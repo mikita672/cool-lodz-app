@@ -9,9 +9,17 @@ Android-приложение на Flutter: в жару строит пешие �
 - **Макет:** [Figma «Cool Łódź — App»](https://www.figma.com/design/U5IzePCuqa0gZlipjRQEOm/Cool-Lodz-App)
 - **Журнал AI:** [docs/ai-log.md](docs/ai-log.md)
 
-## Статус
+## Запуск
 
-Кода пока нет. Первый шаг — [APP-01: каркас Flutter](https://github.com/mikita672/cool-lodz-app/issues/2); вместе с ним здесь появятся инструкции по запуску и demo-режиму.
+Нужны Flutter 3.41 (stable), JDK 17 и Android SDK 36; приложение — только Android 7.0+.
+
+```sh
+flutter pub get
+flutter analyze && flutter test
+flutter run
+```
+
+Устройство кода, правила и git-процесс — в [docs/dev.md](docs/dev.md).
 
 ## Как работаем
 
