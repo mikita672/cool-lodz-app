@@ -1,0 +1,19 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    - lib/l10n/app_localizations*.dart
+    - "**/*.g.dart"
+  errors:
+    missing_required_param: error
+
+linter:
+  rules:
+    - prefer_single_quotes
+    - prefer_const_constructors
+    - prefer_final_locals
+    - always_declare_return_types
+    - avoid_print
+    - directives_ordering
+    - unawaited_futures
+    - require_trailing_commas

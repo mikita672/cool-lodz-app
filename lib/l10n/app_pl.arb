@@ -1,0 +1,17 @@
+{
+  "@@locale": "pl",
+
+  "appTitle": "Cool Łódź",
+  "@appTitle": {"description": "App name"},
+
+  "navMap": "Mapa",
+  "navCool": "Chłód",
+  "navQuest": "Quest",
+  "navProfile": "Profil",
+
+  "questSegmentQuest": "Quest",
+  "questSegmentBadges": "Odznaki",
+  "questSegmentRanking": "Ranking",
+
+  "placeholderInProgress": "Ekran w budowie"
+}
