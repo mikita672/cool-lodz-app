@@ -58,6 +58,8 @@ firestore-debug.log
 ui-debug.log
 database-debug.log
 pubsub-debug.log
+# Emulator data (--import/--export-on-exit)
+.firebase-data/
 
 # Node (Firestore rules tests)
 node_modules/

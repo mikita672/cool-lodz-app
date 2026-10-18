@@ -1,0 +1,10 @@
+rules_version = '2';
+
+// Deny everything until APP-13 writes the real rules (spec: «Данные»).
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
