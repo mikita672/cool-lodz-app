@@ -11,6 +11,22 @@ flutter analyze && flutter test
 flutter run               # Android emulator or phone, Android 7.0+
 ```
 
+## Firebase
+
+Project `coollodz` (Firestore in europe-central2). Code gets Firebase only through the providers in `lib/core/firebase/firebase_providers.dart`; `FirebaseBootstrap.init()` in `main.dart` starts it.
+
+- **Config file.** `android/app/google-services.json` is not in git. Get it from a teammate or download it: `firebase apps:sdkconfig ANDROID --project coollodz -o android/app/google-services.json` (pick the `pl.betterthannever.cool_lodz` app). Without it the Android build fails.
+- **Emulators.** Debug builds talk to the local Emulator Suite (Auth 9099, Firestore 8080, UI <http://localhost:4000>). Start it from the repo root:
+
+  ```sh
+  firebase emulators:start --only auth,firestore --import .firebase-data --export-on-exit
+  ```
+
+  Needs Java 21+ (firebase-tools 15). Data is kept in `.firebase-data/` (ignored by git), created on the first exit. On the Android emulator `localhost` is mapped to the host (`10.0.2.2`) automatically.
+- **Switch.** `--dart-define=USE_FIREBASE_EMULATORS=false` makes a debug build use the real project. The default is `true` in debug; profile and release builds always use the real project (cleartext HTTP is allowed only in `android/app/src/debug`). On a physical phone add `--dart-define=FIREBASE_EMULATOR_HOST=<PC LAN IP>` and let the emulators listen on the LAN (`"host": "0.0.0.0"` for `auth` and `firestore` in a local, uncommitted `firebase.json`).
+- **Push.** There is no FCM emulator: debug builds get a real FCM token, printed to the log as `FCM token: …`. Send a test message from the Firebase console (Messaging → New campaign → Send test message) to that token.
+- **Rules.** `firestore.rules` denies everything until APP-13; the emulator uses this file too.
+
 ## Layout
 
 ```
