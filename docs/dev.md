@@ -24,7 +24,7 @@ assets/demo/      demo JSON following the module D API contract
 test/             mirrors lib/ (test/features/<f>/..., test/core/...)
 ```
 
-Routes for every screen already exist in `lib/app/router.dart`; a feature ticket replaces its placeholder screen and adds routes only when it needs new ones.
+Routes for every screen already exist in `lib/app/router.dart`; a feature ticket replaces its placeholder screen and adds routes only when it needs new ones. Detail screens are sub-routes of their tab (`/quest/scan`, `/map/alert`, `/profile/about`, `/route/result`), so a deep link still has a back stack; inside the app open them with `context.push`. The router is created once — redirect re-checks go through `routerRefreshProvider`.
 
 ## Rules
 

@@ -23,7 +23,8 @@ abstract final class GameConfig {
   // Badges.
   static const badgeShadedTenCount = 10; // Cienista dziesiątka
   static const badgeShadedTenMinShade = 0.60;
-  static const badgeCoolGuardPlaces = 5; // Strażnik chłodu (lower for the demo)
+  static const badgeCoolGuardPlaces =
+      5; // Strażnik chłodu (spec allows lowering it for the demo)
   static const badgeEarlyBirdFromHour = 6; // Ranny ptaszek 6:00–10:00
   static const badgeEarlyBirdToHour = 10;
   static const badgeEveningFromHour = 19; // Wieczorny spacerowicz 19:00–22:00

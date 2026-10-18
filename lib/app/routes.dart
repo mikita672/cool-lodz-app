@@ -8,14 +8,14 @@ abstract final class Routes {
 
   static const map = '/map'; // S05, tab
   static const routePlan = '/route'; // S06
-  static const routeResult = '/route/result'; // S07
+  static const routeResult = '/route/result'; // S07 (child of S06)
   static const coolPlaces = '/cool'; // S09, tab
   static const quest = '/quest'; // S10 + segments S12, S13, tab
-  static const questScan = '/quest/scan'; // S11
-  static const alert = '/alert'; // S14
+  static const questScan = '/quest/scan'; // S11 (child of the Quest tab)
+  static const alert = '/map/alert'; // S14 (child of the Mapa tab)
   static const report = '/report'; // S15
   static const profile = '/profile'; // S16, tab
-  static const about = '/profile/about'; // S16 «O aplikacji»
+  static const about = '/profile/about'; // S16 «O aplikacji» (child of Profil)
   static const privacy = '/privacy'; // Polityka prywatności (S03, S16)
   static const debugComponents = '/debug/components'; // APP-06 showcase
 

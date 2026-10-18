@@ -27,6 +27,8 @@ final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 
 /// Redirect rules for the start flow (onboarding → login → consents → map).
 /// APP-07 overrides this provider; the scaffold lets every route through.
+/// The router is built once: re-checks must come from [routerRefreshProvider],
+/// never from rebuilding the router (that would drop the navigation stack).
 final routerRedirectProvider = Provider<GoRouterRedirect?>((ref) => null);
 
 /// Something the router listens to, so redirects run again when the
@@ -37,8 +39,8 @@ final routerProvider = Provider<GoRouter>((ref) {
   final router = GoRouter(
     navigatorKey: rootNavigatorKey,
     initialLocation: Routes.map,
-    redirect: ref.watch(routerRedirectProvider),
-    refreshListenable: ref.watch(routerRefreshProvider),
+    redirect: ref.read(routerRedirectProvider),
+    refreshListenable: ref.read(routerRefreshProvider),
     routes: [
       GoRoute(
         path: Routes.onboarding,
@@ -56,7 +58,17 @@ final routerProvider = Provider<GoRouter>((ref) {
         branches: [
           StatefulShellBranch(
             routes: [
-              GoRoute(path: Routes.map, builder: (_, _) => const MapScreen()),
+              GoRoute(
+                path: Routes.map,
+                builder: (_, _) => const MapScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'alert',
+                    parentNavigatorKey: rootNavigatorKey,
+                    builder: (_, _) => const AlertScreen(),
+                  ),
+                ],
+              ),
             ],
           ),
           StatefulShellBranch(
@@ -77,6 +89,13 @@ final routerProvider = Provider<GoRouter>((ref) {
                     orElse: () => QuestSection.quest,
                   ),
                 ),
+                routes: [
+                  GoRoute(
+                    path: 'scan',
+                    parentNavigatorKey: rootNavigatorKey,
+                    builder: (_, _) => const QuestScanScreen(),
+                  ),
+                ],
               ),
             ],
           ),
@@ -85,32 +104,33 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: Routes.profile,
                 builder: (_, _) => const ProfileTabScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'about',
+                    parentNavigatorKey: rootNavigatorKey,
+                    builder: (_, _) => const AboutScreen(),
+                  ),
+                ],
               ),
             ],
           ),
         ],
       ),
-      // Full-screen routes above the bottom bar.
+      // Full-screen routes above the bottom bar. Inside the app open them with
+      // context.push so system back returns to where the user came from.
       GoRoute(
         path: Routes.routePlan,
         builder: (_, _) => const RoutePlanScreen(),
-      ),
-      GoRoute(
-        path: Routes.routeResult,
-        builder: (_, _) => const RouteResultScreen(),
+        routes: [
+          GoRoute(path: 'result', builder: (_, _) => const RouteResultScreen()),
+        ],
       ),
       GoRoute(
         path: Routes.placePattern,
         builder: (_, state) =>
             PlaceScreen(placeId: state.pathParameters['placeId']!),
       ),
-      GoRoute(
-        path: Routes.questScan,
-        builder: (_, _) => const QuestScanScreen(),
-      ),
-      GoRoute(path: Routes.alert, builder: (_, _) => const AlertScreen()),
       GoRoute(path: Routes.report, builder: (_, _) => const ReportScreen()),
-      GoRoute(path: Routes.about, builder: (_, _) => const AboutScreen()),
       if (kDebugMode)
         GoRoute(
           path: Routes.debugComponents,

@@ -8,7 +8,7 @@ plugins {
 android {
     namespace = "pl.betterthannever.cool_lodz"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = "27.1.12297006" // installed locally; see android/build.gradle.kts
+    ndkVersion = providers.gradleProperty("coollodz.ndkVersion").getOrElse(flutter.ndkVersion)
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

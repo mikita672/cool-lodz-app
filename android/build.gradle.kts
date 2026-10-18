@@ -15,12 +15,17 @@ subprojects {
     val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)
     project.layout.buildDirectory.value(newSubprojectBuildDir)
 }
-// Plugins default to Flutter's NDK (28.x), which is not installed here and must not be
-// downloaded. Use the same installed NDK as the app for every Android module.
-val installedNdkVersion = "27.1.12297006"
-subprojects {
-    afterEvaluate {
-        extensions.findByType<com.android.build.gradle.BaseExtension>()?.ndkVersion = installedNdkVersion
+// Optional machine-local NDK pin: set `coollodz.ndkVersion=<installed version>` in
+// ~/.gradle/gradle.properties (or $GRADLE_USER_HOME) to build every Android module with an NDK
+// you already have instead of Flutter's default. Without it nothing changes.
+val localNdkVersion: String? = providers.gradleProperty("coollodz.ndkVersion").orNull
+if (localNdkVersion != null) {
+    subprojects {
+        // Registered before the Android plugin applies, so it runs before AGP checks the NDK.
+        afterEvaluate {
+            extensions.findByType(com.android.build.api.dsl.LibraryExtension::class.java)?.ndkVersion =
+                localNdkVersion
+        }
     }
 }
 subprojects {

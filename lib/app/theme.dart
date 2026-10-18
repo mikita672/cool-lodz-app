@@ -93,7 +93,7 @@ extension AppThemeContext on BuildContext {
 }
 
 /// Text styles from the spec (sizes in sp, line height / size).
-/// Inter ships as one variable font, so the weight goes through `wght`.
+/// Inter is bundled as static 400 / 500 / 600 / 700 files.
 abstract final class AppTextStyles {
   static const fontFamily = 'Inter';
 
@@ -103,7 +103,6 @@ abstract final class AppTextStyles {
         fontSize: size,
         height: height / size,
         fontWeight: weight,
-        fontVariations: [FontVariation.weight(weight.value.toDouble())],
         color: AppColors.onSurface,
       );
 
@@ -150,7 +149,7 @@ abstract final class AppTheme {
       onSurface: AppColors.onSurface,
       onSurfaceVariant: AppColors.onSurfaceVariant,
       surfaceContainerHighest: AppColors.surfaceVariant,
-      surfaceContainerHigh: AppColors.surfaceVariant,
+      surfaceContainerHigh: AppColors.surface, // dialogs stay white
       surfaceContainer: AppColors.surface,
       surfaceContainerLow: AppColors.surface,
       outline: AppColors.muted,
@@ -170,10 +169,7 @@ abstract final class AppTheme {
       headlineSmall: AppTextStyles.titleL,
       titleLarge: AppTextStyles.titleL,
       titleMedium: AppTextStyles.titleM,
-      titleSmall: AppTextStyles.body.copyWith(
-        fontWeight: FontWeight.w600,
-        fontVariations: const [FontVariation.weight(600)],
-      ),
+      titleSmall: AppTextStyles.body.copyWith(fontWeight: FontWeight.w600),
       bodyLarge: AppTextStyles.body,
       bodyMedium: AppTextStyles.bodyS,
       bodySmall: AppTextStyles.bodyS.copyWith(
@@ -213,6 +209,20 @@ abstract final class AppTheme {
           foregroundColor: AppColors.primary,
           side: const BorderSide(color: AppColors.primary),
           textStyle: AppTextStyles.button,
+        ),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          minimumSize: buttonSize,
+          shape: buttonShape,
+          textStyle: AppTextStyles.button,
+        ),
+      ),
+      segmentedButtonTheme: SegmentedButtonThemeData(
+        style: SegmentedButton.styleFrom(
+          minimumSize: Size(AppSizes.minTouchTarget, buttonHeight),
+          textStyle: AppTextStyles.label,
+          selectedBackgroundColor: AppColors.primaryContainer,
         ),
       ),
       textButtonTheme: TextButtonThemeData(
