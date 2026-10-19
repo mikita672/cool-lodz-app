@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -26,20 +24,20 @@ class PushTokenSync {
     }
   }
 
-  /// Removes the token before sign-out, so this phone gets no alerts for an
-  /// account that is not signed in. Waits at most [timeout] (offline the
-  /// write stays queued).
+  /// Before sign-out: removes `fcmToken` from [uid]'s document and
+  /// invalidates the token itself. Firestore keeps an unsent write in the
+  /// signed-in user's queue, so offline the field may stay on the server;
+  /// the deleted token makes it useless, and the next sign-in gets a new one.
   Future<void> clear(
     String uid, {
     Duration timeout = const Duration(seconds: 5),
   }) async {
     try {
       await _profiles.saveFcmToken(uid, null).timeout(timeout);
-    } on TimeoutException {
-      // Queued; sent when the network is back.
     } catch (e) {
-      debugPrint('Removing the FCM token failed: $e');
+      debugPrint('Removing the FCM token from users/$uid failed: $e');
     }
+    await _push.deleteToken();
   }
 }
 

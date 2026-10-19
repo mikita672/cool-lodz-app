@@ -75,6 +75,13 @@ void main() {
     expect(permissions.calls, ['notifications']);
   });
 
+  testWidgets('recreates a missing users/{uid} before saving', (tester) async {
+    await pump(tester);
+    await accept(tester);
+    expect(profiles.ensured['u1'], 'Gracz'); // the fake user has no e-mail
+    expect(profiles.saved, hasLength(1));
+  });
+
   testWidgets('no system dialogs when both are off', (tester) async {
     await pump(tester);
     await tester.tap(find.byKey(const Key('consent-location')));

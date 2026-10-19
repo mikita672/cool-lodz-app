@@ -118,10 +118,11 @@ class FakeUserProfileRepository implements UserProfileRepository {
     required String uid,
     required String nickname,
   }) async {
-    if (!created.any((c) => c.uid == uid)) {
-      created.add((uid: uid, nickname: nickname));
-    }
+    if (!created.any((c) => c.uid == uid)) ensured[uid] = nickname;
   }
+
+  /// uid → nickname written by [ensureProfile] for a missing document.
+  final ensured = <String, String>{};
 
   @override
   Future<void> saveConsents(String uid, Consents consents) async {

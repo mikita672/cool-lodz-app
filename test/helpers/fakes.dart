@@ -356,6 +356,14 @@ class FakePushService implements PushService {
 
   @override
   Future<PushMessage?> initial() async => initialMessage;
+
+  int deletedTokens = 0;
+
+  @override
+  Future<void> deleteToken() async {
+    deletedTokens++;
+    tokenValue = null;
+  }
 }
 
 /// Records S16 account changes.

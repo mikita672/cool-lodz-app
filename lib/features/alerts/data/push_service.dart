@@ -32,6 +32,10 @@ abstract interface class PushService {
 
   /// The notification that started the app, if any.
   Future<PushMessage?> initial();
+
+  /// Invalidates this phone's token on the FCM server (sign-out), so a copy
+  /// left in Firestore no longer delivers anything.
+  Future<void> deleteToken();
 }
 
 class FirebasePushService implements PushService {
@@ -68,6 +72,15 @@ class FirebasePushService implements PushService {
   @override
   Stream<PushMessage> get opened =>
       FirebaseMessaging.onMessageOpenedApp.map(_map);
+
+  @override
+  Future<void> deleteToken() async {
+    try {
+      await _messaging.deleteToken();
+    } catch (e) {
+      debugPrint('FCM token not deleted: $e');
+    }
+  }
 
   @override
   Future<PushMessage?> initial() async {

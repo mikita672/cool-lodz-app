@@ -123,7 +123,7 @@ class FirebaseAuthRepository implements AuthRepository {
               )
               .timeout(const Duration(seconds: 10));
         } catch (e) {
-          // Signed in anyway; the next sign-in tries again.
+          // Signed in anyway; S03 checks again before saving consents.
           debugPrint('Could not check users/${user.uid}: $e');
         }
       });

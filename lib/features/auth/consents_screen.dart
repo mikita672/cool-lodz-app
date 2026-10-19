@@ -49,8 +49,18 @@ class _ConsentsScreenState extends ConsumerState<ConsentsScreen> {
       ranking: _ranking,
     );
     try {
-      await ref
-          .read(userProfileRepositoryProvider)
+      final profiles = ref.read(userProfileRepositoryProvider);
+      // An account whose users/{uid} never reached the server (a sign-up cut
+      // off midway) would have every S03 write rejected by the rules.
+      await profiles
+          .ensureProfile(
+            uid: uid,
+            nickname: nicknameFromEmail(
+              ref.read(authRepositoryProvider).currentUser?.email ?? '',
+            ),
+          )
+          .timeout(ConsentsScreen.saveTimeout);
+      await profiles
           .saveConsents(uid, consents)
           .timeout(ConsentsScreen.saveTimeout);
     } catch (e) {
