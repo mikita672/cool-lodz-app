@@ -1,13 +1,13 @@
-# Журнал использования AI
+# AI usage log
 
-Какие задачи сделаны с помощью AI (требование регламента). Журнал передаётся Mikicie Kutsence для документации, см. APP-26.
+Which tasks were done with the help of AI (required by the competition rules). The log is handed to Mikita Kutsenka for the documentation, see APP-26.
 
-| Дата | Задача | Инструмент | Что сделано | Проверил |
+| Date | Task | Tool | What was done | Checked by |
 | :-- | :-- | :-- | :-- | :-- |
-| 18.10.2026 | APP-00 | Claude Code + Figma MCP | Макет «Cool Łódź — App»: токены с режимами Default и Senior, около 30 наборов компонентов, 52 фрейма S01–S16, прототип и флоу демо | ревью MD + AH в APP-00 |
-| 18.10.2026 | Настройка GitHub | Claude Code + GitHub CLI | Репозиторий, лейблы, майлстоуны M1–M6, issues APP-00…APP-28 с шагами, вопросы и зависимости, доска, план по дням | MD |
-| 19.10.2026 | APP-03, APP-07, APP-13 | Claude Code | Модели и клиенты API с fallback 8 с; S01–S03 и start flow; правила Firestore, индексы, сид и тесты правил | автотесты; ревью PR — MD |
-| 19.10.2026 | APP-08…APP-12 | Claude Code | S04 профиль комфорта и Senior; S06 планирование (поиск Nominatim); S07 три варианта, «Prowadź», «Zapisz»; S05 карта со слоями и алертом; S08 шторка и S09 список | автотесты (виджет-тесты 360 dp и Senior); проверка на телефоне — APP-24 |
-| 19.10.2026 | APP-14, APP-16…APP-19 | Claude Code | Движок очков и значков и S12; S10 квест и S11 сканер QR; S13 рейтинг; push, S14 и режим жары; S16 настройки, удаление аккаунта, «O aplikacji» | автотесты, тесты правил Firestore на эмуляторе; ревью — MD |
-| 19.10.2026 | APP-15, APP-21…APP-23 | Claude Code | PDF с QR-кодами квеста; подпись release и инструкция релиза; ползунок «Najlepsza pora wyjścia»; S15 zgłoszenia | автотесты; печать, сборка APK и релиз — команда |
-| 19.10.2026 | APP-26 | Claude Code | Черновик списка ограничений и kolejne kroki (`docs/limitations.md`) | MD перед отправкой |
+| 18.10.2026 | APP-00 | Claude Code + Figma MCP | Mock-up «Cool Łódź — App»: tokens with Default and Senior modes, about 30 component sets, 52 frames S01–S16, prototype and demo flow | review by MD + AH in APP-00 |
+| 18.10.2026 | GitHub setup | Claude Code + GitHub CLI | Repository, labels, milestones M1–M6, issues APP-00…APP-28 with steps, questions and dependencies, board, day-by-day plan | MD |
+| 19.10.2026 | APP-03, APP-07, APP-13 | Claude Code | API models and clients with an 8 s fallback; S01–S03 and the start flow; Firestore rules, indexes, seed and rules tests | automated tests; PR review — MD |
+| 19.10.2026 | APP-08…APP-12 | Claude Code | S04 comfort profile and Senior; S06 planning (Nominatim search); S07 three variants, «Prowadź», «Zapisz»; S05 map with layers and alert; S08 sheet and S09 list | automated tests (widget tests at 360 dp and Senior); phone check — APP-24 |
+| 19.10.2026 | APP-14, APP-16…APP-19 | Claude Code | Points and badges engine and S12; S10 quest and S11 QR scanner; S13 leaderboard; push, S14 and heat mode; S16 settings, account deletion, «O aplikacji» | automated tests, Firestore rules tests in the emulator; review — MD |
+| 19.10.2026 | APP-15, APP-21…APP-23 | Claude Code | PDF with the quest QR codes; release signing and release instructions; «Najlepsza pora wyjścia» slider; S15 zgłoszenia | automated tests; printing, APK build and release — team |
+| 19.10.2026 | APP-26 | Claude Code | Draft list of limitations and kolejne kroki (`docs/limitations.md`) | MD before sending |

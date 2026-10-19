@@ -44,7 +44,7 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# Secrets: never commit (spec, НФТ «Ключи» / «Сборка»)
+# Secrets: never commit (spec, non-functional requirements "Keys" / "Build")
 android/app/google-services.json
 *.jks
 *.keystore

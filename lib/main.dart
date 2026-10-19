@@ -13,7 +13,7 @@ import 'features/auth/start_flow.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Portrait only (spec: "только портретная ориентация").
+  // Portrait only (spec: "portrait orientation only").
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   LicenseRegistry.addLicense(_interLicense);
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);

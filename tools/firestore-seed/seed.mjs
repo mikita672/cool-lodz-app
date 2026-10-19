@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Seeds Firestore with the game's starting data (spec «Данные», APP-13):
+// Seeds Firestore with the game's starting data (spec "Data", APP-13):
 //   config/game, districts/{id}, questPlaces/{placeId}, questCodes/{placeId}.
 // Quest codes are also written to tools/qr/codes.json (gitignored) for the
 // QR generator (APP-15). Existing codes there are reused, so re-running the

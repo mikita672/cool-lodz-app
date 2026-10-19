@@ -70,5 +70,5 @@ class ApiException implements Exception {
       '${message == null ? '' : ': $message'})';
 }
 
-/// Remote timeout from the spec (НФТ «Производительность»).
+/// Remote timeout from the spec (non-functional requirements: "Performance").
 const apiTimeout = Duration(seconds: 8);
