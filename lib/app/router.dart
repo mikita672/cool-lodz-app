@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../core/models/models.dart';
 import '../features/alerts/alert_screen.dart';
 import '../features/auth/consents_screen.dart';
 import '../features/auth/login_screen.dart';
@@ -140,7 +141,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (_, state) =>
             PlaceScreen(placeId: state.pathParameters['placeId']!),
       ),
-      GoRoute(path: Routes.report, builder: (_, _) => const ReportScreen()),
+      GoRoute(
+        path: Routes.report,
+        builder: (_, state) => ReportScreen(
+          place: state.extra is Place ? state.extra! as Place : null,
+        ),
+      ),
       if (kDebugMode)
         GoRoute(
           path: Routes.debugComponents,

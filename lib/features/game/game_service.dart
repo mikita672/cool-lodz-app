@@ -108,6 +108,24 @@ class GameService {
     ]);
   }
 
+  /// Reports approved in the console since the last check: 20 points each
+  /// and Pomocnik miasta after 3. Called when S12 opens.
+  Future<GameAward> syncReports() async {
+    final uid = _uid;
+    if (uid == null) return GameAward.none;
+    final history = await _repo.history(uid);
+    final unpaid = GameRules.unpaidReports(history);
+    if (unpaid.isEmpty) return GameAward.none;
+    return _award(uid, history, [
+      for (final id in unpaid)
+        PointsEntry(
+          type: PointsType.report,
+          points: GameConfig.pointsReportApproved,
+          refId: id,
+        ),
+    ]);
+  }
+
   Future<GameAward> _award(
     String uid,
     GameHistory history,
@@ -137,6 +155,13 @@ class GameService {
 }
 
 final gameServiceProvider = Provider<GameService>(GameService.new);
+
+/// Runs [GameService.syncReports] while S12 is open; its result is the
+/// award to show (if any).
+final reportSyncProvider = FutureProvider.autoDispose<GameAward>(
+  (ref) => ref.read(gameServiceProvider).syncReports(),
+  retry: (_, _) => null,
+);
 
 /// S12: the signed-in player's totals and badges.
 final playerProvider = StreamProvider<PlayerState>((ref) {

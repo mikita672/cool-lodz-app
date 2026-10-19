@@ -522,5 +522,22 @@
   "@routeBestTimeHint": {"placeholders": {"time": {"type": "String"}, "percent": {"type": "int"}}},
   "routeBestTimeSlider": "Wyjście o {time}, {percent} procent trasy w cieniu",
   "@routeBestTimeSlider": {"placeholders": {"time": {"type": "String"}, "percent": {"type": "int"}}},
-  "routeBestTimeChart": "Udział cienia w ciągu dnia dla wybranej trasy"
+  "routeBestTimeChart": "Udział cienia w ciągu dnia dla wybranej trasy",
+
+  "reportTitle": "Zgłoś problem",
+  "reportTypeTitle": "Czego brakuje?",
+  "reportNoBench": "Brak ławki",
+  "reportNoWater": "Brak poidełka",
+  "reportNoShade": "Brak cienia",
+  "reportOther": "Inne",
+  "reportWhere": "Gdzie?",
+  "reportWhereHint": "Przesuń mapę, aby ustawić pinezkę dokładnie w miejscu problemu.",
+  "reportComment": "Komentarz (opcjonalnie)",
+  "reportSend": "Wyślij zgłoszenie",
+  "reportChooseType": "Wybierz rodzaj problemu",
+  "reportThanksTitle": "Dziękujemy!",
+  "reportThanksBody": "+20 pkt po zatwierdzeniu",
+  "reportBack": "Wróć",
+  "reportError": "Nie udało się wysłać zgłoszenia. Sprawdź połączenie i spróbuj ponownie.",
+  "reportMapSemantics": "Mapa z pinezką zgłoszenia"
 }

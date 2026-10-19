@@ -2595,6 +2595,102 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Udział cienia w ciągu dnia dla wybranej trasy'**
   String get routeBestTimeChart;
+
+  /// No description provided for @reportTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zgłoś problem'**
+  String get reportTitle;
+
+  /// No description provided for @reportTypeTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Czego brakuje?'**
+  String get reportTypeTitle;
+
+  /// No description provided for @reportNoBench.
+  ///
+  /// In pl, this message translates to:
+  /// **'Brak ławki'**
+  String get reportNoBench;
+
+  /// No description provided for @reportNoWater.
+  ///
+  /// In pl, this message translates to:
+  /// **'Brak poidełka'**
+  String get reportNoWater;
+
+  /// No description provided for @reportNoShade.
+  ///
+  /// In pl, this message translates to:
+  /// **'Brak cienia'**
+  String get reportNoShade;
+
+  /// No description provided for @reportOther.
+  ///
+  /// In pl, this message translates to:
+  /// **'Inne'**
+  String get reportOther;
+
+  /// No description provided for @reportWhere.
+  ///
+  /// In pl, this message translates to:
+  /// **'Gdzie?'**
+  String get reportWhere;
+
+  /// No description provided for @reportWhereHint.
+  ///
+  /// In pl, this message translates to:
+  /// **'Przesuń mapę, aby ustawić pinezkę dokładnie w miejscu problemu.'**
+  String get reportWhereHint;
+
+  /// No description provided for @reportComment.
+  ///
+  /// In pl, this message translates to:
+  /// **'Komentarz (opcjonalnie)'**
+  String get reportComment;
+
+  /// No description provided for @reportSend.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wyślij zgłoszenie'**
+  String get reportSend;
+
+  /// No description provided for @reportChooseType.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wybierz rodzaj problemu'**
+  String get reportChooseType;
+
+  /// No description provided for @reportThanksTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dziękujemy!'**
+  String get reportThanksTitle;
+
+  /// No description provided for @reportThanksBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'+20 pkt po zatwierdzeniu'**
+  String get reportThanksBody;
+
+  /// No description provided for @reportBack.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wróć'**
+  String get reportBack;
+
+  /// No description provided for @reportError.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie udało się wysłać zgłoszenia. Sprawdź połączenie i spróbuj ponownie.'**
+  String get reportError;
+
+  /// No description provided for @reportMapSemantics.
+  ///
+  /// In pl, this message translates to:
+  /// **'Mapa z pinezką zgłoszenia'**
+  String get reportMapSemantics;
 }
 
 class _AppLocalizationsDelegate

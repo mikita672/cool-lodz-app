@@ -120,6 +120,7 @@ class FirestoreGameRepository implements GameRepository {
       log: [for (final d in log.docs) ?_entry(d.data())],
       badges: PlayerState.fromDoc(user.data()).badges,
       approvedReports: reports.size,
+      approvedReportIds: {for (final d in reports.docs) d.id},
     );
   }
 

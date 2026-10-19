@@ -104,6 +104,7 @@ class GameHistory {
     this.log = const [],
     this.badges = const {},
     this.approvedReports = 0,
+    this.approvedReportIds = const {},
   });
 
   /// All routes, including the one being awarded.
@@ -111,6 +112,9 @@ class GameHistory {
   final List<PointsEntry> log;
   final Set<GameBadge> badges;
   final int approvedReports;
+
+  /// Ids of the user's reports approved in the console (S15).
+  final Set<String> approvedReportIds;
 
   /// Distinct places with a scan entry.
   Set<String> get scannedPlaces => {
@@ -178,6 +182,12 @@ abstract final class GameRules {
   }) => history.has(PointsType.password, refId: questId)
       ? 0
       : GameConfig.pointsPasswordSolved;
+
+  /// Approved reports that have not earned their 20 points yet.
+  static List<String> unpaidReports(GameHistory history) => [
+    for (final id in history.approvedReportIds)
+      if (!history.has(PointsType.report, refId: id)) id,
+  ]..sort();
 
   /// Badges [history] earns that it does not have yet. [route] is a route
   /// started just now; [heatAlertToday] says whether a heat warning is on

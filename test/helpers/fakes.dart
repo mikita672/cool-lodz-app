@@ -18,6 +18,7 @@ import 'package:cool_lodz/features/game/data/game_repository.dart';
 import 'package:cool_lodz/features/leaderboard/data/ranking_repository.dart';
 import 'package:cool_lodz/features/quest/data/quest_repository.dart';
 import 'package:cool_lodz/features/quest/quest_scan_screen.dart';
+import 'package:cool_lodz/features/reports/data/report_repository.dart';
 import 'package:cool_lodz/features/route/data/address_search.dart';
 import 'package:cool_lodz/features/route/data/route_history_repository.dart';
 import 'package:cool_lodz/features/settings/data/account_repository.dart';
@@ -137,7 +138,9 @@ List<Override> appTestOverrides({
   UserProfileRepository? profiles,
   PushService? push,
   AccountRepository? account,
+  ReportRepository? reports,
 }) => [
+  reportRepositoryProvider.overrideWithValue(reports ?? FakeReportRepository()),
   accountRepositoryProvider.overrideWithValue(
     account ?? FakeAccountRepository(),
   ),
@@ -177,6 +180,7 @@ class FakeGameRepository implements GameRepository {
   final log = <PointsEntry>[];
   final writes = <int>[];
   int approvedReports = 0;
+  final approvedReportIds = <String>{};
   final _players = StreamController<PlayerState>.broadcast();
   final _logs = StreamController<List<PointsEntry>>.broadcast();
 
@@ -195,7 +199,8 @@ class FakeGameRepository implements GameRepository {
     ],
     log: List.of(log),
     badges: state.badges,
-    approvedReports: approvedReports,
+    approvedReports: approvedReports + approvedReportIds.length,
+    approvedReportIds: Set.of(approvedReportIds),
   );
 
   @override
@@ -375,4 +380,23 @@ class FakeAccountRepository implements AccountRepository {
 
   @override
   Future<void> deleteUserData(String uid) async => deletedData.add(uid);
+}
+
+/// Records reports instead of writing to Firestore.
+class FakeReportRepository implements ReportRepository {
+  final created =
+      <({ReportType type, double lat, double lon, String? comment})>[];
+  Object? error;
+
+  @override
+  Future<void> create({
+    required String uid,
+    required ReportType type,
+    required double lat,
+    required double lon,
+    String? comment,
+  }) async {
+    if (error != null) throw error!;
+    created.add((type: type, lat: lat, lon: lon, comment: comment));
+  }
 }

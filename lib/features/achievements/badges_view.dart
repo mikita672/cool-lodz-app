@@ -21,6 +21,13 @@ class BadgesView extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final player = ref.watch(playerProvider);
+    // Approved reports earn their points when S12 is opened.
+    ref.listen(reportSyncProvider, (_, next) {
+      final award = next.value;
+      if (award != null && award.points > 0) {
+        showAwardFeedback(context, award);
+      }
+    });
     final log = ref.watch(recentPointsProvider).value ?? const [];
     final coolGuard = ref.watch(isDemoModeEffectiveProvider)
         ? GameConfig.demoBadgeCoolGuardPlaces

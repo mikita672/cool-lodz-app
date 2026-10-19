@@ -1478,4 +1478,54 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String get routeBestTimeChart =>
       'Udział cienia w ciągu dnia dla wybranej trasy';
+
+  @override
+  String get reportTitle => 'Zgłoś problem';
+
+  @override
+  String get reportTypeTitle => 'Czego brakuje?';
+
+  @override
+  String get reportNoBench => 'Brak ławki';
+
+  @override
+  String get reportNoWater => 'Brak poidełka';
+
+  @override
+  String get reportNoShade => 'Brak cienia';
+
+  @override
+  String get reportOther => 'Inne';
+
+  @override
+  String get reportWhere => 'Gdzie?';
+
+  @override
+  String get reportWhereHint =>
+      'Przesuń mapę, aby ustawić pinezkę dokładnie w miejscu problemu.';
+
+  @override
+  String get reportComment => 'Komentarz (opcjonalnie)';
+
+  @override
+  String get reportSend => 'Wyślij zgłoszenie';
+
+  @override
+  String get reportChooseType => 'Wybierz rodzaj problemu';
+
+  @override
+  String get reportThanksTitle => 'Dziękujemy!';
+
+  @override
+  String get reportThanksBody => '+20 pkt po zatwierdzeniu';
+
+  @override
+  String get reportBack => 'Wróć';
+
+  @override
+  String get reportError =>
+      'Nie udało się wysłać zgłoszenia. Sprawdź połączenie i spróbuj ponownie.';
+
+  @override
+  String get reportMapSemantics => 'Mapa z pinezką zgłoszenia';
 }
