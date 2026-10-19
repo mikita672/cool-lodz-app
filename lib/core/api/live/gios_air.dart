@@ -1,14 +1,21 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 
 import '../../models/models.dart';
+import '../../warsaw_time.dart';
 import '../api_client.dart';
 import 'live_http.dart';
-import 'warsaw_time.dart';
 
 /// Air-quality stations in Łódź with the current GIOŚ index, from the PJP
 /// API v1 (the old paths without `/v1` answer 410 Gone since 2025).
 class GiosAirClient {
-  GiosAirClient(this._dio, {this.maxIndexCalls = 8, this.concurrency = 4});
+  GiosAirClient(
+    this._dio, {
+    this.maxIndexCalls = 8,
+    this.concurrency = 4,
+    this.indexTimeout = const Duration(seconds: 3),
+  });
 
   factory GiosAirClient.create() => GiosAirClient(createLiveDio());
 
@@ -24,6 +31,10 @@ class GiosAirClient {
 
   /// Index requests in flight at once.
   final int concurrency;
+
+  /// A slow station gets no index instead of holding up the others (the
+  /// whole call has [apiTimeout]).
+  final Duration indexTimeout;
 
   Future<List<GiosStation>>? _stations;
 
@@ -66,8 +77,12 @@ class GiosAirClient {
 
   Future<GiosIndex?> _index(String stationId) async {
     try {
-      return parseGiosIndex(await getJson(_dio, indexUrl(stationId)));
+      return parseGiosIndex(
+        await getJson(_dio, indexUrl(stationId)).timeout(indexTimeout),
+      );
     } on ApiException {
+      return null;
+    } on TimeoutException {
       return null;
     }
   }

@@ -16,6 +16,7 @@ import '../../core/game/game_rules.dart';
 import '../../core/location/location_service.dart';
 import '../../core/models/models.dart';
 import '../../core/storage/offline_cache.dart';
+import '../../core/warsaw_time.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/map/base_map.dart';
 import '../../shared/widgets/app_button.dart';
@@ -74,19 +75,26 @@ class _RouteResultScreenState extends ConsumerState<RouteResultScreen> {
   bool _saving = false;
   bool _going = false;
 
-  /// The departure the cards show: the slider's slot on the asked day.
+  /// The departure the cards show: the slider's slot (Warsaw time) on the
+  /// asked day.
   DateTime _departure(RouteRequest request) {
     final slot = _slot;
     if (slot == null) return request.datetime;
     final m = parseHhMm(slot);
-    final d = request.datetime;
-    return DateTime(d.year, d.month, d.day, m ~/ 60, m % 60);
+    final d = warsawWallClock(request.datetime);
+    return warsawWallClockToUtc(
+      d.year,
+      d.month,
+      d.day,
+      m ~/ 60,
+      m % 60,
+    ).toLocal();
   }
 
   /// Sun share for leaving at [time]: the hourly slot when module D sends
   /// them and [time] is inside 8:00–20:00, else the answer's own value.
   static double _sunShareAt(RouteVariant v, DateTime time) {
-    final minute = minuteOfDay(time);
+    final minute = warsawMinuteOfDay(time);
     if (v.sunShareByHour.isEmpty || minute < 8 * 60 || minute > 20 * 60) {
       return v.sunShare;
     }
@@ -601,7 +609,7 @@ class _BestTime extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final slots = variant.sunShareByHour.keys.toList();
-    final current = nearestTimeKey(slots, minuteOfDay(departure))!;
+    final current = nearestTimeKey(slots, warsawMinuteOfDay(departure))!;
     final index = slots.indexOf(current);
     final best = variant.bestDepartureSlot!;
     int shade(String slot) =>

@@ -267,6 +267,14 @@ void main() {
         ApiErrorKind.network,
       );
       expect(await failure((o) => jsonBody('{}', 503)), ApiErrorKind.server);
+      // A moved or blocked endpoint is an outage too (→ fallback).
+      for (final status in [403, 404, 406, 410]) {
+        expect(
+          await failure((o) => jsonBody('{}', status)),
+          ApiErrorKind.server,
+          reason: '$status',
+        );
+      }
       expect(await failure((o) => jsonBody('{"a": 1}')), ApiErrorKind.server);
       expect(
         await failure(

@@ -3,10 +3,10 @@ import 'dart:math' as math;
 import 'package:latlong2/latlong.dart';
 
 import '../../models/models.dart';
+import '../../warsaw_time.dart';
 import '../api_client.dart';
 import 'osrm_client.dart';
 import 'shade_model.dart';
-import 'warsaw_time.dart';
 
 /// `POST /v1/routes` computed on the phone: OSRM foot routes (with
 /// alternatives and via-point detours) scored by [ShadeModel] into the three
@@ -151,7 +151,10 @@ class LiveRouteEngine {
     final wt = sum == 0 ? 0.5 : timeW / sum;
     double cost(_Candidate c) =>
         ws * c.sun +
-        wt * 2 * (c.duration.inSeconds / shortest.duration.inSeconds - 1);
+        wt *
+            2 *
+            (c.duration.inSeconds / math.max(1, shortest.duration.inSeconds) -
+                1);
     final others = [
       for (final c in all)
         if (!identical(c, shortest) &&

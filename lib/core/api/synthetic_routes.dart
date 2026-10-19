@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:latlong2/latlong.dart';
 
 import '../models/models.dart';
+import '../warsaw_time.dart';
 
 /// Plausible offline routes for pairs that are not reference routes, so every
 /// screen works in demo mode. Deterministic: the same request gives the same
@@ -87,7 +88,7 @@ abstract final class SyntheticRoutes {
       for (var m = 8 * 60; m <= 20 * 60; m += 30)
         formatHhMm(m): _round(_sunAt(middaySun, m)),
     };
-    final minute = minuteOfDay(time).clamp(8 * 60, 20 * 60);
+    final minute = warsawMinuteOfDay(time).clamp(8 * 60, 20 * 60);
     final sun = _round(_sunAt(middaySun, minute));
     final geometry = _bentLine(from, to, bend);
     return RouteVariant(

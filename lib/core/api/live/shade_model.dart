@@ -22,11 +22,13 @@ class ShadeModel {
   }) : _canopy = _PolygonIndex([
          for (final f in canopy)
            for (final p in f.geometry.polygons)
-             _Indexed(p, (f.shade ?? 0).clamp(0.0, 1.0)),
+             if (p.outer.length >= 3)
+               _Indexed(p, (f.shade ?? 0).clamp(0.0, 1.0)),
        ]),
        _parks = _PolygonIndex([
          for (final f in parks)
-           for (final p in f.geometry.polygons) _Indexed(p, parkCanopy),
+           for (final p in f.geometry.polygons)
+             if (p.outer.length >= 3) _Indexed(p, parkCanopy),
        ]),
        parkCentres = [
          for (final f in parks)
@@ -307,7 +309,6 @@ class _Indexed {
 class _PolygonIndex {
   _PolygonIndex(List<_Indexed> items) {
     for (final item in items) {
-      if (item.polygon.outer.length < 3) continue;
       for (var x = _cell(item.minLon); x <= _cell(item.maxLon); x++) {
         for (var y = _cell(item.minLat); y <= _cell(item.maxLat); y++) {
           (_cells[(x, y)] ??= []).add(item);

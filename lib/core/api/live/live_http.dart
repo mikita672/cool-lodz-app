@@ -18,14 +18,21 @@ Dio createLiveDio() => Dio(
   ),
 );
 
-/// GET [url] and return the decoded JSON body. Errors become [ApiException]
-/// the same way as in `RemoteApiClient`.
+/// GET [url] of a public data API (IMGW, GIOŚ) and return the decoded JSON
+/// body. Errors become [ApiException] like in `RemoteApiClient`, except that
+/// any HTTP error is `server`: a moved or blocked third-party endpoint (410,
+/// 403, 406) is an outage for the app, so it falls back to cached/demo data.
 Future<Object?> getJson(Dio dio, String url) async {
   final Response<Object?> response;
   try {
     response = await dio.get<Object?>(url);
   } on DioException catch (e) {
-    throw mapDioError(e);
+    final error = mapDioError(e);
+    if (error.kind == ApiErrorKind.notFound ||
+        error.kind == ApiErrorKind.badRequest) {
+      throw ApiException(ApiErrorKind.server, error.message, error.statusCode);
+    }
+    throw error;
   }
   final data = response.data;
   if (data is! String) return data;

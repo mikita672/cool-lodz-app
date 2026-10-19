@@ -130,7 +130,7 @@ void main() {
       expect(keys, hasLength(25));
       expect(keys, orderedEquals([...keys]..sort()));
       expect(
-        shaded.sunShareAt(DateTime(2026, 7, 15, 14, 40)),
+        shaded.sunShareAt(DateTime.parse('2026-07-15T14:40:00+02:00')),
         shaded.sunShareByHour['14:30'],
       );
       expect(shaded.bestDepartureSlot, isNotNull);

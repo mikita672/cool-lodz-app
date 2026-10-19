@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 
 import '../models/models.dart';
+import '../warsaw_time.dart';
 import 'api_client.dart';
 import 'reference_routes.dart';
 import 'synthetic_routes.dart';
@@ -32,7 +33,10 @@ class DemoApiClient implements ApiClient {
     if (reference == null) return SyntheticRoutes.generate(request);
     final file = await _json(reference.asset) as Map<String, dynamic>;
     final departures = file['departures'] as Map<String, dynamic>;
-    final key = nearestTimeKey(departures.keys, minuteOfDay(request.datetime));
+    final key = nearestTimeKey(
+      departures.keys,
+      warsawMinuteOfDay(request.datetime),
+    );
     if (key == null) {
       throw ApiException(ApiErrorKind.server, '${reference.asset} is empty');
     }

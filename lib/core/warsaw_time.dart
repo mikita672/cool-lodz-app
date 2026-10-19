@@ -46,6 +46,17 @@ final _naive = RegExp(
   r'^(\d{4})-(\d{1,2})-(\d{1,2})(?:[T ](\d{1,2}):(\d{2})(?::(\d{2})(?:[.,]\d+)?)?)?$',
 );
 
+/// Warsaw wall-clock time of [instant], as a UTC-flagged [DateTime] whose
+/// fields (year … minute) read like a clock in Łódź.
+DateTime warsawWallClock(DateTime instant) =>
+    instant.toUtc().add(warsawUtcOffset(instant));
+
+/// Minutes since midnight in Łódź (route `"HH:mm"` slots are Warsaw time).
+int warsawMinuteOfDay(DateTime instant) {
+  final wall = warsawWallClock(instant);
+  return wall.hour * 60 + wall.minute;
+}
+
 /// Parses `2026-07-15 10:00:00`, `2026-07-15T10:00`, `2026-07-15` as Warsaw
 /// wall-clock time; strings with `Z` or an offset keep their own zone.
 /// Returns a UTC [DateTime], or null when [value] is not a timestamp.

@@ -5,6 +5,7 @@ import 'package:cool_lodz/core/api/demo_api_client.dart';
 import 'package:cool_lodz/core/api/reference_routes.dart';
 import 'package:cool_lodz/core/api/synthetic_routes.dart';
 import 'package:cool_lodz/core/models/models.dart';
+import 'package:cool_lodz/core/warsaw_time.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -19,7 +20,7 @@ RouteRequest request(RoutePoint from, RoutePoint to, [DateTime? time]) =>
     RouteRequest(
       from: from,
       to: to,
-      datetime: time ?? DateTime(2026, 7, 15, 14, 30),
+      datetime: time ?? warsawWallClockToUtc(2026, 7, 15, 14, 30),
       profile: _profile,
     );
 
@@ -88,7 +89,7 @@ void main() {
           request(
             manufaktura.from,
             manufaktura.to,
-            DateTime(2026, 7, 15, h, m),
+            warsawWallClockToUtc(2026, 7, 15, h, m),
           ),
         ),
       );
@@ -145,7 +146,10 @@ void main() {
         expect(v.sunShareByHour.keys.first, '08:00');
         expect(v.sunShareByHour.keys.last, '20:00');
         expect(v.sunShareByHour, hasLength(25));
-        expect(v.sunShareAt(DateTime(2026, 7, 15, 14, 30)), v.sunShare);
+        expect(
+          v.sunShareAt(warsawWallClockToUtc(2026, 7, 15, 14, 30)),
+          v.sunShare,
+        );
         expect(v.segments.first.from, 0);
         expect(v.segments.last.to, v.geometry.length - 1);
         final mean =
@@ -180,7 +184,7 @@ void main() {
     test('more shade in the evening than at 14:30', () async {
       final noon = await demo.getRoutes(request(a, b));
       final evening = await demo.getRoutes(
-        request(a, b, DateTime(2026, 7, 15, 19)),
+        request(a, b, warsawWallClockToUtc(2026, 7, 15, 19)),
       );
       expect(evening.shortest!.sunShare, lessThan(noon.shortest!.sunShare));
     });

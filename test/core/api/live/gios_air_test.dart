@@ -258,7 +258,7 @@ void main() {
       final client = GiosAirClient(fakeDio(adapter));
       await expectLater(
         client.lodzStations(),
-        throwsA(apiError(ApiErrorKind.badRequest)),
+        throwsA(apiError(ApiErrorKind.server)), // 410: an outage → fallback
       );
       adapter = FakeAdapter((o) => jsonBody('{"Lista stacji": []}'));
       await expectLater(
@@ -267,6 +267,23 @@ void main() {
       );
       gone = false;
       expect(await client.lodzStations(), hasLength(4));
+    });
+
+    test('a hanging index request leaves only that station without', () async {
+      adapter = FakeAdapter((o) async {
+        if (o.uri.path == '${v1Index}302') {
+          await Future<void>.delayed(const Duration(seconds: 5));
+        }
+        return v1(o);
+      });
+      final client = GiosAirClient(
+        fakeDio(adapter),
+        indexTimeout: const Duration(milliseconds: 50),
+      );
+      final stations = await client.lodzStations().timeout(
+        const Duration(seconds: 2),
+      );
+      expect(stations.map((s) => s.indexLevel), [0, null, null, 2]);
     });
 
     test('offline → network error, not cached', () async {

@@ -1,4 +1,4 @@
-import 'package:cool_lodz/core/api/live/warsaw_time.dart';
+import 'package:cool_lodz/core/warsaw_time.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
