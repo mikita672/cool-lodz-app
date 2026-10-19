@@ -56,7 +56,13 @@ class LiveRouteEngine {
     }
 
     final direct = osrm.route([from, to], alternatives: 2);
-    final model = await shadeModel();
+    final ShadeModel model;
+    try {
+      model = await shadeModel();
+    } catch (_) {
+      direct.ignore(); // its error must not go unhandled
+      rethrow;
+    }
     final detours = [
       for (final via in viaPoints(from, to, parks: model.parkCentres))
         osrm
