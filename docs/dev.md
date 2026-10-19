@@ -23,9 +23,9 @@ Project `coollodz` (Firestore in europe-central2). Code gets Firebase only throu
   ```
 
   Needs Java 21+ (firebase-tools 15). Data is kept in `.firebase-data/` (ignored by git), created on the first exit. On the Android emulator `localhost` is mapped to the host (`10.0.2.2`) automatically.
-- **Switch.** `--dart-define=USE_FIREBASE_EMULATORS=false` makes a debug build use the real project. The default is `true` in debug; profile and release builds always use the real project (cleartext HTTP is allowed only in `android/app/src/debug`). On a physical phone add `--dart-define=FIREBASE_EMULATOR_HOST=<PC LAN IP>` and let the emulators listen on the LAN (`"host": "0.0.0.0"` for `auth` and `firestore` in a local, uncommitted `firebase.json`).
-- **Push.** There is no FCM emulator: debug builds get a real FCM token, printed to the log as `FCM token: …`. Send a test message from the Firebase console (Messaging → New campaign → Send test message) to that token.
-- **Rules.** `firestore.rules` denies everything until APP-13; the emulator uses this file too.
+- **Switch.** `--dart-define=USE_FIREBASE_EMULATORS=false` makes a debug build use the real project. The default is `true` in debug; profile and release builds always use the real project (cleartext HTTP is allowed only in `android/app/src/debug`). On a physical phone add `--dart-define=FIREBASE_EMULATOR_HOST=<PC LAN IP>` and start the emulators listening on the LAN with a local copy of the config: `cp firebase.json firebase.local.json` (ignored by git), set `"host": "0.0.0.0"` for `auth` and `firestore` there and run `firebase emulators:start --config firebase.local.json …`.
+- **Push.** There is no FCM emulator: debug builds get a real FCM token, printed to the log as `FCM token: …`. Send a test message from the Firebase console (Messaging → New campaign → Send test message) to that token. On Android 13+ allow notifications first (system settings, or `adb shell pm grant pl.betterthannever.cool_lodz android.permission.POST_NOTIFICATIONS`) and put the app in the background — FCM shows nothing while the app is in front (debug builds log `FCM foreground: …` instead).
+- **Rules.** `firestore.rules` and `firestore.indexes.json` are the source of truth for the real project too; deploy them with `firebase deploy --only firestore:rules,firestore:indexes` after every change (the emulator reads the files directly). Until APP-13 the rules deny everything.
 
 ## Layout
 

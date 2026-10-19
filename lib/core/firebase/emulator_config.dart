@@ -43,6 +43,8 @@ class FirebaseEmulatorConfig {
     String useEmulatorsDefine = '',
     String hostDefine = '',
   }) {
+    // Release and profile builds never use the emulators, whatever the define.
+    if (!isDebugBuild) return disabled;
     final requested = switch (useEmulatorsDefine.trim().toLowerCase()) {
       '' || 'true' => true,
       'false' => false,
@@ -52,7 +54,7 @@ class FirebaseEmulatorConfig {
         'must be true or false',
       ),
     };
-    if (!isDebugBuild || !requested) return disabled;
+    if (!requested) return disabled;
     final host = hostDefine.trim();
     return FirebaseEmulatorConfig(
       enabled: true,

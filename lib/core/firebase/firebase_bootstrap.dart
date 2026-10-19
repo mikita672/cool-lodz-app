@@ -19,7 +19,15 @@ abstract final class FirebaseBootstrap {
       auth: FirebaseAuth.instance,
       firestore: FirebaseFirestore.instance,
     );
-    if (kDebugMode) unawaited(logFcmToken(FirebaseMessaging.instance));
+    if (kDebugMode) {
+      unawaited(logFcmToken(FirebaseMessaging.instance));
+      // FCM shows no notification while the app is in front; log it instead.
+      FirebaseMessaging.onMessage.listen(
+        (m) => debugPrint(
+          'FCM foreground: ${m.messageId} ${m.notification?.title}',
+        ),
+      );
+    }
   }
 
   /// Points Auth and Firestore at the Emulator Suite. Must run before any

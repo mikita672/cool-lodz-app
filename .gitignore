@@ -70,3 +70,6 @@ tools/qr/codes.json
 
 # Gradle reports
 android/build/
+
+# Local emulator config for physical phones
+firebase.local.json

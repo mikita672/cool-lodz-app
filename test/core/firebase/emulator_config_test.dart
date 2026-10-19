@@ -64,6 +64,16 @@ void main() {
       );
     });
 
+    test('release ignores an invalid define instead of crashing', () {
+      expect(
+        FirebaseEmulatorConfig.resolve(
+          isDebugBuild: false,
+          useEmulatorsDefine: 'yes',
+        ),
+        FirebaseEmulatorConfig.disabled,
+      );
+    });
+
     test('FIREBASE_EMULATOR_HOST overrides the host (physical phone)', () {
       final config = FirebaseEmulatorConfig.resolve(
         isDebugBuild: true,
