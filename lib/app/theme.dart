@@ -22,7 +22,11 @@ abstract final class AppColors {
   static const onSurfaceVariant = Color(0xFF4A5D66);
   static const muted = Color(0xFF9AA9B0);
   static const error = Color(0xFFB3261E);
-  static const success = Color(0xFF1E8E3E);
+  static const success = Color(0xFF1E8E3E); // dots, fills, icons
+
+  /// Success-coloured text («Otwarte teraz»): `success` is only 4.2:1 on
+  /// white, this darker shade passes WCAG AA (about 5.1:1).
+  static const successText = Color(0xFF1B7F37);
 
   /// Shade layer on the map: primary at 35 % opacity.
   static const shadeLayer = Color(0x590E6E8C);

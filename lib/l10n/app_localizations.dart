@@ -232,6 +232,18 @@ abstract class AppLocalizations {
   /// **'Poidełka na trasie: {count}'**
   String dsWaterStopsSemantics(int count);
 
+  /// No description provided for @dsCoolStopsLabel.
+  ///
+  /// In pl, this message translates to:
+  /// **'Miejsca chłodu: {count}'**
+  String dsCoolStopsLabel(int count);
+
+  /// No description provided for @dsWaterStopsLabel.
+  ///
+  /// In pl, this message translates to:
+  /// **'Poidełka: {count}'**
+  String dsWaterStopsLabel(int count);
+
   /// No description provided for @dsSearchHint.
   ///
   /// In pl, this message translates to:
@@ -322,6 +334,24 @@ abstract class AppLocalizations {
   /// **'Ławka'**
   String get dsPinBench;
 
+  /// No description provided for @dsPinLabelCool.
+  ///
+  /// In pl, this message translates to:
+  /// **'Chłód'**
+  String get dsPinLabelCool;
+
+  /// No description provided for @dsPinLabelWater.
+  ///
+  /// In pl, this message translates to:
+  /// **'Woda'**
+  String get dsPinLabelWater;
+
+  /// No description provided for @dsPinLabelQuest.
+  ///
+  /// In pl, this message translates to:
+  /// **'Litera {letter}'**
+  String dsPinLabelQuest(String letter);
+
   /// No description provided for @dsPinQuestLetter.
   ///
   /// In pl, this message translates to:
@@ -373,7 +403,7 @@ abstract class AppLocalizations {
   /// No description provided for @dsLeaderboardRowSemantics.
   ///
   /// In pl, this message translates to:
-  /// **'Miejsce {rank}, {name}, {points} pkt'**
+  /// **'Miejsce {rank}, {name}, {points, plural, =1{1 punkt} few{{points} punkty} many{{points} punktów} other{{points} punktu}}'**
   String dsLeaderboardRowSemantics(int rank, String name, int points);
 
   /// No description provided for @dsErrorTitle.

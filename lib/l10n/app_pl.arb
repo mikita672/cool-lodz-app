@@ -42,6 +42,10 @@
   "@dsCoolStopsSemantics": {"placeholders": {"count": {"type": "int"}}},
   "dsWaterStopsSemantics": "Poidełka na trasie: {count}",
   "@dsWaterStopsSemantics": {"placeholders": {"count": {"type": "int"}}},
+  "dsCoolStopsLabel": "Miejsca chłodu: {count}",
+  "@dsCoolStopsLabel": {"placeholders": {"count": {"type": "int"}}},
+  "dsWaterStopsLabel": "Poidełka: {count}",
+  "@dsWaterStopsLabel": {"placeholders": {"count": {"type": "int"}}},
 
   "dsSearchHint": "Dokąd idziesz?",
 
@@ -63,6 +67,10 @@
   "dsIconWaterTap": "Poidełko",
   "dsIconQuestLetter": "Litera questu",
   "dsPinBench": "Ławka",
+  "dsPinLabelCool": "Chłód",
+  "dsPinLabelWater": "Woda",
+  "dsPinLabelQuest": "Litera {letter}",
+  "@dsPinLabelQuest": {"placeholders": {"letter": {"type": "String"}}},
   "dsPinQuestLetter": "Litera questu {letter}",
   "@dsPinQuestLetter": {"placeholders": {"letter": {"type": "String"}}},
 
@@ -81,7 +89,7 @@
   "@dsPoints": {"placeholders": {"points": {"type": "int", "format": "decimalPattern"}}},
   "dsPointsGained": "+{points} pkt",
   "@dsPointsGained": {"placeholders": {"points": {"type": "int"}}},
-  "dsLeaderboardRowSemantics": "Miejsce {rank}, {name}, {points} pkt",
+  "dsLeaderboardRowSemantics": "Miejsce {rank}, {name}, {points, plural, =1{1 punkt} few{{points} punkty} many{{points} punktów} other{{points} punktu}}",
   "@dsLeaderboardRowSemantics": {"placeholders": {"rank": {"type": "int"}, "name": {"type": "String"}, "points": {"type": "int"}}},
 
   "dsErrorTitle": "Coś poszło nie tak",

@@ -99,6 +99,16 @@ class AppLocalizationsPl extends AppLocalizations {
   }
 
   @override
+  String dsCoolStopsLabel(int count) {
+    return 'Miejsca chłodu: $count';
+  }
+
+  @override
+  String dsWaterStopsLabel(int count) {
+    return 'Poidełka: $count';
+  }
+
+  @override
   String get dsSearchHint => 'Dokąd idziesz?';
 
   @override
@@ -148,6 +158,17 @@ class AppLocalizationsPl extends AppLocalizations {
   String get dsPinBench => 'Ławka';
 
   @override
+  String get dsPinLabelCool => 'Chłód';
+
+  @override
+  String get dsPinLabelWater => 'Woda';
+
+  @override
+  String dsPinLabelQuest(String letter) {
+    return 'Litera $letter';
+  }
+
+  @override
   String dsPinQuestLetter(String letter) {
     return 'Litera questu $letter';
   }
@@ -191,7 +212,15 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String dsLeaderboardRowSemantics(int rank, String name, int points) {
-    return 'Miejsce $rank, $name, $points pkt';
+    String _temp0 = intl.Intl.pluralLogic(
+      points,
+      locale: localeName,
+      other: '$points punktu',
+      many: '$points punktów',
+      few: '$points punkty',
+      one: '1 punkt',
+    );
+    return 'Miejsce $rank, $name, $_temp0';
   }
 
   @override
