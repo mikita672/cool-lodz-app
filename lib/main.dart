@@ -9,6 +9,7 @@ import 'app/app.dart';
 import 'core/firebase/firebase_bootstrap.dart';
 import 'core/firebase/messaging_background.dart';
 import 'core/storage/preferences.dart';
+import 'features/auth/start_flow.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,7 +22,11 @@ Future<void> main() async {
   final prefs = await SharedPreferences.getInstance();
   runApp(
     ProviderScope(
-      overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+        // Onboarding → login → consents redirects, see start_flow.dart.
+        ...startFlowRouterOverrides,
+      ],
       child: const CoolLodzApp(),
     ),
   );
