@@ -13,5 +13,92 @@
   "questSegmentBadges": "Odznaki",
   "questSegmentRanking": "Ranking",
 
+  "dsShowcaseTitle": "Komponenty",
+  "dsShowcaseSenior": "Podgląd trybu Senior",
+  "dsLoading": "Ładowanie",
+
+  "dsRouteShortest": "Najkrótsza",
+  "dsRouteShaded": "Zacieniona",
+  "dsRouteCompromise": "Kompromis",
+  "dsRouteMeta": "{minutes} min · {distance} km",
+  "@dsRouteMeta": {
+    "description": "Route duration and length on the route card",
+    "placeholders": {
+      "minutes": {"type": "int"},
+      "distance": {"type": "double", "format": "decimalPatternDigits", "optionalParameters": {"decimalDigits": 1}}
+    }
+  },
+  "dsInShade": "w cieniu",
+  "dsFastestRoute": "Najszybsza trasa",
+  "dsExtraMinutes": "+{minutes} min względem najkrótszej",
+  "@dsExtraMinutes": {"placeholders": {"minutes": {"type": "int"}}},
+  "dsPercentValue": "{percent}%",
+  "@dsPercentValue": {"placeholders": {"percent": {"type": "int"}}},
+  "dsShadePercent": "{percent}% w cieniu",
+  "@dsShadePercent": {"placeholders": {"percent": {"type": "int"}}},
+  "dsShadeBarSemantics": "{percent} procent trasy w cieniu",
+  "@dsShadeBarSemantics": {"placeholders": {"percent": {"type": "int"}}},
+  "dsCoolStopsSemantics": "Miejsca chłodu na trasie: {count}",
+  "@dsCoolStopsSemantics": {"placeholders": {"count": {"type": "int"}}},
+  "dsWaterStopsSemantics": "Poidełka na trasie: {count}",
+  "@dsWaterStopsSemantics": {"placeholders": {"count": {"type": "int"}}},
+  "dsCoolStopsLabel": "Miejsca chłodu: {count}",
+  "@dsCoolStopsLabel": {"placeholders": {"count": {"type": "int"}}},
+  "dsWaterStopsLabel": "Poidełka: {count}",
+  "@dsWaterStopsLabel": {"placeholders": {"count": {"type": "int"}}},
+
+  "dsSearchHint": "Dokąd idziesz?",
+
+  "dsHeatTitle": "Ostrzeżenie przed upałem, stopień {level}",
+  "@dsHeatTitle": {"placeholders": {"level": {"type": "int"}}},
+
+  "dsOpenNow": "Otwarte teraz",
+  "dsClosedOpensAt": "Zamknięte, otwarcie o {time}",
+  "@dsClosedOpensAt": {"placeholders": {"time": {"type": "String"}}},
+  "dsLetterToCollect": "Litera do zdobycia",
+  "dsNavigateThere": "Prowadź tam",
+  "dsReportProblem": "Zgłoś problem",
+  "dsAmenityAirConditioning": "Klimatyzacja",
+  "dsAmenityWater": "Woda",
+  "dsAmenityToilet": "Toaleta",
+  "dsAmenityAccessible": "Dostępne",
+
+  "dsIconCoolPlace": "Miejsce chłodu",
+  "dsIconWaterTap": "Poidełko",
+  "dsIconQuestLetter": "Litera questu",
+  "dsPinBench": "Ławka",
+  "dsPinLabelCool": "Chłód",
+  "dsPinLabelWater": "Woda",
+  "dsPinLabelQuest": "Litera {letter}",
+  "@dsPinLabelQuest": {"placeholders": {"letter": {"type": "String"}}},
+  "dsPinQuestLetter": "Litera questu {letter}",
+  "@dsPinQuestLetter": {"placeholders": {"letter": {"type": "String"}}},
+
+  "dsLetterFound": "Litera {letter}, znaleziona",
+  "@dsLetterFound": {"placeholders": {"letter": {"type": "String"}}},
+  "dsLetterEmpty": "Litera jeszcze nieodkryta",
+
+  "dsBadgeEarnedSemantics": "Odznaka {name}, zdobyta",
+  "@dsBadgeEarnedSemantics": {"placeholders": {"name": {"type": "String"}}},
+  "dsBadgeLockedSemantics": "Odznaka {name}, zablokowana",
+  "@dsBadgeLockedSemantics": {"placeholders": {"name": {"type": "String"}}},
+
+  "dsLeaderboardOwn": "Ty · {name}",
+  "@dsLeaderboardOwn": {"placeholders": {"name": {"type": "String"}}},
+  "dsPoints": "{points} pkt",
+  "@dsPoints": {"placeholders": {"points": {"type": "int", "format": "decimalPattern"}}},
+  "dsPointsGained": "+{points} pkt",
+  "@dsPointsGained": {"placeholders": {"points": {"type": "int"}}},
+  "dsLeaderboardRowSemantics": "Miejsce {rank}, {name}, {points, plural, =1{1 punkt} few{{points} punkty} many{{points} punktów} other{{points} punktu}}",
+  "@dsLeaderboardRowSemantics": {"placeholders": {"rank": {"type": "int"}, "name": {"type": "String"}, "points": {"type": "int"}}},
+
+  "dsErrorTitle": "Coś poszło nie tak",
+  "dsErrorMessage": "Spróbuj ponownie za chwilę.",
+  "dsRetry": "Spróbuj ponownie",
+  "dsOfflineBanner": "Brak połączenia z serwerem, pokazujemy ostatnie dane",
+
+  "dsBadgeNew": "Nowa odznaka!",
+  "dsBadgeDialogOk": "Super!",
+
   "placeholderInProgress": "Ekran w budowie"
 }

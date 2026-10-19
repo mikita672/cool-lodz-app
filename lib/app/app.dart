@@ -31,38 +31,10 @@ class CoolLodzApp extends ConsumerWidget {
         if (!senior) return child!;
         final media = MediaQuery.of(context);
         return MediaQuery(
-          data: media.copyWith(
-            textScaler: _ScaledTextScaler(
-              media.textScaler,
-              AppSizes.seniorTextScale,
-            ),
-          ),
+          data: media.copyWith(textScaler: SeniorTextScaler(media.textScaler)),
           child: child!,
         );
       },
     );
   }
-}
-
-class _ScaledTextScaler extends TextScaler {
-  const _ScaledTextScaler(this.base, this.factor);
-
-  final TextScaler base;
-  final double factor;
-
-  @override
-  double scale(double fontSize) => base.scale(fontSize) * factor;
-
-  @override
-  // ignore: deprecated_member_use
-  double get textScaleFactor => base.scale(1) * factor;
-
-  @override
-  bool operator ==(Object other) =>
-      other is _ScaledTextScaler &&
-      other.base == base &&
-      other.factor == factor;
-
-  @override
-  int get hashCode => Object.hash(base, factor);
 }
