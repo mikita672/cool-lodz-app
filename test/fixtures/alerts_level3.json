@@ -1,0 +1,15 @@
+{
+  "alerts": [
+    {
+      "id": "imgw-2026-07-15-lodz",
+      "level": 3,
+      "title": "Ostrzeżenie przed upałem 3. stopnia",
+      "area": "Łódź",
+      "validFrom": "2026-07-15T10:00:00+02:00",
+      "validTo": "2026-07-15T20:00:00+02:00",
+      "source": "IMGW-PIB",
+      "recommendations": ["Pij wodę co godzinę.", "Unikaj słońca 11:00–17:00.", "Odpoczywaj w chłodnych miejscach."],
+      "officialUrl": "https://meteo.imgw.pl/"
+    }
+  ]
+}

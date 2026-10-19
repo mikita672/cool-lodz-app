@@ -1,0 +1,62 @@
+{
+  "places": [
+    {
+      "id": "cool-001",
+      "type": "cool",
+      "name": "EC1 Łódź – Miasto Kultury",
+      "category": "culture",
+      "address": "ul. Targowa 1/3, 90-022 Łódź",
+      "lat": 51.7684,
+      "lon": 19.4694,
+      "hours": {
+        "mon": [],
+        "tue": [["10:00", "18:00"]],
+        "wed": [["10:00", "18:00"]],
+        "thu": [["10:00", "18:00"]],
+        "fri": [["10:00", "20:00"]],
+        "sat": [["10:00", "20:00"]],
+        "sun": [["10:00", "18:00"]]
+      },
+      "amenities": ["airConditioning", "water", "toilet", "wheelchair"],
+      "accessible": true,
+      "questPlace": true,
+      "source": "https://ec1lodz.pl/"
+    },
+    {
+      "id": "cool-002",
+      "type": "cool",
+      "name": "Manufaktura",
+      "category": "mall",
+      "address": "ul. Drewnowska 58, 91-002 Łódź",
+      "lat": 51.7794,
+      "lon": 19.4466,
+      "hours": {
+        "mon": [["09:00", "22:00"]],
+        "tue": [["09:00", "22:00"]],
+        "wed": [["09:00", "22:00"]],
+        "thu": [["09:00", "22:00"]],
+        "fri": [["09:00", "22:00"]],
+        "sat": [["09:00", "22:00"]],
+        "sun": [["10:00", "21:00"]]
+      },
+      "amenities": ["airConditioning", "toilet", "wheelchair", "fountain"],
+      "accessible": true,
+      "questPlace": false,
+      "source": "https://manufaktura.com/"
+    },
+    {
+      "id": "cool-017",
+      "type": "cool",
+      "name": "Park Źródliska",
+      "category": "park",
+      "address": "al. Piłsudskiego, Łódź",
+      "lat": 51.7593,
+      "lon": 19.4732,
+      "hours": null,
+      "amenities": ["water"],
+      "accessible": false,
+      "questPlace": true,
+      "source": "https://uml.lodz.pl/"
+    }
+  ]
+}

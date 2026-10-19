@@ -1,0 +1,8 @@
+{
+  "questId": "chlodne-haslo",
+  "title": "Chłodne hasło",
+  "places": [
+    {"placeId": "cool-017", "name": "Park Źródliska", "letter": "H", "order": 2, "lat": 51.7593, "lon": 19.4732},
+    {"placeId": "cool-001", "name": "EC1 Łódź – Miasto Kultury", "letter": "C", "order": 1, "lat": 51.7684, "lon": 19.4694}
+  ]
+}

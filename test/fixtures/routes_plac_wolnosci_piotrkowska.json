@@ -1,0 +1,105 @@
+{
+  "departures": {
+    "14:30": {
+      "coverage": "approximate",
+      "variants": [
+        {
+          "variant": "shortest",
+          "geometry": {
+            "type": "LineString",
+            "coordinates": [
+              [
+                19.4466,
+                51.7794
+              ],
+              [
+                19.449,
+                51.7781
+              ],
+              [
+                19.4521,
+                51.776
+              ],
+              [
+                19.4548,
+                51.7741
+              ],
+              [
+                19.457,
+                51.772
+              ]
+            ]
+          },
+          "distance_m": 1460,
+          "duration_s": 1120,
+          "sunShare": 0.62,
+          "extraTimeVsShortest_s": 0
+        },
+        {
+          "variant": "shaded",
+          "geometry": {
+            "type": "LineString",
+            "coordinates": [
+              [
+                19.4466,
+                51.7794
+              ],
+              [
+                19.4478,
+                51.7781
+              ],
+              [
+                19.4509,
+                51.776
+              ],
+              [
+                19.4548,
+                51.7741
+              ],
+              [
+                19.457,
+                51.772
+              ]
+            ]
+          },
+          "distance_m": 1720,
+          "duration_s": 1360,
+          "sunShare": 0.25,
+          "extraTimeVsShortest_s": 240
+        },
+        {
+          "variant": "compromise",
+          "geometry": {
+            "type": "LineString",
+            "coordinates": [
+              [
+                19.4466,
+                51.7794
+              ],
+              [
+                19.449800000000003,
+                51.7781
+              ],
+              [
+                19.452900000000003,
+                51.776
+              ],
+              [
+                19.4548,
+                51.7741
+              ],
+              [
+                19.457,
+                51.772
+              ]
+            ]
+          },
+          "distance_m": 1580,
+          "duration_s": 1230,
+          "sunShare": 0.41,
+          "extraTimeVsShortest_s": 110
+        }
+      ]
+    }
+  }
+}
