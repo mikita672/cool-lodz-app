@@ -52,3 +52,77 @@ Hasło **CHŁODNO**. 7 miejsc tworzy pieszą trasę przez Śródmieście (5 km w
 W poniedziałki nieczynne są MeMo i EC1, w niedziele Biblioteka Wolność i (w niedziele niehandlowe) Galeria Łódzka. Quest nie wymaga zebrania liter jednego dnia.
 
 Palmiarnia (szklarnia tropikalna) celowo nie jest na liście: latem jest w niej ciepło i wilgotno, więc nie nadaje się na miejsce chłodu.
+
+## Dane demo: trasy, alerty, warstwy (APP-04)
+
+The app runs on the files in `assets/demo/` until module D has a public API. They follow [api-contract.md](api-contract.md). This page lists where each file comes from, under which licence, and which numbers are synthetic.
+
+Demo day: **15 July 2026** (a heatwave day, times in CEST, +02:00). Area of the layers: Śródmieście, bbox `19.425,51.745,19.495,51.790` (lon/lat).
+
+### Files
+
+| File | Source | Real | Synthetic |
+| --- | --- | --- | --- |
+| `routes_manufaktura_piotrkowska.json` | OSM foot router ([routing.openstreetmap.de](https://routing.openstreetmap.de), OSRM) | geometry along real streets, `distance_m`, `duration_s`, `extraTimeVsShortest_s` | `segments[].sunShare`, `sunShare`, `sunShareByHour` (model below) |
+| `routes_plac_wolnosci_piotrkowska.json` | same | same | same |
+| `alerts_none.json`, `alerts_level2.json`, `alerts_level3.json` | written by hand in the format of IMGW-PIB heat warnings; link to the RCB advice page [Jak przetrwać upał?](https://www.gov.pl/web/rcb/jak-przetrwac-upal2) | warning levels and wording as IMGW uses them | the warnings themselves (dates, periods) |
+| `layer_green.geojson` | OpenStreetMap: `leisure=park`, named `leisure=garden`, `natural=wood`, named `landuse=grass/forest`; polygons ≥ 800 m², simplified to 2 m | polygons, names, `osm` ids | — |
+| `layer_shade_1430.geojson` | derived from OpenStreetMap trees (`natural=tree`, `natural=tree_row`), parks and streets | positions of trees, parks and streets | the `shade` values and the building-shadow strips |
+| `layer_noise.geojson` | OpenStreetMap roads (`highway=trunk/primary/secondary/tertiary`) | road geometry | `db` values |
+| `air.json` | GIOŚ station list, [api.gios.gov.pl](https://api.gios.gov.pl/pjp-api/v1/rest/station/findAll) | the 4 Łódź stations: names, coordinates | `indexLevel`, `updatedAt` |
+| `places_water.json` | OpenStreetMap `amenity=drinking_water` inside the Łódź city boundary | all points | — |
+| `places_bench.json` | OpenStreetMap `amenity=bench` in the Śródmieście bbox, the 500 closest to ul. Piotrkowska (51.7700, 19.4560) | all points | — |
+| `places_cool.json`, `quest.json` | APP-05, see that ticket | | |
+
+OSM data was downloaded on 2026-10-19 (Overpass base timestamp 2026-10-18T23:18Z). Ids: `water-<osm node id>`, `bench-<osm node id>`.
+
+### Reference routes
+
+| Route | Variant | Streets | Length | Time | Shade at 14:30 |
+| --- | --- | --- | --- | --- | --- |
+| Manufaktura → Piotrkowska (Pasaż Rubinsteina) | Najkrótsza | Ogrodowa, Zachodnia, Legionów, Piotrkowska | 1874 m | 24 min | 31 % |
+| | Zacieniona | Park Staromiejski, Nowomiejska, Piotrkowska | 2223 m | +4.7 min | 72 % |
+| | Kompromis | Gdańska, Legionów, Zachodnia, Próchnika, Piotrkowska | 1999 m | +1.7 min | 53 % |
+| Plac Wolności → OFF Piotrkowska | Najkrótsza | Piotrkowska | 1994 m | 27 min | 34 % |
+| | Zacieniona | Traugutta, Moniuszki, Sienkiewicza, Plac Komuny Paryskiej, Pasaż Schillera | 2565 m | +7.6 min | 69 % |
+| | Kompromis | Piotrkowska through Pasaż Rubinsteina | 2180 m | +2.4 min | 51 % |
+
+The destination of the first route is the Piotrkowska entrance of Pasaż Rubinsteina (51.7676, 19.4568), where the passage really is (around Piotrkowska 67–71). The second shaded variant is longer than +6 min: every tree-lined street near Piotrkowska is a full block (≈ 300 m) away, so no shorter shaded detour exists.
+
+Departures: 10:00, 14:30, 18:00. `stops` lists cool places (`places_cool.json`) within 80 m and drinking water within 25 m of the line, except those next to the start.
+
+### Sun and shade model (synthetic)
+
+Each edge of a route gets a sun share from:
+
+- **sun position** for the edge's mid-point at the time the walker gets there (departure + walking time);
+- **building shadow**: street canyon with 16 m tenements and a width by road class (18–40 m); the share of the walk in shadow is `0.6 × shadow width across the street / street width`, capped at 1 — so N–S streets such as Piotrkowska are fully shaded by 18:00;
+- **tree crowns**: 0.3 per mapped tree within 15 m (max 0.9), 0.75 near a tree row, 0.8 inside a park; crowns count more when the sun is low.
+
+OSM maps only part of the street trees in Łódź, so the raw model barely tells the variants apart. Each variant is therefore calibrated with one exponent (`sun' = sun^γ`) so that its share at 14:30 matches the numbers from the spec (Zacieniona ≈ 72 % shade vs Najkrótsza ≈ 31 %). The model still decides where along the route the sun is and how it changes over the day. Replace all of this with module D results when they arrive.
+
+`layer_shade_1430.geojson` uses the same inputs at 14:30: parks (`shade` 0.55–0.9 by mapped trees per hectare, woods 0.9), 8 m buffers around tree rows (0.7), 12 m buffers along tree-lined stretches of streets (0.4–0.85), and building-shadow strips on the sun side of streets in the tenement grid (0.85).
+
+`layer_noise.geojson`: a 15 m band per road at its level and, for roads ≥ 63 dB, a 40 m band 8 dB lower. Levels by class (trunk 72, primary 68, secondary 63, tertiary 58 dB) with overrides for the main arteries (al. Włókniarzy 75, al. Piłsudskiego and al. Mickiewicza 72, Zachodnia 70, al. Kościuszki 68, Narutowicza 66, Kilińskiego and Północna 65, Żeromskiego 64). These are estimates, not measurements from the Łódź noise map.
+
+### Licences
+
+- OpenStreetMap data: © OpenStreetMap contributors, [ODbL 1.0](https://opendatacommons.org/licenses/odbl/). The app must show the attribution on the map.
+- Routes: computed by the FOSSGIS OSRM service on OSM data (ODbL).
+- Air-quality stations: Główny Inspektorat Ochrony Środowiska (GIOŚ), open data from the PJP API.
+- Heat warnings: format and levels of the IMGW-PIB warnings; the texts here are our own.
+
+### Regenerate
+
+Python 3, standard library only. Downloads go to `tools/demo-data/raw/` (git-ignored); every fetch script skips files that already exist.
+
+```sh
+cd tools/demo-data
+python3 -I fetch_osm.py      # 3 Overpass queries
+python3 -I fetch_routes.py   # 6 router requests
+python3 -I fetch_gios.py
+python3 -I build.py [raw_dir] [path/to/places_cool.json]
+flutter test test/assets/demo_assets_test.dart
+```
+
+Without `places_cool.json` the build uses the cool stop ids hard-coded in `build.py`.
