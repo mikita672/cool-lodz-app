@@ -187,6 +187,40 @@ describe('users', () => {
   });
 });
 
+// The exact writes the app makes (FirestoreUserProfileRepository).
+describe('users: app writes (S02 register, S03 consents, S04 profile)', () => {
+  test('register, then consents, then profile, each as a merge', async () => {
+    const alice = db('alice');
+    const ref = doc(alice, 'users/alice');
+    // createProfile (S02)
+    await assertSucceeds(
+      setDoc(ref, { nickname: 'cienista_ania', points: 0, weekPoints: 0, badges: [], createdAt: serverTimestamp() }, { merge: true }),
+    );
+    // saveConsents (S03)
+    await assertSucceeds(
+      setDoc(ref, { consents: { location: true, push: true, ranking: false, acceptedAt: serverTimestamp() } }, { merge: true }),
+    );
+    // saveComfortProfile (S04), weights are integers 0..100
+    await assertSucceeds(
+      setDoc(ref, { profile: { id: 'senior', weights: { shade: 90, time: 20, quiet: 60, air: 60 }, seniorMode: true } }, { merge: true }),
+    );
+    // Changing the profile later (Profil → «Mój profil komfortu»).
+    await assertSucceeds(
+      setDoc(ref, { profile: { id: 'default', weights: { shade: 60, time: 60, quiet: 30, air: 30 }, seniorMode: false } }, { merge: true }),
+    );
+    const saved = (await getDoc(ref)).data();
+    assert.equal(saved.profile.id, 'default');
+    assert.equal(saved.nickname, 'cienista_ania');
+  });
+
+  test('profile with unknown keys is rejected', async () => {
+    await seed({ 'users/alice': user() });
+    await assertFails(
+      setDoc(doc(db('alice'), 'users/alice'), { profile: { id: 'senior', weights: {}, seniorMode: true, age: 70 } }, { merge: true }),
+    );
+  });
+});
+
 describe('ranking (rankings/{uid})', () => {
   const optedIn = (overrides = {}) =>
     user({ points: 300, weekPoints: 120, consents: { ranking: true }, ...overrides });

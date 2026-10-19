@@ -1,14 +1,21 @@
 import 'package:cool_lodz/app/app.dart';
 import 'package:cool_lodz/app/router.dart';
 import 'package:cool_lodz/app/routes.dart';
+import 'package:cool_lodz/core/storage/preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import '../helpers/test_app.dart';
 
 void main() {
   testWidgets('a deep link to the QR scanner keeps the Quest tab underneath', (
     tester,
   ) async {
-    final container = ProviderContainer.test();
+    final container = ProviderContainer.test(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(await testPrefs()),
+      ],
+    );
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,
@@ -29,7 +36,11 @@ void main() {
   });
 
   testWidgets('route result sits on top of route planning', (tester) async {
-    final container = ProviderContainer.test();
+    final container = ProviderContainer.test(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(await testPrefs()),
+      ],
+    );
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,

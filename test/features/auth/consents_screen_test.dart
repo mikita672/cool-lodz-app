@@ -5,11 +5,15 @@ import 'package:cool_lodz/features/auth/start_flow.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../helpers/test_app.dart';
 import 'fakes.dart';
 
 void main() {
+  late SharedPreferences prefs;
+  setUp(() async => prefs = await testPrefs());
+
   late FakeUserProfileRepository profiles;
   late FakeSystemPermissions permissions;
 
@@ -22,6 +26,7 @@ void main() {
     tester,
     const ConsentsScreen(),
     overrides: fakeAuthOverrides(
+      prefs: prefs,
       auth: FakeAuthRepository(user: const AppUser(uid: 'u1')),
       profiles: profiles,
       onboarding: FakeOnboardingStore(seen: true),
@@ -119,6 +124,7 @@ void main() {
       tester,
       const ConsentsScreen(),
       overrides: fakeAuthOverrides(
+        prefs: prefs,
         auth: FakeAuthRepository(user: const AppUser(uid: 'u1')),
       ),
     );

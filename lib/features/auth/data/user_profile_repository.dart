@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/firebase/firebase_providers.dart';
+import '../../profile/data/comfort_profile.dart';
 
 /// Choices from S03 (spec: `users/{uid}.consents`).
 @immutable
@@ -42,6 +43,13 @@ abstract interface class UserProfileRepository {
 
   /// Whether S03 was completed for this account.
   Future<bool> hasAcceptedConsents(String uid);
+
+  /// Saves the S04 choice as `profile` {id, weights, seniorMode}.
+  Future<void> saveComfortProfile(String uid, ComfortProfile profile);
+
+  /// The saved S04 choice, or null when S04 was never completed (or the
+  /// saved value cannot be read).
+  Future<ComfortProfile?> loadComfortProfile(String uid);
 }
 
 class FirestoreUserProfileRepository implements UserProfileRepository {
@@ -77,6 +85,23 @@ class FirestoreUserProfileRepository implements UserProfileRepository {
   Future<bool> hasAcceptedConsents(String uid) async {
     final snapshot = await _doc(uid).get();
     return snapshot.data()?['consents'] is Map;
+  }
+
+  @override
+  Future<void> saveComfortProfile(String uid, ComfortProfile profile) =>
+      _doc(uid).set({'profile': profile.toJson()}, SetOptions(merge: true));
+
+  @override
+  Future<ComfortProfile?> loadComfortProfile(String uid) async {
+    final snapshot = await _doc(uid).get();
+    final raw = snapshot.data()?['profile'];
+    if (raw is! Map) return null;
+    try {
+      return ComfortProfile.fromJson(Map<String, dynamic>.from(raw));
+    } catch (e) {
+      debugPrint('Unreadable users/$uid.profile: $e');
+      return null;
+    }
   }
 }
 

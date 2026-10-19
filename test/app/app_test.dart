@@ -1,15 +1,25 @@
 import 'package:cool_lodz/app/app.dart';
 import 'package:cool_lodz/app/senior_mode.dart';
 import 'package:cool_lodz/app/theme.dart';
+import 'package:cool_lodz/core/storage/preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import '../helpers/test_app.dart';
 
 void main() {
   testWidgets('starts on the map tab and switches between the 4 tabs', (
     tester,
   ) async {
-    await tester.pumpWidget(const ProviderScope(child: CoolLodzApp()));
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(await testPrefs()),
+        ],
+        child: const CoolLodzApp(),
+      ),
+    );
     await tester.pumpAndSettle();
 
     expect(find.text('Mapa'), findsWidgets);
@@ -55,8 +65,12 @@ void main() {
   });
 
   testWidgets('senior mode scales text by 1.25', (tester) async {
-    final container = ProviderContainer.test();
-    container.read(seniorModeProvider.notifier).set(true);
+    final container = ProviderContainer.test(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(await testPrefs()),
+        seniorModeProvider.overrideWithValue(true),
+      ],
+    );
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,

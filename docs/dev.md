@@ -71,7 +71,15 @@ test/             mirrors lib/ (test/features/<f>/..., test/core/...)
 
 Routes for every screen already exist in `lib/app/router.dart`; a feature ticket replaces its placeholder screen and adds routes only when it needs new ones.
 
-**Start flow (S01 → S02 → S03 → map).** `lib/features/auth/start_flow.dart` holds `StartFlowState` (onboarding seen, signed-in user, consents accepted) and the pure `startFlowRedirect`. `main.dart` plugs it into the router with `startFlowRouterOverrides` (overrides of `routerRedirectProvider` / `routerRefreshProvider`). Widget tests that pump `CoolLodzApp` without these overrides see every route unguarded; to test the flow, add the overrides plus fakes for `authRepositoryProvider`, `userProfileRepositoryProvider`, `onboardingStoreProvider`, `systemPermissionsProvider` (see `test/features/auth/fakes.dart`). `/start` is a short loading screen while the state is read; `/privacy` is reachable at every step. Detail screens are sub-routes of their tab (`/quest/scan`, `/map/alert`, `/profile/about`, `/route/result`), so a deep link still has a back stack; inside the app open them with `context.push`. The router is created once — redirect re-checks go through `routerRefreshProvider`.
+**Start flow (S01 → S02 → S03 → S04 → map).** `lib/features/auth/start_flow.dart` holds `StartFlowState` (onboarding seen, signed-in user, consents accepted, comfort profile chosen) and the pure `startFlowRedirect`. `main.dart` plugs it into the router with `startFlowRouterOverrides` (overrides of `routerRedirectProvider` / `routerRefreshProvider`). Widget tests that pump `CoolLodzApp` without these overrides see every route unguarded; to test the flow, add the overrides plus fakes for `authRepositoryProvider`, `userProfileRepositoryProvider`, `onboardingStoreProvider`, `systemPermissionsProvider` (see `test/features/auth/fakes.dart`). `/start` is a short loading screen while the state is read; `/privacy` is reachable at every step. Every test that builds the app needs `sharedPreferencesProvider` (use `testPrefs()` from `test/helpers/test_app.dart`).
+
+**Comfort profiles (S04).** `ComfortProfile` (`features/profile/data/`) is `users/{uid}.profile` = `{id, weights, seniorMode}`; `comfortProfileProvider` holds the current one, keeps a copy in shared_preferences (Senior mode is on from the first frame, also offline) and `seniorModeProvider` is derived from it. S04 is shown once after S03 when the account has no profile, and from Profil. The spec has no starting weights, so we chose these (0..100, change them in `ComfortProfile.presetWeights`):
+
+| Profile | shade | time | quiet | air | Senior mode |
+| :-- | --: | --: | --: | --: | :-- |
+| Senior (`senior`) | 90 | 20 | 60 | 60 | on |
+| Turysta (`tourist`) | 70 | 40 | 30 | 40 | off |
+| Domyślny (`default`) | 60 | 60 | 30 | 30 | off | Detail screens are sub-routes of their tab (`/quest/scan`, `/map/alert`, `/profile/about`, `/route/result`), so a deep link still has a back stack; inside the app open them with `context.push`. The router is created once — redirect re-checks go through `routerRefreshProvider`.
 
 ## Rules
 

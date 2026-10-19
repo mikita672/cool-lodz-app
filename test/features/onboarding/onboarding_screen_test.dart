@@ -2,11 +2,15 @@ import 'package:cool_lodz/features/auth/start_flow.dart';
 import 'package:cool_lodz/features/onboarding/onboarding_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../helpers/test_app.dart';
 import '../auth/fakes.dart';
 
 void main() {
+  late SharedPreferences prefs;
+  setUp(() async => prefs = await testPrefs());
+
   late FakeOnboardingStore store;
 
   setUp(() => store = FakeOnboardingStore());
@@ -14,7 +18,11 @@ void main() {
   Future<void> pump(WidgetTester tester) => pumpScreen(
     tester,
     const OnboardingScreen(),
-    overrides: fakeAuthOverrides(auth: FakeAuthRepository(), onboarding: store),
+    overrides: fakeAuthOverrides(
+      prefs: prefs,
+      auth: FakeAuthRepository(),
+      onboarding: store,
+    ),
   );
 
   bool seenInState(WidgetTester tester) => ProviderScope.containerOf(
@@ -57,7 +65,7 @@ void main() {
     await pumpSenior360(
       tester,
       const OnboardingScreen(),
-      overrides: fakeAuthOverrides(auth: FakeAuthRepository()),
+      overrides: fakeAuthOverrides(prefs: prefs, auth: FakeAuthRepository()),
     );
     for (var i = 0; i < 2; i++) {
       await tester.tap(find.text('Dalej'));

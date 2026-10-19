@@ -1,14 +1,23 @@
 import 'package:cool_lodz/app/routes.dart';
+import 'package:cool_lodz/app/senior_mode.dart';
+import 'package:cool_lodz/core/models/route_request.dart';
 import 'package:cool_lodz/features/auth/data/auth_repository.dart';
 import 'package:cool_lodz/features/auth/start_flow.dart';
+import 'package:cool_lodz/features/profile/data/comfort_profile.dart';
+import 'package:cool_lodz/features/profile/data/comfort_profile_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../helpers/test_app.dart';
 import 'fakes.dart';
 
 const _user = AppUser(uid: 'u1', email: 'a@b.pl');
 
 void main() {
+  late SharedPreferences prefs;
+  setUp(() async => prefs = await testPrefs());
+
   group('startFlowRedirect', () {
     // Every combination of the three inputs and the screen each one needs.
     final cases = <(StartFlowState, String?)>[];
@@ -19,22 +28,33 @@ void main() {
         (true, _user),
       ]) {
         for (final consents in [null, false, true]) {
-          final state = StartFlowState(
-            onboardingSeen: seen,
-            authKnown: authKnown,
-            user: user,
-            consentsAccepted: consents,
-          );
-          final String? expected = switch ((seen, authKnown, user, consents)) {
-            (null, _, _, _) => Routes.start,
-            (false, _, _, _) => Routes.onboarding,
-            (true, false, _, _) => Routes.start,
-            (true, true, null, _) => Routes.login,
-            (true, true, _, null) => Routes.start,
-            (true, true, _, false) => Routes.consents,
-            _ => null,
-          };
-          cases.add((state, expected));
+          for (final profile in [null, false, true]) {
+            final state = StartFlowState(
+              onboardingSeen: seen,
+              authKnown: authKnown,
+              user: user,
+              consentsAccepted: consents,
+              profileChosen: profile,
+            );
+            final String? expected = switch ((
+              seen,
+              authKnown,
+              user,
+              consents,
+              profile,
+            )) {
+              (null, _, _, _, _) => Routes.start,
+              (false, _, _, _, _) => Routes.onboarding,
+              (true, false, _, _, _) => Routes.start,
+              (true, true, null, _, _) => Routes.login,
+              (true, true, _, null, _) => Routes.start,
+              (true, true, _, false, _) => Routes.consents,
+              (true, true, _, true, null) => Routes.start,
+              (true, true, _, true, false) => Routes.profileSelect,
+              _ => null,
+            };
+            cases.add((state, expected));
+          }
         }
       }
     }
@@ -46,6 +66,7 @@ void main() {
       Routes.map,
       Routes.questScan,
       Routes.profile,
+      Routes.profileSelect,
       Routes.privacy,
     ];
 
@@ -85,6 +106,7 @@ void main() {
     ProviderContainer create() {
       final container = ProviderContainer.test(
         overrides: fakeAuthOverrides(
+          prefs: prefs,
           auth: auth,
           profiles: profiles,
           onboarding: onboarding,
@@ -116,7 +138,7 @@ void main() {
       expect(container.read(startFlowProvider).requiredRoute, Routes.login);
     });
 
-    test('registration goes to consents, then done', () async {
+    test('registration goes to consents, then profile, then done', () async {
       onboarding.seen = true;
       container = create();
       await settle();
@@ -126,22 +148,80 @@ void main() {
       expect(container.read(startFlowProvider).requiredRoute, Routes.consents);
 
       container.read(startFlowProvider.notifier).markConsentsAccepted();
+      expect(
+        container.read(startFlowProvider).requiredRoute,
+        Routes.profileSelect,
+      );
+
+      container.read(startFlowProvider.notifier).markProfileChosen();
       expect(container.read(startFlowProvider).requiredRoute, isNull);
     });
 
-    test('a returning user with consents goes straight through', () async {
+    test('consents without a profile go to S04', () async {
       onboarding.seen = true;
       profiles.accepted['u1'] = true;
       auth = FakeAuthRepository(user: _user);
       container = create();
       await settle();
-      expect(container.read(startFlowProvider).requiredRoute, isNull);
-
-      auth.emit(null);
-      await settle();
-      expect(container.read(startFlowProvider).requiredRoute, Routes.login);
-      expect(container.read(startFlowProvider).consentsAccepted, isNull);
+      expect(
+        container.read(startFlowProvider).requiredRoute,
+        Routes.profileSelect,
+      );
     });
+
+    test('the account profile is loaded and applied on sign-in', () async {
+      onboarding.seen = true;
+      profiles.accepted['u1'] = true;
+      profiles.comfortProfiles['u1'] = ComfortProfile.preset(ProfileId.senior);
+      auth = FakeAuthRepository(user: _user);
+      container = create();
+      await settle();
+      expect(container.read(startFlowProvider).requiredRoute, isNull);
+      expect(container.read(comfortProfileProvider).id, ProfileId.senior);
+      expect(container.read(seniorModeProvider), isTrue);
+    });
+
+    test('offline: S04 is skipped only when chosen on this device', () async {
+      onboarding.seen = true;
+      profiles.accepted['u1'] = true;
+      profiles.profileReadError = Exception('offline');
+      auth = FakeAuthRepository(user: _user);
+      container = create();
+      await settle();
+      expect(
+        container.read(startFlowProvider).requiredRoute,
+        Routes.profileSelect,
+      );
+
+      prefs = await testPrefs({
+        ComfortProfileNotifier.prefsKey:
+            '{"id":"tourist","weights":{"shade":70,"time":40,"quiet":30,"air":40},"seniorMode":false}',
+      });
+      container = create();
+      await settle();
+      expect(container.read(startFlowProvider).requiredRoute, isNull);
+      expect(container.read(comfortProfileProvider).id, ProfileId.tourist);
+    });
+
+    test(
+      'a returning user with consents and a profile goes straight through',
+      () async {
+        onboarding.seen = true;
+        profiles.accepted['u1'] = true;
+        profiles.comfortProfiles['u1'] = ComfortProfile.preset(
+          ProfileId.standard,
+        );
+        auth = FakeAuthRepository(user: _user);
+        container = create();
+        await settle();
+        expect(container.read(startFlowProvider).requiredRoute, isNull);
+
+        auth.emit(null);
+        await settle();
+        expect(container.read(startFlowProvider).requiredRoute, Routes.login);
+        expect(container.read(startFlowProvider).consentsAccepted, isNull);
+      },
+    );
 
     test('an unreadable profile asks for consents again', () async {
       onboarding.seen = true;

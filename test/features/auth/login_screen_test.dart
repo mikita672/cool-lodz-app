@@ -4,11 +4,15 @@ import 'package:cool_lodz/features/auth/data/auth_repository.dart';
 import 'package:cool_lodz/features/auth/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../helpers/test_app.dart';
 import 'fakes.dart';
 
 void main() {
+  late SharedPreferences prefs;
+  setUp(() async => prefs = await testPrefs());
+
   late FakeAuthRepository auth;
 
   setUp(() => auth = FakeAuthRepository());
@@ -16,7 +20,7 @@ void main() {
   Future<void> pump(WidgetTester tester) => pumpScreen(
     tester,
     const LoginScreen(),
-    overrides: fakeAuthOverrides(auth: auth),
+    overrides: fakeAuthOverrides(prefs: prefs, auth: auth),
   );
 
   Finder field(String label) => find.widgetWithText(TextFormField, label);
@@ -208,7 +212,7 @@ void main() {
     await pumpSenior360(
       tester,
       const LoginScreen(),
-      overrides: fakeAuthOverrides(auth: auth),
+      overrides: fakeAuthOverrides(prefs: prefs, auth: auth),
     );
     await tester.tap(find.text('Załóż konto').first);
     await tester.pumpAndSettle();

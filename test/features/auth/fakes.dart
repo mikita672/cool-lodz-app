@@ -1,10 +1,13 @@
 import 'dart:async';
 
+import 'package:cool_lodz/core/storage/preferences.dart';
 import 'package:cool_lodz/features/auth/data/auth_repository.dart';
 import 'package:cool_lodz/features/auth/data/system_permissions.dart';
 import 'package:cool_lodz/features/auth/data/user_profile_repository.dart';
 import 'package:cool_lodz/features/onboarding/data/onboarding_store.dart';
+import 'package:cool_lodz/features/profile/data/comfort_profile.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FakeAuthRepository implements AuthRepository {
   FakeAuthRepository({AppUser? user}) : _user = user;
@@ -79,6 +82,11 @@ class FakeUserProfileRepository implements UserProfileRepository {
   Object? saveError;
   Object? readError;
 
+  /// uid → saved comfort profile (S04).
+  final comfortProfiles = <String, ComfortProfile>{};
+  Object? profileSaveError;
+  Object? profileReadError;
+
   @override
   Future<void> createProfile({
     required String uid,
@@ -96,6 +104,18 @@ class FakeUserProfileRepository implements UserProfileRepository {
   Future<bool> hasAcceptedConsents(String uid) async {
     if (readError != null) throw readError!;
     return accepted[uid] ?? false;
+  }
+
+  @override
+  Future<void> saveComfortProfile(String uid, ComfortProfile profile) async {
+    if (profileSaveError != null) throw profileSaveError!;
+    comfortProfiles[uid] = profile;
+  }
+
+  @override
+  Future<ComfortProfile?> loadComfortProfile(String uid) async {
+    if (profileReadError != null) throw profileReadError!;
+    return comfortProfiles[uid];
   }
 }
 
@@ -128,10 +148,12 @@ class FakeSystemPermissions implements SystemPermissions {
 /// Overrides for every repository the start flow and S01–S03 touch.
 List<Override> fakeAuthOverrides({
   required FakeAuthRepository auth,
+  required SharedPreferences prefs,
   FakeUserProfileRepository? profiles,
   FakeOnboardingStore? onboarding,
   FakeSystemPermissions? permissions,
 }) => [
+  sharedPreferencesProvider.overrideWithValue(prefs),
   authRepositoryProvider.overrideWithValue(auth),
   userProfileRepositoryProvider.overrideWithValue(
     profiles ?? FakeUserProfileRepository(),

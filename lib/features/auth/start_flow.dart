@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/router.dart';
 import '../../app/routes.dart';
 import '../onboarding/data/onboarding_store.dart';
+import '../profile/data/comfort_profile_provider.dart';
 import 'data/auth_repository.dart';
 import 'data/user_profile_repository.dart';
 
@@ -18,6 +19,7 @@ class StartFlowState {
     this.authKnown = false,
     this.user,
     this.consentsAccepted,
+    this.profileChosen,
   });
 
   /// Everything done: used by tests and demo setups.
@@ -26,6 +28,7 @@ class StartFlowState {
     authKnown: true,
     user: AppUser(uid: 'complete'),
     consentsAccepted: true,
+    profileChosen: true,
   );
 
   final bool? onboardingSeen;
@@ -37,6 +40,10 @@ class StartFlowState {
   /// Only meaningful while [user] is signed in.
   final bool? consentsAccepted;
 
+  /// Whether the account has a comfort profile (S04). Only meaningful while
+  /// [user] is signed in; read together with [consentsAccepted].
+  final bool? profileChosen;
+
   /// The start-flow screen the user must be on, or null when the flow is done.
   String? get requiredRoute {
     if (onboardingSeen == null) return Routes.start;
@@ -45,7 +52,8 @@ class StartFlowState {
     if (user == null) return Routes.login;
     if (consentsAccepted == null) return Routes.start;
     if (consentsAccepted == false) return Routes.consents;
-    // APP-08 inserts S04 (profile selection) here.
+    if (profileChosen == null) return Routes.start;
+    if (profileChosen == false) return Routes.profileSelect;
     return null;
   }
 
@@ -54,6 +62,7 @@ class StartFlowState {
     bool? authKnown,
     AppUser? Function()? user,
     bool? Function()? consentsAccepted,
+    bool? Function()? profileChosen,
   }) => StartFlowState(
     onboardingSeen: onboardingSeen ?? this.onboardingSeen,
     authKnown: authKnown ?? this.authKnown,
@@ -61,6 +70,7 @@ class StartFlowState {
     consentsAccepted: consentsAccepted != null
         ? consentsAccepted()
         : this.consentsAccepted,
+    profileChosen: profileChosen != null ? profileChosen() : this.profileChosen,
   );
 
   @override
@@ -69,16 +79,23 @@ class StartFlowState {
       other.onboardingSeen == onboardingSeen &&
       other.authKnown == authKnown &&
       other.user == user &&
-      other.consentsAccepted == consentsAccepted;
+      other.consentsAccepted == consentsAccepted &&
+      other.profileChosen == profileChosen;
 
   @override
-  int get hashCode =>
-      Object.hash(onboardingSeen, authKnown, user, consentsAccepted);
+  int get hashCode => Object.hash(
+    onboardingSeen,
+    authKnown,
+    user,
+    consentsAccepted,
+    profileChosen,
+  );
 
   @override
   String toString() =>
       'StartFlowState(onboardingSeen: $onboardingSeen, authKnown: $authKnown, '
-      'user: $user, consentsAccepted: $consentsAccepted)';
+      'user: $user, consentsAccepted: $consentsAccepted, '
+      'profileChosen: $profileChosen)';
 }
 
 /// Screens that belong to the start flow; once it is done they go to the map.
@@ -145,6 +162,10 @@ class StartFlowNotifier extends Notifier<StartFlowState> {
     (s) => s.user == null ? s : s._with(consentsAccepted: () => true),
   );
 
+  /// S04 saved during the start flow.
+  void markProfileChosen() =>
+      _update((s) => s.user == null ? s : s._with(profileChosen: () => true));
+
   Future<void> _loadOnboarding(OnboardingStore store) async {
     bool seen;
     try {
@@ -165,11 +186,14 @@ class StartFlowNotifier extends Notifier<StartFlowState> {
           authKnown: true,
           user: () => null,
           consentsAccepted: () => null,
+          profileChosen: () => null,
         ),
       );
       return;
     }
-    if (user.uid == current.user?.uid && current.consentsAccepted != null) {
+    if (user.uid == current.user?.uid &&
+        current.consentsAccepted != null &&
+        current.profileChosen != null) {
       _emit(current._with(authKnown: true, user: () => user));
       return;
     }
@@ -178,6 +202,7 @@ class StartFlowNotifier extends Notifier<StartFlowState> {
         authKnown: true,
         user: () => user,
         consentsAccepted: () => null,
+        profileChosen: () => null,
       ),
     );
 
@@ -189,11 +214,33 @@ class StartFlowNotifier extends Notifier<StartFlowState> {
       debugPrint('Could not read consents: $e');
       accepted = false;
     }
+    final chosen = await _loadProfile(user.uid, profiles);
     _update((s) {
-      // Signed out or switched accounts meanwhile, or S03 already finished.
-      if (s.user?.uid != user.uid || s.consentsAccepted == true) return s;
-      return s._with(consentsAccepted: () => accepted);
+      // Signed out or switched accounts meanwhile.
+      if (s.user?.uid != user.uid) return s;
+      return s._with(
+        // S03 or S04 may have finished meanwhile.
+        consentsAccepted: s.consentsAccepted == true ? null : () => accepted,
+        profileChosen: s.profileChosen == true ? null : () => chosen,
+      );
     });
+  }
+
+  /// Loads the account's comfort profile into [comfortProfileProvider].
+  /// Returns whether S04 can be skipped.
+  Future<bool> _loadProfile(String uid, UserProfileRepository profiles) async {
+    final local = ref.read(comfortProfileProvider.notifier);
+    try {
+      final saved = await profiles.loadComfortProfile(uid);
+      if (saved == null) return false;
+      if (ref.mounted) await local.apply(saved);
+      return true;
+    } catch (e) {
+      // No network and nothing cached: a profile chosen on this device is
+      // good enough; otherwise ask again.
+      debugPrint('Could not read the comfort profile: $e');
+      return ref.mounted && local.hasLocal;
+    }
   }
 
   void _update(StartFlowState Function(StartFlowState current) change) {

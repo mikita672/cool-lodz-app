@@ -483,4 +483,108 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String get privacyContactBody =>
       'Administrator danych: zespół Cool Łódź, [nazwa i adres do uzupełnienia]. Pytania o dane: [adres e-mail zespołu do uzupełnienia].';
+
+  @override
+  String get profileTitle => 'Profil komfortu';
+
+  @override
+  String get profileIntro =>
+      'Wybierz, co jest dla Ciebie ważne na trasie. Zmienisz to w każdej chwili w Profilu.';
+
+  @override
+  String get profileSeniorName => 'Senior';
+
+  @override
+  String get profileSeniorBody =>
+      'Najwięcej cienia, ławki po drodze i duży tekst';
+
+  @override
+  String get profileTouristName => 'Turysta';
+
+  @override
+  String get profileTouristBody =>
+      'Zabytki w cieniu i chłodne miejsca w pobliżu';
+
+  @override
+  String get profileStandardName => 'Domyślny';
+
+  @override
+  String get profileStandardBody => 'Kompromis między czasem a cieniem';
+
+  @override
+  String get profileSelected => 'Wybrany';
+
+  @override
+  String get profileAdjust => 'Dostosuj';
+
+  @override
+  String get profileAdjustHint => '0 — nieważne, 100 — bardzo ważne';
+
+  @override
+  String get profileWeightShade => 'Cień';
+
+  @override
+  String get profileWeightTime => 'Czas';
+
+  @override
+  String get profileWeightQuiet => 'Cisza';
+
+  @override
+  String get profileWeightAir => 'Powietrze';
+
+  @override
+  String get profileSeniorModeTitle => 'Duży tekst i przyciski';
+
+  @override
+  String get profileSeniorModeBody =>
+      'Tryb Senior: tekst o 25% większy, większe przyciski i podpisy przy ikonach';
+
+  @override
+  String get profileSoonTitle => 'Wkrótce';
+
+  @override
+  String get profileSoon => 'Wkrótce';
+
+  @override
+  String get profileDogName => 'Z psem';
+
+  @override
+  String get profileDogBody => 'Cień, zieleń i woda dla psa';
+
+  @override
+  String get profileStrollerName => 'Z wózkiem';
+
+  @override
+  String get profileStrollerBody => 'Bez schodów, z cieniem i ławkami';
+
+  @override
+  String get profileCommuteName => 'Do pracy';
+
+  @override
+  String get profileCommuteBody => 'Szybko, ale nie w pełnym słońcu';
+
+  @override
+  String get profileActiveName => 'Aktywny';
+
+  @override
+  String get profileActiveBody => 'Dłuższe trasy przez zieleń';
+
+  @override
+  String get profileSensitiveName => 'Wrażliwy na hałas i smog';
+
+  @override
+  String get profileSensitiveBody => 'Cisza i czyste powietrze';
+
+  @override
+  String get profileSave => 'Zapisz';
+
+  @override
+  String get profileContinue => 'Dalej';
+
+  @override
+  String get profileSaved => 'Profil zapisany';
+
+  @override
+  String get profileSaveError =>
+      'Nie udało się zapisać profilu. Sprawdź połączenie i spróbuj ponownie.';
 }

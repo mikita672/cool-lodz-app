@@ -867,6 +867,204 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Administrator danych: zespół Cool Łódź, [nazwa i adres do uzupełnienia]. Pytania o dane: [adres e-mail zespołu do uzupełnienia].'**
   String get privacyContactBody;
+
+  /// No description provided for @profileTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Profil komfortu'**
+  String get profileTitle;
+
+  /// No description provided for @profileIntro.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wybierz, co jest dla Ciebie ważne na trasie. Zmienisz to w każdej chwili w Profilu.'**
+  String get profileIntro;
+
+  /// No description provided for @profileSeniorName.
+  ///
+  /// In pl, this message translates to:
+  /// **'Senior'**
+  String get profileSeniorName;
+
+  /// No description provided for @profileSeniorBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Najwięcej cienia, ławki po drodze i duży tekst'**
+  String get profileSeniorBody;
+
+  /// No description provided for @profileTouristName.
+  ///
+  /// In pl, this message translates to:
+  /// **'Turysta'**
+  String get profileTouristName;
+
+  /// No description provided for @profileTouristBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zabytki w cieniu i chłodne miejsca w pobliżu'**
+  String get profileTouristBody;
+
+  /// No description provided for @profileStandardName.
+  ///
+  /// In pl, this message translates to:
+  /// **'Domyślny'**
+  String get profileStandardName;
+
+  /// No description provided for @profileStandardBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Kompromis między czasem a cieniem'**
+  String get profileStandardBody;
+
+  /// No description provided for @profileSelected.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wybrany'**
+  String get profileSelected;
+
+  /// No description provided for @profileAdjust.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dostosuj'**
+  String get profileAdjust;
+
+  /// No description provided for @profileAdjustHint.
+  ///
+  /// In pl, this message translates to:
+  /// **'0 — nieważne, 100 — bardzo ważne'**
+  String get profileAdjustHint;
+
+  /// No description provided for @profileWeightShade.
+  ///
+  /// In pl, this message translates to:
+  /// **'Cień'**
+  String get profileWeightShade;
+
+  /// No description provided for @profileWeightTime.
+  ///
+  /// In pl, this message translates to:
+  /// **'Czas'**
+  String get profileWeightTime;
+
+  /// No description provided for @profileWeightQuiet.
+  ///
+  /// In pl, this message translates to:
+  /// **'Cisza'**
+  String get profileWeightQuiet;
+
+  /// No description provided for @profileWeightAir.
+  ///
+  /// In pl, this message translates to:
+  /// **'Powietrze'**
+  String get profileWeightAir;
+
+  /// No description provided for @profileSeniorModeTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Duży tekst i przyciski'**
+  String get profileSeniorModeTitle;
+
+  /// No description provided for @profileSeniorModeBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Tryb Senior: tekst o 25% większy, większe przyciski i podpisy przy ikonach'**
+  String get profileSeniorModeBody;
+
+  /// No description provided for @profileSoonTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wkrótce'**
+  String get profileSoonTitle;
+
+  /// No description provided for @profileSoon.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wkrótce'**
+  String get profileSoon;
+
+  /// No description provided for @profileDogName.
+  ///
+  /// In pl, this message translates to:
+  /// **'Z psem'**
+  String get profileDogName;
+
+  /// No description provided for @profileDogBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Cień, zieleń i woda dla psa'**
+  String get profileDogBody;
+
+  /// No description provided for @profileStrollerName.
+  ///
+  /// In pl, this message translates to:
+  /// **'Z wózkiem'**
+  String get profileStrollerName;
+
+  /// No description provided for @profileStrollerBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Bez schodów, z cieniem i ławkami'**
+  String get profileStrollerBody;
+
+  /// No description provided for @profileCommuteName.
+  ///
+  /// In pl, this message translates to:
+  /// **'Do pracy'**
+  String get profileCommuteName;
+
+  /// No description provided for @profileCommuteBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Szybko, ale nie w pełnym słońcu'**
+  String get profileCommuteBody;
+
+  /// No description provided for @profileActiveName.
+  ///
+  /// In pl, this message translates to:
+  /// **'Aktywny'**
+  String get profileActiveName;
+
+  /// No description provided for @profileActiveBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dłuższe trasy przez zieleń'**
+  String get profileActiveBody;
+
+  /// No description provided for @profileSensitiveName.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wrażliwy na hałas i smog'**
+  String get profileSensitiveName;
+
+  /// No description provided for @profileSensitiveBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Cisza i czyste powietrze'**
+  String get profileSensitiveBody;
+
+  /// No description provided for @profileSave.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zapisz'**
+  String get profileSave;
+
+  /// No description provided for @profileContinue.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dalej'**
+  String get profileContinue;
+
+  /// No description provided for @profileSaved.
+  ///
+  /// In pl, this message translates to:
+  /// **'Profil zapisany'**
+  String get profileSaved;
+
+  /// No description provided for @profileSaveError.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie udało się zapisać profilu. Sprawdź połączenie i spróbuj ponownie.'**
+  String get profileSaveError;
 }
 
 class _AppLocalizationsDelegate

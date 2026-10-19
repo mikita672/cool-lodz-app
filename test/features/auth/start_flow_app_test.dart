@@ -1,16 +1,24 @@
 import 'package:cool_lodz/app/app.dart';
+import 'package:cool_lodz/core/models/route_request.dart';
 import 'package:cool_lodz/features/auth/consents_screen.dart';
 import 'package:cool_lodz/features/auth/data/auth_repository.dart';
 import 'package:cool_lodz/features/auth/start_flow.dart';
+import 'package:cool_lodz/features/profile/data/comfort_profile.dart';
+import 'package:cool_lodz/features/profile/profile_select_screen.dart';
 import 'package:cool_lodz/features/settings/privacy_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../helpers/test_app.dart';
 import 'fakes.dart';
 
 /// The whole start flow in the real router: S01 → S02 → S03 → map.
 void main() {
+  late SharedPreferences prefs;
+  setUp(() async => prefs = await testPrefs());
+
   testWidgets('a new user goes from onboarding to the map', (tester) async {
     final auth = FakeAuthRepository();
     final profiles = FakeUserProfileRepository();
@@ -19,6 +27,7 @@ void main() {
       ProviderScope(
         overrides: [
           ...fakeAuthOverrides(
+            prefs: prefs,
             auth: auth,
             profiles: profiles,
             permissions: permissions,
@@ -73,19 +82,33 @@ void main() {
 
     await tester.tap(find.byKey(const Key('consents-accept')));
     await tester.pumpAndSettle();
-
-    expect(find.text('S05'), findsOneWidget);
     expect(profiles.saved.single.$1, 'uid-1');
     expect(permissions.calls, ['location', 'notifications']);
+
+    // S04: Senior, saved to the account; bigger text in the whole app.
+    expect(find.byType(ProfileSelectScreen), findsOneWidget);
+    await tester.tap(find.byKey(const Key('profile-senior')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('profile-save')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('S05'), findsOneWidget);
+    expect(profiles.comfortProfiles['uid-1']!.id, ProfileId.senior);
+    expect(profiles.comfortProfiles['uid-1']!.seniorMode, isTrue);
+    final context = tester.element(find.text('S05'));
+    expect(MediaQuery.textScalerOf(context).scale(16), closeTo(20, 0.01));
   });
 
   testWidgets('signing out returns to the login screen', (tester) async {
     final auth = FakeAuthRepository(user: const AppUser(uid: 'u1'));
-    final profiles = FakeUserProfileRepository()..accepted['u1'] = true;
+    final profiles = FakeUserProfileRepository()
+      ..accepted['u1'] = true
+      ..comfortProfiles['u1'] = ComfortProfile.fallback;
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           ...fakeAuthOverrides(
+            prefs: prefs,
             auth: auth,
             profiles: profiles,
             onboarding: FakeOnboardingStore(seen: true),
