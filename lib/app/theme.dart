@@ -34,6 +34,9 @@ abstract final class AppColors {
   /// Green layer on the map: green at 30 % opacity.
   static const greenLayer = Color(0x4D2E8B57);
 
+  /// Quiet layer on the map: a purple heat map, darker = louder.
+  static const quiet = Color(0xFF6A3D9A);
+
   /// Sunny part of the ShadeBar track: sun at 35 % opacity.
   static const sunTrack = Color(0x59F28C28);
 

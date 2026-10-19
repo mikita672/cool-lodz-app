@@ -18,8 +18,8 @@ Request:
 
 ```jsonc
 {
-  "from": { "lat": 51.7801, "lon": 19.4475, "label": "Manufaktura" },
-  "to": { "lat": 51.7592, "lon": 19.4581, "label": "Piotrkowska 104" },
+  "from": { "lat": 51.7794, "lon": 19.4466, "label": "Manufaktura" },             // label optional
+  "to": { "lat": 51.7676, "lon": 19.4568, "label": "ul. Piotrkowska (Pasaż Rubinsteina)" },
   "datetime": "2026-07-15T14:30:00+02:00",   // departure, local time with offset
   "profile": {
     "id": "senior",                           // senior | tourist | default
@@ -37,7 +37,7 @@ Response `200`:
   "variants": [                  // always 3: shortest, shaded, compromise
     {
       "variant": "shaded",       // shortest | shaded | compromise
-      "geometry": { "type": "LineString", "coordinates": [[19.4466, 51.7794], [19.4570, 51.7720]] },
+      "geometry": { "type": "LineString", "coordinates": [[19.4466, 51.7794], [19.4568, 51.7676]] },
       "segments": [              // coordinate index ranges [from, to] with their sun share
         { "from": 0, "to": 12, "sunShare": 0.15 }
       ],
@@ -52,7 +52,10 @@ Response `200`:
 }
 ```
 
-`segments` and `sunShareByHour` are still being agreed with module D (issue DEP-03), so the app treats both as optional. Errors: `404 {"error": "route_not_found"}`.
+- `sunShare` is the share at the requested `datetime`; `sunShareByHour` gives it for other departures (keys `"HH:mm"`, sorted).
+- `segments[].from`/`to` are inclusive indices into `geometry.coordinates`.
+- `segments`, `stops` and `sunShareByHour` may be omitted: `segments` and `sunShareByHour` are still being agreed with module D (issue DEP-03), so the app treats all three as optional (missing = empty).
+- Errors: `404 {"error": "route_not_found"}` (shown as «route not found», no demo fallback); timeouts, network errors and `5xx` switch the app to demo/cached data.
 
 ## GET /v1/places?type=cool,water,bench&bbox=minLon,minLat,maxLon,maxLat  (S05, S08, S09, S10)
 
@@ -81,6 +84,8 @@ Response `200`:
 ```
 
 Water points and benches only need `id`, `type`, `lat`, `lon`; the other fields may be null. Benches are shown from zoom 17.
+
+`hours` details: a weekday key that is missing counts as closed (same as `[]`); times are `"HH:mm"` local time (Europe/Warsaw), the end is exclusive, `"24:00"` is allowed, and an interval whose end is before its start runs past midnight (`["22:00", "02:00"]`). Unknown `amenities` values are ignored by the app; an unknown `category` is read as `other`. `questPlace` defaults to `false`.
 
 ## GET /v1/alerts?lat&lon  (S05, S14)
 
@@ -111,7 +116,7 @@ Water points and benches only need `id`, `type`, `lat`, `lon`; the other fields 
       "id": "gios-lodz-czernika",
       "name": "Łódź, ul. Czernika",
       "lat": 51.7586, "lon": 19.5295,
-      "indexLevel": 1,              // GIOŚ index: 0 bardzo dobry … 5 bardzo zły
+      "indexLevel": 1,              // GIOŚ index: 0 bardzo dobry … 5 bardzo zły; null = no data
       "updatedAt": "2026-07-15T14:00:00+02:00"
     }
   ]
@@ -138,4 +143,29 @@ The app writes reports straight to Firestore `reports`; this endpoint is the alt
 | `places_cool.json`, `places_water.json`, `places_bench.json` | `/v1/places` |
 | `alerts_none.json`, `alerts_level2.json`, `alerts_level3.json` | `/v1/alerts` |
 | `layer_shade_1430.geojson`, `layer_green.geojson`, `layer_noise.geojson`, `air.json` | `/v1/layers/*`, `/v1/air` |
-| `quest.json` | quest places and letters (seed for Firestore `questPlaces`) |
+| `quest.json` | quest places and letters (seed for Firestore `questPlaces`), format below |
+
+### `quest.json`
+
+Not a module D endpoint (the game lives in Firestore); the app reads the bundled file. `placeId` is the `id` from `places_cool.json` (name and coordinates come from there); `order` is the 1-based letter position.
+
+```jsonc
+{
+  "questId": "chlodne-haslo-2026",     // optional
+  "password": "CHŁODNO",               // optional
+  "places": [                          // 7 places; a bare array of places is also accepted
+    { "placeId": "cool-002", "letter": "C", "order": 1 }   // optional: name, lat, lon (as in Firestore questPlaces)
+  ]
+}
+```
+
+## Demo mode (`DemoApiClient`)
+
+- **Reference routes** (`lib/core/api/reference_routes.dart`):
+  - Manufaktura (51.7794, 19.4466) → ul. Piotrkowska (Pasaż Rubinsteina) (51.7676, 19.4568): `routes_manufaktura_piotrkowska.json`;
+  - Plac Wolności (51.7768, 19.4547) → OFF Piotrkowska (51.7596, 19.4577): `routes_plac_wolnosci_piotrkowska.json`.
+
+  A request matches when both endpoints are within 300 m (same direction only). The departure whose `"HH:mm"` key is closest to the requested time of day is returned (a tie goes to the earlier one).
+- **Any other pair** gets a generated response with `coverage: "approximate"`: three variants along a gently bent line, distance ≈ straight line × 1.3 (shaded ×1.12, compromise ×1.05 on top), walking speed 1.3 m/s, sun shares derived from the coordinates, `sunShareByHour` 08:00–20:00.
+- **Alerts:** `alerts_none` / `alerts_level2` (default, demo scenario) / `alerts_level3`, chosen in the app; `lat`/`lon` are ignored.
+- **Layers:** `layer_shade_1430.geojson` is returned for any `datetime`; `bbox` is ignored for layers (the files cover Śródmieście). Places and air stations are filtered by `bbox`.

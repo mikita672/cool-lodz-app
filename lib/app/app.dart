@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../features/alerts/push_handler.dart';
 import '../l10n/app_localizations.dart';
 import 'router.dart';
 import 'senior_mode.dart';
@@ -18,6 +19,7 @@ class CoolLodzApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(senior: senior),
       routerConfig: ref.watch(routerProvider),
+      scaffoldMessengerKey: rootMessengerKey,
       locale: const Locale('pl'),
       supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: const [
@@ -27,12 +29,15 @@ class CoolLodzApp extends ConsumerWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       // Senior mode scales all text ×1.25 on top of the system font size.
+      // Always the same tree, so toggling Senior does not rebuild the app
+      // (and the push handler) from scratch.
       builder: (context, child) {
-        if (!senior) return child!;
         final media = MediaQuery.of(context);
         return MediaQuery(
-          data: media.copyWith(textScaler: SeniorTextScaler(media.textScaler)),
-          child: child!,
+          data: senior
+              ? media.copyWith(textScaler: SeniorTextScaler(media.textScaler))
+              : media,
+          child: PushHandler(child: child!),
         );
       },
     );

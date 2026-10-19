@@ -1,0 +1,6 @@
+{
+  "stations": [
+    {"id": "gios-lodz-czernika", "name": "Łódź, ul. Czernika", "lat": 51.7586, "lon": 19.5295, "indexLevel": 1, "updatedAt": "2026-07-15T14:00:00+02:00"},
+    {"id": "gios-lodz-legionow", "name": "Łódź, al. Legionów", "lat": 51.7750, "lon": 19.4370, "indexLevel": null}
+  ]
+}

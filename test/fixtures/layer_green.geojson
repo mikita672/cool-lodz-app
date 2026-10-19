@@ -1,0 +1,1 @@
+{"type": "FeatureCollection", "features": [{"type": "Feature", "id": "park-zrodliska", "properties": {"kind": "park"}, "geometry": {"type": "Polygon", "coordinates": [[[19.4700, 51.7580], [19.4760, 51.7580], [19.4760, 51.7610], [19.4700, 51.7580]]]}}]}

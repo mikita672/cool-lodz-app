@@ -1,0 +1,6 @@
+{
+  "places": [
+    {"id": "water-003", "type": "water", "lat": 51.7731, "lon": 19.4558},
+    {"id": "water-004", "type": "water", "name": "Zdrój uliczny", "lat": 51.7598, "lon": 19.4580, "hours": null}
+  ]
+}

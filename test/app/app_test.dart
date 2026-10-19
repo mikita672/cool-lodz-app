@@ -1,34 +1,47 @@
 import 'package:cool_lodz/app/app.dart';
 import 'package:cool_lodz/app/senior_mode.dart';
 import 'package:cool_lodz/app/theme.dart';
+import 'package:cool_lodz/features/achievements/badges_view.dart';
+import 'package:cool_lodz/features/cool_places/cool_places_screen.dart';
+import 'package:cool_lodz/features/map/map_screen.dart';
+import 'package:cool_lodz/features/quest/quest_view.dart';
+import 'package:cool_lodz/features/settings/profile_tab_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import '../helpers/fakes.dart';
+import '../helpers/test_app.dart';
 
 void main() {
   testWidgets('starts on the map tab and switches between the 4 tabs', (
     tester,
   ) async {
-    await tester.pumpWidget(const ProviderScope(child: CoolLodzApp()));
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [...appTestOverrides(prefs: await testPrefs())],
+        child: const CoolLodzApp(),
+      ),
+    );
     await tester.pumpAndSettle();
 
     expect(find.text('Mapa'), findsWidgets);
-    expect(find.text('S05'), findsOneWidget);
+    expect(find.byType(MapScreen), findsOneWidget);
 
     await tester.tap(find.text('Chłód'));
     await tester.pumpAndSettle();
-    expect(find.text('S09'), findsOneWidget);
+    expect(find.byType(CoolPlacesScreen), findsOneWidget);
 
     await tester.tap(find.text('Quest').last);
     await tester.pumpAndSettle();
-    expect(find.text('S10'), findsOneWidget);
+    expect(find.byType(QuestView), findsOneWidget);
     await tester.tap(find.text('Odznaki'));
     await tester.pumpAndSettle();
-    expect(find.text('S12'), findsOneWidget);
+    expect(find.byType(BadgesView), findsOneWidget);
 
     await tester.tap(find.text('Profil'));
     await tester.pumpAndSettle();
-    expect(find.text('S16'), findsOneWidget);
+    expect(find.byType(ProfileTabScreen), findsOneWidget);
   });
 
   testWidgets('theme uses the spec tokens', (tester) async {
@@ -55,8 +68,12 @@ void main() {
   });
 
   testWidgets('senior mode scales text by 1.25', (tester) async {
-    final container = ProviderContainer.test();
-    container.read(seniorModeProvider.notifier).set(true);
+    final container = ProviderContainer.test(
+      overrides: [
+        ...appTestOverrides(prefs: await testPrefs()),
+        seniorModeProvider.overrideWithValue(true),
+      ],
+    );
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,
@@ -64,7 +81,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    final context = tester.element(find.text('S05'));
+    final context = tester.element(find.byType(MapScreen));
     expect(MediaQuery.textScalerOf(context).scale(16), closeTo(20, 0.01));
   });
 }

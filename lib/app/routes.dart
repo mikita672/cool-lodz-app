@@ -1,6 +1,7 @@
 /// Route paths for every screen in the spec (S01–S16).
 /// Tabs (bottom bar): Mapa, Chłód, Quest, Profil.
 abstract final class Routes {
+  static const start = '/start'; // loading while the start flow is checked
   static const onboarding = '/onboarding'; // S01
   static const login = '/login'; // S02
   static const consents = '/consents'; // S03
@@ -16,6 +17,7 @@ abstract final class Routes {
   static const report = '/report'; // S15
   static const profile = '/profile'; // S16, tab
   static const about = '/profile/about'; // S16 «O aplikacji» (child of Profil)
+  static const consentsSettings = '/profile/consents'; // S16 «Zgody»
   static const privacy = '/privacy'; // Polityka prywatności (S03, S16)
   static const debugComponents = '/debug/components'; // APP-06 showcase
 
