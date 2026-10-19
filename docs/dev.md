@@ -91,6 +91,8 @@ Routes for every screen already exist in `lib/app/router.dart`; a feature ticket
 
 **Quest (S10, S11).** The quest comes from `assets/demo/quest.json` (+ names and positions from the cool places); progress is the user's own `visits` (readable by the owner). A scan checks, in order: the `coollodz://quest/{placeId}?c={kod}` format and that the place is in the quest → not scanned today (own visits) → within 150 m → the visit write, where the rules compare the code → `GameService.placeScanned` (+50, badges). The camera is behind `qrScannerBuilderProvider`; tests use `FakeQrScanner`. The reward code is a stable demo code per user (real MPK codes are a next step).
 
+**Printing the quest QR codes (APP-15).** After the seed (it writes `tools/qr/codes.json`): `npm --prefix tools/qr ci && node tools/qr/generate.mjs` → `tools/qr/out/quest-codes.pdf`, one A4 page per place (QR with `coollodz://quest/{placeId}?c={kod}`, the place name, «Zeskanuj kod przy wejściu»; the letter is not printed). Both files are gitignored — a photo of a code is enough to score without a visit. After `seed --new-codes`, regenerate and reprint.
+
 ## Rules
 
 - **State:** Riverpod 3 (`flutter_riverpod`), no code generation. Repositories and clients are providers, so tests and demo mode can override them.

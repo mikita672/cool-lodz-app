@@ -1,0 +1,16 @@
+{
+  "name": "cool-lodz-qr",
+  "private": true,
+  "description": "Printable QR codes for the 7 quest places (APP-15)",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "generate": "node generate.mjs"
+  },
+  "dependencies": {
+    "pdfkit": "0.17.2",
+    "qrcode": "1.5.4"
+  }
+}
