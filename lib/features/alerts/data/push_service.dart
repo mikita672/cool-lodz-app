@@ -76,6 +76,8 @@ class FirebasePushService implements PushService {
   @override
   Future<void> deleteToken() async {
     try {
+      // Pairs with the registration token from [token] (see there).
+      // ignore: deprecated_member_use
       await _messaging.deleteToken();
     } catch (e) {
       debugPrint('FCM token not deleted: $e');
