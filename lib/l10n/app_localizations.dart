@@ -1947,6 +1947,210 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'W trybie upału trasy z wyjściem 11:00–17:00 nie dają punktów. Wybierz poranek lub wieczór.'**
   String get gameHeatNoPoints;
+
+  /// No description provided for @questTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Chłodne hasło'**
+  String get questTitle;
+
+  /// No description provided for @questIntro.
+  ///
+  /// In pl, this message translates to:
+  /// **'Odwiedzaj miejsca chłodu, skanuj kody QR przy wejściu i zbieraj litery hasła.'**
+  String get questIntro;
+
+  /// No description provided for @questProgress.
+  ///
+  /// In pl, this message translates to:
+  /// **'{found} z {total} liter'**
+  String questProgress(int found, int total);
+
+  /// No description provided for @questScan.
+  ///
+  /// In pl, this message translates to:
+  /// **'Skanuj kod QR'**
+  String get questScan;
+
+  /// No description provided for @questPlacesTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Miejsca questu'**
+  String get questPlacesTitle;
+
+  /// No description provided for @questVisited.
+  ///
+  /// In pl, this message translates to:
+  /// **'Odwiedzone'**
+  String get questVisited;
+
+  /// No description provided for @questToVisit.
+  ///
+  /// In pl, this message translates to:
+  /// **'Do odwiedzenia'**
+  String get questToVisit;
+
+  /// No description provided for @questLetterOf.
+  ///
+  /// In pl, this message translates to:
+  /// **'Litera {letter}'**
+  String questLetterOf(String letter);
+
+  /// No description provided for @questHeatHint.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dziś odwiedzaj miejsca rano lub wieczorem'**
+  String get questHeatHint;
+
+  /// No description provided for @questHeatHidden.
+  ///
+  /// In pl, this message translates to:
+  /// **'W trybie upału ukrywamy miejsca na słońcu: {count}'**
+  String questHeatHidden(int count);
+
+  /// No description provided for @questPasswordTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Masz wszystkie litery!'**
+  String get questPasswordTitle;
+
+  /// No description provided for @questPasswordHint.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wpisz hasło'**
+  String get questPasswordHint;
+
+  /// No description provided for @questPasswordCheck.
+  ///
+  /// In pl, this message translates to:
+  /// **'Sprawdź'**
+  String get questPasswordCheck;
+
+  /// No description provided for @questPasswordWrong.
+  ///
+  /// In pl, this message translates to:
+  /// **'To nie to hasło. Ułóż litery w kolejności miejsc.'**
+  String get questPasswordWrong;
+
+  /// No description provided for @questRewardTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Hasło odgadnięte!'**
+  String get questRewardTitle;
+
+  /// No description provided for @questRewardBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Twój kod zniżki na przejazd MPK Łódź:'**
+  String get questRewardBody;
+
+  /// No description provided for @questRewardNote.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zachowaj go — przyda się przy zakupie biletu.'**
+  String get questRewardNote;
+
+  /// No description provided for @questLoadError.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie udało się wczytać questu'**
+  String get questLoadError;
+
+  /// No description provided for @scanTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Skaner QR'**
+  String get scanTitle;
+
+  /// No description provided for @scanHint.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zeskanuj kod przy wejściu'**
+  String get scanHint;
+
+  /// No description provided for @scanChecking.
+  ///
+  /// In pl, this message translates to:
+  /// **'Sprawdzamy kod…'**
+  String get scanChecking;
+
+  /// No description provided for @scanSuccess.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nowa litera: {letter}'**
+  String scanSuccess(String letter);
+
+  /// No description provided for @scanBackToQuest.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wróć do questu'**
+  String get scanBackToQuest;
+
+  /// No description provided for @scanAgain.
+  ///
+  /// In pl, this message translates to:
+  /// **'Skanuj ponownie'**
+  String get scanAgain;
+
+  /// No description provided for @scanTooFar.
+  ///
+  /// In pl, this message translates to:
+  /// **'Jesteś za daleko od miejsca'**
+  String get scanTooFar;
+
+  /// No description provided for @scanTooFarDetail.
+  ///
+  /// In pl, this message translates to:
+  /// **'Podejdź bliżej wejścia (jesteś {meters} m od miejsca, potrzeba do 150 m).'**
+  String scanTooFarDetail(int meters);
+
+  /// No description provided for @scanAlreadyToday.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ten kod już dziś zeskanowałeś'**
+  String get scanAlreadyToday;
+
+  /// No description provided for @scanInvalid.
+  ///
+  /// In pl, this message translates to:
+  /// **'Kod nieważny'**
+  String get scanInvalid;
+
+  /// No description provided for @scanNoLocation.
+  ///
+  /// In pl, this message translates to:
+  /// **'Włącz lokalizację, aby potwierdzić wizytę w miejscu'**
+  String get scanNoLocation;
+
+  /// No description provided for @scanFailed.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie udało się zapisać wizyty. Sprawdź połączenie i spróbuj ponownie.'**
+  String get scanFailed;
+
+  /// No description provided for @scanNoCameraTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Potrzebujemy aparatu'**
+  String get scanNoCameraTitle;
+
+  /// No description provided for @scanNoCameraBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Aparat służy tylko do odczytania kodu QR. Zdjęcia nie są zapisywane.'**
+  String get scanNoCameraBody;
+
+  /// No description provided for @scanOpenSettings.
+  ///
+  /// In pl, this message translates to:
+  /// **'Otwórz ustawienia'**
+  String get scanOpenSettings;
+
+  /// No description provided for @scanCameraError.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie udało się uruchomić aparatu'**
+  String get scanCameraError;
 }
 
 class _AppLocalizationsDelegate

@@ -1,6 +1,8 @@
 import 'package:cool_lodz/app/app.dart';
 import 'package:cool_lodz/app/router.dart';
 import 'package:cool_lodz/app/routes.dart';
+import 'package:cool_lodz/features/quest/quest_scan_screen.dart';
+import 'package:cool_lodz/features/quest/quest_view.dart';
 import 'package:cool_lodz/features/route/route_plan_screen.dart';
 import 'package:cool_lodz/features/route/route_result_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,12 +29,12 @@ void main() {
     final router = container.read(routerProvider);
     router.go(Routes.questScan);
     await tester.pumpAndSettle();
-    expect(find.text('S11'), findsOneWidget);
+    expect(find.byType(QuestScanScreen), findsOneWidget);
 
     expect(router.canPop(), isTrue);
     router.pop();
     await tester.pumpAndSettle();
-    expect(find.text('S10'), findsOneWidget);
+    expect(find.byType(QuestView), findsOneWidget);
   });
 
   testWidgets('route result sits on top of route planning', (tester) async {

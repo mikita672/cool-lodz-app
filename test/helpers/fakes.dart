@@ -13,9 +13,12 @@ import 'package:cool_lodz/core/storage/preferences.dart';
 import 'package:cool_lodz/features/auth/data/auth_repository.dart';
 import 'package:cool_lodz/features/game/data/game_config_repository.dart';
 import 'package:cool_lodz/features/game/data/game_repository.dart';
+import 'package:cool_lodz/features/quest/data/quest_repository.dart';
+import 'package:cool_lodz/features/quest/quest_scan_screen.dart';
 import 'package:cool_lodz/features/route/data/address_search.dart';
 import 'package:cool_lodz/features/route/data/route_history_repository.dart';
 import 'package:cool_lodz/shared/map/base_map.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -124,7 +127,14 @@ List<Override> appTestOverrides({
   GameSettings? settings,
   GameRepository? game,
   AuthRepository? auth,
+  QuestRepository? quest,
+  FakeQrScanner? scanner,
 }) => [
+  questRepositoryProvider.overrideWithValue(quest ?? FakeQuestRepository()),
+  qrScannerBuilderProvider.overrideWithValue(
+    (scanner ?? FakeQrScanner()).build,
+  ),
+  assetLoaderProvider.overrideWithValue(readAssetFile),
   authRepositoryProvider.overrideWithValue(
     auth ?? FakeAuthRepository(user: const AppUser(uid: 'u1')),
   ),
@@ -214,5 +224,57 @@ class FakeGameRepository implements GameRepository {
   Stream<List<PointsEntry>> watchLog(String uid, {int limit = 10}) async* {
     yield log.reversed.take(limit).toList();
     yield* _logs.stream;
+  }
+}
+
+/// Visits like the rules: right code, one per place and day.
+class FakeQuestRepository implements QuestRepository {
+  FakeQuestRepository({Map<String, String>? codes})
+    : codes = codes ?? {'cool-002': 'K7M2QX', 'cool-007': 'H4P9TA'};
+
+  /// placeId → valid code (`questCodes`).
+  final Map<String, String> codes;
+  final visits = <String>{};
+  final _changes = StreamController<Set<String>>.broadcast();
+
+  @override
+  Stream<Set<String>> watchVisits(String uid) async* {
+    yield Set.of(visits);
+    yield* _changes.stream;
+  }
+
+  @override
+  Future<void> addVisit({
+    required String uid,
+    required String placeId,
+    required String code,
+    required double lat,
+    required double lon,
+    required DateTime now,
+  }) async {
+    final id = visitId(uid, placeId, now);
+    if (codes[placeId] != code || visits.contains(id)) {
+      throw const VisitRejected();
+    }
+    visits.add(id);
+    _changes.add(Set.of(visits));
+  }
+}
+
+/// Stand-in for the camera: tests call [scan] with a QR text.
+class FakeQrScanner {
+  ValueChanged<String>? _onCode;
+  bool permissionDenied = false;
+
+  void scan(String raw) => _onCode?.call(raw);
+
+  Widget build(
+    BuildContext context,
+    ValueChanged<String> onCode,
+    WidgetBuilder noPermission,
+  ) {
+    _onCode = onCode;
+    if (permissionDenied) return noPermission(context);
+    return const ColoredBox(key: Key('fake-camera'), color: Color(0xFF000000));
   }
 }

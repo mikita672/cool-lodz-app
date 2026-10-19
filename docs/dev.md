@@ -89,6 +89,8 @@ Routes for every screen already exist in `lib/app/router.dart`; a feature ticket
 
 **Game (APP-16).** Rules are pure functions in `lib/core/game/game_rules.dart` (numbers in `game_config.dart`); `GameService` (`features/game/`) applies them to events — «Prowadź» (S07), a QR scan, the quest password — and `FirestoreGameRepository.award` writes the result: `pointsLog` entries, absolute `points`/`weekId`/`weekPoints`/`badges` on `users/{uid}`, the `rankings/{uid}` mirror (with consent) and `FieldValue.increment` on the district and its week. Every batch carries at most 200 points (the rules cap each write), so «hasło» (200) and a badge (30) go in two batches. The heat level is the stronger of the IMGW alert and `config/game.heatOverride`. In demo mode Strażnik chłodu needs 1 place instead of 5 (`GameConfig.demoBadgeCoolGuardPlaces`).
 
+**Quest (S10, S11).** The quest comes from `assets/demo/quest.json` (+ names and positions from the cool places); progress is the user's own `visits` (readable by the owner). A scan checks, in order: the `coollodz://quest/{placeId}?c={kod}` format and that the place is in the quest → not scanned today (own visits) → within 150 m → the visit write, where the rules compare the code → `GameService.placeScanned` (+50, badges). The camera is behind `qrScannerBuilderProvider`; tests use `FakeQrScanner`. The reward code is a stable demo code per user (real MPK codes are a next step).
+
 ## Rules
 
 - **State:** Riverpod 3 (`flutter_riverpod`), no code generation. Repositories and clients are providers, so tests and demo mode can override them.

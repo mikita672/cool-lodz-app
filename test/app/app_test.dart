@@ -4,6 +4,7 @@ import 'package:cool_lodz/app/theme.dart';
 import 'package:cool_lodz/features/achievements/badges_view.dart';
 import 'package:cool_lodz/features/cool_places/cool_places_screen.dart';
 import 'package:cool_lodz/features/map/map_screen.dart';
+import 'package:cool_lodz/features/quest/quest_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -32,7 +33,7 @@ void main() {
 
     await tester.tap(find.text('Quest').last);
     await tester.pumpAndSettle();
-    expect(find.text('S10'), findsOneWidget);
+    expect(find.byType(QuestView), findsOneWidget);
     await tester.tap(find.text('Odznaki'));
     await tester.pumpAndSettle();
     expect(find.byType(BadgesView), findsOneWidget);

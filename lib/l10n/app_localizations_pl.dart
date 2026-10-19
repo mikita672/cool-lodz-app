@@ -1101,4 +1101,121 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String get gameHeatNoPoints =>
       'W trybie upału trasy z wyjściem 11:00–17:00 nie dają punktów. Wybierz poranek lub wieczór.';
+
+  @override
+  String get questTitle => 'Chłodne hasło';
+
+  @override
+  String get questIntro =>
+      'Odwiedzaj miejsca chłodu, skanuj kody QR przy wejściu i zbieraj litery hasła.';
+
+  @override
+  String questProgress(int found, int total) {
+    return '$found z $total liter';
+  }
+
+  @override
+  String get questScan => 'Skanuj kod QR';
+
+  @override
+  String get questPlacesTitle => 'Miejsca questu';
+
+  @override
+  String get questVisited => 'Odwiedzone';
+
+  @override
+  String get questToVisit => 'Do odwiedzenia';
+
+  @override
+  String questLetterOf(String letter) {
+    return 'Litera $letter';
+  }
+
+  @override
+  String get questHeatHint => 'Dziś odwiedzaj miejsca rano lub wieczorem';
+
+  @override
+  String questHeatHidden(int count) {
+    return 'W trybie upału ukrywamy miejsca na słońcu: $count';
+  }
+
+  @override
+  String get questPasswordTitle => 'Masz wszystkie litery!';
+
+  @override
+  String get questPasswordHint => 'Wpisz hasło';
+
+  @override
+  String get questPasswordCheck => 'Sprawdź';
+
+  @override
+  String get questPasswordWrong =>
+      'To nie to hasło. Ułóż litery w kolejności miejsc.';
+
+  @override
+  String get questRewardTitle => 'Hasło odgadnięte!';
+
+  @override
+  String get questRewardBody => 'Twój kod zniżki na przejazd MPK Łódź:';
+
+  @override
+  String get questRewardNote => 'Zachowaj go — przyda się przy zakupie biletu.';
+
+  @override
+  String get questLoadError => 'Nie udało się wczytać questu';
+
+  @override
+  String get scanTitle => 'Skaner QR';
+
+  @override
+  String get scanHint => 'Zeskanuj kod przy wejściu';
+
+  @override
+  String get scanChecking => 'Sprawdzamy kod…';
+
+  @override
+  String scanSuccess(String letter) {
+    return 'Nowa litera: $letter';
+  }
+
+  @override
+  String get scanBackToQuest => 'Wróć do questu';
+
+  @override
+  String get scanAgain => 'Skanuj ponownie';
+
+  @override
+  String get scanTooFar => 'Jesteś za daleko od miejsca';
+
+  @override
+  String scanTooFarDetail(int meters) {
+    return 'Podejdź bliżej wejścia (jesteś $meters m od miejsca, potrzeba do 150 m).';
+  }
+
+  @override
+  String get scanAlreadyToday => 'Ten kod już dziś zeskanowałeś';
+
+  @override
+  String get scanInvalid => 'Kod nieważny';
+
+  @override
+  String get scanNoLocation =>
+      'Włącz lokalizację, aby potwierdzić wizytę w miejscu';
+
+  @override
+  String get scanFailed =>
+      'Nie udało się zapisać wizyty. Sprawdź połączenie i spróbuj ponownie.';
+
+  @override
+  String get scanNoCameraTitle => 'Potrzebujemy aparatu';
+
+  @override
+  String get scanNoCameraBody =>
+      'Aparat służy tylko do odczytania kodu QR. Zdjęcia nie są zapisywane.';
+
+  @override
+  String get scanOpenSettings => 'Otwórz ustawienia';
+
+  @override
+  String get scanCameraError => 'Nie udało się uruchomić aparatu';
 }
