@@ -19,7 +19,6 @@ import '../../shared/widgets/layer_filter_chip.dart';
 import '../../shared/widgets/map_pin.dart';
 import '../../shared/widgets/offline_banner.dart';
 import '../../shared/widgets/search_field.dart';
-import '../alerts/data/alert_providers.dart';
 import '../cool_places/data/places_providers.dart';
 import '../cool_places/place_format.dart';
 import '../cool_places/place_sheet.dart';
@@ -124,7 +123,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     final l10n = AppLocalizations.of(context);
     final layers = ref.watch(mapLayersProvider);
     final senior = ref.watch(seniorModeProvider);
-    final alert = ref.watch(activeAlertProvider).value;
+    final alert = ref.watch(currentAlertProvider);
     final heatMode = ref.watch(heatLevelProvider) >= GameConfig.heatModeLevel;
     final offline = ref.watch(dataSourceProvider) == DataSource.fallback;
     final location = ref.watch(userLocationProvider).value;
@@ -278,10 +277,12 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                     HeatBanner(
                       key: const Key('map-heat-banner'),
                       level: alert.level,
-                      subtitle: l10n.mapAlertSubtitle(
-                        alert.source,
-                        '${alert.validTo.hour}:${alert.validTo.minute.toString().padLeft(2, '0')}',
-                      ),
+                      subtitle: isOverrideAlert(alert)
+                          ? null
+                          : l10n.mapAlertSubtitle(
+                              alert.source,
+                              '${alert.validTo.hour}:${alert.validTo.minute.toString().padLeft(2, '0')}',
+                            ),
                       onTap: () => context.push(Routes.alert),
                     ),
                   ],
@@ -290,6 +291,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                     _Pill(
                       icon: Icons.ac_unit_rounded,
                       text: l10n.mapHeatModeHint,
+                      onTap: () => context.push(Routes.alert),
                     ),
                   ],
                   if (offline) ...[
@@ -432,27 +434,31 @@ class _NoLocationCard extends StatelessWidget {
 }
 
 class _Pill extends StatelessWidget {
-  const _Pill({required this.icon, required this.text});
+  const _Pill({required this.icon, required this.text, this.onTap});
 
   final IconData icon;
   final String text;
+  final VoidCallback? onTap;
 
   @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(
-      horizontal: AppSizes.s12,
-      vertical: AppSizes.s8,
-    ),
-    decoration: BoxDecoration(
-      color: AppColors.primaryContainer,
-      borderRadius: BorderRadius.circular(AppSizes.radiusChip),
-    ),
-    child: Row(
-      children: [
-        Icon(icon, size: 18, color: AppColors.primary),
-        const SizedBox(width: AppSizes.s8),
-        Expanded(child: Text(text, style: AppTextStyles.label)),
-      ],
+  Widget build(BuildContext context) => GestureDetector(
+    onTap: onTap,
+    child: Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSizes.s12,
+        vertical: AppSizes.s8,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.primaryContainer,
+        borderRadius: BorderRadius.circular(AppSizes.radiusChip),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, size: 18, color: AppColors.primary),
+          const SizedBox(width: AppSizes.s8),
+          Expanded(child: Text(text, style: AppTextStyles.label)),
+        ],
+      ),
     ),
   );
 }

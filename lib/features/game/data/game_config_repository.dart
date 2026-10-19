@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/firebase/firebase_providers.dart';
 import '../../../core/firestore/collections.dart';
+import '../../../core/models/models.dart';
 import '../../alerts/data/alert_providers.dart';
 
 /// `config/game`: set by hand in the Firebase console for the demo.
@@ -40,3 +41,27 @@ final heatLevelProvider = Provider<int>((ref) {
   final override = ref.watch(gameSettingsProvider).value?.heatOverride ?? 0;
   return alert > override ? alert : override;
 });
+
+/// The alert S05, S10 and S14 show: the IMGW alert, or — when
+/// `config/game.heatOverride` is higher (demo) — an alert of that level for
+/// today in Łódź with an empty [Alert.title] and [Alert.source] (the UI
+/// then uses its own texts).
+final currentAlertProvider = Provider<Alert?>((ref) {
+  final alert = ref.watch(activeAlertProvider).value;
+  final override = ref.watch(gameSettingsProvider).value?.heatOverride ?? 0;
+  if (override <= (alert?.level ?? 0)) return alert;
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+  return Alert(
+    id: 'heatOverride-$override',
+    level: override,
+    title: '',
+    area: 'Łódź',
+    validFrom: today,
+    validTo: today.add(const Duration(hours: 22)),
+    source: '',
+  );
+});
+
+/// True for an alert made from `heatOverride` (no IMGW data behind it).
+bool isOverrideAlert(Alert alert) => alert.id.startsWith('heatOverride-');

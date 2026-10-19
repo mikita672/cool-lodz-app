@@ -1245,4 +1245,72 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get rankingLoadError => 'Nie udało się wczytać rankingu';
+
+  @override
+  String get alertTitle => 'Alert upałowy';
+
+  @override
+  String alertHeading(int level) {
+    return 'Ostrzeżenie przed upałem $level. stopnia';
+  }
+
+  @override
+  String alertPeriod(String area, String from, String to) {
+    return '$area · $from–$to';
+  }
+
+  @override
+  String alertToday(String area) {
+    return '$area · dziś';
+  }
+
+  @override
+  String alertSource(String source) {
+    return 'Źródło: $source';
+  }
+
+  @override
+  String get alertWhatToDo => 'Co robić';
+
+  @override
+  String get alertTip1 =>
+      'Pij wodę regularnie, nie czekaj, aż poczujesz pragnienie.';
+
+  @override
+  String get alertTip2 =>
+      'W najcieplejszych godzinach wybieraj trasy w cieniu i rób przerwy w chłodnych miejscach.';
+
+  @override
+  String get alertTip3 =>
+      'Zadzwoń do starszych bliskich lub sąsiadów i zapytaj, czy czegoś nie potrzebują.';
+
+  @override
+  String get alertOfficial => 'Oficjalne zalecenia';
+
+  @override
+  String get alertShowCool => 'Pokaż miejsca chłodu';
+
+  @override
+  String get alertHeatModeTitle => 'Tryb upału';
+
+  @override
+  String get alertHeatModeBody =>
+      'Trasy z wyjściem 11:00–17:00 nie dają dziś punktów, a quest ukrywa miejsca na słońcu. Miejsca chłodu są otwarte jak zwykle.';
+
+  @override
+  String get alertNone => 'Brak ostrzeżeń przed upałem';
+
+  @override
+  String get alertNoneBody =>
+      'Gdy IMGW ogłosi ostrzeżenie dla Łodzi, zobaczysz je tutaj.';
+
+  @override
+  String get alertPushFallback =>
+      'Ostrzeżenie przed upałem w Łodzi. Zobacz trasy w cieniu.';
+
+  @override
+  String get alertSee => 'Zobacz';
+
+  @override
+  String get alertOpenError => 'Nie udało się otworzyć strony';
 }

@@ -10,7 +10,9 @@ import 'package:cool_lodz/core/game/game_rules.dart';
 import 'package:cool_lodz/core/location/location_service.dart';
 import 'package:cool_lodz/core/models/models.dart';
 import 'package:cool_lodz/core/storage/preferences.dart';
+import 'package:cool_lodz/features/alerts/data/push_service.dart';
 import 'package:cool_lodz/features/auth/data/auth_repository.dart';
+import 'package:cool_lodz/features/auth/data/user_profile_repository.dart';
 import 'package:cool_lodz/features/game/data/game_config_repository.dart';
 import 'package:cool_lodz/features/game/data/game_repository.dart';
 import 'package:cool_lodz/features/leaderboard/data/ranking_repository.dart';
@@ -131,7 +133,13 @@ List<Override> appTestOverrides({
   QuestRepository? quest,
   FakeQrScanner? scanner,
   RankingRepository? ranking,
+  UserProfileRepository? profiles,
+  PushService? push,
 }) => [
+  userProfileRepositoryProvider.overrideWithValue(
+    profiles ?? FakeUserProfileRepository(),
+  ),
+  pushServiceProvider.overrideWithValue(push ?? FakePushService()),
   rankingRepositoryProvider.overrideWithValue(
     ranking ?? FakeRankingRepository(),
   ),
@@ -315,4 +323,28 @@ class FakeRankingRepository implements RankingRepository {
         RankingEntry(id: id, name: districtName(id), points: source[id] ?? 0),
     ]..sort((a, b) => b.points.compareTo(a.points));
   }
+}
+
+/// Push with controllable streams.
+class FakePushService implements PushService {
+  String? tokenValue = 'fcm-token-1';
+  PushMessage? initialMessage;
+  final refresh = StreamController<String>.broadcast();
+  final foregroundMessages = StreamController<PushMessage>.broadcast();
+  final openedMessages = StreamController<PushMessage>.broadcast();
+
+  @override
+  Future<String?> token() async => tokenValue;
+
+  @override
+  Stream<String> get tokenRefresh => refresh.stream;
+
+  @override
+  Stream<PushMessage> get foreground => foregroundMessages.stream;
+
+  @override
+  Stream<PushMessage> get opened => openedMessages.stream;
+
+  @override
+  Future<PushMessage?> initial() async => initialMessage;
 }

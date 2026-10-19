@@ -107,6 +107,25 @@ class FakeUserProfileRepository implements UserProfileRepository {
     return accepted[uid] ?? false;
   }
 
+  /// uid → saved token.
+  final tokens = <String, String?>{};
+
+  @override
+  Future<Consents?> loadConsents(String uid) async {
+    if (readError != null) throw readError!;
+    return consents[uid] ??
+        (accepted[uid] == true
+            ? const Consents(location: true, push: true, ranking: false)
+            : null);
+  }
+
+  /// Explicit consents per uid (default: push on when [accepted]).
+  final consents = <String, Consents>{};
+
+  @override
+  Future<void> saveFcmToken(String uid, String? token) async =>
+      tokens[uid] = token;
+
   @override
   Future<void> saveComfortProfile(String uid, ComfortProfile profile) async {
     if (profileSaveError != null) throw profileSaveError!;
@@ -154,9 +173,10 @@ List<Override> fakeAuthOverrides({
   FakeOnboardingStore? onboarding,
   FakeSystemPermissions? permissions,
 }) => [
-  ...appTestOverrides(prefs: prefs, auth: auth),
-  userProfileRepositoryProvider.overrideWithValue(
-    profiles ?? FakeUserProfileRepository(),
+  ...appTestOverrides(
+    prefs: prefs,
+    auth: auth,
+    profiles: profiles ?? FakeUserProfileRepository(),
   ),
   onboardingStoreProvider.overrideWithValue(
     onboarding ?? FakeOnboardingStore(),

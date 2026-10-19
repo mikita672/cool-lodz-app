@@ -44,6 +44,12 @@ abstract interface class UserProfileRepository {
   /// Whether S03 was completed for this account.
   Future<bool> hasAcceptedConsents(String uid);
 
+  /// The S03 choices, or null when S03 was never completed.
+  Future<Consents?> loadConsents(String uid);
+
+  /// Stores (or with null removes) `fcmToken` for heat alerts.
+  Future<void> saveFcmToken(String uid, String? token);
+
   /// Saves the S04 choice as `profile` {id, weights, seniorMode}.
   Future<void> saveComfortProfile(String uid, ComfortProfile profile);
 
@@ -86,6 +92,22 @@ class FirestoreUserProfileRepository implements UserProfileRepository {
     final snapshot = await _doc(uid).get();
     return snapshot.data()?['consents'] is Map;
   }
+
+  @override
+  Future<Consents?> loadConsents(String uid) async {
+    final raw = (await _doc(uid).get()).data()?['consents'];
+    if (raw is! Map) return null;
+    return Consents(
+      location: raw['location'] == true,
+      push: raw['push'] == true,
+      ranking: raw['ranking'] == true,
+    );
+  }
+
+  @override
+  Future<void> saveFcmToken(String uid, String? token) => _doc(
+    uid,
+  ).set({'fcmToken': token ?? FieldValue.delete()}, SetOptions(merge: true));
 
   @override
   Future<void> saveComfortProfile(String uid, ComfortProfile profile) =>

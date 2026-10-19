@@ -2199,6 +2199,114 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Nie udało się wczytać rankingu'**
   String get rankingLoadError;
+
+  /// No description provided for @alertTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Alert upałowy'**
+  String get alertTitle;
+
+  /// No description provided for @alertHeading.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ostrzeżenie przed upałem {level}. stopnia'**
+  String alertHeading(int level);
+
+  /// No description provided for @alertPeriod.
+  ///
+  /// In pl, this message translates to:
+  /// **'{area} · {from}–{to}'**
+  String alertPeriod(String area, String from, String to);
+
+  /// No description provided for @alertToday.
+  ///
+  /// In pl, this message translates to:
+  /// **'{area} · dziś'**
+  String alertToday(String area);
+
+  /// No description provided for @alertSource.
+  ///
+  /// In pl, this message translates to:
+  /// **'Źródło: {source}'**
+  String alertSource(String source);
+
+  /// No description provided for @alertWhatToDo.
+  ///
+  /// In pl, this message translates to:
+  /// **'Co robić'**
+  String get alertWhatToDo;
+
+  /// No description provided for @alertTip1.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pij wodę regularnie, nie czekaj, aż poczujesz pragnienie.'**
+  String get alertTip1;
+
+  /// No description provided for @alertTip2.
+  ///
+  /// In pl, this message translates to:
+  /// **'W najcieplejszych godzinach wybieraj trasy w cieniu i rób przerwy w chłodnych miejscach.'**
+  String get alertTip2;
+
+  /// No description provided for @alertTip3.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zadzwoń do starszych bliskich lub sąsiadów i zapytaj, czy czegoś nie potrzebują.'**
+  String get alertTip3;
+
+  /// No description provided for @alertOfficial.
+  ///
+  /// In pl, this message translates to:
+  /// **'Oficjalne zalecenia'**
+  String get alertOfficial;
+
+  /// No description provided for @alertShowCool.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pokaż miejsca chłodu'**
+  String get alertShowCool;
+
+  /// No description provided for @alertHeatModeTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Tryb upału'**
+  String get alertHeatModeTitle;
+
+  /// No description provided for @alertHeatModeBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Trasy z wyjściem 11:00–17:00 nie dają dziś punktów, a quest ukrywa miejsca na słońcu. Miejsca chłodu są otwarte jak zwykle.'**
+  String get alertHeatModeBody;
+
+  /// No description provided for @alertNone.
+  ///
+  /// In pl, this message translates to:
+  /// **'Brak ostrzeżeń przed upałem'**
+  String get alertNone;
+
+  /// No description provided for @alertNoneBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Gdy IMGW ogłosi ostrzeżenie dla Łodzi, zobaczysz je tutaj.'**
+  String get alertNoneBody;
+
+  /// No description provided for @alertPushFallback.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ostrzeżenie przed upałem w Łodzi. Zobacz trasy w cieniu.'**
+  String get alertPushFallback;
+
+  /// No description provided for @alertSee.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zobacz'**
+  String get alertSee;
+
+  /// No description provided for @alertOpenError.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie udało się otworzyć strony'**
+  String get alertOpenError;
 }
 
 class _AppLocalizationsDelegate

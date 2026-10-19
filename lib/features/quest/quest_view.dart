@@ -398,24 +398,27 @@ class _HeatHint extends StatelessWidget {
   final String text;
 
   @override
-  Widget build(BuildContext context) => Container(
-    key: const Key('quest-heat-hint'),
-    padding: const EdgeInsets.all(AppSizes.s12),
-    decoration: BoxDecoration(
-      color: AppColors.heat3,
-      borderRadius: BorderRadius.circular(AppSizes.radiusCard),
-    ),
-    child: Row(
-      children: [
-        const Icon(Icons.wb_sunny_rounded, color: AppColors.onPrimary),
-        const SizedBox(width: AppSizes.s8),
-        Expanded(
-          child: Text(
-            text,
-            style: AppTextStyles.bodyS.copyWith(color: AppColors.onPrimary),
+  Widget build(BuildContext context) => GestureDetector(
+    onTap: () => context.push(Routes.alert),
+    child: Container(
+      key: const Key('quest-heat-hint'),
+      padding: const EdgeInsets.all(AppSizes.s12),
+      decoration: BoxDecoration(
+        color: AppColors.heat3,
+        borderRadius: BorderRadius.circular(AppSizes.radiusCard),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.wb_sunny_rounded, color: AppColors.onPrimary),
+          const SizedBox(width: AppSizes.s8),
+          Expanded(
+            child: Text(
+              text,
+              style: AppTextStyles.bodyS.copyWith(color: AppColors.onPrimary),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     ),
   );
 }
