@@ -2151,6 +2151,54 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Nie udało się uruchomić aparatu'**
   String get scanCameraError;
+
+  /// No description provided for @rankingDistricts.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dzielnice'**
+  String get rankingDistricts;
+
+  /// No description provided for @rankingUsers.
+  ///
+  /// In pl, this message translates to:
+  /// **'Użytkownicy'**
+  String get rankingUsers;
+
+  /// No description provided for @rankingWeek.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ten tydzień'**
+  String get rankingWeek;
+
+  /// No description provided for @rankingSummer.
+  ///
+  /// In pl, this message translates to:
+  /// **'Całe lato'**
+  String get rankingSummer;
+
+  /// No description provided for @rankingEmpty.
+  ///
+  /// In pl, this message translates to:
+  /// **'Na razie nikt nie ma tu punktów. Zacznij od trasy w cieniu!'**
+  String get rankingEmpty;
+
+  /// No description provided for @rankingNoConsent.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie bierzesz udziału w rankingu. Możesz to zmienić w Profilu → Zgody i prywatność.'**
+  String get rankingNoConsent;
+
+  /// No description provided for @rankingNoDistrict.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wybierz dzielnicę w Profilu, aby Twoje punkty liczyły się także dla niej.'**
+  String get rankingNoDistrict;
+
+  /// No description provided for @rankingLoadError.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie udało się wczytać rankingu'**
+  String get rankingLoadError;
 }
 
 class _AppLocalizationsDelegate

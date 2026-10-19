@@ -13,6 +13,7 @@ import 'package:cool_lodz/core/storage/preferences.dart';
 import 'package:cool_lodz/features/auth/data/auth_repository.dart';
 import 'package:cool_lodz/features/game/data/game_config_repository.dart';
 import 'package:cool_lodz/features/game/data/game_repository.dart';
+import 'package:cool_lodz/features/leaderboard/data/ranking_repository.dart';
 import 'package:cool_lodz/features/quest/data/quest_repository.dart';
 import 'package:cool_lodz/features/quest/quest_scan_screen.dart';
 import 'package:cool_lodz/features/route/data/address_search.dart';
@@ -129,7 +130,11 @@ List<Override> appTestOverrides({
   AuthRepository? auth,
   QuestRepository? quest,
   FakeQrScanner? scanner,
+  RankingRepository? ranking,
 }) => [
+  rankingRepositoryProvider.overrideWithValue(
+    ranking ?? FakeRankingRepository(),
+  ),
   questRepositoryProvider.overrideWithValue(quest ?? FakeQuestRepository()),
   qrScannerBuilderProvider.overrideWithValue(
     (scanner ?? FakeQrScanner()).build,
@@ -276,5 +281,38 @@ class FakeQrScanner {
     _onCode = onCode;
     if (permissionDenied) return noPermission(context);
     return const ColoredBox(key: Key('fake-camera'), color: Color(0xFF000000));
+  }
+}
+
+/// Rankings from fixed lists.
+class FakeRankingRepository implements RankingRepository {
+  List<RankingEntry> summerUsers = const [];
+  List<RankingEntry> weekUsers = const [];
+  Map<String, int> summerDistricts = const {};
+  Map<String, int> weekDistricts = const {};
+
+  @override
+  Future<List<RankingEntry>> users(RankingPeriod period, String weekId) async =>
+      period == RankingPeriod.week ? weekUsers : summerUsers;
+
+  @override
+  Future<int> userRank(RankingPeriod period, String weekId, int points) async =>
+      (period == RankingPeriod.week ? weekUsers : summerUsers)
+          .where((e) => e.points > points)
+          .length +
+      1;
+
+  @override
+  Future<List<RankingEntry>> districts(
+    RankingPeriod period,
+    String weekId,
+  ) async {
+    final source = period == RankingPeriod.week
+        ? weekDistricts
+        : summerDistricts;
+    return [
+      for (final id in FirestoreDistricts.ids)
+        RankingEntry(id: id, name: districtName(id), points: source[id] ?? 0),
+    ]..sort((a, b) => b.points.compareTo(a.points));
   }
 }

@@ -15,6 +15,7 @@ import {
   deleteDoc,
   doc,
   getDoc,
+  getCountFromServer,
   getDocs,
   increment,
   limit,
@@ -389,6 +390,21 @@ describe('ranking (rankings/{uid})', () => {
       getDocs(query(col, where('weekId', '==', '2026-W43'), orderBy('weekPoints', 'desc'), limit(50))),
     );
     assert.deepEqual(week.docs.map((d) => d.id), ['alice']);
+  });
+
+  test('rank of the pinned own row: count of users with more points', async () => {
+    await seed({
+      'rankings/alice': { ...mirror(optedIn()), updatedAt: new Date() },
+      'rankings/dave': { ...mirror(optedIn({ nickname: 'Dawid', points: 50, weekId: '2026-W42', weekPoints: 50 })), updatedAt: new Date() },
+    });
+    const col = collection(db('bob'), 'rankings');
+    const above = await assertSucceeds(getCountFromServer(query(col, where('points', '>', 10))));
+    assert.equal(above.data().count, 2);
+    const weekAbove = await assertSucceeds(
+      getCountFromServer(query(col, where('weekId', '==', '2026-W43'), where('weekPoints', '>', 0))),
+    );
+    assert.equal(weekAbove.data().count, 1);
+    await assertFails(getCountFromServer(query(collection(db(null), 'rankings'), where('points', '>', 0))));
   });
 
   test('unauthenticated users cannot read rankings', async () => {

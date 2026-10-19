@@ -1218,4 +1218,31 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get scanCameraError => 'Nie udało się uruchomić aparatu';
+
+  @override
+  String get rankingDistricts => 'Dzielnice';
+
+  @override
+  String get rankingUsers => 'Użytkownicy';
+
+  @override
+  String get rankingWeek => 'Ten tydzień';
+
+  @override
+  String get rankingSummer => 'Całe lato';
+
+  @override
+  String get rankingEmpty =>
+      'Na razie nikt nie ma tu punktów. Zacznij od trasy w cieniu!';
+
+  @override
+  String get rankingNoConsent =>
+      'Nie bierzesz udziału w rankingu. Możesz to zmienić w Profilu → Zgody i prywatność.';
+
+  @override
+  String get rankingNoDistrict =>
+      'Wybierz dzielnicę w Profilu, aby Twoje punkty liczyły się także dla niej.';
+
+  @override
+  String get rankingLoadError => 'Nie udało się wczytać rankingu';
 }

@@ -435,5 +435,14 @@
   "scanNoCameraTitle": "Potrzebujemy aparatu",
   "scanNoCameraBody": "Aparat służy tylko do odczytania kodu QR. Zdjęcia nie są zapisywane.",
   "scanOpenSettings": "Otwórz ustawienia",
-  "scanCameraError": "Nie udało się uruchomić aparatu"
+  "scanCameraError": "Nie udało się uruchomić aparatu",
+
+  "rankingDistricts": "Dzielnice",
+  "rankingUsers": "Użytkownicy",
+  "rankingWeek": "Ten tydzień",
+  "rankingSummer": "Całe lato",
+  "rankingEmpty": "Na razie nikt nie ma tu punktów. Zacznij od trasy w cieniu!",
+  "rankingNoConsent": "Nie bierzesz udziału w rankingu. Możesz to zmienić w Profilu → Zgody i prywatność.",
+  "rankingNoDistrict": "Wybierz dzielnicę w Profilu, aby Twoje punkty liczyły się także dla niej.",
+  "rankingLoadError": "Nie udało się wczytać rankingu"
 }
