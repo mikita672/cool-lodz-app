@@ -30,8 +30,8 @@ abstract final class ReferenceRoutes {
     id: 'manufaktura_piotrkowska',
     from: RoutePoint(lat: 51.7794, lon: 19.4466, label: 'Manufaktura'),
     to: RoutePoint(
-      lat: 51.7720,
-      lon: 19.4570,
+      lat: 51.7676,
+      lon: 19.4568,
       label: 'ul. Piotrkowska (Pasaż Rubinsteina)',
     ),
     asset: 'assets/demo/routes_manufaktura_piotrkowska.json',

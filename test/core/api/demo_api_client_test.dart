@@ -74,7 +74,7 @@ void main() {
         ReferenceRoutes.match(
           request(
             const RoutePoint(lat: 51.7801, lon: 19.4475),
-            const RoutePoint(lat: 51.7720, lon: 19.4570),
+            const RoutePoint(lat: 51.7676, lon: 19.4568),
           ),
         ),
         manufaktura,

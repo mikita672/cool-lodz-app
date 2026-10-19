@@ -100,7 +100,7 @@ void main() {
     test('geometry is [lon, lat] → LatLng', () {
       final shaded = response.variant(RouteVariantType.shaded)!;
       expect(shaded.geometry.first, const LatLng(51.7794, 19.4466));
-      expect(shaded.geometry.last, const LatLng(51.7720, 19.4570));
+      expect(shaded.geometry.last, const LatLng(51.7676, 19.4568));
       final json = shaded.toJson()['geometry'] as Map<String, dynamic>;
       expect(json['type'], 'LineString');
       expect((json['coordinates'] as List).first, [19.4466, 51.7794]);
@@ -225,7 +225,7 @@ void main() {
           lon: 19.4466,
           label: 'Manufaktura',
         ),
-        to: const RoutePoint(lat: 51.7720, lon: 19.4570),
+        to: const RoutePoint(lat: 51.7676, lon: 19.4568),
         datetime: departure,
         profile: const RouteProfile(
           id: ProfileId.senior,
@@ -238,7 +238,7 @@ void main() {
         'lon': 19.4466,
         'label': 'Manufaktura',
       });
-      expect(json['to'], {'lat': 51.7720, 'lon': 19.4570});
+      expect(json['to'], {'lat': 51.7676, 'lon': 19.4568});
       expect(json['profile'], {
         'id': 'senior',
         'weights': {'shade': 90, 'time': 20, 'quiet': 60, 'air': 50},

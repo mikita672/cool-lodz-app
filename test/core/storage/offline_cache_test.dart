@@ -29,7 +29,7 @@ void main() {
     );
     final request = RouteRequest(
       from: const RoutePoint(lat: 51.7794, lon: 19.4466, label: 'Manufaktura'),
-      to: const RoutePoint(lat: 51.7720, lon: 19.4570),
+      to: const RoutePoint(lat: 51.7676, lon: 19.4568),
       datetime: DateTime(2026, 7, 15, 14, 30),
       profile: const RouteProfile(
         id: ProfileId.tourist,

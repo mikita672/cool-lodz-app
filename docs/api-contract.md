@@ -19,7 +19,7 @@ Request:
 ```jsonc
 {
   "from": { "lat": 51.7794, "lon": 19.4466, "label": "Manufaktura" },             // label optional
-  "to": { "lat": 51.7720, "lon": 19.4570, "label": "ul. Piotrkowska (Pasaż Rubinsteina)" },
+  "to": { "lat": 51.7676, "lon": 19.4568, "label": "ul. Piotrkowska (Pasaż Rubinsteina)" },
   "datetime": "2026-07-15T14:30:00+02:00",   // departure, local time with offset
   "profile": {
     "id": "senior",                           // senior | tourist | default
@@ -37,7 +37,7 @@ Response `200`:
   "variants": [                  // always 3: shortest, shaded, compromise
     {
       "variant": "shaded",       // shortest | shaded | compromise
-      "geometry": { "type": "LineString", "coordinates": [[19.4466, 51.7794], [19.4570, 51.7720]] },
+      "geometry": { "type": "LineString", "coordinates": [[19.4466, 51.7794], [19.4568, 51.7676]] },
       "segments": [              // coordinate index ranges [from, to] with their sun share
         { "from": 0, "to": 12, "sunShare": 0.15 }
       ],
@@ -162,7 +162,7 @@ Not a module D endpoint (the game lives in Firestore); the app reads the bundled
 ## Demo mode (`DemoApiClient`)
 
 - **Reference routes** (`lib/core/api/reference_routes.dart`):
-  - Manufaktura (51.7794, 19.4466) → ul. Piotrkowska (Pasaż Rubinsteina) (51.7720, 19.4570): `routes_manufaktura_piotrkowska.json`;
+  - Manufaktura (51.7794, 19.4466) → ul. Piotrkowska (Pasaż Rubinsteina) (51.7676, 19.4568): `routes_manufaktura_piotrkowska.json`;
   - Plac Wolności (51.7768, 19.4547) → OFF Piotrkowska (51.7596, 19.4577): `routes_plac_wolnosci_piotrkowska.json`.
 
   A request matches when both endpoints are within 300 m (same direction only). The departure whose `"HH:mm"` key is closest to the requested time of day is returned (a tie goes to the earlier one).
