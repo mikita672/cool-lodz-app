@@ -73,3 +73,6 @@ android/build/
 
 # Local emulator config for physical phones
 firebase.local.json
+
+# Local build settings (map tiles key etc.)
+defines.local.json

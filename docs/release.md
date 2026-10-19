@@ -59,6 +59,7 @@ Repository secrets (Settings → Secrets and variables → Actions → New repos
 | `ANDROID_KEYSTORE_PASSWORD` | with the key | store password |
 | `ANDROID_KEY_ALIAS` | with the key | `coollodz` |
 | `ANDROID_KEY_PASSWORD` | optional | key password, if different from the store password |
+| `MAP_TILES_KEY` | yes, for a usable map | free CARTO basemaps key from <https://carto.com/basemaps/apikey> (no account needed, 5 M tiles a month free). Without it every map tile only says «API KEY REQUIRED». |
 
 Without the key secrets every build gets a new throw-away debug key, so Android refuses to install a new build over an older one (uninstall first). The build number is the workflow run number, so `versionCode` always grows.
 
