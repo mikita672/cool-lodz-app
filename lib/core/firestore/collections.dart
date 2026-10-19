@@ -1,4 +1,4 @@
-/// Firestore collection and field names (spec «Данные»). The access rules
+/// Firestore collection and field names (spec "Data"). The access rules
 /// live in `firestore.rules`; keep both in sync.
 library;
 

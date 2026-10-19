@@ -1,6 +1,6 @@
 rules_version = '2';
 
-// Firestore rules for Cool Łódź (spec: «Данные», «Геймификация»).
+// Firestore rules for Cool Łódź (spec: "Data", "Gamification").
 // Tests: tools/firestore-tests (see docs/dev.md, "Firestore rules").
 //
 // Known limitation (spec): without Cloud Functions the client awards points;

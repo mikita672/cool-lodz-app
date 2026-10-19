@@ -178,6 +178,12 @@ abstract class AppLocalizations {
   /// **'Kompromis'**
   String get dsRouteCompromise;
 
+  /// No description provided for @dsRouteAlternative.
+  ///
+  /// In pl, this message translates to:
+  /// **'Inna trasa {number}'**
+  String dsRouteAlternative(int number);
+
   /// Route duration and length on the route card
   ///
   /// In pl, this message translates to:
@@ -1591,7 +1597,7 @@ abstract class AppLocalizations {
   /// No description provided for @mapLegendQuiet.
   ///
   /// In pl, this message translates to:
-  /// **'Ciemniej = głośniej'**
+  /// **'Ciemniej = ciszej'**
   String get mapLegendQuiet;
 
   /// No description provided for @mapLegendAir.

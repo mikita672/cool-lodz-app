@@ -55,7 +55,7 @@ class PlayerState {
 
 /// Firestore access for the game (S07 routes, S11 scans, S12, quest
 /// password). The rules only cap each write; the client adds the points
-/// (known limitation, spec «Геймификация»).
+/// (known limitation, spec "Gamification").
 abstract interface class GameRepository {
   Future<PlayerState> player(String uid);
 

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:cool_lodz/core/api/api_client.dart';
 import 'package:cool_lodz/core/api/demo_api_client.dart';
@@ -80,7 +79,10 @@ void main() {
         () => remote.getAir(bbox: any(named: 'bbox')),
       ).thenThrow(const ApiException(ApiErrorKind.network));
       final api = client();
-      expect(jsonEncode(await api.getAir()), jsonEncode(await demo.getAir()));
+      final offline = await api.getAir();
+      // The demo stations, but no made-up index.
+      expect(offline.map((s) => s.id), (await demo.getAir()).map((s) => s.id));
+      expect(offline.every((s) => s.indexLevel == null), isTrue);
       expect(flags, [true]);
 
       when(

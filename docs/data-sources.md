@@ -1,45 +1,45 @@
-# Źródła danych
+# Data sources
 
-## Miejsca chłodu (APP-05)
+## Cooling places — miejsca chłodu (APP-05)
 
-Plik: `assets/demo/places_cool.json` (kontrakt `/v1/places`), quest: `assets/demo/quest.json`.
+File: `assets/demo/places_cool.json` (contract `/v1/places`), quest: `assets/demo/quest.json`.
 
-> **Przed demo trzeba ponownie sprawdzić godziny otwarcia.** Dane zebrano 2026-10-19, czyli poza sezonem letnim. Tam, gdzie miejsce nie publikuje osobnych godzin letnich, w `hours` są godziny bieżące (zaznaczone w uwagach).
+> **Opening hours must be re-checked before the demo.** The data was collected on 2026-10-19, i.e. outside the summer season. Where a place does not publish separate summer hours, `hours` contains the current hours (marked in the notes).
 
-Zasady:
+Rules:
 
-- Współrzędne: OpenStreetMap / Nominatim (punkt budynku; dla parków punkt środkowy parku, dla Ogrodu Botanicznego adres kasy przy ul. Krzemienieckiej). Kody pocztowe: ze strony miejsca, a jeśli strona ich nie podaje, z OSM.
-- `hours: null` = otwarte całą dobę, `[]` = nieczynne w danym dniu.
-- `amenities` i `accessible` wpisane tylko wtedy, gdy potwierdza je źródło (strona miejsca, deklaracja dostępności) albo są oczywiste (toalety i klimatyzacja w centrum handlowym). `accessible: false` oznacza „brak potwierdzenia”, a nie „niedostępne”.
-- Punkty wody pitnej (`water`) nie zostały przypisane żadnemu miejscu: nie znaleziono źródła, które by je potwierdzało.
+- Coordinates: OpenStreetMap / Nominatim (the building's point; for parks the centre point of the park, for the Botanical Garden the address of the ticket office on ul. Krzemieniecka). Postcodes: from the place's website, or from OSM if the website does not give them.
+- `hours: null` = open 24 hours, `[]` = closed on that day.
+- `amenities` and `accessible` are filled in only when a source confirms them (the place's website, an accessibility statement) or they are obvious (toilets and air conditioning in a shopping centre). `accessible: false` means "not confirmed", not "inaccessible".
+- No drinking water points (`water`) were assigned to any place: no source confirming them was found.
 
-| id | Miejsce | Źródło godzin | Sprawdzono | Uwagi |
+| id | Place | Source of hours | Checked | Notes |
 | --- | --- | --- | --- | --- |
-| cool-001 | EC1 Łódź – Miasto Kultury | [ec1lodz.pl/ckini/informacje-praktyczne](https://ec1lodz.pl/ckini/informacje-praktyczne) | 2026-10-19 | Godziny Centrum Komiksu (wt–nd 10:00–18:00), jedyne godziny podane na stronie bez JavaScriptu. Godziny Centrum Nauki i Techniki i Planetarium mogą być inne. Brak osobnych godzin letnich. Wejścia bezprogowe, drzwi automatyczne. |
-| cool-002 | Manufaktura | [manufaktura.com/godziny-otwarcia/obiekt](https://manufaktura.com/godziny-otwarcia/obiekt) | 2026-10-19 | Galeria handlowa pn–sob 10:00–22:00. W niedziele niehandlowe galeria jest zamknięta, czynne jest Qulinarium (12:00–20:00), i te godziny wpisano na niedzielę. Toalety dla osób z niepełnosprawnościami: [dostępność](https://manufaktura.com/site/613/dostepnosc-w-manufakturze). |
-| cool-003 | Galeria Łódzka | [galeria-lodzka.pl/o-centrum/godziny-otwarcia](https://www.galeria-lodzka.pl/o-centrum/godziny-otwarcia/) | 2026-10-19 | Pn–sob 9:30–21:00. W niedzielę wpisano „nieczynne”; strona podaje 10:00–20:00, co dotyczy tylko niedziel handlowych. |
-| cool-004 | Port Łódź | [portlodz.pl/pl/godziny-otwarcia](https://portlodz.pl/pl/godziny-otwarcia) | 2026-10-19 | Pn–sob 10:00–21:00 (dane strukturalne strony). W niedziele niehandlowe centrum jest nieczynne, w handlowe 10:00–20:00. |
-| cool-005 | Dworzec Łódź Fabryczna | [plk-sa.pl/…/dworzec-lodz-fabryczna/o-dworcu](https://www.plk-sa.pl/informacje/dworce/dworzec-lodz-fabryczna/o-dworcu) | 2026-10-19 | Dworzec czynny całodobowo. Toalety płatne (czynne całą dobę, dostosowane), 10 wind. |
-| cool-006 | Mediateka MeMo (filia nr 29) | [biblioteka.lodz.pl/filie/filia-nr-29-mediateka-memo](https://www.biblioteka.lodz.pl/filie/filia-nr-29-mediateka-memo/) | 2026-10-19 | Godziny bieżące; w lipcu i sierpniu filie mogą mieć skrócone godziny. Winda i toalety dostosowane wg [deklaracji dostępności](https://www.biblioteka.lodz.pl/deklaracja-dostepnosci/). |
-| cool-007 | Biblioteka Wolność (filia nr 39) | [biblioteka.lodz.pl/filie/filia-nr-39-biblioteka-wolnosc](https://www.biblioteka.lodz.pl/filie/filia-nr-39-biblioteka-wolnosc/) | 2026-10-19 | Godziny bieżące; w wakacje mogą być inne. Parter, toaleta dostosowana wg deklaracji dostępności. |
-| cool-008 | Wojewódzka Biblioteka Publiczna | [nowa.wbp.lodz.pl/godziny-otwarcia](https://nowa.wbp.lodz.pl/godziny-otwarcia/) | 2026-10-19 | Godziny bieżące (pn–pt 8:00–19:45, sob 8:00–15:00); brak informacji o godzinach letnich. Wejście dla wózków, winda i toaleta na parterze wg [deklaracji dostępności](https://nowa.wbp.lodz.pl/deklaracja-dostepnosci/). |
-| cool-009 | Muzeum Sztuki ms¹ | [msl.org.pl/godziny-otwarcia-1](https://msl.org.pl/godziny-otwarcia-1) | 2026-10-19 | Brak osobnych godzin letnich. Dostępność nie potwierdzona na stronie, stąd `accessible: false`. |
-| cool-010 | Muzeum Sztuki ms² | [msl.org.pl/godziny-otwarcia-1](https://msl.org.pl/godziny-otwarcia-1) | 2026-10-19 | Jak ms¹. |
-| cool-011 | Muzeum Miasta Łodzi | [muzeum-lodz.pl/palac-rodziny-poznanskich-zaplanuj-wizyte](https://muzeum-lodz.pl/palac-rodziny-poznanskich-zaplanuj-wizyte/) | 2026-10-19 | Brak osobnych godzin letnich. Platforma schodowa przy wejściu od ul. Zachodniej (z pomocą obsługi), toaleta „Komfortka”. Pałac zamknięty 27–31.10.2026. |
-| cool-012 | Centralne Muzeum Włókiennictwa | [cmwl.pl/public/informacje/godziny-otwarcia](https://cmwl.pl/public/informacje/godziny-otwarcia) | 2026-10-19 | Brak osobnych godzin letnich. Dostępność nie potwierdzona. |
-| cool-013 | Muzeum Kinematografii | [muzeumkinematografii.pl/wizyta/zaplanuj-wizyte](https://muzeumkinematografii.pl/wizyta/zaplanuj-wizyte/) | 2026-10-19 | Brak osobnych godzin letnich. Windy i 3 toalety dostosowane wg [strony o dostępności](https://muzeumkinematografii.pl/wizyta/muzeum-dostepne/). |
-| cool-015 | Park Źródliska I | [zzm.lodz.pl/…/parki-i-zielence](https://zzm.lodz.pl/zarzad-zieleni-miejskiej/zielen/parki-i-zielence/) | 2026-10-19 | ZZM nie podaje godzin; park jest ogrodzony, więc trzeba sprawdzić, czy bramy są zamykane na noc. Staw i zbiorniki wodne. |
-| cool-016 | Park im. H. Sienkiewicza | jw. | 2026-10-19 | Godziny nie podane; fontanna. |
-| cool-017 | Park im. S. Staszica | jw. | 2026-10-19 | Godziny nie podane; staw. Niskie ogrodzenie. |
-| cool-018 | Park im. ks. J. Poniatowskiego | jw. | 2026-10-19 | Godziny nie podane; staw, fontanna posadzkowa, automatyczna toaleta dostosowana dla osób z niepełnosprawnościami. |
-| cool-019 | Park Helenów | jw. | 2026-10-19 | Godziny nie podane; stawy. |
-| cool-020 | Ogród Botaniczny w Łodzi | [botaniczny.lodz.pl/ogrod-botaniczny/godziny-otwarcia](https://www.botaniczny.lodz.pl/ogrod-botaniczny/godziny-otwarcia/) | 2026-10-19 | Godziny sezonu maj–sierpień (codziennie 9:00–20:00); w październiku 9:00–17:00, od 1 listopada do 31 marca nieczynny. Wstęp płatny. |
+| cool-001 | EC1 Łódź – Miasto Kultury | [ec1lodz.pl/ckini/informacje-praktyczne](https://ec1lodz.pl/ckini/informacje-praktyczne) | 2026-10-19 | Hours of the Comics Centre (Tue–Sun 10:00–18:00), the only hours given on the site without JavaScript. The hours of the Science and Technology Centre and the Planetarium may differ. No separate summer hours. Step-free entrances, automatic doors. |
+| cool-002 | Manufaktura | [manufaktura.com/godziny-otwarcia/obiekt](https://manufaktura.com/godziny-otwarcia/obiekt) | 2026-10-19 | Shopping centre Mon–Sat 10:00–22:00. On non-trading Sundays the shopping centre is closed but Qulinarium is open (12:00–20:00), and those hours are entered for Sunday. Toilets for people with disabilities: [accessibility](https://manufaktura.com/site/613/dostepnosc-w-manufakturze). |
+| cool-003 | Galeria Łódzka | [galeria-lodzka.pl/o-centrum/godziny-otwarcia](https://www.galeria-lodzka.pl/o-centrum/godziny-otwarcia/) | 2026-10-19 | Mon–Sat 9:30–21:00. Sunday is entered as "closed"; the site gives 10:00–20:00, which applies only to trading Sundays. |
+| cool-004 | Port Łódź | [portlodz.pl/pl/godziny-otwarcia](https://portlodz.pl/pl/godziny-otwarcia) | 2026-10-19 | Mon–Sat 10:00–21:00 (the site's structured data). Closed on non-trading Sundays, 10:00–20:00 on trading Sundays. |
+| cool-005 | Dworzec Łódź Fabryczna | [plk-sa.pl/…/dworzec-lodz-fabryczna/o-dworcu](https://www.plk-sa.pl/informacje/dworce/dworzec-lodz-fabryczna/o-dworcu) | 2026-10-19 | The station is open 24 hours. Paid toilets (open 24 hours, accessible), 10 lifts. |
+| cool-006 | Mediateka MeMo (filia nr 29) | [biblioteka.lodz.pl/filie/filia-nr-29-mediateka-memo](https://www.biblioteka.lodz.pl/filie/filia-nr-29-mediateka-memo/) | 2026-10-19 | Current hours; in July and August branches may have shorter hours. Lift and accessible toilets according to the [accessibility statement](https://www.biblioteka.lodz.pl/deklaracja-dostepnosci/). |
+| cool-007 | Biblioteka Wolność (filia nr 39) | [biblioteka.lodz.pl/filie/filia-nr-39-biblioteka-wolnosc](https://www.biblioteka.lodz.pl/filie/filia-nr-39-biblioteka-wolnosc/) | 2026-10-19 | Current hours; may differ during the summer holidays. Ground floor, accessible toilet according to the accessibility statement. |
+| cool-008 | Wojewódzka Biblioteka Publiczna | [nowa.wbp.lodz.pl/godziny-otwarcia](https://nowa.wbp.lodz.pl/godziny-otwarcia/) | 2026-10-19 | Current hours (Mon–Fri 8:00–19:45, Sat 8:00–15:00); no information on summer hours. Wheelchair entrance, lift and toilet on the ground floor according to the [accessibility statement](https://nowa.wbp.lodz.pl/deklaracja-dostepnosci/). |
+| cool-009 | Muzeum Sztuki ms¹ | [msl.org.pl/godziny-otwarcia-1](https://msl.org.pl/godziny-otwarcia-1) | 2026-10-19 | No separate summer hours. Accessibility not confirmed on the site, hence `accessible: false`. |
+| cool-010 | Muzeum Sztuki ms² | [msl.org.pl/godziny-otwarcia-1](https://msl.org.pl/godziny-otwarcia-1) | 2026-10-19 | Same as ms¹. |
+| cool-011 | Muzeum Miasta Łodzi | [muzeum-lodz.pl/palac-rodziny-poznanskich-zaplanuj-wizyte](https://muzeum-lodz.pl/palac-rodziny-poznanskich-zaplanuj-wizyte/) | 2026-10-19 | No separate summer hours. Stair platform at the entrance from ul. Zachodnia (with staff assistance), «Komfortka» toilet. The palace is closed 27–31.10.2026. |
+| cool-012 | Centralne Muzeum Włókiennictwa | [cmwl.pl/public/informacje/godziny-otwarcia](https://cmwl.pl/public/informacje/godziny-otwarcia) | 2026-10-19 | No separate summer hours. Accessibility not confirmed. |
+| cool-013 | Muzeum Kinematografii | [muzeumkinematografii.pl/wizyta/zaplanuj-wizyte](https://muzeumkinematografii.pl/wizyta/zaplanuj-wizyte/) | 2026-10-19 | No separate summer hours. Lifts and 3 accessible toilets according to the [accessibility page](https://muzeumkinematografii.pl/wizyta/muzeum-dostepne/). |
+| cool-015 | Park Źródliska I | [zzm.lodz.pl/…/parki-i-zielence](https://zzm.lodz.pl/zarzad-zieleni-miejskiej/zielen/parki-i-zielence/) | 2026-10-19 | ZZM does not give hours; the park is fenced, so it needs checking whether the gates are locked at night. Pond and water features. |
+| cool-016 | Park im. H. Sienkiewicza | as above | 2026-10-19 | Hours not given; fountain. |
+| cool-017 | Park im. S. Staszica | as above | 2026-10-19 | Hours not given; pond. Low fence. |
+| cool-018 | Park im. ks. J. Poniatowskiego | as above | 2026-10-19 | Hours not given; pond, ground-level fountain, automatic toilet accessible to people with disabilities. |
+| cool-019 | Park Helenów | as above | 2026-10-19 | Hours not given; ponds. |
+| cool-020 | Ogród Botaniczny w Łodzi | [botaniczny.lodz.pl/ogrod-botaniczny/godziny-otwarcia](https://www.botaniczny.lodz.pl/ogrod-botaniczny/godziny-otwarcia/) | 2026-10-19 | Season hours May–August (daily 9:00–20:00); in October 9:00–17:00, closed from 1 November to 31 March. Paid entry. |
 
 ### Quest „Chłodne hasło”
 
-Hasło **CHŁODNO**. 7 miejsc tworzy pieszą trasę przez Śródmieście (5 km w linii prostej, ok. 6 km pieszo) od Manufaktury do Galerii Łódzkiej. Kod QR wisi przy ogólnodostępnym wejściu.
+Password (hasło) **CHŁODNO**. The 7 places form a walking route through Śródmieście (5 km in a straight line, about 6 km on foot) from Manufaktura to Galeria Łódzka. The QR code hangs by the public entrance.
 
-| Kolejność | Litera | id | Miejsce |
+| Order | Letter | id | Place |
 | --- | --- | --- | --- |
 | 1 | C | cool-002 | Manufaktura |
 | 2 | H | cool-007 | Biblioteka Wolność (pl. Wolności 4) |
@@ -49,11 +49,11 @@ Hasło **CHŁODNO**. 7 miejsc tworzy pieszą trasę przez Śródmieście (5 km w
 | 6 | N | cool-001 | EC1 Łódź – Miasto Kultury |
 | 7 | O | cool-003 | Galeria Łódzka |
 
-W poniedziałki nieczynne są MeMo i EC1, w niedziele Biblioteka Wolność i (w niedziele niehandlowe) Galeria Łódzka. Quest nie wymaga zebrania liter jednego dnia.
+MeMo and EC1 are closed on Mondays; Biblioteka Wolność and (on non-trading Sundays) Galeria Łódzka are closed on Sundays. The quest does not require collecting the letters in one day.
 
-Palmiarnia (szklarnia tropikalna) celowo nie jest na liście: latem jest w niej ciepło i wilgotno, więc nie nadaje się na miejsce chłodu.
+Palmiarnia (the tropical glasshouse) is deliberately not on the list: in summer it is warm and humid inside, so it is not suitable as a cooling place.
 
-## Dane demo: trasy, alerty, warstwy (APP-04)
+## Demo data: routes, alerts, layers (APP-04)
 
 The app runs on the files in `assets/demo/` until module D has a public API. They follow [api-contract.md](api-contract.md). This page lists where each file comes from, under which licence, and which numbers are synthetic.
 
@@ -69,6 +69,7 @@ Demo day: **15 July 2026** (a heatwave day, times in CEST, +02:00). Area of the 
 | `layer_green.geojson` | OpenStreetMap: `leisure=park`, named `leisure=garden`, `natural=wood`, named `landuse=grass/forest`; polygons ≥ 800 m², simplified to 2 m | polygons, names, `osm` ids | — |
 | `layer_shade_1430.geojson` | derived from OpenStreetMap trees (`natural=tree`, `natural=tree_row`), parks and streets | positions of trees, parks and streets | the `shade` values and the building-shadow strips |
 | `layer_noise.geojson` | OpenStreetMap roads (`highway=trunk/primary/secondary/tertiary`) | road geometry | `db` values |
+| `streets_core.geojson` | OpenStreetMap named streets in the tenement grid (`19.435–19.480 × 51.755–51.785`), merged per name and class, simplified to 3 m; built by `tools/demo-data/build_streets.py` from `osm_streets.json` (downloaded 2026-10-19 from the overpass.private.coffee mirror, data as of 2026-05-31) | centrelines | `w`, the street width by road class (18–40 m) |
 | `air.json` | GIOŚ station list, [api.gios.gov.pl](https://api.gios.gov.pl/pjp-api/v1/rest/station/findAll) | the 4 Łódź stations: names, coordinates | `indexLevel`, `updatedAt` |
 | `places_water.json` | OpenStreetMap `amenity=drinking_water` inside the Łódź city boundary | all points | — |
 | `places_bench.json` | OpenStreetMap `amenity=bench` in the Śródmieście bbox, the 500 closest to ul. Piotrkowska (51.7700, 19.4560) | all points | — |
@@ -128,10 +129,11 @@ Python 3, standard library only. Downloads go to `tools/demo-data/raw/` (git-ign
 
 ```sh
 cd tools/demo-data
-python3 -I fetch_osm.py      # 3 Overpass queries
+python3 -I fetch_osm.py      # 3 Overpass queries (OVERPASS_URL=… for a mirror)
 python3 -I fetch_routes.py   # 6 router requests
 python3 -I fetch_gios.py
 python3 -I build.py [raw_dir] [path/to/places_cool.json]
+python3 -I build_streets.py [raw_dir]   # streets_core.geojson for the live shade layer
 flutter test test/assets/demo_assets_test.dart
 ```
 

@@ -1,12 +1,12 @@
 Closes #
 
-## Что сделано
+## What was done
 -
 
-## Проверка
-- [ ] `flutter analyze` без ошибок
-- [ ] `flutter test` зелёный, новые правила покрыты тестами
-- [ ] Проверено на эмуляторе Android, скриншот ниже
-- [ ] Чек-лист «Готово, когда» в issue выполнен
+## Checks
+- [ ] `flutter analyze` with no errors
+- [ ] `flutter test` green, new rules covered by tests
+- [ ] Checked on an Android emulator, screenshot below
+- [ ] The "Done when" checklist in the issue is complete
 
-## Скриншот
+## Screenshot

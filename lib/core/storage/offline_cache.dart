@@ -7,7 +7,7 @@ import '../models/models.dart';
 import 'preferences.dart';
 
 /// The last route and the cool places list, kept for use without network
-/// (НФТ «Офлайн»). Written after successful remote calls.
+/// (spec, non-functional requirements: "Offline"). Written after successful remote calls.
 class OfflineCache {
   OfflineCache(this._prefs, {DateTime Function()? clock})
     : _clock = clock ?? DateTime.now;

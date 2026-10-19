@@ -104,7 +104,7 @@ void main() {
         weights: ProfileWeights(shade: 60, time: 60, quiet: 30, air: 30),
       ),
     );
-    expect((await c.getRoutes(req())).variants, hasLength(3));
+    expect((await c.getRoutes(req())).variants, hasLength(2));
     await c.getRoutes(req());
     expect(assetReads.where((p) => p.contains('layer_shade')), hasLength(1));
   });
@@ -123,6 +123,6 @@ void main() {
     );
     await expectLater(c.getRoutes(req), throwsA(anything));
     assetsBroken = false;
-    expect((await c.getRoutes(req)).variants, hasLength(3));
+    expect((await c.getRoutes(req)).variants, hasLength(2));
   });
 }

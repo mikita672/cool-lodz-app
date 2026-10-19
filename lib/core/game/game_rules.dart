@@ -140,7 +140,7 @@ class GameHistory {
 bool _sameDay(DateTime a, DateTime b) =>
     a.year == b.year && a.month == b.month && a.day == b.day;
 
-/// Pure game rules from the spec («Геймификация»). Numbers live in
+/// Pure game rules from the spec ("Gamification"). Numbers live in
 /// [GameConfig].
 abstract final class GameRules {
   /// Heat mode (alert level 3): routes leaving 11:00–17:00 earn nothing.

@@ -1,6 +1,6 @@
 # Module D API contract (as used by the app)
 
-Based on section 6 of the brief and the spec section «Данные». Module D has no public server yet, so the app computes the contract **on the phone** (`LiveApiClient`, see [Live mode](#live-mode-liveapiclient) below) from public APIs and the bundled files in `assets/demo/`, which follow this contract exactly. Coordinates are WGS84; GeoJSON order is `[lon, lat]`.
+Based on section 6 of the brief and the spec section "Data". Module D has no public server yet, so the app computes the contract **on the phone** (`LiveApiClient`, see [Live mode](#live-mode-liveapiclient) below) from public APIs and the bundled files in `assets/demo/`, which follow this contract exactly. Coordinates are WGS84; GeoJSON order is `[lon, lat]`.
 
 Which client the app uses (`apiClientProvider` in `lib/core/api/api_providers.dart`):
 
@@ -44,9 +44,9 @@ Response `200`:
 ```jsonc
 {
   "coverage": "full",            // full | approximate («Dla tego obszaru cień jest przybliżony»)
-  "variants": [                  // always 3: shortest, shaded, compromise
+  "variants": [                  // 1–5: shortest, shaded, compromise, then alternative(s)
     {
-      "variant": "shaded",       // shortest | shaded | compromise
+      "variant": "shaded",       // shortest | shaded | compromise | alternative
       "geometry": { "type": "LineString", "coordinates": [[19.4466, 51.7794], [19.4568, 51.7676]] },
       "segments": [              // coordinate index ranges [from, to] with their sun share
         { "from": 0, "to": 12, "sunShare": 0.15 }
@@ -139,7 +139,7 @@ New endpoint requested from module D (issue DEP-04). Returns a GeoJSON `FeatureC
 
 - `shade` — properties `{ "shade": 0.8 }` (share of shade at `datetime`, 0..1);
 - `green` — properties `{ "kind": "park" }`;
-- `noise` — properties `{ "db": 65 }`.
+- `noise` — properties `{ "db": 65 }`. The «Cisza» filter does not draw these bands: it shows where it is quiet, derived on the phone (`features/map/data/quiet_layer.dart`) as the ~40 m cells outside every noise band (`quiet: 1`), and those inside a park or at least 120 m from every band (`quiet: 2`, darker).
 
 ## POST /v1/reports  (S15, optional)
 
@@ -189,7 +189,8 @@ Not a module D endpoint (the game lives in Firestore); the app reads the bundled
 | `POST /v1/routes` | `LiveRouteEngine`: OSRM foot routes from the public FOSSGIS router (`https://routing.openstreetmap.de/routed-foot`) scored by `ShadeModel` |
 | `GET /v1/alerts` | IMGW-PIB `https://danepubliczne.imgw.pl/api/data/warningsmeteo`, heat warnings (`Upał`) whose `teryt` contains `1061` (city of Łódź); `lat`/`lon` are ignored |
 | `GET /v1/air` | GIOŚ PJP API v1: `station/findAll` once, then `aqindex/getIndex/{id}` for the Łódź stations, filtered by `bbox` |
-| `GET /v1/places`, `/v1/layers/*`, quest | the bundled files, as in demo mode (the shade layer is for 14:30, so the map offers only that slot) |
+| `GET /v1/layers/shade` | `ShadeLayerBuilder` (`shade_layer.dart`): the `trees` polygons of `layer_shade_1430.geojson` plus building-shadow strips drawn for the asked `datetime` on the street centrelines of `streets_core.geojson` (so the map offers every slot 08:00–20:00) |
+| `GET /v1/places`, `/v1/layers/green` and `noise`, quest | the bundled files, as in demo mode |
 
 **Routes.** One request with `alternatives=2`, plus up to 4 via-point detours in parallel: two points 20 % of the distance (120–500 m) to each side of the middle of the straight line, and up to two parks of `layer_green.geojson` whose detour is at most 1.3× the straight line. Out-and-back spurs to a via point are cut, near-duplicates (length within 2 %, middle within 40 m) dropped, detours over 1.6× the shortest dropped. Then:
 
@@ -197,7 +198,7 @@ Not a module D endpoint (the game lives in Firestore); the app reads the bundled
 - **shaded**: the least sun at the departure among candidates at most 1.5× slower;
 - **compromise**: among the other candidates with less sun than the shortest and no slower than the shaded one, the lowest `w_shade · sun + w_time · 2 · extra/shortest` (profile weights, normalised); without such a candidate the better of shortest and shaded.
 
-If no detour is shadier, the three variants can be the same walk. `segments` group edges of similar sun (≥ 80 m, steps ≥ 0.1, at most 12); `sunShareByHour` runs the walk for every departure 08:00–20:00 on the request's day (Europe/Warsaw); `stops` are cool places within 80 m and drinking water within 25 m of the line (not within 150 m of the start, at most 4 of each, in walking order). `coverage` is `full` only when every candidate stays inside the bundled layers (Śródmieście, bbox `19.425,51.745,19.495,51.790`). Straight lines over 25 km and OSRM `NoRoute`/`NoSegment` give `404 route_not_found`.
+Each distinct walk is offered once: the named variants that differ (a single possible walk gives one variant, `shortest`), then the other distinct candidates as `alternative` (least sun first), at most 5 variants in all. The app shows alternatives as «Inna trasa 1», «Inna trasa 2»… `segments` group edges of similar sun (≥ 80 m, steps ≥ 0.1, at most 12); `sunShareByHour` runs the walk for every departure 08:00–20:00 on the request's day (Europe/Warsaw); `stops` are cool places within 80 m and drinking water within 25 m of the line (not within 150 m of the start, at most 4 of each, in walking order). `coverage` is `full` only when every candidate stays inside the bundled layers (Śródmieście, bbox `19.425,51.745,19.495,51.790`). Straight lines over 25 km and OSRM `NoRoute`/`NoSegment` give `404 route_not_found`.
 
 **Shade model** (`shade_model.dart`, the model of [data-sources.md](data-sources.md#sun-and-shade-model-synthetic) without the per-variant calibration): per edge, the sun position (`sun.dart`) at the time the walker gets there; tree crowns from the `trees` polygons of `layer_shade_1430.geojson` and parks/woods (0.8), stronger when the sun is low; building shadow of a street canyon — 16 m tenements and 18 m streets in the Śródmieście grid (`19.435–19.480 × 51.755–51.785`), 10 m / 24 m elsewhere, none inside parks — `0.6 × shadow across / width`. Sun below 2° counts as shade.
 

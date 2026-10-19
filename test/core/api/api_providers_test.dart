@@ -47,8 +47,8 @@ void main() {
     expect(c.read(apiClientProvider), isA<FallbackApiClient>());
     expect(c.read(isDemoModeEffectiveProvider), isFalse);
     expect(c.read(dataSourceProvider), DataSource.remote);
-    // The map shade layer is still the bundled 14:30 file.
-    expect(c.read(staticShadeLayerProvider), isTrue);
+    // The on-phone API draws the shade layer for any time.
+    expect(c.read(staticShadeLayerProvider), isFalse);
     await c.read(apiClientProvider).getAir();
     verify(() => live.getAir()).called(1);
     verifyZeroInteractions(remote);

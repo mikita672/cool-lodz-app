@@ -9,8 +9,9 @@ import 'osrm_client.dart';
 import 'shade_model.dart';
 
 /// `POST /v1/routes` computed on the phone: OSRM foot routes (with
-/// alternatives and via-point detours) scored by [ShadeModel] into the three
-/// variants shortest / shaded / compromise.
+/// alternatives and via-point detours) scored by [ShadeModel] into the
+/// variants shortest / shaded / compromise (only the distinct ones) plus
+/// further distinct walks as alternatives.
 class LiveRouteEngine {
   LiveRouteEngine({
     required this.osrm,
@@ -31,6 +32,9 @@ class LiveRouteEngine {
 
   /// Detours longer than this × the shortest walk are dropped.
   static const maxDetourFactor = 1.6;
+
+  /// At most this many variants (named ones first, then alternatives).
+  static const maxVariants = 5;
 
   /// The shaded variant may take at most this × the shortest walk.
   static const maxShadedFactor = 1.5;
@@ -123,14 +127,33 @@ class LiveRouteEngine {
         )
         ? RouteCoverage.full
         : RouteCoverage.approximate;
+    // Each distinct walk once: the named variants that differ, then the
+    // other candidates (least sun first) as alternatives, at most
+    // [maxVariants]. A single possible walk gives a single variant.
+    // When two names share a walk, the profile's default name (S07 opens
+    // on it: shaded for Senior, compromise otherwise) keeps it.
+    final senior = request.profile.id == ProfileId.senior;
+    final picked = <(RouteVariantType, _Candidate)>[];
+    for (final (type, c) in [
+      (RouteVariantType.shortest, shortest),
+      if (senior) (RouteVariantType.shaded, shaded),
+      (RouteVariantType.compromise, compromise),
+      if (!senior) (RouteVariantType.shaded, shaded),
+    ]) {
+      if (!picked.any((p) => identical(p.$2, c))) picked.add((type, c));
+    }
+    picked.sort((a, b) => a.$1.index.compareTo(b.$1.index));
+    final rest = [
+      for (final c in candidates)
+        if (!picked.any((p) => identical(p.$2, c))) c,
+    ]..sort((a, b) => a.sun.compareTo(b.sun));
+    for (final c in rest.take(maxVariants - picked.length)) {
+      picked.add((RouteVariantType.alternative, c));
+    }
     return RouteResponse(
       coverage: coverage,
       variants: [
-        for (final (type, c) in [
-          (RouteVariantType.shortest, shortest),
-          (RouteVariantType.shaded, shaded),
-          (RouteVariantType.compromise, compromise),
-        ])
+        for (final (type, c) in picked)
           _variant(type, c, shortest, request.datetime, stopPlaces),
       ],
     );

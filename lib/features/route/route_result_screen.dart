@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -64,11 +65,18 @@ const variantOrder = [
   RouteVariantType.shortest,
   RouteVariantType.shaded,
   RouteVariantType.compromise,
+  RouteVariantType.alternative,
+];
+
+/// [response]'s variants in card order (alternatives keep their order).
+List<RouteVariant> orderedVariants(RouteResponse response) => [
+  for (final t in variantOrder)
+    ...response.variants.where((v) => v.variant == t),
 ];
 
 class _RouteResultScreenState extends ConsumerState<RouteResultScreen> {
   /// The user's pick; null = the profile default.
-  RouteVariantType? _picked;
+  RouteVariant? _picked;
 
   /// «Najlepsza pora wyjścia» (APP-22): "HH:mm", null = the asked time.
   String? _slot;
@@ -101,11 +109,16 @@ class _RouteResultScreenState extends ConsumerState<RouteResultScreen> {
     return v.sunShareAt(time);
   }
 
-  RouteVariantType _selected(RouteResponse response) {
-    final wanted =
-        _picked ?? defaultVariant(ref.read(comfortProfileProvider).id);
-    if (response.variant(wanted) != null) return wanted;
-    return response.variants.first.variant;
+  /// The picked card, else the profile default, else the first variant.
+  RouteVariant _selected(RouteResponse response) {
+    final picked = _picked;
+    if (picked != null && response.variants.any((v) => identical(v, picked))) {
+      return picked;
+    }
+    return response.variant(
+          defaultVariant(ref.read(comfortProfileProvider).id),
+        ) ??
+        orderedVariants(response).first;
   }
 
   Future<void> _go(RouteRequest request, RouteVariant variant) async {
@@ -273,21 +286,17 @@ class _RouteResultScreenState extends ConsumerState<RouteResultScreen> {
 /// Map lines for [response]: the others thin and grey underneath, the
 /// selected one on top, split into shade (primary) and sun (orange) parts
 /// by `segments`, or in one colour when module D sends none (DEP-03).
-List<Polyline> routePolylines(
-  RouteResponse response,
-  RouteVariantType selected,
-) {
+List<Polyline> routePolylines(RouteResponse response, RouteVariant selected) {
   final lines = <Polyline>[
     for (final v in response.variants)
-      if (v.variant != selected)
+      if (!identical(v, selected))
         Polyline(
           points: v.geometry,
           color: AppColors.muted,
           strokeWidth: AppSizes.routeOtherWidth,
         ),
   ];
-  final chosen = response.variant(selected);
-  if (chosen == null) return lines;
+  final chosen = selected;
   final segments = chosen.segments
       .where(
         (s) => s.from >= 0 && s.to < chosen.geometry.length && s.to > s.from,
@@ -337,13 +346,13 @@ class _Result extends ConsumerWidget {
 
   final RouteRequest request;
   final RouteResponse response;
-  final RouteVariantType selected;
+  final RouteVariant selected;
 
   /// The slider's departure; null = the asked time (cards then show the
   /// answer's own shade share).
   final DateTime? departure;
   final ValueChanged<String> onSlot;
-  final ValueChanged<RouteVariantType> onSelect;
+  final ValueChanged<RouteVariant> onSelect;
   final ValueChanged<RouteVariant> onGo;
   final VoidCallback onSave;
   final bool saving;
@@ -355,7 +364,13 @@ class _Result extends ConsumerWidget {
     final theme = Theme.of(context);
     final senior = ref.watch(seniorModeProvider);
     final places = ref.watch(placeByIdProvider);
-    final variant = response.variant(selected)!;
+    final variant = selected;
+    final ordered = orderedVariants(response);
+    final alternatives = [
+      for (final v in ordered)
+        if (v.variant == RouteVariantType.alternative) v,
+    ];
+    int number(RouteVariant v) => alternatives.indexOf(v) + 1;
     final shortest = response.shortest;
     final now = DateTime.now();
 
@@ -366,12 +381,18 @@ class _Result extends ConsumerWidget {
     ];
 
     ds.RouteVariantCard card(RouteVariant v) => ds.RouteVariantCard(
-      key: Key('route-card-${v.variant.name}'),
+      key: Key(
+        v.variant == RouteVariantType.alternative
+            ? 'route-card-alternative-${number(v)}'
+            : 'route-card-${v.variant.name}',
+      ),
       variant: switch (v.variant) {
         RouteVariantType.shortest => ds.RouteVariant.shortest,
         RouteVariantType.shaded => ds.RouteVariant.shaded,
         RouteVariantType.compromise => ds.RouteVariant.compromise,
+        RouteVariantType.alternative => ds.RouteVariant.alternative,
       },
+      number: number(v),
       minutes: (v.durationS / 60).round(),
       distanceKm: v.distanceM / 1000,
       shadePercent:
@@ -383,11 +404,9 @@ class _Result extends ConsumerWidget {
           : (v.extraTimeVsShortestS / 60).round(),
       coolStops: v.stops.where((s) => s.type == StopType.cool).length,
       waterStops: v.stops.where((s) => s.type == StopType.water).length,
-      selected: v.variant == selected,
-      onTap: () => onSelect(v.variant),
+      selected: identical(v, selected),
+      onTap: () => onSelect(v),
     );
-
-    final ordered = [for (final t in variantOrder) ?response.variant(t)];
 
     return Column(
       children: [
@@ -396,7 +415,7 @@ class _Result extends ConsumerWidget {
             children: [
               Semantics(
                 label: l10n.routeMapSemantics(
-                  _name(selected, l10n),
+                  _name(selected.variant, l10n, number(selected)),
                   (variant.shadeShare * 100).round(),
                 ),
                 child: ExcludeSemantics(
@@ -582,12 +601,16 @@ class _Result extends ConsumerWidget {
     );
   }
 
-  static String _name(RouteVariantType type, AppLocalizations l10n) =>
-      switch (type) {
-        RouteVariantType.shortest => l10n.dsRouteShortest,
-        RouteVariantType.shaded => l10n.dsRouteShaded,
-        RouteVariantType.compromise => l10n.dsRouteCompromise,
-      };
+  static String _name(
+    RouteVariantType type,
+    AppLocalizations l10n, [
+    int number = 1,
+  ]) => switch (type) {
+    RouteVariantType.shortest => l10n.dsRouteShortest,
+    RouteVariantType.shaded => l10n.dsRouteShaded,
+    RouteVariantType.compromise => l10n.dsRouteCompromise,
+    RouteVariantType.alternative => l10n.dsRouteAlternative(number),
+  };
 }
 
 /// «Najlepsza pora wyjścia» (APP-22): 30-minute slots of the selected
@@ -693,16 +716,19 @@ class _SeniorPager extends StatelessWidget {
   });
 
   final List<RouteVariant> variants;
-  final RouteVariantType selected;
-  final ValueChanged<RouteVariantType> onSelect;
+  final RouteVariant selected;
+  final ValueChanged<RouteVariant> onSelect;
   final Widget Function(RouteVariant) card;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final index = variants.indexWhere((v) => v.variant == selected);
+    final index = math.max(
+      0,
+      variants.indexWhere((v) => identical(v, selected)),
+    );
     void go(int i) {
-      if (i >= 0 && i < variants.length) onSelect(variants[i].variant);
+      if (i >= 0 && i < variants.length) onSelect(variants[i]);
     }
 
     return Column(
@@ -718,7 +744,7 @@ class _SeniorPager extends StatelessWidget {
           child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 200),
             child: KeyedSubtree(
-              key: ValueKey(selected),
+              key: ValueKey(index),
               child: card(variants[index]),
             ),
           ),

@@ -1,345 +1,345 @@
-# Cool Łódź: спецификация мобильного приложения
+# Cool Łódź: mobile app specification
 
 Oct 18, 2026 · @Mikita
 
-> Копия спецификации в репозитории: на её разделы ссылаются issues. Две встроенные схемы исходного документа заменены: карта экранов — ссылкой на Figma, майлстоуны — диаграммой.
+> A copy of the specification kept in the repository: issues link to its sections. Two embedded diagrams of the original document have been replaced: the screen map with a link to Figma, the milestones with a diagram.
 
-Это полный пакет спецификации приложения Cool Łódź (часть B брифа) для агента-исполнителя: по нему делается макет в Figma, заводятся задачи в GitHub и стартует разработка. Источник требований — бриф «Cool Łódź: brief techniczny» v0.1 от 18.10.2026; где спецификация с ним расходится, верна спецификация. Как агенту работать с документом, написано в последнем разделе.
+This is the complete specification package for the Cool Łódź app (part B of the brief), written for the executing agent: it is used to build the Figma mock-up, create the GitHub tasks and start development. The source of requirements is the brief «Cool Łódź: brief techniczny» v0.1 of 18.10.2026; where the specification disagrees with it, the specification wins. How the agent should work with this document is described in the last section.
 
-## Допущения
+## Assumptions
 
-На приложение у нас около 40 часов на двоих: 2 человека × \~2,5 часа × 8 дней (18–25.10), 26–27.10 только подача и видео. Этого хватает на ядро, если остальное вынести в kolejne kroki.
+We have about 40 hours for the app between the two of us: 2 people × \~2.5 hours × 8 days (18–25.10); 26–27.10 are only for submission and the video. That is enough for the core if everything else is moved to kolejne kroki (next steps).
 
-- **Владельцы:** MD — Mikita Dzeviatau, AH — Artem Hnap.
-- **Данные:** почти всё реальное, поэтому отдельные пометки «dane symulowane» не делаем. Единственное, что в демо условно, — коды скидок MPK: это одна строка в документации, а не метка в интерфейсе.
-- **Страховка:** в приложении есть demo-режим с сохранёнными JSON для двух референсных маршрутов. Если API модуля D недоступен, приложение всё равно показывает маршруты.
-- **Оценки** даны с учётом Claude Code. Если задача выходит больше чем в 1,5 раза от оценки, режем её, а не сдвигаем остальное.
-- **Внутренний дедлайн:** 25.10 заморозка, 26.10 вечером всё готово, 27.10 до 12:00 подача.
+- **Owners:** MD — Mikita Dzeviatau, AH — Artem Hnap.
+- **Data:** almost everything is real, so we do not add separate «dane symulowane» labels. The only thing that is mocked in the demo is the MPK discount codes: that is one line in the documentation, not a label in the UI.
+- **Safety net:** the app has a demo mode with saved JSON for the two reference routes. If the module D API is unavailable, the app still shows routes.
+- **Estimates** assume Claude Code is used. If a task takes more than 1.5 times its estimate, we cut it rather than push everything else back.
+- **Internal deadline:** 25.10 freeze, 26.10 evening everything ready, 27.10 submission by 12:00.
 
-## Продукт
+## Product
 
-Cool Łódź — Android-приложение, которое в жару строит пешие маршруты по Лодзи через тень, зелень и тихие улицы, показывает miejsca chłodu и воду и превращает их посещение в игру. Конкурс: Hackathon Future Smart City 2026, область Health Shift, команда Better Than Never.
+Cool Łódź is an Android app that, in hot weather, plans walking routes across Łódź through shade, greenery and quiet streets, shows miejsca chłodu (cooling places) and water, and turns visiting them into a game. Competition: Hackathon Future Smart City 2026, Health Shift area, team Better Than Never.
 
-**Задача пользователя:** дойти из точки A в точку B в жаркий день, проведя на солнце как можно меньше времени, и знать, где можно остыть и попить воды.
+**User's job:** get from point A to point B on a hot day spending as little time in the sun as possible, and know where to cool down and drink water.
 
-**Целевые пользователи:**
+**Target users:**
 
-| Сегмент | Что им нужно от приложения |
+| Segment | What they need from the app |
 | --- | --- |
-| Сеньоры (65+) | Максимум тени, лавки и места отдыха на маршруте, крупный шрифт, простой интерфейс |
-| Туристы | Маршрут между достопримечательностями в тени, кондиционированные места рядом |
-| Родители с коляской | Без лестниц, тень, лавки |
-| Жители (работа, учёба, прогулка) | Компромисс между временем и тенью, алерты о жаре |
-| Владельцы собак | Тень, зелень, вода |
+| Seniors (65+) | Maximum shade, benches and rest spots on the route, large font, simple UI |
+| Tourists | A shaded route between sights, air-conditioned places nearby |
+| Parents with a pram | No stairs, shade, benches |
+| Residents (work, study, leisure walks) | A trade-off between time and shade, heat alerts |
+| Dog owners | Shade, greenery, water |
 
-**Язык интерфейса:** польский (основной). Английский — вне объёма, но все строки сразу выносим в ARB-файлы (`intl`), чтобы перевод был дешёвым.
+**UI language:** Polish (primary). English is out of scope, but all strings go into ARB files (`intl`) from the start so translation stays cheap.
 
-**Объём (MoSCoW):**
+**Scope (MoSCoW):**
 
-| Функция | Приоритет | Комментарий |
+| Feature | Priority | Comment |
 | --- | --- | --- |
-| Онбординг, вход по e-mail, согласия | M | Без входа через соцсети |
-| Выбор профиля комфорта | M | Рабочих профилей 3: Senior, Turysta, Domyślny. Остальные 5 из брифа только в документации |
-| Карта с фильтрами (тень, зелень, вода, miejsca chłodu, воздух, тишина) | M | Слои с API модуля D |
-| Планирование маршрута A→B, дата и время | M |  |
-| Результат: 3 варианта (najkrótsza, zacieniona, kompromis) | M | Сравнение по времени, длине, доле тени |
-| Miejsca chłodu: список, «otwarte teraz», «Prowadź tam» | M |  |
-| Квест с QR и буквами | M |  |
-| Значки и очки | M | Минимум 3 значка работают в демо |
-| Рейтинг районов и пользователей | M |  |
-| Push-алерт о жаре и «режим жары» | M | Для демо достаточно тестового push |
-| Настройки, приватность, удаление аккаунта | M |  |
-| Ползунок «лучшее время выхода» на результате маршрута | S | Тень уже посчитана по 30-минутным интервалам |
-| Zgłoszenia (тип проблемы + GPS, без фото) | S |  |
-| Навигация шаг за шагом | вне объёма | kolejne kroki |
-| Оценка маршрута после прогулки | вне объёма | kolejne kroki |
-| AI-ассистент | вне объёма | kolejne kroki |
-| Фото в zgłoszeniach, групповые прогулки, реферальный код | вне объёма | kolejne kroki |
-| iOS | вне объёма | Без Android остаётся сайт |
+| Onboarding, e-mail sign-in, consents | M | No social sign-in |
+| Comfort profile selection | M | 3 working profiles: Senior, Turysta, Domyślny. The other 5 from the brief are documentation only |
+| Map with filters (shade, greenery, water, miejsca chłodu, air, quiet) | M | Layers from the module D API |
+| Route planning A→B, date and time | M |  |
+| Result: 3 variants (najkrótsza, zacieniona, kompromis) | M | Comparison by time, length, shade share |
+| Miejsca chłodu: list, «otwarte teraz», «Prowadź tam» | M |  |
+| Quest with QR codes and letters | M |  |
+| Badges and points | M | At least 3 badges work in the demo |
+| District and user leaderboard | M |  |
+| Heat push alert and «heat mode» | M | A test push is enough for the demo |
+| Settings, privacy, account deletion | M |  |
+| «Best time to leave» slider on the route result | S | Shade is already computed in 30-minute intervals |
+| Zgłoszenia (problem type + GPS, no photo) | S |  |
+| Turn-by-turn navigation | out of scope | kolejne kroki |
+| Post-walk route rating | out of scope | kolejne kroki |
+| AI assistant | out of scope | kolejne kroki |
+| Photos in zgłoszenia, group walks, referral code | out of scope | kolejne kroki |
+| iOS | out of scope | Without Android, the website remains |
 
-## Архитектура и стек
+## Architecture and stack
 
-Приложение не считает тень само: маршруты, слои карты и места приходят из общего API модуля D, а аккаунт, игра и рейтинг живут в Firebase.
+The app does not compute shade itself: routes, map layers and places come from the shared module D API, while the account, game and leaderboard live in Firebase.
 
-| Слой | Решение | Почему |
+| Layer | Decision | Why |
 | --- | --- | --- |
-| Фреймворк | Flutter (stable), Dart 3, только Android, minSdk 24 | Опыт команды с прошлого года |
-| Состояние | Riverpod | Простой DI, удобно подменять API на demo-режим |
-| Навигация | go\_router, нижняя панель из 4 вкладок |  |
-| Карта | flutter\_map + векторные/растровые тайлы провайдера с бесплатным планом, атрибуция OSM | Не используем tile.openstreetmap.org в продакшене |
-| Слои карты | GeoJSON из API модуля D | Тот же источник, что у сайта |
-| Аккаунт | Firebase Auth, e-mail и пароль |  |
-| Данные игры | Cloud Firestore, регион europe-central2 (Варшава) | RODO, данные в ЕС |
-| Push | Firebase Cloud Messaging | Отправка тестового алерта из консоли Firebase |
+| Framework | Flutter (stable), Dart 3, Android only, minSdk 24 | Team experience from last year |
+| State | Riverpod | Simple DI, easy to swap the API for demo mode |
+| Navigation | go\_router, bottom bar with 4 tabs |  |
+| Map | flutter\_map + vector/raster tiles from a provider with a free plan, OSM attribution | We do not use tile.openstreetmap.org in production |
+| Map layers | GeoJSON from the module D API | Same source as the website |
+| Account | Firebase Auth, e-mail and password |  |
+| Game data | Cloud Firestore, region europe-central2 (Warsaw) | RODO (GDPR), data in the EU |
+| Push | Firebase Cloud Messaging | Test alert sent from the Firebase console |
 | QR | mobile\_scanner |  |
-| Геолокация | geolocator, только во время использования |  |
-| HTTP | dio + json\_serializable | Модели строятся из контракта API |
-| Локальный кэш | shared\_preferences или hive | Последний маршрут и список miejsc chłodu без сети |
-| Cloud Functions | не используем | Нужен тариф Blaze; проверки делаем правилами Firestore |
+| Geolocation | geolocator, only while in use |  |
+| HTTP | dio + json\_serializable | Models are built from the API contract |
+| Local cache | shared\_preferences or hive | Last route and the list of miejsca chłodu without network |
+| Cloud Functions | not used | Requires the Blaze plan; checks are done with Firestore rules |
 
-**Demo-режим.** Класс `ApiClient` имеет две реализации: `RemoteApiClient` (реальный модуль D) и `DemoApiClient` (JSON из `assets/demo/`). Переключатель скрыт в настройках (5 нажатий на версию приложения). Если удалённый API не отвечает за 8 секунд, приложение показывает данные из demo и баннер «Brak połączenia z serwerem, pokazujemy ostatnie dane». Это страхует показ жюри 6.11.
+**Demo mode.** The `ApiClient` class has two implementations: `RemoteApiClient` (the real module D) and `DemoApiClient` (JSON from `assets/demo/`). The switch is hidden in the settings (5 taps on the app version). If the remote API does not answer within 8 seconds, the app shows demo data and the banner «Brak połączenia z serwerem, pokazujemy ostatnie dane». This protects the presentation to the jury on 6.11.
 
-**Структура проекта:**
+**Project structure:**
 
 ```
 lib/
-  app/            роутер, тема, локализация
-  core/           api (remote + demo), модели, ошибки, геолокация
+  app/            router, theme, localisation
+  core/           api (remote + demo), models, errors, geolocation
   features/
     auth/  onboarding/  profile/  map/  route/  cool_places/
     quest/  achievements/  leaderboard/  alerts/  reports/  settings/
-  shared/         виджеты дизайн-системы
-assets/demo/      JSON по контракту API
+  shared/         design system widgets
+assets/demo/      JSON following the API contract
 ```
 
-## Карта экранов
+## Screen map
 
-Карта экранов (16 экранов, 4 вкладки) — на странице [Flow в Figma](https://www.figma.com/design/U5IzePCuqa0gZlipjRQEOm/Cool-Lodz-App?node-id=1-5); кликабельный прототип — на странице [Screens](https://www.figma.com/design/U5IzePCuqa0gZlipjRQEOm/Cool-Lodz-App?node-id=1-4).
+The screen map (16 screens, 4 tabs) is on the [Flow page in Figma](https://www.figma.com/design/U5IzePCuqa0gZlipjRQEOm/Cool-Lodz-App?node-id=1-5); the clickable prototype is on the [Screens](https://www.figma.com/design/U5IzePCuqa0gZlipjRQEOm/Cool-Lodz-App?node-id=1-4) page.
 
-Выделен S07 «Wynik trasy» — ради него существует приложение, на нём держится демо. Переходы между вкладками (S08 → S07, S16 → S04) подписаны в карточках, а не стрелками.
+S07 «Wynik trasy» is highlighted — the app exists for its sake and the demo rests on it. Transitions between tabs (S08 → S07, S16 → S04) are labelled on the cards, not drawn as arrows.
 
-## Экраны
+## Screens
 
-16 экранов; каждый в Figma рисуется в трёх состояниях, где они есть: данные, загрузка, ошибка или пусто. Нижняя панель: **Mapa**, **Chłód**, **Quest**, **Profil**. Тексты интерфейса ниже даны на польском, как в приложении.
+16 screens; in Figma each one is drawn in three states where they apply: data, loading, error or empty. Bottom bar: **Mapa**, **Chłód**, **Quest**, **Profil**. UI texts below are in Polish, as in the app.
 
 ### S01 Onboarding (M)
 
-- 3 слайда: «Idź w cieniu» (маршруты по тени), «Znajdź miejsce chłodu» (места и вода), «Zbieraj litery» (квест и значки). Кнопки «Dalej», «Pomiń».
-- Показывается один раз после установки.
+- 3 slides: «Idź w cieniu» (shaded routes), «Znajdź miejsce chłodu» (places and water), «Zbieraj litery» (quest and badges). Buttons «Dalej», «Pomiń».
+- Shown once after installation.
 
 ### S02 Logowanie i rejestracja (M)
 
-- Вкладки «Zaloguj się» / «Załóż konto»: e-mail, пароль, псевдоним (при регистрации), ссылка «Nie pamiętam hasła».
-- Ошибки под полями: неверный пароль, занятый e-mail, нет сети.
-- Псевдоним виден в рейтинге; подсказка: «Nie podawaj imienia i nazwiska».
+- Tabs «Zaloguj się» / «Załóż konto»: e-mail, password, nickname (on sign-up), link «Nie pamiętam hasła».
+- Errors under the fields: wrong password, e-mail already taken, no network.
+- The nickname is visible in the leaderboard; hint: «Nie podawaj imienia i nazwiska».
 
 ### S03 Zgody (M)
 
-- Три переключателя с пояснением: локализация (обязательно для квеста), уведомления, участие в rankingu. Ссылка на politykę prywatności.
-- Кнопка «Akceptuję i dalej»; системные запросы Android показываются после неё.
+- Three toggles with an explanation: location (required for the quest), notifications, taking part in the ranking. Link to the privacy policy.
+- Button «Akceptuję i dalej»; the Android system prompts appear after it.
 
 ### S04 Wybór profilu (M)
 
-- Карточки профилей: Senior, Turysta, Domyślny (иконка, 1 строка описания). Остальные профили брифа — неактивные карточки «Wkrótce».
-- Под карточкой «Dostosuj»: 4 ползунка (cień, czas, cisza, powietrze) от 0 до 100.
-- Профиль Senior включает крупный шрифт (см. «Дизайн-система»).
-- Тот же экран открывается из Profil → «Mój profil komfortu».
+- Profile cards: Senior, Turysta, Domyślny (icon, 1-line description). The other profiles from the brief are inactive «Wkrótce» cards.
+- Under the card, «Dostosuj»: 4 sliders (cień, czas, cisza, powietrze) from 0 to 100.
+- The Senior profile turns on the large font (see "Design system").
+- The same screen opens from Profil → «Mój profil komfortu».
 
-### S05 Mapa (M, главный экран)
+### S05 Mapa (M, main screen)
 
-- Карта Лодзи, центр на пользователе или на Śródmieście, если геолокация выключена.
-- Сверху поле «Dokąd idziesz?» → открывает S06.
-- Ряд чипов-фильтров: Cień, Zieleń, Cisza, Powietrze, Woda, Miejsca chłodu. Активный чип показывает свой слой; одновременно не больше 2 слоёв-заливок (cień, zieleń, cisza, powietrze) плюс любые точки.
-- Слой тени: полупрозрачная синяя заливка; над картой подпись времени «Cień o 14:30» и кнопка смены времени.
-- Точки: miejsca chłodu (снежинка), вода (капля), лавки (только при зуме ≥ 17).
-- Если действует алерт о жаре — сверху баннер «Ostrzeżenie przed upałem, stopień 2» (цвет по степени), нажатие открывает S14.
-- Нажатие на точку → нижняя шторка S08.
-- Состояния: нет геолокации (кнопка «Włącz lokalizację»), нет сети (demo-баннер).
+- Map of Łódź, centred on the user, or on Śródmieście if location is off.
+- At the top, the field «Dokąd idziesz?» → opens S06.
+- A row of filter chips: Cień, Zieleń, Cisza, Powietrze, Woda, Miejsca chłodu. An active chip shows its layer; at most 2 fill layers (cień, zieleń, cisza, powietrze) at once, plus any point layers.
+- Shade layer: semi-transparent blue fill; above the map a time label «Cień o 14:30» and a button to change the time.
+- Points: miejsca chłodu (snowflake), water (drop), benches (only at zoom ≥ 17).
+- If a heat alert is active — a banner at the top «Ostrzeżenie przed upałem, stopień 2» (colour by level); tapping it opens S14.
+- Tapping a point → bottom sheet S08.
+- States: no location (button «Włącz lokalizację»), no network (demo banner).
 
 ### S06 Planowanie trasy (M)
 
-- Поля «Skąd» (по умолчанию «Moja lokalizacja») и «Dokąd», поиск по адресам и местам, кнопка поменять местами.
-- Дата и время выхода («Teraz» по умолчанию).
-- Текущий профиль чипом, нажатие → S04.
-- Быстрые варианты: две референсные трассы (Manufaktura → Piotrkowska, Plac Wolności → Piotrkowska) для демо.
-- Кнопка «Pokaż trasy».
+- Fields «Skąd» (default «Moja lokalizacja») and «Dokąd», search by address and place, swap button.
+- Departure date and time («Teraz» by default).
+- Current profile as a chip; tapping it → S04.
+- Quick options: two reference routes (Manufaktura → Piotrkowska, Plac Wolności → Piotrkowska) for the demo.
+- Button «Pokaż trasy».
 
 ### S07 Wynik trasy (M)
 
-- Карта с тремя линиями; выбранная яркая, остальные серые. Участки на солнце на выбранной линии — оранжевые, в тени — синие.
-- Нижняя шторка с тремя карточками: **Najkrótsza**, **Zacieniona**, **Kompromis**. На карточке: время (мин), длина (км), доля тени (%, крупно, с полоской), «+4 min względem najkrótszej», значки остановок (miejsca chłodu, вода) на пути.
-- По умолчанию выбрана Kompromis; для профиля Senior — Zacieniona.
-- (S) Ползунок «Najlepsza pora wyjścia»: часы 8:00–20:00, под ним мини-график доли тени выбранного варианта.
-- Кнопка «Prowadź» открывает маршрут в Google Maps (навигация вне объёма); кнопка «Zapisz».
-- Состояния: загрузка (скелетон карточек), маршрут не найден, вне зоны расчёта тени («Dla tego obszaru cień jest przybliżony»).
+- Map with three lines; the selected one is bright, the others grey. On the selected line, sunny segments are orange and shaded ones blue.
+- Bottom sheet with three cards: **Najkrótsza**, **Zacieniona**, **Kompromis**. On a card: time (min), length (km), shade share (%, large, with a bar), «+4 min względem najkrótszej», icons for stops on the way (miejsca chłodu, water).
+- Kompromis is selected by default; for the Senior profile — Zacieniona.
+- (S) Slider «Najlepsza pora wyjścia»: hours 8:00–20:00, with a mini chart of the selected variant's shade share below it.
+- Button «Prowadź» opens the route in Google Maps (navigation is out of scope); button «Zapisz».
+- States: loading (card skeleton), route not found, outside the shade calculation area («Dla tego obszaru cień jest przybliżony»).
 
-### S08 Szczegóły miejsca (M, нижняя шторка)
+### S08 Szczegóły miejsca (M, bottom sheet)
 
-- Название, тип, адрес, часы работы, статус «Otwarte teraz / Zamknięte, otwarcie o 10:00».
-- Иконки удобств: klimatyzacja, woda, toaleta, dostępne dla wózków.
-- Если место в квесте — бейдж «Litera do zdobycia».
-- Кнопки «Prowadź tam» (→ S07 с этим местом как B) и «Zgłoś problem» (→ S15).
+- Name, type, address, opening hours, status «Otwarte teraz / Zamknięte, otwarcie o 10:00».
+- Amenity icons: klimatyzacja, woda, toaleta, dostępne dla wózków.
+- If the place is part of the quest — badge «Litera do zdobycia».
+- Buttons «Prowadź tam» (→ S07 with this place as B) and «Zgłoś problem» (→ S15).
 
-### S09 Miejsca chłodu (M, вкладка Chłód)
+### S09 Miejsca chłodu (M, Chłód tab)
 
-- Переключатель «Lista / Mapa». Список отсортирован по расстоянию.
-- Фильтры-чипы: Otwarte teraz, Z wodą, Dostępne, W queście.
-- Элемент списка: название, тип, расстояние, часы сегодня, статус.
-- Пусто: «Brak otwartych miejsc w pobliżu» + кнопка «Pokaż wszystkie».
+- Toggle «Lista / Mapa». The list is sorted by distance.
+- Filter chips: Otwarte teraz, Z wodą, Dostępne, W queście.
+- List item: name, type, distance, today's hours, status.
+- Empty: «Brak otwartych miejsc w pobliżu» + button «Pokaż wszystkie».
 
-### S10 Quest (M, вкладка Quest)
+### S10 Quest (M, Quest tab)
 
-- Название квеста «Chłodne hasło», поле из букв: найденные открыты, ненайденные — пустые клетки.
-- Прогресс «4 z 7 liter», список мест квеста со статусом (odwiedzone / do odwiedzenia), кнопка «Prowadź tam» у каждого.
-- Большая кнопка «Skanuj kod QR» → S11.
-- После всех букв — поле ввода hasła, затем экран награды: код скидки и текст про MPK.
-- В режиме жары сверху плашка «Dziś odwiedzaj miejsca rano lub wieczorem».
-- Внутри вкладки сегменты: Quest, Odznaki (S12), Ranking (S13).
+- Quest title «Chłodne hasło», a grid of letters: found ones revealed, missing ones as empty tiles.
+- Progress «4 z 7 liter», list of quest places with status (odwiedzone / do odwiedzenia), a «Prowadź tam» button for each.
+- Large button «Skanuj kod QR» → S11.
+- After all letters — a password (hasło) input, then the reward screen: discount code and a text about MPK.
+- In heat mode, a strip at the top: «Dziś odwiedzaj miejsca rano lub wieczorem».
+- Segments inside the tab: Quest, Odznaki (S12), Ranking (S13).
 
 ### S11 Skaner QR (M)
 
-- Камера на весь экран с рамкой, подсказка «Zeskanuj kod przy wejściu».
-- Успех: анимация открытия буквы, «+50 pkt».
-- Ошибки: «Jesteś za daleko od miejsca» (> 150 м), «Ten kod już dziś zeskanowałeś», «Kod nieważny».
-- Нет разрешения камеры: пояснение и кнопка «Otwórz ustawienia».
+- Full-screen camera with a frame, hint «Zeskanuj kod przy wejściu».
+- Success: letter reveal animation, «+50 pkt».
+- Errors: «Jesteś za daleko od miejsca» (> 150 m), «Ten kod już dziś zeskanowałeś», «Kod nieważny».
+- No camera permission: explanation and button «Otwórz ustawienia».
 
 ### S12 Odznaki i punkty (M)
 
-- Сетка значков 3 в ряд: полученные цветные, остальные серые с условием получения.
-- Сверху сумма очков и последние 10 начислений (что, когда, сколько).
-- При получении значка — модальное окно с конфетти.
+- Badge grid, 3 per row: earned ones in colour, the rest grey with the condition to earn them.
+- At the top, the points total and the last 10 awards (what, when, how many).
+- When a badge is earned — a modal with confetti.
 
 ### S13 Ranking (M)
 
-- Переключатель «Dzielnice / Użytkownicy», период «Ten tydzień / Całe lato».
-- Строка: место, название района или псевдоним, очки. Своя строка подсвечена и закреплена снизу, если её нет на экране.
+- Toggle «Dzielnice / Użytkownicy», period «Ten tydzień / Całe lato».
+- Row: position, district name or nickname, points. The user's own row is highlighted and pinned to the bottom if it is not on screen.
 
 ### S14 Alert upałowy i tryb upału (M)
 
 - Push: «Ostrzeżenie przed upałem 2. stopnia w Łodzi do 20:00. Zobacz trasy w cieniu».
-- Экран алерта: степень, период, источник (IMGW), 3 короткие рекомендации, ссылка на официальные zalecenia, кнопка «Pokaż miejsca chłodu».
-- Режим жары включается при степени 3: задания квеста на солнце скрыты, на карте приоритет miejsc chłodu, баннер на S05 и S10.
+- Alert screen: level, period, source (IMGW), 3 short recommendations, link to the official zalecenia (guidance), button «Pokaż miejsca chłodu».
+- Heat mode turns on at level 3: quest tasks in the sun are hidden, miejsca chłodu get priority on the map, banner on S05 and S10.
 
 ### S15 Zgłoszenie (S)
 
-- Тип: brak ławki, brak poidełka, brak cienia, inne. Позиция с GPS на мини-карте (можно сдвинуть), комментарий до 200 знаков.
-- После отправки: «Dziękujemy! +20 pkt po zatwierdzeniu».
+- Type: brak ławki, brak poidełka, brak cienia, inne. GPS position on a mini map (can be moved), comment up to 200 characters.
+- After sending: «Dziękujemy! +20 pkt po zatwierdzeniu».
 
-### S16 Profil i ustawienia (M, вкладка Profil)
+### S16 Profil i ustawienia (M, Profil tab)
 
-- Шапка: псевдоним, район (выбор из 5), сумма очков.
-- Пункты: Mój profil komfortu, Powiadomienia, Zgody i prywatność, Polityka prywatności, O aplikacji i źródła danych, Wyloguj, Usuń konto.
-- «Usuń konto»: подтверждение с вводом пароля, удаляет пользователя и все его документы.
-- «O aplikacji»: версия (5 нажатий → переключатель demo-режима), источники данных и атрибуция OSM.
+- Header: nickname, district (choice of 5), points total.
+- Items: Mój profil komfortu, Powiadomienia, Zgody i prywatność, Polityka prywatności, O aplikacji i źródła danych, Wyloguj, Usuń konto.
+- «Usuń konto»: confirmation by entering the password; deletes the user and all their documents.
+- «O aplikacji»: version (5 taps → demo mode switch), data sources and OSM attribution.
 
-## Дизайн-система
+## Design system
 
-Основа — Material 3 с собственной палитрой «прохлада против жары»: сине-бирюзовый цвет означает тень и безопасность, оранжевый — солнце и жару. Только светлая тема; тёмная вне объёма. Базовый фрейм в Figma: Android 360 × 800 dp.
+Based on Material 3 with a custom "cool versus heat" palette: blue-teal means shade and safety, orange means sun and heat. Light theme only; dark theme is out of scope. Base frame in Figma: Android 360 × 800 dp.
 
-**Цвета (токены):**
+**Colours (tokens):**
 
-| Токен | HEX | Где используется |
+| Token | HEX | Where it is used |
 | --- | --- | --- |
-| `primary` / cień | #0E6E8C | Кнопки, активные чипы, тень на маршруте, слой тени (35% прозрачности) |
-| `primaryContainer` | #CDEFF7 | Фон выбранной карточки, плашки |
-| `green` / zieleń | #2E8B57 | Слой зелени (30%), парки, значки «Łowca parków» |
-| `sun` / słońce | #F28C28 | Участки на солнце, иконки жары. Только заливки и линии, не текст на белом |
-| `water` | #2F80ED | Точки воды |
-| `cool` | #5BC0EB | Точки miejsc chłodu |
-| `heat1` | #F2C230 | Алерт 1-й степени |
-| `heat2` | #F28C28 | Алерт 2-й степени |
-| `heat3` | #D7263D | Алерт 3-й степени, режим жары |
-| `background` | #F7FAFB | Фон экранов |
-| `surface` | #FFFFFF | Карточки, шторки |
-| `surfaceVariant` | #EAF1F3 | Неактивные чипы, разделители |
-| `onSurface` | #12232B | Основной текст |
-| `onSurfaceVariant` | #4A5D66 | Вторичный текст |
-| `muted` | #9AA9B0 | Невыбранные маршруты, заблокированные значки |
-| `error` | #B3261E | Ошибки |
-| `success` | #1E8E3E | Успех, «Otwarte teraz» |
+| `primary` / cień | #0E6E8C | Buttons, active chips, shade on the route, shade layer (35% opacity) |
+| `primaryContainer` | #CDEFF7 | Background of the selected card, strips |
+| `green` / zieleń | #2E8B57 | Greenery layer (30%), parks, «Łowca parków» badges |
+| `sun` / słońce | #F28C28 | Sunny segments, heat icons. Fills and lines only, never text on white |
+| `water` | #2F80ED | Water points |
+| `cool` | #5BC0EB | Miejsca chłodu points |
+| `heat1` | #F2C230 | Level 1 alert |
+| `heat2` | #F28C28 | Level 2 alert |
+| `heat3` | #D7263D | Level 3 alert, heat mode |
+| `background` | #F7FAFB | Screen background |
+| `surface` | #FFFFFF | Cards, sheets |
+| `surfaceVariant` | #EAF1F3 | Inactive chips, dividers |
+| `onSurface` | #12232B | Primary text |
+| `onSurfaceVariant` | #4A5D66 | Secondary text |
+| `muted` | #9AA9B0 | Unselected routes, locked badges |
+| `error` | #B3261E | Errors |
+| `success` | #1E8E3E | Success, «Otwarte teraz» |
 
-Слой качества воздуха использует официальную шкалу цветов индекса GIOŚ (взять с powietrze.gios.gov.pl), слой тишины — фиолетовую тепловую карту.
+The air quality layer uses the official GIOŚ index colour scale (take it from powietrze.gios.gov.pl); the quiet layer uses a purple heat map.
 
-**Шрифт:** Inter (Google Fonts, полная поддержка польских букв).
+**Font:** Inter (Google Fonts, full support for Polish letters).
 
-| Стиль | Размер / межстрочный, sp | Начертание |
+| Style | Size / line height, sp | Weight |
 | --- | --- | --- |
-| Display | 32 / 40 | Bold — доля тени на карточке маршрута |
-| Title L | 24 / 32 | SemiBold — заголовки экранов |
-| Title M | 20 / 28 | SemiBold — заголовки шторок и карточек |
+| Display | 32 / 40 | Bold — shade share on the route card |
+| Title L | 24 / 32 | SemiBold — screen titles |
+| Title M | 20 / 28 | SemiBold — sheet and card titles |
 | Body | 16 / 24 | Regular |
-| Body S | 14 / 20 | Regular — вторичный текст |
-| Label | 12 / 16 | Medium — чипы, подписи |
+| Body S | 14 / 20 | Regular — secondary text |
+| Label | 12 / 16 | Medium — chips, captions |
 
-**Отступы и формы:** сетка 4 dp (4, 8, 12, 16, 24, 32); поля экрана 16 dp; радиусы: чипы 8, карточки 12, шторки 20 (верхние углы); кнопки высотой 52 dp, радиус 12; зона нажатия не меньше 48 × 48 dp.
+**Spacing and shapes:** 4 dp grid (4, 8, 12, 16, 24, 32); screen margins 16 dp; radii: chips 8, cards 12, sheets 20 (top corners); buttons 52 dp high, radius 12; touch target at least 48 × 48 dp.
 
-**Режим Senior** (включается профилем, можно отдельно в настройках): все стили шрифта × 1,25, кнопки 60 dp, меньше элементов на экране (на S07 одна карточка видна целиком, остальные листаются), подписи у всех иконок.
+**Senior mode** (turned on by the profile, can also be set separately in settings): all font styles × 1.25, buttons 60 dp, fewer elements on screen (on S07 one card is fully visible, the others scroll), labels on all icons.
 
-**Линии маршрута:** выбранный вариант 6 dp, участки в тени `primary`, на солнце `sun`; невыбранные 4 dp `muted`.
+**Route lines:** selected variant 6 dp, shaded segments `primary`, sunny `sun`; unselected 4 dp `muted`.
 
-**Иконки:** Material Symbols Rounded. Своих иконок 3: miejsce chłodu (снежинка в домике), poidełko (капля с краном), litera questu. Логотип — заглушка, финальный делает команда в Gemini.
+**Icons:** Material Symbols Rounded. 3 custom icons: miejsce chłodu (snowflake in a house), poidełko (drop with a tap), quest letter. The logo is a placeholder; the final one is made by the team in Gemini.
 
-**Компоненты для Figma (с вариантами):**
+**Components for Figma (with variants):**
 
-- Button: primary, secondary, text; обычный и Senior.
-- FilterChip: выкл, вкл; с иконкой слоя.
+- Button: primary, secondary, text; regular and Senior.
+- FilterChip: off, on; with a layer icon.
 - SearchField «Dokąd idziesz?».
-- RouteVariantCard: najkrótsza, zacieniona, kompromis; выбранная и нет; с полоской ShadeBar.
-- ShadeBar: горизонтальная полоса доли тени с числом в %.
-- HeatBanner: степени 1, 2, 3.
-- PlaceListItem и PlaceSheet: открыто, закрыто, в квесте.
-- LetterTile: найдена, пустая.
-- BadgeTile: получен, заблокирован.
-- LeaderboardRow: обычная, своя.
-- BottomNav: 4 вкладки, активная и нет.
-- EmptyState, ErrorState, Skeleton, Toast, модальное окно значка.
+- RouteVariantCard: najkrótsza, zacieniona, kompromis; selected and not; with a ShadeBar.
+- ShadeBar: horizontal shade share bar with the number in %.
+- HeatBanner: levels 1, 2, 3.
+- PlaceListItem and PlaceSheet: open, closed, in quest.
+- LetterTile: found, empty.
+- BadgeTile: earned, locked.
+- LeaderboardRow: regular, own.
+- BottomNav: 4 tabs, active and not.
+- EmptyState, ErrorState, Skeleton, Toast, badge modal.
 
-**Доступность:** контраст текста не ниже WCAG AA (4,5:1); цвет никогда не единственный носитель смысла (рядом с цветом тени всегда число в %); подписи для TalkBack; приложение уважает системный размер шрифта.
+**Accessibility:** text contrast at least WCAG AA (4.5:1); colour is never the only carrier of meaning (the shade colour always comes with a number in %); labels for TalkBack; the app respects the system font size.
 
-**Тон текстов:** на «ty», коротко и спокойно, без запугивания и медицинских обещаний. В «O aplikacji» строка: «Aplikacja nie jest wyrobem medycznym. W razie złego samopoczucia dzwoń 112».
+**Tone of copy:** informal «ty», short and calm, no scaremongering and no medical promises. In «O aplikacji» the line: «Aplikacja nie jest wyrobem medycznym. W razie złego samopoczucia dzwoń 112».
 
-## Геймификация
+## Gamification
 
-Игра награждает прогулки в тени и визиты в miejsca chłodu утром и вечером, а не выход в самую жару. Числа ниже — стартовые значения; команда может их менять, они хранятся в одном файле конфигурации `game_config.dart`.
+The game rewards walks in the shade and visits to miejsca chłodu in the morning and evening, not going out in the worst heat. The numbers below are starting values; the team may change them, and they live in a single config file, `game_config.dart`.
 
-**Квест «Chłodne hasło»:**
+**Quest «Chłodne hasło»:**
 
-1. 7 мест квеста (из списка miejsc chłodu, см. «Данные»), у каждого QR-код и одна буква. Пример hasła: CHŁODNO.
-2. QR содержит ссылку `coollodz://quest/{placeId}?c={kod}`.
-3. Скан засчитывается, если: код совпадает с кодом места в Firestore (проверяют правила доступа), пользователь не дальше 150 м от места (проверка в приложении), это первый скан этого места сегодня (id документа `{uid}_{placeId}_{yyyyMMdd}`, перезапись запрещена правилами).
-4. После 7 букв пользователь вводит hasło и получает код скидки. В демо код условный, реальная интеграция с MigAppka MPK — в kolejne kroki.
-5. Коды мест можно менять вручную в Firestore (например раз в неделю), чтобы старая фотография QR переставала работать.
+1. 7 quest places (from the list of miejsca chłodu, see "Data"), each with a QR code and one letter. Example password (hasło): CHŁODNO.
+2. The QR contains the link `coollodz://quest/{placeId}?c={kod}`.
+3. A scan counts if: the code matches the place's code in Firestore (checked by the security rules), the user is no further than 150 m from the place (checked in the app), and it is the first scan of this place today (document id `{uid}_{placeId}_{yyyyMMdd}`, overwriting is forbidden by the rules).
+4. After 7 letters the user enters the hasło and gets a discount code. In the demo the code is a mock; real integration with MigAppka MPK is in kolejne kroki.
+5. Place codes can be changed manually in Firestore (e.g. once a week) so that an old photo of a QR code stops working.
 
-**Очки:**
+**Points:**
 
-| Действие | Очки | Ограничение |
+| Action | Points | Limit |
 | --- | --- | --- |
-| Скан QR в miejscu chłodu | 50 | 1 раз в сутки на место |
-| Маршрут с долей тени ≥ 60% | 10 | Не больше 5 в сутки; в режиме жары 0, если выход между 11:00 и 17:00 |
-| Hasło квеста разгадано | 200 | 1 раз |
-| Получен значок | 30 | 1 раз за значок |
-| Zgłoszenie подтверждено (S) | 20 | Подтверждение вручную в консоли Firebase |
+| QR scan at a miejsce chłodu | 50 | Once a day per place |
+| Route with shade share ≥ 60% | 10 | At most 5 a day; in heat mode 0 if departing between 11:00 and 17:00 |
+| Quest hasło solved | 200 | Once |
+| Badge earned | 30 | Once per badge |
+| Zgłoszenie approved (S) | 20 | Approved manually in the Firebase console |
 
-**Значки** (в демо обязательно работают первые четыре):
+**Badges** (the first four must work in the demo):
 
-| Значок | Условие |
+| Badge | Condition |
 | --- | --- |
-| Pierwszy krok | Первый построенный маршрут |
-| Cienista dziesiątka | 10 маршрутов с долей тени ≥ 60% |
-| Strażnik chłodu | 5 разных miejsc chłodu отсканировано |
-| Ranny ptaszek | Маршрут с выходом 6:00–10:00 в день алерта о жаре |
-| Wieczorny spacerowicz | Маршрут с выходом 19:00–22:00 в день алерта о жаре |
-| Łowca parków | 5 маршрутов с конечной точкой в парке |
-| Pomocnik miasta (S) | 3 подтверждённых zgłoszenia |
+| Pierwszy krok | First route planned |
+| Cienista dziesiątka | 10 routes with shade share ≥ 60% |
+| Strażnik chłodu | 5 different miejsca chłodu scanned |
+| Ranny ptaszek | Route departing 6:00–10:00 on a heat alert day |
+| Wieczorny spacerowicz | Route departing 19:00–22:00 on a heat alert day |
+| Łowca parków | 5 routes ending in a park |
+| Pomocnik miasta (S) | 3 approved zgłoszenia |
 
-Ambasador (реферальный код) и Wspólny spacer — kolejne kroki.
+Ambasador (referral code) and Wspólny spacer are kolejne kroki.
 
-**Рейтинг:** 5 районов (Bałuty, Górna, Polesie, Śródmieście, Widzew; подтверждается, см. «Открытые вопросы»). Пользователь выбирает район в профиле, его очки идут и в личный рейтинг, и в рейтинг района. Периоды: текущая неделя (по ISO-неделе) и всё лето. В рейтинге виден только псевдоним.
+**Leaderboard:** 5 districts (Bałuty, Górna, Polesie, Śródmieście, Widzew; to be confirmed, see "Open questions"). The user picks a district in the profile; their points count towards both the personal leaderboard and the district leaderboard. Periods: current week (ISO week) and the whole summer. Only the nickname is visible in the leaderboard.
 
-**Правило безопасности (алерт 3-й степени):**
+**Safety rule (level 3 alert):**
 
-- задания и очки за маршруты с выходом 11:00–17:00 отключены;
-- квест показывает подсказку «Odwiedzaj miejsca rano lub wieczorem», сами miejsca chłodu остаются доступны как укрытие;
-- на S05, S10 и S14 баннер со ссылкой на официальные zalecenia.
+- tasks and points for routes departing 11:00–17:00 are disabled;
+- the quest shows the hint «Odwiedzaj miejsca rano lub wieczorem»; the miejsca chłodu themselves stay available as shelter;
+- on S05, S10 and S14 a banner with a link to the official zalecenia.
 
-**Известное ограничение:** без Cloud Functions очки начисляет клиент, а правила Firestore только ограничивают величину прибавки. Для конкурса это допустимо; в kolejne kroki — серверная проверка.
+**Known limitation:** without Cloud Functions the client awards points, and the Firestore rules only limit the size of the increment. This is acceptable for the competition; server-side validation is in kolejne kroki.
 
-## Данные
+## Data
 
-Геоданные (маршруты, места, слои, алерты) приложение берёт из API модуля D; аккаунт, игру и рейтинг — из Firestore. Эндпоинты `/v1/quests` и `/v1/leaderboard` из брифа приложение не использует: игра живёт в Firestore.
+The app gets geodata (routes, places, layers, alerts) from the module D API, and the account, game and leaderboard from Firestore. The app does not use the `/v1/quests` and `/v1/leaderboard` endpoints from the brief: the game lives in Firestore.
 
-**Эндпоинты модуля D (контракт из раздела 6 брифа):**
+**Module D endpoints (contract from section 6 of the brief):**
 
-| Эндпоинт | Экраны | Примечание |
+| Endpoint | Screens | Note |
 | --- | --- | --- |
-| `POST /v1/routes` | S06, S07 | Вход: `from`, `to`, `datetime`, `profile` (id + веса), `filters`. Выход: 3 варианта |
-| `GET /v1/places?type=cool,water,bench&bbox=` | S05, S08, S09, S10 | Нужны поля `hours`, `amenities`, `accessible`, `questPlace` |
+| `POST /v1/routes` | S06, S07 | Input: `from`, `to`, `datetime`, `profile` (id + weights), `filters`. Output: 3 variants |
+| `GET /v1/places?type=cool,water,bench&bbox=` | S05, S08, S09, S10 | Needs the fields `hours`, `amenities`, `accessible`, `questPlace` |
 | `GET /v1/alerts?lat&lon` | S05, S14 |  |
-| `GET /v1/air?bbox` | S05 (слой Powietrze) |  |
-| `GET /v1/layers/{shade,green,noise}?bbox&datetime` | S05 | **Нового эндпоинта нет в брифе**, его нужно запросить у модуля D (GeoJSON или URL тайлов) |
-| `POST /v1/reports` | S15 | Альтернатива — запись прямо в Firestore `reports` |
+| `GET /v1/air?bbox` | S05 (Powietrze layer) |  |
+| `GET /v1/layers/{shade,green,noise}?bbox&datetime` | S05 | **This new endpoint is not in the brief**; it must be requested from module D (GeoJSON or tile URL) |
+| `POST /v1/reports` | S15 | Alternative: write directly to Firestore `reports` |
 
-Пример одного варианта маршрута (структура фиксируется в `core/models`):
+Example of one route variant (the structure is fixed in `core/models`):
 
 ```json
 {
@@ -355,190 +355,190 @@ Ambasador (реферальный код) и Wspólny spacer — kolejne kroki.
 }
 ```
 
-Поле `segments` нужно для раскраски линии «тень / солнце» на S07, `sunShareByHour` — для ползунка лучшего времени. Оба поля нужно согласовать с модулем D.
+The `segments` field is needed to colour the line "shade / sun" on S07, and `sunShareByHour` for the best-time slider. Both fields must be agreed with module D.
 
-**Firestore (регион europe-central2):**
+**Firestore (region europe-central2):**
 
-| Коллекция | Поля | Доступ |
+| Collection | Fields | Access |
 | --- | --- | --- |
-| `users/{uid}` | `nickname`, `district`, `profile` {`id`, `weights`, `seniorMode`}, `consents` {`location`, `push`, `ranking`, `acceptedAt`}, `points`, `badges[]`, `fcmToken`, `createdAt` | Читать и писать только владелец; `points` растёт не больше чем на 200 за запись |
-| `users/{uid}/pointsLog/{id}` | `type`, `points`, `refId`, `createdAt` | Только владелец, только создание |
-| `users/{uid}/routes/{id}` | `from`, `to`, `departAt`, `variant`, `sunShare`, `distance_m`, `endPlaceType`, `createdAt` | Только владелец; нужно для значков |
-| `visits/{uid_placeId_yyyyMMdd}` | `uid`, `placeId`, `code`, `lat`, `lon`, `createdAt` | Только создание; `code` должен совпасть с `questCodes/{placeId}` |
-| `questPlaces/{placeId}` | `name`, `letter`, `order`, `lat`, `lon` | Чтение всем вошедшим |
-| `questCodes/{placeId}` | `code` | Клиент не читает; используется только в правилах |
-| `districts/{id}` и `districts/{id}/weeks/{yyyy-Www}` | `name`, `points` | Чтение всем; прибавка не больше 200 за запись |
-| `reports/{id}` | `uid`, `type`, `lat`, `lon`, `comment`, `status` (new, approved, rejected), `createdAt` | Создаёт автор; статус меняет только админ |
-| `config/game` | `heatOverride` (0–3), `activeQuestId` | Чтение всем; позволяет включить режим жары на демо |
+| `users/{uid}` | `nickname`, `district`, `profile` {`id`, `weights`, `seniorMode`}, `consents` {`location`, `push`, `ranking`, `acceptedAt`}, `points`, `badges[]`, `fcmToken`, `createdAt` | Read and write by the owner only; `points` grows by at most 200 per write |
+| `users/{uid}/pointsLog/{id}` | `type`, `points`, `refId`, `createdAt` | Owner only, create only |
+| `users/{uid}/routes/{id}` | `from`, `to`, `departAt`, `variant`, `sunShare`, `distance_m`, `endPlaceType`, `createdAt` | Owner only; needed for badges |
+| `visits/{uid_placeId_yyyyMMdd}` | `uid`, `placeId`, `code`, `lat`, `lon`, `createdAt` | Create only; `code` must match `questCodes/{placeId}` |
+| `questPlaces/{placeId}` | `name`, `letter`, `order`, `lat`, `lon` | Readable by all signed-in users |
+| `questCodes/{placeId}` | `code` | Not read by the client; used only in the rules |
+| `districts/{id}` and `districts/{id}/weeks/{yyyy-Www}` | `name`, `points` | Readable by all; increment at most 200 per write |
+| `reports/{id}` | `uid`, `type`, `lat`, `lon`, `comment`, `status` (new, approved, rejected), `createdAt` | Created by the author; only an admin changes the status |
+| `config/game` | `heatOverride` (0–3), `activeQuestId` | Readable by all; lets us turn on heat mode for the demo |
 
-Рейтинг пользователей: запрос `users` с `consents.ranking == true`, сортировка по `points`, первые 50 (нужен составной индекс).
+User leaderboard: query `users` with `consents.ranking == true`, ordered by `points`, top 50 (needs a composite index).
 
-**Demo JSON** (`assets/demo/`), все по контракту API:
+**Demo JSON** (`assets/demo/`), all following the API contract:
 
-- `routes_manufaktura_piotrkowska.json`, `routes_plac_wolnosci_piotrkowska.json` — по 3 варианта, на нескольких временах выхода;
-- `places_cool.json` (собранный вручную список, см. бэклог), `places_water.json`, `places_bench.json`;
+- `routes_manufaktura_piotrkowska.json`, `routes_plac_wolnosci_piotrkowska.json` — 3 variants each, for several departure times;
+- `places_cool.json` (hand-collected list, see the backlog), `places_water.json`, `places_bench.json`;
 - `alerts_none.json`, `alerts_level2.json`, `alerts_level3.json`;
-- `layer_shade_1430.geojson`, `layer_green.geojson`, `layer_noise.geojson`, `air.json` — для Śródmieścia.
+- `layer_shade_1430.geojson`, `layer_green.geojson`, `layer_noise.geojson`, `air.json` — for Śródmieście.
 
-## Нефункциональные требования
+## Non-functional requirements
 
-| Область | Требование |
+| Area | Requirement |
 | --- | --- |
-| Приватность (RODO) | Минимум данных: e-mail, псевдоним, район, настройки профиля. Никаких данных о здоровье: профиль — это предпочтения маршрута. Геолокация только во время использования, трек прогулки не сохраняется. Удаление аккаунта удаляет все документы пользователя. Polityka prywatności доступна из S03 и S16 |
-| Ключи | В приложении нет ключей внешних провайдеров. Конфигурация Firebase — обычный `google-services.json` |
-| Производительность | Холодный старт до 3 с на среднем Android; ответ на маршрут показывается до 5 с, иначе скелетон и через 8 с переход на demo-данные |
-| Офлайн | Последний маршрут и список miejsc chłodu доступны без сети |
-| Устройства | Android 7.0+ (minSdk 24), экраны от 360 dp по ширине, только портретная ориентация |
-| Сборка | Release APK, подписанный ключом команды (ключ не в репозитории), `versionName` 1.0.0. Публикация: GitHub Releases + ссылка на сайте `/pobierz` и в заявке |
-| Качество | `flutter analyze` без ошибок; unit-тесты для правил игры (очки, значки, режим жары) и парсинга моделей API |
-| Лицензии | Атрибуция OpenStreetMap на карте и в «O aplikacji»; список источников данных там же |
-| Использование AI | Ведём короткий журнал: какие задачи сделаны с Claude Code. Передаётся Mikicie Kutsence для документации (требование регламента) |
+| Privacy (RODO) | Minimal data: e-mail, nickname, district, profile settings. No health data: the profile is a set of route preferences. Location only while in use; the walk track is not stored. Deleting the account deletes all of the user's documents. The privacy policy is reachable from S03 and S16 |
+| Keys | The app contains no keys for external providers. The Firebase configuration is a regular `google-services.json` |
+| Performance | Cold start under 3 s on a mid-range Android phone; a route response is shown within 5 s, otherwise a skeleton, and after 8 s fallback to demo data |
+| Offline | The last route and the list of miejsca chłodu are available without network |
+| Devices | Android 7.0+ (minSdk 24), screens from 360 dp wide, portrait orientation only |
+| Build | Release APK signed with the team key (the key is not in the repository), `versionName` 1.0.0. Distribution: GitHub Releases + a link on the website `/pobierz` and in the submission |
+| Quality | `flutter analyze` with no errors; unit tests for the game rules (points, badges, heat mode) and for parsing the API models |
+| Licences | OpenStreetMap attribution on the map and in «O aplikacji»; the list of data sources is there too |
+| Use of AI | We keep a short log of which tasks were done with Claude Code. It goes to Mikita Kutsenka for the documentation (required by the rules) |
 
-## Майлстоуны
+## Milestones
 
 ```mermaid
 gantt
-    title Майлстоуны, 18–27.10.2026
+    title Milestones, 18–27.10.2026
     dateFormat YYYY-MM-DD
     axisFormat %d.%m
-    section Разработка
-    M1 Фундамент        :m1, 2026-10-18, 2d
-    M2 Карта и маршруты :m2, after m1, 2d
-    M3 Игра и алерты    :m3, after m2, 2d
-    M4 Интеграция и APK :m4, after m3, 1d
-    M5 Заморозка        :m5, after m4, 1d
-    section Подача
-    M6 Подача           :m6, after m5, 2d
+    section Development
+    M1 Foundation           :m1, 2026-10-18, 2d
+    M2 Map and routes       :m2, after m1, 2d
+    M3 Game and alerts      :m3, after m2, 2d
+    M4 Integration and APK  :m4, after m3, 1d
+    M5 Freeze               :m5, after m4, 1d
+    section Submission
+    M6 Submission           :m6, after m5, 2d
 ```
 
-Майлстоун считается пройденным, когда выполнено условие ниже; если нет — на следующий день сначала режем S-задачи. Финал 6.11 в 10:00, к нему приложение должно работать и в demo-режиме.
+A milestone is reached when the condition below is met; if not, the next day we cut S tasks first. The final is on 6.11 at 10:00, and by then the app must also work in demo mode.
 
-- **M1 Фундамент (19.10):** приложение собирается, вход работает, demo JSON и список miejsc chłodu в репозитории, макет Figma просмотрен.
-- **M2 Карта и маршруты (21.10):** на demo-данных проходит путь S05 → S06 → S07 с тремя вариантами; от модуля D пришёл первый реальный маршрут.
-- **M3 Игра и алерты (23.10):** скан QR открывает букву, 4 значка открываются, push приходит, режим жары включается из `config/game`.
-- **M4 Интеграция и APK (24.10):** референсные трассы с реального API, подписанный APK в GitHub Release.
-- **M5 Заморозка (25.10):** чек-лист DoD пройден на двух телефонах, скриншоты сданы; дальше только исправления критических ошибок.
-- **M6 Подача (26–27.10):** видео и материалы у Mikity K., заявка на ChallengeRocket отправлена 27.10 до 12:00 (формальный срок 23:59).
+- **M1 Foundation (19.10):** the app builds, sign-in works, demo JSON and the list of miejsca chłodu are in the repository, the Figma mock-up has been reviewed.
+- **M2 Map and routes (21.10):** on demo data the flow S05 → S06 → S07 with three variants works; the first real route has arrived from module D.
+- **M3 Game and alerts (23.10):** a QR scan reveals a letter, 4 badges unlock, push arrives, heat mode is turned on from `config/game`.
+- **M4 Integration and APK (24.10):** reference routes from the real API, signed APK in a GitHub Release.
+- **M5 Freeze (25.10):** the DoD checklist passed on two phones, screenshots handed in; after this only critical bug fixes.
+- **M6 Submission (26–27.10):** video and materials are with Mikita K., the ChallengeRocket submission sent on 27.10 by 12:00 (formal deadline 23:59).
 
-## Бэклог задач (issues для GitHub)
+## Task backlog (GitHub issues)
 
-Задачи с приоритетом M дают около 46 часов при бюджете около 45 (2 человека × 2,5 ч × 9 дней), запаса нет. Поэтому S-задачи и видео делаем только при опережении графика; если 22.10 отстаём больше чем на 3 часа, первым убираем периоды рейтинга (оставляем только «całe lato»), затем рейтинг районов.
+The M-priority tasks add up to about 46 hours against a budget of about 45 (2 people × 2.5 h × 9 days), so there is no slack. That is why S tasks and the video are done only if we are ahead of schedule; if on 22.10 we are more than 3 hours behind, we first drop the leaderboard periods (keeping only «całe lato»), then the district leaderboard.
 
-Одна строка = один issue. Заголовок issue = «ID: задача», описание = ссылка на раздел спецификации + колонка «Готово, когда» как чек-лист.
+One row = one issue. Issue title = «ID: task», description = link to the specification section + the "Done when" column as a checklist.
 
-| ID | Задача | Влад. | Майлстоун | Ч | Лейблы | Готово, когда |
+| ID | Task | Owner | Milestone | H | Labels | Done when |
 | --- | --- | --- | --- | --- | --- | --- |
-| APP-00 | Макет в Figma по разделам «Экраны» и «Дизайн-система» | агент, ревью MD+AH | M1 | — | design | 16 экранов, компоненты и токены в Figma; команда оставила комментарии |
-| APP-01 | Каркас Flutter: структура, go\_router, Riverpod, тема из токенов, локализация PL | MD | M1 | 1,5 | infra, prio:M | Приложение запускается, 4 вкладки переключаются, цвета и шрифт из токенов |
-| APP-02 | Firebase: проект в europe-central2, Auth e-mail, Firestore, FCM | MD | M1 | 1,5 | infra, prio:M | Регистрация создаёт пользователя; тестовый push доходит до телефона |
-| APP-03 | Модели API, RemoteApiClient, DemoApiClient, переключатель и fallback 8 с | AH | M1 | 2,5 | infra, area:api, prio:M | Обе реализации проходят unit-тест на одном и том же JSON |
-| APP-04 | Demo JSON: 2 референсные трассы, алерты, слои Śródmieścia | AH | M1 | 1 | data, prio:M | Файлы в `assets/demo/` валидны по моделям |
-| APP-05 | Ручной список 15–20 miejsc chłodu в Łodzi: адрес, часы летом, удобства, источник; 7 из них для квеста | AH | M1 | 3 | data, prio:M | JSON передан модулю D и лежит в demo; у каждого места ссылка на источник часов |
-| APP-06 | Базовые компоненты дизайн-системы (список в «Дизайн-система») | AH | M2 | 1,5 | ui, prio:M | Компоненты в `shared/`, страница-витрина в debug-сборке |
-| APP-07 | S01–S03: онбординг, вход и регистрация, согласия | MD | M1 | 2 | area:auth, prio:M | Новый пользователь проходит путь до карты; ошибки входа показываются |
-| APP-08 | S04: выбор профиля, ползунки, режим Senior | MD | M2 | 1,5 | area:profile, prio:M | Профиль сохраняется в `users/{uid}`; Senior увеличивает шрифт в 1,25 раза |
-| APP-09 | S05: карта, чипы-фильтры, слои, точки, баннер алерта | AH | M2 | 3 | area:map, prio:M | Все 6 фильтров переключают слои на demo-данных |
-| APP-10 | S06: планирование маршрута, поиск, время выхода, быстрые трассы | MD | M2 | 1,5 | area:route, prio:M | Запрос уходит с профилем и временем |
-| APP-11 | S07: 3 варианта, раскраска тень/солнце, сравнение, «Prowadź» | MD | M2 | 2,5 | area:route, prio:M | Референсная трасса показывает 3 варианта; смена профиля меняет вариант по умолчанию |
-| APP-12 | S08 шторка места и S09 список miejsc chłodu с фильтрами | AH | M2 | 2 | area:places, prio:M | «Otwarte teraz» считается по часам; «Prowadź tam» открывает S07 |
-| APP-13 | Схема Firestore, правила доступа, индексы, `config/game` | AH | M3 | 1,5 | infra, area:game, prio:M | Тест правил: повторный скан за день и чужой документ отклоняются |
-| APP-14 | S10 квест и S11 сканер QR с проверками | MD | M3 | 3 | area:game, prio:M | Скан открывает букву и даёт 50 очков; повторный скан и скан дальше 150 м отклоняются |
-| APP-15 | Генератор QR-кодов для 7 мест квеста (PDF для печати) | AH | M3 | 0,5 | data, area:game, prio:M | 7 кодов распечатаны для видео и демо |
-| APP-16 | Движок очков и значков (`game_config.dart`, unit-тесты) и S12 | AH | M3 | 2,5 | area:game, prio:M | В демо открываются Pierwszy krok, Cienista dziesiątka, Strażnik chłodu, Ranny ptaszek |
-| APP-17 | S13 рейтинг пользователей и районов, неделя и лето | AH | M3 | 1,5 | area:game, prio:M | Свой ряд подсвечен; без согласия на ranking пользователя нет в списке |
-| APP-18 | Push-алерт, S14, режим жары через `heatOverride` | MD | M3 | 2 | area:alerts, prio:M | Тестовый push открывает S14; уровень 3 отключает очки за маршруты 11–17 |
-| APP-19 | S16 профиль, настройки, удаление аккаунта, «O aplikacji», переключатель demo | MD | M4 | 1,5 | area:settings, prio:M | Удаление аккаунта стирает пользователя и его документы |
-| APP-20 | Интеграция с реальным API модуля D | AH + MD | M4 | 3 | area:api, prio:M | Обе референсные трассы идут с реального API; при его падении работает demo |
-| APP-21 | Release APK, подпись, GitHub Release, ссылка для `/pobierz` | MD | M4 | 1 | infra, prio:M | APK ставится на чистый телефон без ошибок |
-| APP-22 | Ползунок «Najlepsza pora wyjścia» на S07 | AH | M4 | 1,5 | area:route, prio:S | Ползунок меняет долю тени на карточках |
-| APP-23 | S15 zgłoszenia (тип, GPS, комментарий) | AH | M4 | 1,5 | area:reports, prio:S | Запись появляется в `reports` со статусом new |
-| APP-24 | Тест на реальных телефонах, исправления, заморозка | MD + AH | M5 | 4 | qa, prio:M | Чек-лист DoD из брифа (B10) пройден |
-| APP-25 | Скриншоты для документации (список из B10) | AH | M5 | 1 | docs, prio:M | 9 скриншотов в общей папке |
-| APP-26 | Список ограничений и журнал использования AI для Mikity K. | MD | M5 | 0,5 | docs, prio:M | Отправлено Mikicie Kutsence |
-| APP-27 | Видео (если подтверждено за командой приложения) | AH | M6 | 3 | docs, prio:S | Видео в заявке |
-| APP-28 | Загрузка заявки на ChallengeRocket | MD | M6 | 0,5 | docs, prio:M | Заявка отправлена 27.10 до 12:00 |
+| APP-00 | Figma mock-up based on the "Screens" and "Design system" sections | agent, review MD+AH | M1 | — | design | 16 screens, components and tokens in Figma; the team has left comments |
+| APP-01 | Flutter skeleton: structure, go\_router, Riverpod, theme from tokens, PL localisation | MD | M1 | 1.5 | infra, prio:M | The app launches, 4 tabs switch, colours and font come from tokens |
+| APP-02 | Firebase: project in europe-central2, e-mail Auth, Firestore, FCM | MD | M1 | 1.5 | infra, prio:M | Sign-up creates a user; a test push reaches the phone |
+| APP-03 | API models, RemoteApiClient, DemoApiClient, switch and 8 s fallback | AH | M1 | 2.5 | infra, area:api, prio:M | Both implementations pass a unit test on the same JSON |
+| APP-04 | Demo JSON: 2 reference routes, alerts, Śródmieście layers | AH | M1 | 1 | data, prio:M | Files in `assets/demo/` are valid against the models |
+| APP-05 | Hand-made list of 15–20 miejsca chłodu in Łódź: address, summer hours, amenities, source; 7 of them for the quest | AH | M1 | 3 | data, prio:M | JSON handed to module D and stored in demo; every place has a link to the source of its hours |
+| APP-06 | Basic design system components (list in "Design system") | AH | M2 | 1.5 | ui, prio:M | Components in `shared/`, a showcase page in the debug build |
+| APP-07 | S01–S03: onboarding, sign-in and sign-up, consents | MD | M1 | 2 | area:auth, prio:M | A new user gets through to the map; sign-in errors are shown |
+| APP-08 | S04: profile selection, sliders, Senior mode | MD | M2 | 1.5 | area:profile, prio:M | The profile is saved in `users/{uid}`; Senior scales the font by 1.25 |
+| APP-09 | S05: map, filter chips, layers, points, alert banner | AH | M2 | 3 | area:map, prio:M | All 6 filters toggle layers on demo data |
+| APP-10 | S06: route planning, search, departure time, quick routes | MD | M2 | 1.5 | area:route, prio:M | The request is sent with the profile and time |
+| APP-11 | S07: 3 variants, shade/sun colouring, comparison, «Prowadź» | MD | M2 | 2.5 | area:route, prio:M | A reference route shows 3 variants; changing the profile changes the default variant |
+| APP-12 | S08 place sheet and S09 list of miejsca chłodu with filters | AH | M2 | 2 | area:places, prio:M | «Otwarte teraz» is computed from the hours; «Prowadź tam» opens S07 |
+| APP-13 | Firestore schema, security rules, indexes, `config/game` | AH | M3 | 1.5 | infra, area:game, prio:M | Rules test: a repeat scan on the same day and someone else's document are rejected |
+| APP-14 | S10 quest and S11 QR scanner with checks | MD | M3 | 3 | area:game, prio:M | A scan reveals a letter and gives 50 points; a repeat scan and a scan from more than 150 m away are rejected |
+| APP-15 | QR code generator for the 7 quest places (printable PDF) | AH | M3 | 0.5 | data, area:game, prio:M | 7 codes printed for the video and the demo |
+| APP-16 | Points and badges engine (`game_config.dart`, unit tests) and S12 | AH | M3 | 2.5 | area:game, prio:M | In the demo Pierwszy krok, Cienista dziesiątka, Strażnik chłodu, Ranny ptaszek unlock |
+| APP-17 | S13 user and district leaderboard, week and summer | AH | M3 | 1.5 | area:game, prio:M | Own row highlighted; without ranking consent the user is not in the list |
+| APP-18 | Push alert, S14, heat mode via `heatOverride` | MD | M3 | 2 | area:alerts, prio:M | A test push opens S14; level 3 disables points for routes 11–17 |
+| APP-19 | S16 profile, settings, account deletion, «O aplikacji», demo switch | MD | M4 | 1.5 | area:settings, prio:M | Account deletion erases the user and their documents |
+| APP-20 | Integration with the real module D API | AH + MD | M4 | 3 | area:api, prio:M | Both reference routes come from the real API; when it is down, demo works |
+| APP-21 | Release APK, signing, GitHub Release, link for `/pobierz` | MD | M4 | 1 | infra, prio:M | The APK installs on a clean phone without errors |
+| APP-22 | «Najlepsza pora wyjścia» slider on S07 | AH | M4 | 1.5 | area:route, prio:S | The slider changes the shade share on the cards |
+| APP-23 | S15 zgłoszenia (type, GPS, comment) | AH | M4 | 1.5 | area:reports, prio:S | A record appears in `reports` with status new |
+| APP-24 | Testing on real phones, fixes, freeze | MD + AH | M5 | 4 | qa, prio:M | The DoD checklist from the brief (B10) passed |
+| APP-25 | Screenshots for the documentation (list from B10) | AH | M5 | 1 | docs, prio:M | 9 screenshots in the shared folder |
+| APP-26 | List of limitations and AI usage log for Mikita K. | MD | M5 | 0.5 | docs, prio:M | Sent to Mikita Kutsenka |
+| APP-27 | Video (if confirmed as the app team's job) | AH | M6 | 3 | docs, prio:S | Video in the submission |
+| APP-28 | Uploading the submission to ChallengeRocket | MD | M6 | 0.5 | docs, prio:M | Submission sent on 27.10 by 12:00 |
 
-## Зависимости от других команд
+## Dependencies on other teams
 
-Самый большой риск — поздний реальный API: без первого настоящего маршрута к 21.10 интеграция 24.10 не успеет найти расхождения с контрактом.
+The biggest risk is a late real API: without the first real route by 21.10, the integration on 24.10 will not have time to find mismatches with the contract.
 
-| Что нужно приложению | От кого | Срок | Если не готово |
+| What the app needs | From whom | Deadline | If not ready |
 | --- | --- | --- | --- |
-| Решение, кто ведёт модуль D (вопрос 1 брифа) | Команда сайта, Mikita K. | 19.10 | Эскалируем в общий чат команды |
-| Примеры JSON по контракту (routes, places, alerts) в репозитории | Модуль D | 19.10 | Приложение пишет их само (APP-04) и отдаёт модулю D как эталон |
-| Поля `segments` и `sunShareByHour` в ответе `/v1/routes` | Модуль D | 20.10 согласовать | Раскраска маршрута одним цветом, ползунок времени убираем |
-| Новый эндпоинт `/v1/layers/*` для слоёв тени, зелени, шума | Модуль D | 21.10 | Слои берутся из статических GeoJSON в demo |
-| Первый реальный маршрут (одна референсная трасса) | Модуль D | 21.10 | Интеграция только на demo, честно сказать в документации |
-| Все эндпоинты приложения на публичном адресе | Модуль D | 23.10 | То же |
-| Страница `/pobierz` с ссылкой на APK и QR | Сайт | 24.10 | Ссылка на GitHub Release в заявке |
-| Список miejsc chłodu загружен в `/v1/places` | Модуль D (данные даёт AH, APP-05) | 22.10 | Места из demo JSON |
+| Decision on who runs module D (question 1 of the brief) | Website team, Mikita K. | 19.10 | Escalate to the team's shared chat |
+| Example JSON following the contract (routes, places, alerts) in the repository | Module D | 19.10 | The app writes them itself (APP-04) and gives them to module D as the reference |
+| Fields `segments` and `sunShareByHour` in the `/v1/routes` response | Module D | agree by 20.10 | Route drawn in a single colour, time slider dropped |
+| New endpoint `/v1/layers/*` for shade, greenery and noise layers | Module D | 21.10 | Layers come from static GeoJSON in demo |
+| First real route (one reference route) | Module D | 21.10 | Integration on demo only; say so honestly in the documentation |
+| All app endpoints on a public address | Module D | 23.10 | Same |
+| `/pobierz` page with the APK link and QR | Website | 24.10 | Link to the GitHub Release in the submission |
+| List of miejsca chłodu loaded into `/v1/places` | Module D (data from AH, APP-05) | 22.10 | Places from the demo JSON |
 
-## Вне объёма (kolejne kroki)
+## Out of scope (next steps)
 
-Эти функции описываются в документации как развитие, в коде их нет:
+These features are described in the documentation as future development; they are not in the code:
 
-- навигация шаг за шагом внутри приложения (сейчас — передача маршрута в Google Maps);
-- оценка маршрута после прогулки;
-- AI-ассистент на естественном языке;
-- фото в zgłoszeniach, групповые прогулки, реферальный код и значки Ambasador, Wspólny spacer;
-- 5 из 8 профилей комфорта (пёс, коляска, дорога на работу, активный, чувствительность к шуму и смогу) как отдельные карточки; их веса уже доступны через ползунки;
-- вход через Google и другие внешние аккаунты;
-- реальные коды MPK в MigAppka (нужно соглашение с MPK);
-- серверная проверка очков (Cloud Functions);
-- iOS, английский язык, тёмная тема.
+- in-app turn-by-turn navigation (for now the route is handed over to Google Maps);
+- post-walk route rating;
+- natural-language AI assistant;
+- photos in zgłoszenia, group walks, referral code and the Ambasador and Wspólny spacer badges;
+- 5 of the 8 comfort profiles (dog, pram, commute, active, sensitivity to noise and smog) as separate cards; their weights are already available through the sliders;
+- sign-in with Google and other external accounts;
+- real MPK codes in MigAppka (requires an agreement with MPK);
+- server-side validation of points (Cloud Functions);
+- iOS, English language, dark theme.
 
-## Сценарий демо (3 минуты)
+## Demo scenario (3 minutes)
 
-Одна непрерывная история, по которой проверяем готовность, снимаем видео и показываем жюри 6.11. Перед показом в `config/game` ставим `heatOverride = 2`.
+One continuous story that we use to check readiness, record the video and present to the jury on 6.11. Before the presentation, set `heatOverride = 2` in `config/game`.
 
-1. Приходит push «Ostrzeżenie przed upałem 2. stopnia» → S14 → «Pokaż miejsca chłodu».
-2. S05: на карте включены Cień и Miejsca chłodu, видно, как тень лежит на Piotrkowskiej в 14:30.
-3. S06: быстрая трасса Manufaktura → Piotrkowska, профиль Senior.
-4. S07: три варианта; Zacieniona даёт, например, 72% тени против 31% у Najkrótszej за +4 минуты (реальные числа берём из теста модуля D). Ползунок времени показывает, что в 18:00 тени больше.
-5. На маршруте miejsce chłodu → S08 → «Prowadź tam».
-6. S11: скан QR у входа, открывается буква, +50 очков, всплывает значок Strażnik chłodu (для демо порог можно снизить в `game_config`).
-7. S13: район Śródmieście поднимается в рейтинге.
-8. Переход на сайт: панель Cool Łódź City показывает те же miejsca chłodu и пробелы в тени (часть команды сайта).
+1. The push «Ostrzeżenie przed upałem 2. stopnia» arrives → S14 → «Pokaż miejsca chłodu».
+2. S05: Cień and Miejsca chłodu are on in the map; you can see the shade lying on Piotrkowska at 14:30.
+3. S06: quick route Manufaktura → Piotrkowska, Senior profile.
+4. S07: three variants; Zacieniona gives, for example, 72% shade versus 31% for Najkrótsza for +4 minutes (real numbers come from the module D test). The time slider shows there is more shade at 18:00.
+5. A miejsce chłodu on the route → S08 → «Prowadź tam».
+6. S11: QR scan at the entrance, a letter is revealed, +50 points, the Strażnik chłodu badge pops up (for the demo the threshold can be lowered in `game_config`).
+7. S13: the Śródmieście district climbs the leaderboard.
+8. Switch to the website: the Cool Łódź City panel shows the same miejsca chłodu and the gaps in shade (the website team's part).
 
-## Открытые вопросы
+## Open questions
 
-- [ ] Кто ведёт модуль D и кто отвечает за эндпоинт `/v1/layers/*` — Mikita K., до 19.10.
-- [ ] Согласовать поля `segments` и `sunShareByHour` в `/v1/routes` — MD с модулем D, до 20.10.
-- [ ] Подтвердить 5 районов для рейтинга (Bałuty, Górna, Polesie, Śródmieście, Widzew) — Mikita K., до 20.10.
-- [ ] Видео делает команда приложения или кто-то другой — Mikita K., до 20.10.
-- [ ] Читает ли сайт рейтинг из Firestore для публичного превью или через модуль D — MD с командой сайта, до 22.10.
-- [ ] Провайдер тайлов карты с бесплатным планом и его лимиты — AH, до 20.10.
-- [ ] Hasło квеста и 7 мест квеста — AH, вместе с APP-05.
+- [ ] Who runs module D and who is responsible for the `/v1/layers/*` endpoint — Mikita K., by 19.10.
+- [ ] Agree the `segments` and `sunShareByHour` fields in `/v1/routes` — MD with module D, by 20.10.
+- [ ] Confirm the 5 districts for the leaderboard (Bałuty, Górna, Polesie, Śródmieście, Widzew) — Mikita K., by 20.10.
+- [ ] Is the video made by the app team or someone else — Mikita K., by 20.10.
+- [ ] Does the website read the leaderboard from Firestore for the public preview, or through module D — MD with the website team, by 22.10.
+- [ ] Map tile provider with a free plan and its limits — AH, by 20.10.
+- [ ] Quest hasło and the 7 quest places — AH, together with APP-05.
 
-## Инструкция для агента
+## Instructions for the agent
 
-Агент делает три вещи по порядку: Figma-файл, настройку GitHub, каркас репозитория. Решения, которых нет в спецификации, агент не придумывает, а записывает в issue с лейблом `question`.
+The agent does three things in order: the Figma file, the GitHub setup, the repository skeleton. The agent does not invent decisions that are not in the specification; it records them in an issue labelled `question`.
 
-**1. Figma** (отдельный файл «Cool Łódź — App», страницы в таком порядке):
+**1. Figma** (a separate file «Cool Łódź — App», pages in this order):
 
-1. Cover — название, команда, дата, ссылка на эту спецификацию.
-2. Tokens — цвета и текстовые стили из «Дизайн-система» как Figma Variables и Text Styles (режимы Default и Senior для размеров).
-3. Components — все компоненты из списка, с вариантами (Variants) и Auto Layout.
-4. Screens — S01–S16 во фреймах 360 × 800, имя фрейма = код и название (`S07 Wynik trasy`); состояния загрузки, пусто и ошибка — соседними фреймами `S07 / loading`. Для S04, S07, S10 дополнительно версия Senior.
-5. Flow — прототипные связи по «Карте экранов» и кликабельный путь сценария демо.
+1. Cover — title, team, date, link to this specification.
+2. Tokens — colours and text styles from "Design system" as Figma Variables and Text Styles (Default and Senior modes for sizes).
+3. Components — all components from the list, with Variants and Auto Layout.
+4. Screens — S01–S16 in 360 × 800 frames, frame name = code and title (`S07 Wynik trasy`); loading, empty and error states as neighbouring frames `S07 / loading`. For S04, S07, S10 also a Senior version.
+5. Flow — prototype links following the "Screen map" and a clickable path for the demo scenario.
 
-Данные на макетах реальные: улицы Лодзи, места из APP-05 (до его готовности — Biblioteka Miejska, EC1, Manufaktura, Ogród Botaniczny), числа маршрутов в правдоподобном диапазоне. Без lorem ipsum.
+Data in the mock-ups is real: Łódź streets, places from APP-05 (until it is ready — Biblioteka Miejska, EC1, Manufaktura, Ogród Botaniczny), route numbers in a plausible range. No lorem ipsum.
 
 **2. GitHub:**
 
-- Репозиторий `cool-lodz-app` (или папка `app/` в общем монорепо, если команда так решит).
-- Лейблы: `prio:M`, `prio:S`, `infra`, `data`, `ui`, `design`, `qa`, `docs`, `question`, `area:auth`, `area:profile`, `area:map`, `area:route`, `area:places`, `area:game`, `area:alerts`, `area:settings`, `area:reports`, `area:api`.
-- Майлстоуны с датами из раздела «Майлстоуны».
-- Issues APP-00…APP-28 из бэклога: заголовок «ID: задача», исполнитель по колонке «Влад.» (GitHub-логины уточнить у команды), тело = ссылка на раздел спецификации, оценка в часах, чек-лист из «Готово, когда». Зависимости из раздела «Зависимости» — отдельные issues с лейблом `question` для других команд.
-- Project (доска): колонки Backlog, To do, In progress, Review, Done; поле Estimate (часы) и Milestone.
+- Repository `cool-lodz-app` (or an `app/` folder in a shared monorepo, if the team decides so).
+- Labels: `prio:M`, `prio:S`, `infra`, `data`, `ui`, `design`, `qa`, `docs`, `question`, `area:auth`, `area:profile`, `area:map`, `area:route`, `area:places`, `area:game`, `area:alerts`, `area:settings`, `area:reports`, `area:api`.
+- Milestones with the dates from the "Milestones" section.
+- Issues APP-00…APP-28 from the backlog: title «ID: task», assignee from the "Owner" column (check GitHub logins with the team), body = link to the specification section, estimate in hours, checklist from "Done when". Dependencies from the "Dependencies on other teams" section become separate issues labelled `question` for the other teams.
+- Project (board): columns Backlog, To do, In progress, Review, Done; fields Estimate (hours) and Milestone.
 
-**3. Каркас репозитория:**
+**3. Repository skeleton:**
 
 - `flutter create --org pl.betterthannever --project-name cool_lodz --platforms android`.
-- Структура папок из «Архитектура и стек», зависимости в `pubspec.yaml` (go\_router, flutter\_riverpod, flutter\_map, dio, json\_serializable, firebase\_core, firebase\_auth, cloud\_firestore, firebase\_messaging, mobile\_scanner, geolocator, intl, shared\_preferences).
-- Тема из токенов дизайн-системы в `app/theme.dart`, файл `game_config.dart` со значениями из «Геймификация».
-- `firestore.rules` и `firestore.indexes.json` по разделу «Данные».
-- GitHub Actions: `flutter analyze` и `flutter test` на каждый PR.
-- Ветки: `main` защищена, работа в `feat/APP-xx-…`, PR с ссылкой на issue; шаблон PR с чек-листом (скриншот, тест, ссылка на issue).
-- README: как запустить, как включить demo-режим, где спецификация.
-- `google-services.json` и ключ подписи APK в репозиторий не коммитить (`.gitignore`).
+- Folder structure from "Architecture and stack", dependencies in `pubspec.yaml` (go\_router, flutter\_riverpod, flutter\_map, dio, json\_serializable, firebase\_core, firebase\_auth, cloud\_firestore, firebase\_messaging, mobile\_scanner, geolocator, intl, shared\_preferences).
+- Theme from the design system tokens in `app/theme.dart`, a `game_config.dart` file with the values from "Gamification".
+- `firestore.rules` and `firestore.indexes.json` following the "Data" section.
+- GitHub Actions: `flutter analyze` and `flutter test` on every PR.
+- Branches: `main` is protected, work happens in `feat/APP-xx-…`, PRs link to their issue; a PR template with a checklist (screenshot, test, issue link).
+- README: how to run, how to turn on demo mode, where the specification is.
+- Do not commit `google-services.json` or the APK signing key to the repository (`.gitignore`).

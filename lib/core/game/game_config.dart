@@ -1,4 +1,4 @@
-/// Game numbers from the spec ("Геймификация"). They are starting values:
+/// Game numbers from the spec ("Gamification"). They are starting values:
 /// change them here and only here.
 abstract final class GameConfig {
   // Points.

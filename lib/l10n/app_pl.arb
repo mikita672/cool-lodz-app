@@ -20,6 +20,8 @@
   "dsRouteShortest": "Najkrótsza",
   "dsRouteShaded": "Zacieniona",
   "dsRouteCompromise": "Kompromis",
+  "dsRouteAlternative": "Inna trasa {number}",
+  "@dsRouteAlternative": {"placeholders": {"number": {"type": "int"}}},
   "dsRouteMeta": "{minutes} min · {distance} km",
   "@dsRouteMeta": {
     "description": "Route duration and length on the route card",
@@ -327,7 +329,7 @@
   "mapAlertSubtitle": "{source} · do {time}",
   "@mapAlertSubtitle": {"placeholders": {"source": {"type": "String"}, "time": {"type": "String"}}},
   "mapHeatModeHint": "Tryb upału: w najgorętszych godzinach odpocznij w miejscu chłodu",
-  "mapLegendQuiet": "Ciemniej = głośniej",
+  "mapLegendQuiet": "Ciemniej = ciszej",
   "mapLegendAir": "Indeks jakości powietrza GIOŚ",
   "mapAirVeryGood": "Bardzo dobry",
   "mapAirGood": "Dobry",

@@ -27,8 +27,8 @@ class LocationUnavailable implements Exception {
   String toString() => 'LocationUnavailable(${problem.name})';
 }
 
-/// The user's position, only while the app is in use (spec: «Геолокация
-/// только во время использования», no track is stored).
+/// The user's position, only while the app is in use (spec: "location only
+/// while the app is in use"), no track is stored.
 abstract interface class LocationService {
   /// Current position. Asks for the permission if it was not decided yet.
   /// Throws [LocationUnavailable].

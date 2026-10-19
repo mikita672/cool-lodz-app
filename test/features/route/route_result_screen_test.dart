@@ -48,6 +48,36 @@ class _NoHourlyApi extends RecordingApiClient {
   }
 }
 
+/// The demo answer reshaped: only the first [keep] variants, then
+/// [alternatives] copies of the shaded one as `alternative`s.
+class _VariantsApi extends RecordingApiClient {
+  _VariantsApi({this.keep = 3, this.alternatives = 0});
+
+  final int keep;
+  final int alternatives;
+
+  @override
+  Future<RouteResponse> getRoutes(RouteRequest request) async {
+    final full = await super.getRoutes(request);
+    final shaded = full.variant(RouteVariantType.shaded)!;
+    return RouteResponse(
+      coverage: full.coverage,
+      variants: [
+        ...full.variants.take(keep),
+        for (var i = 0; i < alternatives; i++)
+          RouteVariant(
+            variant: RouteVariantType.alternative,
+            geometry: shaded.geometry,
+            distanceM: shaded.distanceM + 100 * (i + 1),
+            durationS: shaded.durationS + 60 * (i + 1),
+            sunShare: shaded.sunShare,
+            extraTimeVsShortestS: shaded.extraTimeVsShortestS + 60 * (i + 1),
+          ),
+      ],
+    );
+  }
+}
+
 /// When «Prowadź» is tapped in these tests.
 final _now = DateTime(2026, 7, 15, 14, 30);
 
@@ -347,6 +377,38 @@ void main() {
     });
   });
 
+  testWidgets('one possible walk → one card, selected', (tester) async {
+    api = _VariantsApi(keep: 1);
+    await pump(tester, profile: ProfileId.senior);
+    expect(find.byKey(const Key('route-card-shortest')), findsOneWidget);
+    expect(find.byKey(const Key('route-card-shaded')), findsNothing);
+    expect(find.byKey(const Key('route-card-compromise')), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('more walks → «Inna trasa» cards after the three', (
+    tester,
+  ) async {
+    api = _VariantsApi(alternatives: 2);
+    await pump(tester, size: const Size(400, 1400));
+    for (final key in [
+      'route-card-shortest',
+      'route-card-shaded',
+      'route-card-compromise',
+      'route-card-alternative-1',
+      'route-card-alternative-2',
+    ]) {
+      expect(find.byKey(Key(key)), findsOneWidget, reason: key);
+    }
+    expect(find.text('Inna trasa 2'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('route-card-alternative-2')));
+    await tester.pumpAndSettle();
+    final card = tester.widget<ds.RouteVariantCard>(
+      find.byKey(const Key('route-card-alternative-2')),
+    );
+    expect(card.selected, isTrue);
+  });
+
   group('routePolylines', () {
     RouteVariant variant(
       RouteVariantType type, {
@@ -381,7 +443,10 @@ void main() {
           variant(RouteVariantType.compromise),
         ],
       );
-      final lines = routePolylines(response, RouteVariantType.shaded);
+      final lines = routePolylines(
+        response,
+        response.variant(RouteVariantType.shaded)!,
+      );
       expect(lines, hasLength(5));
       expect(lines[0].color, AppColors.muted);
       expect(lines[0].strokeWidth, 4);
@@ -400,7 +465,10 @@ void main() {
         coverage: RouteCoverage.full,
         variants: [variant(RouteVariantType.compromise)],
       );
-      final lines = routePolylines(response, RouteVariantType.compromise);
+      final lines = routePolylines(
+        response,
+        response.variant(RouteVariantType.compromise)!,
+      );
       expect(lines.single.color, AppColors.primary);
       expect(lines.single.points, hasLength(4));
     });
