@@ -1,10 +1,223 @@
 rules_version = '2';
 
-// Deny everything until APP-13 writes the real rules (spec: «Данные»).
+// Firestore rules for Cool Łódź (spec: «Данные», «Геймификация»).
+// Tests: tools/firestore-tests (see docs/dev.md, "Firestore rules").
+//
+// Known limitation (spec): without Cloud Functions the client awards points;
+// these rules only cap each write (max 200) and keep totals from going down.
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write: if false;
+
+    // ---- helpers ----------------------------------------------------------
+
+    function signedIn() {
+      return request.auth != null;
     }
+
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    // Must match FirestoreDistricts.ids in lib/core/firestore/collections.dart.
+    function districtIds() {
+      return ['baluty', 'gorna', 'polesie', 'srodmiescie', 'widzew'];
+    }
+
+    // Must match FirestoreReports.types in lib/core/firestore/collections.dart.
+    function reportTypes() {
+      return ['noBench', 'noWater', 'noShade', 'other'];
+    }
+
+    function isWeekId(s) {
+      return s is string && s.matches('^[0-9]{4}-W[0-9]{2}$');
+    }
+
+    function isPointsDelta(n) {
+      return n is int && n >= 1 && n <= 200;
+    }
+
+    // Date part of a visit id (yyyyMMdd) is "today" in Poland. Warsaw is UTC+1
+    // in winter and UTC+2 in summer; both are accepted, so around midnight a
+    // place could be scanned twice. That is fine for the game.
+    function isDateOf(s, t) {
+      return s.size() == 8
+        && int(s[0:4]) == t.year()
+        && int(s[4:6]) == t.month()
+        && int(s[6:8]) == t.day();
+    }
+
+    function isTodayInPoland(s) {
+      return isDateOf(s, request.time + duration.value(1, 'h'))
+        || isDateOf(s, request.time + duration.value(2, 'h'));
+    }
+
+    // ---- users ------------------------------------------------------------
+
+    function validUser(d) {
+      return d.keys().hasOnly(['nickname', 'district', 'profile', 'consents',
+          'points', 'weekId', 'weekPoints', 'badges', 'fcmToken', 'createdAt'])
+        && d.nickname is string
+        && d.nickname.size() >= 2 && d.nickname.size() <= 24
+        && (d.get('district', null) == null || d.district in districtIds())
+        && (!('profile' in d) || (d.profile is map
+            && d.profile.keys().hasOnly(['id', 'weights', 'seniorMode'])))
+        && (!('consents' in d) || (d.consents is map
+            && d.consents.keys().hasOnly(['location', 'push', 'ranking', 'acceptedAt'])
+            && d.consents.get('ranking', false) is bool))
+        && d.get('points', 0) is int && d.get('points', 0) >= 0
+        && d.get('weekPoints', 0) is int && d.get('weekPoints', 0) >= 0
+        && (!('weekId' in d) || isWeekId(d.weekId))
+        && d.get('badges', []) is list && d.get('badges', []).size() <= 50
+        && (d.get('fcmToken', null) == null || d.fcmToken is string)
+        && (!('createdAt' in d) || d.createdAt is timestamp);
+    }
+
+    // points: never down, at most +200 per write.
+    // weekPoints: same, except that a new weekId resets it (0..200 allowed).
+    // badges: only grow.
+    function validUserChange(before, after) {
+      let dPoints = after.get('points', 0) - before.get('points', 0);
+      let dWeek = after.get('weekPoints', 0) - before.get('weekPoints', 0);
+      let sameWeek = after.get('weekId', '') == before.get('weekId', '');
+      return dPoints >= 0 && dPoints <= 200
+        && (sameWeek
+            ? (dWeek >= 0 && dWeek <= 200)
+            : after.get('weekPoints', 0) <= 200)
+        && after.get('badges', []).hasAll(before.get('badges', []))
+        && after.get('createdAt', null) == before.get('createdAt', null);
+    }
+
+    match /users/{uid} {
+      // Ranking exception (S13, decisions Q-03/Q-09): a signed-in user may read
+      // another user's document only when that user opted in to the ranking
+      // (consents.ranking == true); the leaderboard queries filter on it.
+      // Trade-off: Firestore cannot hide single fields, so the WHOLE document
+      // of an opted-in user is readable by any signed-in user: nickname,
+      // district, points, weekId/weekPoints, badges, but also profile,
+      // consents and fcmToken (an FCM token alone cannot send pushes; that
+      // needs the server key). Users who did not opt in stay private. If this
+      // is too much, move the public fields to a separate rankings/{uid} doc.
+      allow read: if isOwner(uid)
+        || (signedIn() && resource.data.consents.ranking == true);
+
+      allow create: if isOwner(uid)
+        && validUser(incoming())
+        && incoming().get('points', 0) <= 200
+        && incoming().get('weekPoints', 0) <= 200;
+
+      allow update: if isOwner(uid)
+        && validUser(incoming())
+        && validUserChange(resource.data, incoming());
+
+      // "Usuń konto" (S16) deletes the user's documents from the client.
+      allow delete: if isOwner(uid);
+
+      // Points history (S12). No updates. Delete only for account deletion
+      // (same reasoning as Q-10 for visits/reports).
+      match /pointsLog/{logId} {
+        allow read, delete: if isOwner(uid);
+        allow create: if isOwner(uid)
+          && incoming().keys().hasOnly(['type', 'points', 'refId', 'createdAt'])
+          && incoming().keys().hasAll(['type', 'points', 'refId', 'createdAt'])
+          && incoming().type is string
+          && incoming().type.size() >= 1 && incoming().type.size() <= 40
+          && isPointsDelta(incoming().points)
+          && (incoming().refId == null
+              || (incoming().refId is string && incoming().refId.size() <= 200))
+          && incoming().createdAt == request.time;
+      }
+
+      // Routes started with "Prowadź" (Q-08), used for badges.
+      match /routes/{routeId} {
+        allow read, delete: if isOwner(uid);
+        allow create: if isOwner(uid)
+          && incoming().keys().hasOnly(['from', 'to', 'departAt', 'variant',
+              'sunShare', 'distance_m', 'endPlaceType', 'createdAt']);
+      }
+    }
+
+    // ---- quest --------------------------------------------------------------
+
+    // Id: {uid}_{placeId}_{yyyyMMdd}. Create only, so a second scan of the
+    // same place on the same day fails (the document already exists).
+    match /visits/{visitId} {
+      allow read, delete: if signedIn() && resource.data.uid == request.auth.uid;
+
+      allow create: if signedIn()
+        && incoming().keys().hasOnly(['uid', 'placeId', 'code', 'lat', 'lon', 'createdAt'])
+        && incoming().keys().hasAll(['uid', 'placeId', 'code', 'createdAt'])
+        && incoming().uid == request.auth.uid
+        && incoming().placeId is string
+        && visitId.size() > 8
+        && visitId == request.auth.uid + '_' + incoming().placeId + '_'
+            + visitId[visitId.size() - 8:visitId.size()]
+        && isTodayInPoland(visitId[visitId.size() - 8:visitId.size()])
+        && exists(/databases/$(database)/documents/questCodes/$(incoming().placeId))
+        && incoming().code
+            == get(/databases/$(database)/documents/questCodes/$(incoming().placeId)).data.code
+        && (!('lat' in incoming()) || incoming().lat is number)
+        && (!('lon' in incoming()) || incoming().lon is number)
+        && incoming().createdAt == request.time;
+    }
+
+    match /questPlaces/{placeId} {
+      allow read: if signedIn();
+    }
+
+    // questCodes: no client access. Only get() in the visits rule reads it.
+
+    // ---- ranking ------------------------------------------------------------
+
+    function validDistrictIncrement() {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(['points'])
+        && isPointsDelta(incoming().points - resource.data.points);
+    }
+
+    match /districts/{districtId} {
+      allow read: if signedIn();
+      allow update: if signedIn() && validDistrictIncrement();
+
+      match /weeks/{weekId} {
+        allow read: if signedIn();
+        allow create: if signedIn()
+          && isWeekId(weekId)
+          && exists(/databases/$(database)/documents/districts/$(districtId))
+          && incoming().keys().hasOnly(['name', 'points'])
+          && (!('name' in incoming())
+              || (incoming().name is string && incoming().name.size() <= 40))
+          && isPointsDelta(incoming().points);
+        allow update: if signedIn() && validDistrictIncrement();
+      }
+    }
+
+    // ---- reports (S15) --------------------------------------------------------
+
+    // Status (new/approved/rejected) is changed only in the Firebase console.
+    match /reports/{reportId} {
+      allow read, delete: if signedIn() && resource.data.uid == request.auth.uid;
+      allow create: if signedIn()
+        && incoming().keys().hasOnly(['uid', 'type', 'lat', 'lon', 'comment', 'status', 'createdAt'])
+        && incoming().keys().hasAll(['uid', 'type', 'lat', 'lon', 'status', 'createdAt'])
+        && incoming().uid == request.auth.uid
+        && incoming().status == 'new'
+        && incoming().type in reportTypes()
+        && incoming().lat is number
+        && incoming().lon is number
+        && (!('comment' in incoming())
+            || (incoming().comment is string && incoming().comment.size() <= 200))
+        && incoming().createdAt == request.time;
+    }
+
+    // ---- config ---------------------------------------------------------------
+
+    match /config/{docId} {
+      allow read: if signedIn() && docId == 'game';
+    }
+
+    // Everything else is denied by default (no matching allow).
   }
 }
