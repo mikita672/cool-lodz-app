@@ -25,7 +25,36 @@ Project `coollodz` (Firestore in europe-central2). Code gets Firebase only throu
   Needs Java 21+ (firebase-tools 15). Data is kept in `.firebase-data/` (ignored by git), created on the first exit. On the Android emulator `localhost` is mapped to the host (`10.0.2.2`) automatically.
 - **Switch.** `--dart-define=USE_FIREBASE_EMULATORS=false` makes a debug build use the real project. The default is `true` in debug; profile and release builds always use the real project (cleartext HTTP is allowed only in `android/app/src/debug`). On a physical phone add `--dart-define=FIREBASE_EMULATOR_HOST=<PC LAN IP>` and start the emulators listening on the LAN with a local copy of the config: `cp firebase.json firebase.local.json` (ignored by git), set `"host": "0.0.0.0"` for `auth` and `firestore` there and run `firebase emulators:start --config firebase.local.json …`.
 - **Push.** There is no FCM emulator: debug builds get a real FCM token, printed to the log as `FCM token: …`. Send a test message from the Firebase console (Messaging → New campaign → Send test message) to that token. On Android 13+ allow notifications first (system settings, or `adb shell pm grant pl.betterthannever.cool_lodz android.permission.POST_NOTIFICATIONS`) and put the app in the background — FCM shows nothing while the app is in front (debug builds log `FCM foreground: …` instead).
-- **Rules.** `firestore.rules` and `firestore.indexes.json` are the source of truth for the real project too; deploy them with `firebase deploy --only firestore:rules,firestore:indexes` after every change (the emulator reads the files directly). Until APP-13 the rules deny everything.
+- **Rules.** `firestore.rules` and `firestore.indexes.json` are the source of truth for the real project too; see [Firestore rules](#firestore-rules) below.
+
+### Firestore rules
+
+Collection and field names are in `lib/core/firestore/collections.dart`, together with `weekId()` (ISO week, `2026-W43`) and `visitId()` (`{uid}_{placeId}_{yyyyMMdd}`). Keep them in sync with `firestore.rules`. Things the client must do to pass the rules:
+
+- `createdAt` in `visits`, `reports` and `pointsLog` is `FieldValue.serverTimestamp()`.
+- `users.points` and `weekPoints` only grow, by at most 200 per write; a new `weekId` resets `weekPoints` (0–200). `badges` only grow. `users.district` is a district id (`baluty`, `gorna`, `polesie`, `srodmiescie`, `widzew`).
+- District totals change only with `FieldValue.increment(1..200)`; the week doc `districts/{id}/weeks/{weekId}` is created by the first `set(..., merge)` with an increment.
+- The ranking queries must filter `consents.ranking == true` (the composite indexes are in `firestore.indexes.json`).
+
+**Tests** (`tools/firestore-tests`, Node 22 + Java 21, `node --test`):
+
+```sh
+npm ci --prefix tools/firestore-tests
+firebase emulators:exec --only firestore --project demo-coollodz "npm --prefix tools/firestore-tests test"
+```
+
+The `demo-` project id keeps everything offline. If port 8080 is busy (another emulator running), use a copy of `firebase.json` with other ports as `firebase.local.json` and add `--config firebase.local.json`. CI runs the same command in the `firestore rules` job.
+
+**Deploy** (the lead does it, after the PR is merged): `firebase deploy --only firestore:rules,firestore:indexes`. The emulator reads the files directly, no deploy needed for local work.
+
+**Seed** `config/game`, the 5 `districts`, `questPlaces` and `questCodes` (needs `assets/demo/quest.json` and `places_cool.json` from APP-05):
+
+```sh
+firebase emulators:start --only auth,firestore      # in another terminal
+node tools/firestore-seed/seed.mjs                  # emulator, project coollodz
+```
+
+Quest codes are written to `tools/qr/codes.json` (ignored by git, input for the QR generator). Re-running keeps existing codes, `config/game` and district points; `--new-codes` rotates the codes (old QR prints stop working), `--force` resets config and districts, `--dry-run` only prints. For the real project pass an OAuth token of an account with access to `coollodz`: `node tools/firestore-seed/seed.mjs --project coollodz --token "$(gcloud auth print-access-token)"` (after `gcloud auth login`).
 
 ## Layout
 
@@ -48,7 +77,7 @@ Routes for every screen already exist in `lib/app/router.dart`; a feature ticket
 - **Strings:** never hard-code UI text. Add keys to `lib/l10n/app_pl.arb` with the feature prefix (`map…`, `route…`, `quest…`) inside the block for your feature.
 - **Theme:** colours, sizes and text styles come from `lib/app/theme.dart` (`AppColors`, `AppSizes`, `AppTextStyles`, `context.palette`). No raw hex values in features.
 - **Accessibility:** tap targets ≥ 48 dp, `Semantics` labels for icons, colour is never the only signal (shade colour always has a % next to it). Senior mode must not break layouts at 360 dp width.
-- **Firebase:** go through repositories in the feature or `core/`; widgets never call `FirebaseFirestore.instance` directly. Debug builds talk to the Firebase Emulator Suite.
+- **Firebase:** collection and field names come from `lib/core/firestore/collections.dart`; go through repositories in the feature or `core/`; widgets never call `FirebaseFirestore.instance` directly. Debug builds talk to the Firebase Emulator Suite.
 - **Game numbers:** only in `lib/core/game/game_config.dart`.
 - **Models:** `json_serializable`; generated `*.g.dart` files are committed (`dart run build_runner build --delete-conflicting-outputs`).
 - **Tests:** unit tests for logic (game rules, parsing, opening hours), widget tests for screens. Keep `flutter analyze` clean and code formatted with `dart format`.
