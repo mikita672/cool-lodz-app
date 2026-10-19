@@ -130,14 +130,19 @@ class LiveRouteEngine {
     // Each distinct walk once: the named variants that differ, then the
     // other candidates (least sun first) as alternatives, at most
     // [maxVariants]. A single possible walk gives a single variant.
+    // When two names share a walk, the profile's default name (S07 opens
+    // on it: shaded for Senior, compromise otherwise) keeps it.
+    final senior = request.profile.id == ProfileId.senior;
     final picked = <(RouteVariantType, _Candidate)>[];
     for (final (type, c) in [
       (RouteVariantType.shortest, shortest),
-      (RouteVariantType.shaded, shaded),
+      if (senior) (RouteVariantType.shaded, shaded),
       (RouteVariantType.compromise, compromise),
+      if (!senior) (RouteVariantType.shaded, shaded),
     ]) {
       if (!picked.any((p) => identical(p.$2, c))) picked.add((type, c));
     }
+    picked.sort((a, b) => a.$1.index.compareTo(b.$1.index));
     final rest = [
       for (final c in candidates)
         if (!picked.any((p) => identical(p.$2, c))) c,

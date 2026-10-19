@@ -224,6 +224,34 @@ void main() {
       expect(response.variant(RouteVariantType.compromise), isNull);
     });
 
+    test('a shared walk keeps the profile default name', () async {
+      final adapter = FakeAdapter(
+        (o) => pointCount(o) == 2
+            ? jsonBody(lineJson(const [a, b], distance: 1000))
+            : jsonBody(lineJson(const [a, n1, n2, b], distance: 1200)),
+      );
+      final response = await engine(adapter, model: model).route(
+        RouteRequest(
+          from: RoutePoint.fromLatLng(a),
+          to: RoutePoint.fromLatLng(b),
+          datetime: DateTime.parse('2026-07-15T12:00:00+02:00'),
+          profile: const RouteProfile(
+            id: ProfileId.standard,
+            weights: ProfileWeights(shade: 60, time: 60, quiet: 30, air: 30),
+          ),
+        ),
+      );
+      // Standard opens on «compromise»: the shady detour keeps that name.
+      expect(response.variants.map((v) => v.variant), [
+        RouteVariantType.shortest,
+        RouteVariantType.compromise,
+      ]);
+      expect(
+        response.variant(RouteVariantType.compromise)!.geometry,
+        hasLength(4),
+      );
+    });
+
     test('a single possible walk → a single variant', () async {
       final adapter = FakeAdapter(
         (o) => jsonBody(lineJson(const [a, b], distance: 1000)),
@@ -300,8 +328,13 @@ void main() {
           ),
         ),
       );
-      // The compromise is the short walk itself, so it is not repeated.
-      expect(response.variant(RouteVariantType.compromise), isNull);
+      // The compromise is the short walk itself, so only the detour keeps
+      // its own name (had the compromise chosen the detour, the standard
+      // profile would keep «compromise» for it instead of «shaded»).
+      expect(response.variants.map((v) => v.variant), [
+        RouteVariantType.shortest,
+        RouteVariantType.shaded,
+      ]);
       expect(response.shortest!.geometry, hasLength(2));
     });
 
