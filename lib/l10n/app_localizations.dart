@@ -1065,6 +1065,168 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Nie udało się zapisać profilu. Sprawdź połączenie i spróbuj ponownie.'**
   String get profileSaveError;
+
+  /// No description provided for @routePlanTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zaplanuj trasę'**
+  String get routePlanTitle;
+
+  /// No description provided for @routeFrom.
+  ///
+  /// In pl, this message translates to:
+  /// **'Skąd'**
+  String get routeFrom;
+
+  /// No description provided for @routeTo.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dokąd'**
+  String get routeTo;
+
+  /// No description provided for @routeToHint.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wybierz cel'**
+  String get routeToHint;
+
+  /// No description provided for @routeMyLocation.
+  ///
+  /// In pl, this message translates to:
+  /// **'Moja lokalizacja'**
+  String get routeMyLocation;
+
+  /// No description provided for @routeSwap.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zamień start i cel'**
+  String get routeSwap;
+
+  /// No description provided for @routeDeparture.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wyjście'**
+  String get routeDeparture;
+
+  /// No description provided for @routeDepartNow.
+  ///
+  /// In pl, this message translates to:
+  /// **'Teraz'**
+  String get routeDepartNow;
+
+  /// No description provided for @routeDepartPick.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wybierz godzinę'**
+  String get routeDepartPick;
+
+  /// No description provided for @routeDepartToday.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dziś, {time}'**
+  String routeDepartToday(String time);
+
+  /// No description provided for @routeDepartTomorrow.
+  ///
+  /// In pl, this message translates to:
+  /// **'Jutro, {time}'**
+  String routeDepartTomorrow(String time);
+
+  /// No description provided for @routeDepartOn.
+  ///
+  /// In pl, this message translates to:
+  /// **'{date}, {time}'**
+  String routeDepartOn(String date, String time);
+
+  /// No description provided for @routeProfileChip.
+  ///
+  /// In pl, this message translates to:
+  /// **'Profil: {name}'**
+  String routeProfileChip(String name);
+
+  /// No description provided for @routeProfileChipHint.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zmień profil komfortu'**
+  String get routeProfileChipHint;
+
+  /// No description provided for @routeQuickTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Szybkie trasy'**
+  String get routeQuickTitle;
+
+  /// No description provided for @routeQuickRoute.
+  ///
+  /// In pl, this message translates to:
+  /// **'{from} → {to}'**
+  String routeQuickRoute(String from, String to);
+
+  /// No description provided for @routeShowRoutes.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pokaż trasy'**
+  String get routeShowRoutes;
+
+  /// No description provided for @routeSearchHint.
+  ///
+  /// In pl, this message translates to:
+  /// **'Szukaj adresu lub miejsca'**
+  String get routeSearchHint;
+
+  /// No description provided for @routeSearchFromTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Skąd idziesz?'**
+  String get routeSearchFromTitle;
+
+  /// No description provided for @routeSearchToTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dokąd idziesz?'**
+  String get routeSearchToTitle;
+
+  /// No description provided for @routeSearchPlaces.
+  ///
+  /// In pl, this message translates to:
+  /// **'Miejsca chłodu'**
+  String get routeSearchPlaces;
+
+  /// No description provided for @routeSearchAddresses.
+  ///
+  /// In pl, this message translates to:
+  /// **'Adresy w Łodzi'**
+  String get routeSearchAddresses;
+
+  /// No description provided for @routeSearchTypeMore.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wpisz co najmniej 3 znaki, aby szukać adresów'**
+  String get routeSearchTypeMore;
+
+  /// No description provided for @routeSearchNoResults.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nic nie znaleźliśmy'**
+  String get routeSearchNoResults;
+
+  /// No description provided for @routeSearchError.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie udało się wyszukać adresów. Sprawdź połączenie.'**
+  String get routeSearchError;
+
+  /// No description provided for @routeSearchClear.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wyczyść'**
+  String get routeSearchClear;
+
+  /// No description provided for @routeSearchAttribution.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wyszukiwanie: © OpenStreetMap (Nominatim)'**
+  String get routeSearchAttribution;
 }
 
 class _AppLocalizationsDelegate

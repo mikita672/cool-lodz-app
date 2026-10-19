@@ -81,6 +81,8 @@ Routes for every screen already exist in `lib/app/router.dart`; a feature ticket
 | Turysta (`tourist`) | 70 | 40 | 30 | 40 | off |
 | Domyślny (`default`) | 60 | 60 | 30 | 30 | off | Detail screens are sub-routes of their tab (`/quest/scan`, `/map/alert`, `/profile/about`, `/route/result`), so a deep link still has a back stack; inside the app open them with `context.push`. The router is created once — redirect re-checks go through `routerRefreshProvider`.
 
+**Route planning (S06 → S07).** `routePlanProvider` (`features/route/data/route_plan.dart`) holds from / to / departure (`null` = «Teraz»); S06 and «Prowadź tam» (S08) fill it. `routeRequestProvider` turns it into the `POST /v1/routes` body (resolves «Moja lokalizacja» through `locationServiceProvider`, adds the comfort profile) and `routeResultProvider` asks `apiClientProvider`. Address search uses Nominatim (decision Q-04): only inside Łódź (`viewbox` + `bounded=1`), app User-Agent, typing debounced 1 s and at most 1 request per second; cool places are searched on the device.
+
 ## Rules
 
 - **State:** Riverpod 3 (`flutter_riverpod`), no code generation. Repositories and clients are providers, so tests and demo mode can override them.

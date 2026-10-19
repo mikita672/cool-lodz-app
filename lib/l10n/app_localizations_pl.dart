@@ -587,4 +587,98 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String get profileSaveError =>
       'Nie udało się zapisać profilu. Sprawdź połączenie i spróbuj ponownie.';
+
+  @override
+  String get routePlanTitle => 'Zaplanuj trasę';
+
+  @override
+  String get routeFrom => 'Skąd';
+
+  @override
+  String get routeTo => 'Dokąd';
+
+  @override
+  String get routeToHint => 'Wybierz cel';
+
+  @override
+  String get routeMyLocation => 'Moja lokalizacja';
+
+  @override
+  String get routeSwap => 'Zamień start i cel';
+
+  @override
+  String get routeDeparture => 'Wyjście';
+
+  @override
+  String get routeDepartNow => 'Teraz';
+
+  @override
+  String get routeDepartPick => 'Wybierz godzinę';
+
+  @override
+  String routeDepartToday(String time) {
+    return 'Dziś, $time';
+  }
+
+  @override
+  String routeDepartTomorrow(String time) {
+    return 'Jutro, $time';
+  }
+
+  @override
+  String routeDepartOn(String date, String time) {
+    return '$date, $time';
+  }
+
+  @override
+  String routeProfileChip(String name) {
+    return 'Profil: $name';
+  }
+
+  @override
+  String get routeProfileChipHint => 'Zmień profil komfortu';
+
+  @override
+  String get routeQuickTitle => 'Szybkie trasy';
+
+  @override
+  String routeQuickRoute(String from, String to) {
+    return '$from → $to';
+  }
+
+  @override
+  String get routeShowRoutes => 'Pokaż trasy';
+
+  @override
+  String get routeSearchHint => 'Szukaj adresu lub miejsca';
+
+  @override
+  String get routeSearchFromTitle => 'Skąd idziesz?';
+
+  @override
+  String get routeSearchToTitle => 'Dokąd idziesz?';
+
+  @override
+  String get routeSearchPlaces => 'Miejsca chłodu';
+
+  @override
+  String get routeSearchAddresses => 'Adresy w Łodzi';
+
+  @override
+  String get routeSearchTypeMore =>
+      'Wpisz co najmniej 3 znaki, aby szukać adresów';
+
+  @override
+  String get routeSearchNoResults => 'Nic nie znaleźliśmy';
+
+  @override
+  String get routeSearchError =>
+      'Nie udało się wyszukać adresów. Sprawdź połączenie.';
+
+  @override
+  String get routeSearchClear => 'Wyczyść';
+
+  @override
+  String get routeSearchAttribution =>
+      'Wyszukiwanie: © OpenStreetMap (Nominatim)';
 }
