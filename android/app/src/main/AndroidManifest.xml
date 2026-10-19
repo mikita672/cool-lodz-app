@@ -1,7 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET"/>
-    <!-- Android 13+: FCM notifications. Asked at runtime in APP-07 (S02). -->
+    <!-- Android 13+: FCM notifications. Asked at runtime after S03 (APP-07). -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <!-- Location while the app is in use (map, route, quest). Asked at
+         runtime after S03 (APP-07); no background location. -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <application
         android:label="Cool Łódź"
         android:name="${applicationName}"
