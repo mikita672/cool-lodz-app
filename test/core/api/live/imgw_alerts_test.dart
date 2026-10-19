@@ -10,7 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../../helpers/fake_dio.dart';
 import '../../../helpers/fixtures.dart';
 
-final now = DateTime.utc(2026, 7, 15, 10); // 12:00 in Łódź
+final now = DateTime.utc(2026, 8, 15, 12); // 14:00 in Łódź
 
 Object? warnings() => jsonDecode(fixture('live/imgw_warningsmeteo.json'));
 
@@ -18,8 +18,8 @@ Map<String, Object?> heat({
   Object? id = 'X1',
   Object? level = '2',
   Object? teryt = const ['1061'],
-  String from = '2026-07-15 10:00:00',
-  String to = '2026-07-15 20:00:00',
+  String from = '2026-08-15 10:00:00',
+  String to = '2026-08-15 20:00:00',
 }) => {
   'id': id,
   'nazwa_zdarzenia': 'Upał',
@@ -31,29 +31,46 @@ Map<String, Object?> heat({
 
 void main() {
   group('parseImgwWarnings', () {
-    test('keeps current heat warnings for Łódź, highest level first', () {
+    test('real feed: the heat warning for Łódź city only', () {
+      // 1062 is the county around the city (powiat łódzki wschodni).
       final alerts = parseImgwWarnings(warnings(), now: now);
-      expect(alerts.map((a) => a.id), ['imgw-SU20261231', 'imgw-SU20261214']);
+      expect(alerts.map((a) => a.id), ['imgw-Sk20260815100248479']);
+      final alert = alerts.single;
+      expect(alert.level, 1);
+      expect(alert.title, 'Ostrzeżenie przed upałem 1. stopnia');
+      expect(alert.area, 'Łódź');
+      expect(alert.source, 'IMGW-PIB');
+      expect(alert.validFrom.toUtc(), DateTime.utc(2026, 8, 15, 10, 2));
+      expect(alert.validTo.toUtc(), DateTime.utc(2026, 8, 16, 16));
+      expect(alert.officialUrl, imgwWarningsPage);
+      expect(alert.recommendations, heatRecommendations[1]);
+      expect(alert.isActiveAt(now), isTrue);
+    });
 
-      final level3 = alerts.first;
-      expect(level3.level, 3);
-      expect(level3.title, 'Ostrzeżenie przed upałem 3. stopnia');
-      expect(level3.validFrom.toUtc(), DateTime.utc(2026, 7, 16, 8));
-      expect(level3.validTo.toUtc(), DateTime.utc(2026, 7, 17, 19));
+    test('real "no warnings" answer is an object with a message', () {
+      expect(
+        parseImgwWarnings(
+          jsonDecode(fixture('live/imgw_warningsmeteo_empty.json')),
+          now: now,
+        ),
+        isEmpty,
+      );
+    });
 
-      final level2 = alerts.last;
-      expect(level2.level, 2);
-      expect(level2.title, 'Ostrzeżenie przed upałem 2. stopnia');
-      expect(level2.area, 'Łódź');
-      expect(level2.source, 'IMGW-PIB');
-      expect(level2.validFrom.toUtc(), DateTime.utc(2026, 7, 15, 8));
-      expect(level2.validTo.toUtc(), DateTime.utc(2026, 7, 15, 18));
-      expect(level2.officialUrl, imgwWarningsPage);
-      expect(level2.isActiveAt(now), isTrue);
+    test('highest level first, then the earlier start', () {
+      final alerts = parseImgwWarnings([
+        heat(id: 'a', level: '2', from: '2026-08-15 13:00:00'),
+        heat(id: 'b', level: '3', from: '2026-08-16 10:00:00'),
+        heat(id: 'c', level: '2', from: '2026-08-15 11:00:00'),
+      ], now: now);
+      expect(alerts.map((a) => a.id), ['imgw-b', 'imgw-c', 'imgw-a']);
     });
 
     test('recommendations match the demo alerts', () {
-      final alerts = parseImgwWarnings(warnings(), now: now);
+      final alerts = parseImgwWarnings([
+        heat(id: 'a', level: '3'),
+        heat(id: 'b', level: '2'),
+      ], now: now);
       List<String> demoTips(String file) =>
           // The bundled assets, not test/fixtures (those have short texts).
           ((jsonDecode(File('assets/demo/$file').readAsStringSync())
@@ -69,7 +86,7 @@ void main() {
     });
 
     test('same JSON shape as the demo alerts', () {
-      final alert = parseImgwWarnings(warnings(), now: now).last;
+      final alert = parseImgwWarnings(warnings(), now: now).single;
       final json = jsonDecode(jsonEncode(alert)) as Map<String, dynamic>;
       final demo =
           (fixtureJson('alerts_level2.json')['alerts'] as List).single
@@ -79,12 +96,12 @@ void main() {
     });
 
     test('ends exactly at now → gone; later → nothing left', () {
-      final atNoon = parseImgwWarnings([
-        heat(to: '2026-07-15 12:00:00'),
+      final atNow = parseImgwWarnings([
+        heat(to: '2026-08-15 14:00:00'),
       ], now: now);
-      expect(atNoon, isEmpty);
+      expect(atNow, isEmpty);
       expect(
-        parseImgwWarnings(warnings(), now: DateTime.utc(2026, 7, 18)),
+        parseImgwWarnings(warnings(), now: DateTime.utc(2026, 8, 17)),
         isEmpty,
       );
     });
@@ -92,15 +109,9 @@ void main() {
     test('upcoming warnings are kept', () {
       final alerts = parseImgwWarnings(
         warnings(),
-        now: DateTime.utc(2026, 7, 14, 6),
+        now: DateTime.utc(2026, 8, 14, 6),
       );
-      expect(alerts.map((a) => a.id), [
-        'imgw-SU20261231',
-        'imgw-SU20261214',
-        'imgw-SU20261199',
-        'imgw-SU20261216',
-      ]);
-      expect(alerts[2].recommendations, heatRecommendations[1]);
+      expect(alerts.map((a) => a.id), ['imgw-Sk20260815100248479']);
     });
 
     test('level: string or int, clamped to 1..3, missing → 1', () {
@@ -173,7 +184,7 @@ void main() {
         heat(id: 'A'),
         heat(id: null),
       ], now: now);
-      expect(alerts.map((a) => a.id), ['imgw-A', 'imgw-2026-07-15T08-lodz-2']);
+      expect(alerts.map((a) => a.id), ['imgw-A', 'imgw-2026-08-15T08-lodz-2']);
     });
 
     test('a wrapper object around the list is accepted', () {
@@ -208,11 +219,22 @@ void main() {
       );
       final client = ImgwAlertsClient(fakeDio(adapter));
       final alerts = await client.heatAlerts(now: now);
-      expect(alerts, hasLength(2));
+      expect(alerts, hasLength(1));
       expect(
         adapter.requests.single.uri.toString(),
         ImgwAlertsClient.warningsUrl,
       );
+    });
+
+    test('no warnings at all → empty list', () async {
+      final client = ImgwAlertsClient(
+        fakeDio(
+          FakeAdapter(
+            (o) => jsonBody(fixture('live/imgw_warningsmeteo_empty.json')),
+          ),
+        ),
+      );
+      expect(await client.heatAlerts(now: now), isEmpty);
     });
 
     Future<ApiErrorKind> failure(FakeHandler handler) async {

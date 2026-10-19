@@ -1,90 +1,78 @@
 [
   {
-    "id": "SU20261214",
+    "id": "Sk20260815100248479",
+    "nazwa_zdarzenia": "Upał",
+    "stopien": "1",
+    "prawdopodobienstwo": "80",
+    "obowiazuje_do": "2026-08-16 18:00:00",
+    "obowiazuje_od": "2026-08-15 12:02:00",
+    "opublikowano": "2026-08-15 12:02:00",
+    "tresc": "Prognozuje się upał. Temperatura maksymalna od 30°C do 32°C. Temperatura minimalna od 15°C do 17°C.",
+    "komentarz": "Zmiana dotyczy wydłużenia ważności ostrzeżenia.",
+    "biuro": "Centralne Biuro Prognoz Meteorologicznych w Warszawie",
+    "teryt": [
+      "1003",
+      "1008",
+      "1014",
+      "1019",
+      "1061"
+    ]
+  },
+  {
+    "id": "Gd20260814094159060",
     "nazwa_zdarzenia": "Upał",
     "stopien": "2",
     "prawdopodobienstwo": "80",
-    "obowiazuje_od": "2026-07-15 10:00:00",
-    "obowiazuje_do": "2026-07-15 20:00:00",
-    "opublikowano": "2026-07-14 12:31:05",
-    "tresc": "Prognozuje się wystąpienie upału, temperatura maksymalna od 31°C do 33°C.",
-    "komentarz": "",
-    "biuro": "Biuro Prognoz Meteorologicznych w Warszawie",
-    "teryt": ["1061", "1062", "1063", "1001"]
+    "obowiazuje_do": "2026-08-16 21:00:00",
+    "obowiazuje_od": "2026-08-15 13:00:00",
+    "opublikowano": "2026-08-14 11:41:00",
+    "tresc": "Prognozuje się upały. Temperatura maksymalna w dzień od 30°C do 34°C. Temperatura minimalna w nocy od 17°C do 20°C.",
+    "komentarz": "Ostrzeżenie może być aktualizowane.",
+    "biuro": "Centralne Biuro Prognoz Meteorologicznych w Warszawie",
+    "teryt": [
+      "1001",
+      "1009",
+      "1010",
+      "1012",
+      "1017",
+      "1018",
+      "1062"
+    ]
   },
   {
-    "id": "SU20261220",
-    "nazwa_zdarzenia": "Burze z gradem",
-    "stopien": "1",
-    "prawdopodobienstwo": "70",
-    "obowiazuje_od": "2026-07-15 13:00:00",
-    "obowiazuje_do": "2026-07-15 22:00:00",
-    "opublikowano": "2026-07-15 07:02:11",
-    "tresc": "Prognozuje się burze z opadami deszczu do 30 mm oraz porywami wiatru do 70 km/h.",
-    "komentarz": "",
-    "biuro": "Biuro Prognoz Meteorologicznych w Warszawie",
-    "teryt": ["1061", "1020"]
-  },
-  {
-    "id": "SU20261231",
-    "nazwa_zdarzenia": "Upał",
-    "stopien": 3,
-    "prawdopodobienstwo": 90,
-    "obowiazuje_od": "2026-07-16T10:00",
-    "obowiazuje_do": "2026-07-17 21:00",
-    "opublikowano": "2026-07-15 11:45:00",
-    "tresc": "Prognozuje się wystąpienie upału, temperatura maksymalna od 34°C do 36°C, minimalna od 20°C do 22°C.",
-    "komentarz": "Bardzo ciepłe noce.",
-    "biuro": "Biuro Prognoz Meteorologicznych w Warszawie",
-    "teryt": ["1061"]
-  },
-  {
-    "id": "SU20261199",
+    "id": "Sk20260815100238357",
     "nazwa_zdarzenia": "Upał",
     "stopien": "1",
     "prawdopodobienstwo": "80",
-    "obowiazuje_od": "2026-07-14 11:00:00",
-    "obowiazuje_do": "2026-07-14 20:00:00",
-    "opublikowano": "2026-07-13 12:00:00",
-    "tresc": "Prognozuje się wystąpienie upału, temperatura maksymalna od 29°C do 31°C.",
-    "komentarz": "",
-    "biuro": "Biuro Prognoz Meteorologicznych w Warszawie",
-    "teryt": ["1061", "1062"]
+    "obowiazuje_do": "2026-08-16 18:00:00",
+    "obowiazuje_od": "2026-08-15 13:00:00",
+    "opublikowano": "2026-08-15 12:02:00",
+    "tresc": "Prognozuje się upał. Temperatura maksymalna w dzień od 29°C do 31°C. Temperatura minimalna w nocy od 14°C do 16°C.",
+    "komentarz": "Zmiana dotyczy wydłużenia ważności ostrzeżenia.",
+    "biuro": "Centralne Biuro Prognoz Meteorologicznych w Warszawie",
+    "teryt": [
+      "0208"
+    ]
   },
   {
-    "id": "SU20261215",
-    "nazwa_zdarzenia": "Upał",
-    "stopien": "2",
-    "prawdopodobienstwo": "85",
-    "obowiazuje_od": "2026-07-15 10:00:00",
-    "obowiazuje_do": "2026-07-16 20:00:00",
-    "opublikowano": "2026-07-14 12:31:05",
-    "tresc": "Prognozuje się wystąpienie upału, temperatura maksymalna od 32°C do 34°C.",
-    "komentarz": "",
-    "biuro": "Biuro Prognoz Meteorologicznych w Warszawie",
-    "teryt": ["1465", "1412", "1413"]
-  },
-  {
-    "id": "SU20261216",
-    "nazwa_zdarzenia": "Upał/Upał",
+    "id": "Po20260828075405364",
+    "nazwa_zdarzenia": "Burze",
     "stopien": "1",
     "prawdopodobienstwo": "80",
-    "obowiazuje_od": "2026-07-15 08:00",
-    "obowiazuje_do": "2026-07-15 12:00:00",
-    "opublikowano": "2026-07-14 12:31:05",
-    "tresc": "Prognozuje się wystąpienie upału.",
-    "komentarz": "",
-    "biuro": "Biuro Prognoz Meteorologicznych w Warszawie",
-    "teryt": "1061,1018"
-  },
-  {
-    "id": "SU20261240",
-    "nazwa_zdarzenia": "Przymrozki",
-    "stopien": "1",
-    "obowiazuje_od": "2026-07-15 22:00:00",
-    "obowiazuje_do": "2026-07-16 07:00:00",
-    "teryt": ["1061"]
-  },
-  "junk",
-  {"id": "SU20261241", "nazwa_zdarzenia": "Upał", "stopien": "2", "teryt": ["1061"]}
+    "obowiazuje_do": "2026-08-29 10:00:00",
+    "obowiazuje_od": "2026-08-29 02:00:00",
+    "opublikowano": "2026-08-28 09:54:00",
+    "tresc": "Prognozowane są burze, którym miejscami będą towarzyszyć opady deszczu od 15 mm do 25 mm oraz porywy wiatru do 65 km/h.",
+    "komentarz": "Brak.",
+    "biuro": "Centralne Biuro Prognoz Meteorologicznych w Warszawie",
+    "teryt": [
+      "1001",
+      "1002",
+      "1003",
+      "1004",
+      "1006",
+      "1008",
+      "1061"
+    ]
+  }
 ]

@@ -6,19 +6,16 @@ import 'live_http.dart';
 import 'warsaw_time.dart';
 
 /// Air-quality stations in Łódź with the current GIOŚ index, from the PJP
-/// API (v1, falling back to the old v0 paths).
+/// API v1 (the old paths without `/v1` answer 410 Gone since 2025).
 class GiosAirClient {
   GiosAirClient(this._dio, {this.maxIndexCalls = 8, this.concurrency = 4});
 
   factory GiosAirClient.create() => GiosAirClient(createLiveDio());
 
-  static const _base = 'https://api.gios.gov.pl/pjp-api';
-  static const stationsUrlV1 = '$_base/v1/rest/station/findAll?size=500';
-  static const stationsUrlV0 = '$_base/rest/station/findAll';
-  static String indexUrlV1(String stationId) =>
-      '$_base/v1/rest/aqindex/getIndex/$stationId';
-  static String indexUrlV0(String stationId) =>
-      '$_base/rest/aqindex/getIndex/$stationId';
+  static const _base = 'https://api.gios.gov.pl/pjp-api/v1/rest';
+  static const stationsUrl = '$_base/station/findAll?size=500';
+  static String indexUrl(String stationId) =>
+      '$_base/aqindex/getIndex/$stationId';
 
   final Dio _dio;
 
@@ -28,21 +25,20 @@ class GiosAirClient {
   /// Index requests in flight at once.
   final int concurrency;
 
-  Future<_StationList>? _stations;
+  Future<List<GiosStation>>? _stations;
 
   /// Łódź stations with their index (null where GIOŚ has none or the index
   /// request failed). The station list is fetched once per client.
   /// Throws [ApiException] when the station list cannot be loaded.
   Future<List<AirStation>> lodzStations() async {
-    final list = await (_stations ??= _loadStations());
-    final stations = list.stations.where((s) => isLodz(s.city)).toList();
+    final all = await (_stations ??= _loadStations());
+    final stations = all.where((s) => isLodz(s.city)).toList();
     final indexes = <GiosIndex?>[];
     final withIndex = stations.take(maxIndexCalls).toList();
     for (var i = 0; i < withIndex.length; i += concurrency) {
       indexes.addAll(
         await Future.wait([
-          for (final s in withIndex.skip(i).take(concurrency))
-            _index(s.id, list.v0),
+          for (final s in withIndex.skip(i).take(concurrency)) _index(s.id),
         ]),
       );
     }
@@ -59,45 +55,22 @@ class GiosAirClient {
     ];
   }
 
-  Future<_StationList> _loadStations() async {
+  Future<List<GiosStation>> _loadStations() async {
     try {
-      return _StationList(
-        parseGiosStations(await getJson(_dio, stationsUrlV1)),
-        v0: false,
-      );
-    } on ApiException catch (e) {
-      // v0 would be just as unreachable.
-      if (e.kind == ApiErrorKind.timeout || e.kind == ApiErrorKind.network) {
-        _stations = null;
-        rethrow;
-      }
-      try {
-        return _StationList(
-          parseGiosStations(await getJson(_dio, stationsUrlV0)),
-          v0: true,
-        );
-      } on ApiException {
-        _stations = null;
-        throw e;
-      }
+      return parseGiosStations(await getJson(_dio, stationsUrl));
+    } catch (_) {
+      _stations = null; // try again next time
+      rethrow;
     }
   }
 
-  Future<GiosIndex?> _index(String stationId, bool v0) async {
+  Future<GiosIndex?> _index(String stationId) async {
     try {
-      final url = v0 ? indexUrlV0(stationId) : indexUrlV1(stationId);
-      return parseGiosIndex(await getJson(_dio, url));
+      return parseGiosIndex(await getJson(_dio, indexUrl(stationId)));
     } on ApiException {
       return null;
     }
   }
-}
-
-class _StationList {
-  const _StationList(this.stations, {required this.v0});
-
-  final List<GiosStation> stations;
-  final bool v0;
 }
 
 /// One measuring station from `station/findAll`.
@@ -128,8 +101,9 @@ class GiosIndex {
 
 bool isLodz(String? city) => city != null && normalizeKey(city) == 'lodz';
 
-/// Station list, v1 (`{"Lista stacji pomiarowych": [{"Identyfikator stacji":
-/// …}]}`) or v0 (`[{"id": …, "gegrLat": …, "city": {"name": …}}]`).
+/// Station list (`{"Lista stacji pomiarowych": [{"Identyfikator stacji": 295,
+/// "WGS84 φ N": "51.758050", "Nazwa miasta": "Łódź", …}]}`); a bare list
+/// is accepted too.
 /// Entries without id, name or coordinates are skipped; throws
 /// [ApiException] (server) when nothing usable is found.
 List<GiosStation> parseGiosStations(Object? json) {
@@ -157,29 +131,21 @@ List<GiosStation> parseGiosStations(Object? json) {
 GiosStation? _station(Map<Object?, Object?> item) {
   final id = asText(
     item['Identyfikator stacji'] ??
-        findValue(item, (k) => k.startsWith('identyfikator stacji')) ??
-        item['id'],
+        findValue(item, (k) => k.startsWith('identyfikator stacji')),
   );
   final name = asText(
-    item['Nazwa stacji'] ??
-        findValue(item, (k) => k == 'nazwa stacji') ??
-        item['stationName'],
+    item['Nazwa stacji'] ?? findValue(item, (k) => k == 'nazwa stacji'),
   );
   final lat = parseNum(
     item['WGS84 φ N'] ??
-        findValue(item, (k) => k.contains('wgs84') && _isLatKey(k)) ??
-        item['gegrLat'],
+        findValue(item, (k) => k.contains('wgs84') && _isLatKey(k)),
   );
   final lon = parseNum(
     item['WGS84 λ E'] ??
-        findValue(item, (k) => k.contains('wgs84') && _isLonKey(k)) ??
-        item['gegrLon'],
+        findValue(item, (k) => k.contains('wgs84') && _isLonKey(k)),
   );
-  final cityV0 = item['city'];
   final city = asText(
-    item['Nazwa miasta'] ??
-        findValue(item, (k) => k.contains('miasta')) ??
-        (cityV0 is Map ? cityV0['name'] : cityV0),
+    item['Nazwa miasta'] ?? findValue(item, (k) => k.contains('miasta')),
   );
   if (id == null || name == null || lat == null || lon == null) return null;
   return GiosStation(
@@ -203,9 +169,9 @@ const _categories = {
   'bardzo zly': 5,
 };
 
-/// Overall station index, v1 (`{"AqIndex": {"Wartość indeksu": 1, …}}`) or
-/// v0 (`{"stIndexLevel": {"id": 1}, "stCalcDate": …}`). Missing or `-1`
-/// index → `level: null`. Throws [ApiException] (server) when [json] is
+/// Overall station index (`{"AqIndex": {"Wartość indeksu": 1, …}}`; GIOŚ
+/// sends every field as null for a station without an index). Missing or
+/// `-1` index → `level: null`. Throws [ApiException] (server) when [json] is
 /// not an object.
 GiosIndex parseGiosIndex(Object? json) {
   if (json is! Map<Object?, Object?>) {
@@ -214,38 +180,30 @@ GiosIndex parseGiosIndex(Object? json) {
   final inner = findValue(json, (k) => k == 'aqindex');
   final map = inner is Map<Object?, Object?> ? inner : json;
 
-  // v1 also has per-pollutant keys ("… dla wskaźnika PM10"): skip them.
+  // There are also per-pollutant keys ("… dla wskaźnika PM10"): skip them.
   bool overall(String k) => !k.contains('wskaznik');
   final status = findValue(
     map,
     (k) => k.startsWith('status indeksu') && overall(k),
   );
-  final v0Level = map['stIndexLevel'];
-  int? level =
-      parseInt(
-        findValue(map, (k) => k == 'wartosc indeksu') ??
-            findValue(
-              map,
-              (k) => k.startsWith('wartosc indeksu') && overall(k),
-            ),
-      ) ??
-      parseInt(v0Level is Map ? v0Level['id'] : null);
+  int? level = parseInt(
+    findValue(map, (k) => k == 'wartosc indeksu') ??
+        findValue(map, (k) => k.startsWith('wartosc indeksu') && overall(k)),
+  );
   final category = asText(
-    findValue(map, (k) => k.startsWith('nazwa kategorii') && overall(k)) ??
-        (v0Level is Map ? v0Level['indexLevelName'] : null),
+    findValue(map, (k) => k.startsWith('nazwa kategorii') && overall(k)),
   );
   if (level == null && category != null) {
     level = _categories[normalizeKey(category)];
   }
   if (level != null && (level < 0 || level > 5)) level = null;
-  if (status == false || map['stIndexStatus'] == false) level = null;
+  if (status == false) level = null;
 
   final updatedAt = parseWarsawTime(
     findValue(
-          map,
-          (k) => k.startsWith('data wykonania obliczen') && overall(k),
-        ) ??
-        map['stCalcDate'],
+      map,
+      (k) => k.startsWith('data wykonania obliczen') && overall(k),
+    ),
   );
   return GiosIndex(level: level, updatedAt: updatedAt?.toLocal());
 }

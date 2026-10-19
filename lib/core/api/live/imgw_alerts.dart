@@ -56,11 +56,14 @@ const heatRecommendations = <int, List<String>>{
 /// `warningsmeteo` JSON → heat [Alert]s for Łódź still valid at [now],
 /// sorted by level (highest first), then start time.
 ///
-/// Unknown entries are skipped; throws [ApiException] (server) only when
-/// [json] is not a list of warnings at all.
+/// IMGW answers `{"message": "Brak ostrzeżeń meteorologicznych"}` instead of
+/// `[]` when there are none. Unknown entries are skipped; throws
+/// [ApiException] (server) only when [json] is not a list of warnings at all.
 List<Alert> parseImgwWarnings(Object? json, {required DateTime now}) {
   final items = switch (json) {
     final List<Object?> list => list,
+    // No warnings anywhere: {"message": "Brak ostrzeżeń meteorologicznych"}.
+    final Map<Object?, Object?> map when _isNoWarnings(map) => const [],
     // Tolerate a wrapper object around the array.
     final Map<Object?, Object?> map =>
       map.values.whereType<List<Object?>>().firstOrNull,
@@ -83,6 +86,13 @@ List<Alert> parseImgwWarnings(Object? json, {required DateTime now}) {
     final level = b.level.compareTo(a.level);
     return level != 0 ? level : a.validFrom.compareTo(b.validFrom);
   });
+}
+
+bool _isNoWarnings(Map<Object?, Object?> map) {
+  final message = asText(map['message']);
+  return message != null &&
+      normalizeKey(message).startsWith('brak') &&
+      !map.values.any((v) => v is List);
 }
 
 Alert? _heatAlert(Map<Object?, Object?> item) {
