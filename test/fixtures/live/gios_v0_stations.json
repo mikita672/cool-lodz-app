@@ -1,0 +1,5 @@
+[
+  {"id": 10058, "stationName": "Łódź, ul. Czernika", "gegrLat": "51.758050", "gegrLon": "19.529786", "city": {"id": 463, "name": "Łódź", "commune": {"communeName": "Łódź", "districtName": "Łódź", "provinceName": "ŁÓDZKIE"}}, "addressStreet": "ul. Czernika 1/3"},
+  {"id": 10061, "stationName": "Łódź, ul. Gdańska", "gegrLat": "51.775378", "gegrLon": "19.450992", "city": {"id": 463, "name": "Łódź", "commune": {"communeName": "Łódź", "districtName": "Łódź", "provinceName": "ŁÓDZKIE"}}, "addressStreet": "ul. Gdańska 16"},
+  {"id": 530, "stationName": "Warszawa, Al. Niepodległości", "gegrLat": "52.219298", "gegrLon": "21.004724", "city": {"id": 1006, "name": "Warszawa", "commune": {"communeName": "Warszawa", "districtName": "Warszawa", "provinceName": "MAZOWIECKIE"}}, "addressStreet": "al. Niepodległości 227/233"}
+]

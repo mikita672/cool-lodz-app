@@ -1,0 +1,16 @@
+{
+  "AqIndex": {
+    "Identyfikator stacji pomiarowej": 10058,
+    "Wartość indeksu dla wskaźnika O3": 3,
+    "Nazwa kategorii indeksu dla wskażnika O3": "Dostateczny",
+    "Data wykonania obliczeń indeksu dla wskaźnika O3": "2026-07-15 13:20:13",
+    "Data wykonania obliczeń indeksu": "2026-07-15 14:20:13",
+    "Wartość indeksu": 1,
+    "Nazwa kategorii indeksu": "Dobry",
+    "Data danych źródłowych, z których policzono wartość indeksu dla wskaźnika st": "2026-07-15 14:00:00",
+    "Wartość indeksu dla wskaźnika PM10": 0,
+    "Nazwa kategorii indeksu dla wskażnika PM10": "Bardzo dobry",
+    "Status indeksu ogólnego dla stacji pomiarowej": true,
+    "Kod zanieczyszczenia krytycznego": "O3"
+  }
+}

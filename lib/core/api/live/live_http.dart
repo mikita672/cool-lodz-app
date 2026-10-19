@@ -1,0 +1,115 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
+
+import '../api_client.dart';
+
+/// Dio for the public data APIs, with the app's [apiTimeout].
+Dio createLiveDio() => Dio(
+  BaseOptions(
+    connectTimeout: apiTimeout,
+    sendTimeout: apiTimeout,
+    receiveTimeout: apiTimeout,
+    responseType: ResponseType.json,
+    headers: {'Accept': 'application/json'},
+  ),
+);
+
+/// GET [url] and return the decoded JSON body. Errors become [ApiException]
+/// the same way as in `RemoteApiClient`.
+Future<Object?> getJson(Dio dio, String url) async {
+  final Response<Object?> response;
+  try {
+    response = await dio.get<Object?>(url);
+  } on DioException catch (e) {
+    throw mapDioError(e);
+  }
+  final data = response.data;
+  if (data is! String) return data;
+  try {
+    return jsonDecode(data);
+  } on FormatException catch (e) {
+    throw ApiException(ApiErrorKind.server, 'bad response: $e');
+  }
+}
+
+ApiException mapDioError(DioException e) {
+  switch (e.type) {
+    case DioExceptionType.connectionTimeout:
+    case DioExceptionType.sendTimeout:
+    case DioExceptionType.receiveTimeout:
+    case DioExceptionType.transformTimeout:
+      return ApiException(ApiErrorKind.timeout, e.message);
+    case DioExceptionType.badResponse:
+      final status = e.response?.statusCode;
+      return ApiException(
+        switch (status) {
+          404 => ApiErrorKind.notFound,
+          408 || 429 => ApiErrorKind.server,
+          final s? when s >= 400 && s < 500 => ApiErrorKind.badRequest,
+          _ => ApiErrorKind.server,
+        },
+        e.message,
+        status,
+      );
+    case DioExceptionType.connectionError:
+    case DioExceptionType.badCertificate:
+    case DioExceptionType.cancel:
+    case DioExceptionType.unknown:
+      return ApiException(ApiErrorKind.network, e.message);
+  }
+}
+
+const _plain = {
+  'ą': 'a',
+  'ć': 'c',
+  'ę': 'e',
+  'ł': 'l',
+  'ń': 'n',
+  'ó': 'o',
+  'ś': 's',
+  'ź': 'z',
+  'ż': 'z',
+};
+
+/// Lower case, Polish letters without diacritics, single spaces:
+/// `"Wartość  Indeksu"` → `"wartosc indeksu"`.
+String normalizeKey(String value) {
+  final buffer = StringBuffer();
+  for (final char in value.toLowerCase().split('')) {
+    buffer.write(_plain[char] ?? char);
+  }
+  return buffer.toString().trim().replaceAll(RegExp(r'[\s_]+'), ' ');
+}
+
+/// `1`, `1.5`, `"51,758"`, `" 2 "` → num; anything else → null.
+num? parseNum(Object? value) {
+  if (value is num) return value;
+  if (value is String) {
+    return num.tryParse(value.trim().replaceAll(',', '.'));
+  }
+  return null;
+}
+
+int? parseInt(Object? value) {
+  final n = parseNum(value);
+  if (n == null || !n.isFinite) return null;
+  return n.round();
+}
+
+/// The value under the first key of [map] whose [normalizeKey] passes [test].
+Object? findValue(Map<Object?, Object?> map, bool Function(String key) test) {
+  for (final entry in map.entries) {
+    final key = entry.key;
+    if (key is String && test(normalizeKey(key))) return entry.value;
+  }
+  return null;
+}
+
+/// Non-empty trimmed string, or null. Numbers are turned into strings.
+String? asText(Object? value) {
+  if (value is num) return value.toString();
+  if (value is! String) return null;
+  final text = value.trim();
+  return text.isEmpty ? null : text;
+}
