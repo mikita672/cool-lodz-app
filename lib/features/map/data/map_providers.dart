@@ -5,6 +5,7 @@ import 'package:latlong2/latlong.dart';
 import '../../../core/api/api_providers.dart';
 import '../../../core/location/location_service.dart';
 import '../../../core/models/models.dart';
+import 'quiet_layer.dart';
 
 /// The six S05 filters. The first four are fills, the last two are points.
 enum MapLayer {
@@ -80,7 +81,7 @@ class ShadeTime extends Notifier<String> {
 
   @override
   String build() =>
-      // The bundled shade layer (demo, fallback, on-phone API) is for 14:30.
+      // The bundled shade layer (demo mode, fallback) is for 14:30 only.
       ref.watch(staticShadeLayerProvider) ? demoSlot : slotFor(DateTime.now());
 
   void set(String slot) => state = slot;
@@ -107,6 +108,18 @@ final layerProvider = FutureProvider.family<GeoLayer, LayerKind>((ref, kind) {
       ? shadeDateTime(ref.watch(shadeTimeProvider), DateTime.now())
       : DateTime.now();
   return api.getLayer(kind, datetime: datetime);
+}, retry: noRetry);
+
+/// «Cisza»: where it is quiet (away from the noise bands, parks quietest).
+final quietLayerProvider = FutureProvider<GeoLayer>((ref) async {
+  final noise = await ref.watch(layerProvider(LayerKind.noise).future);
+  GeoLayer? green;
+  try {
+    green = await ref.watch(layerProvider(LayerKind.green).future);
+  } catch (_) {
+    // Without parks every quiet cell is just «quiet».
+  }
+  return quietAreas(noise, green: green);
 }, retry: noRetry);
 
 /// GIOŚ stations for the Powietrze layer.

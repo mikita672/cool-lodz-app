@@ -156,7 +156,7 @@ void main() {
 
     await tap(MapLayer.quiet);
     expect(container.read(mapLayersProvider), contains(MapLayer.quiet));
-    expect(find.text('Ciemniej = głośniej'), findsOneWidget);
+    expect(find.text('Ciemniej = ciszej'), findsOneWidget);
 
     // A third fill switches off the oldest one (green) with a message.
     await tap(MapLayer.air);
@@ -303,10 +303,10 @@ void main() {
       expect(ShadeTime.slotFor(DateTime(2026, 7, 15, 22)), '20:00');
     });
 
-    test('GIOŚ colours and noise shades', () {
+    test('GIOŚ colours and quiet shades', () {
       expect(airColor(0), const Color(0xFF57B108));
       expect(airColor(null), AppColors.muted);
-      expect(noiseColor(75).a, greaterThan(noiseColor(45).a));
+      expect(quietColor(2).a, greaterThan(quietColor(1).a));
     });
   });
 

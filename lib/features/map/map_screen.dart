@@ -31,7 +31,7 @@ import 'data/map_providers.dart';
 class MapScreen extends ConsumerStatefulWidget {
   const MapScreen({super.key});
 
-  /// Benches only from this zoom (spec: «лавки только при зуме ≥ 17»).
+  /// Benches only from this zoom (spec: "benches only at zoom ≥ 17").
   static const benchMinZoom = 17.0;
   static const startZoom = 14.0;
   static const userZoom = 15.0;
@@ -210,7 +210,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           ? layer(LayerKind.green)
           : null,
       MapLayer.quiet: layers.contains(MapLayer.quiet)
-          ? layer(LayerKind.noise)
+          ? ref.watch(quietLayerProvider).value
           : null,
       MapLayer.shade: layers.contains(MapLayer.shade)
           ? layer(LayerKind.shade)
@@ -564,8 +564,7 @@ class _Legend extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final rows = [
-      if (layers.contains(MapLayer.quiet))
-        (noiseColor(75), l10n.mapLegendQuiet),
+      if (layers.contains(MapLayer.quiet)) (quietColor(2), l10n.mapLegendQuiet),
       if (layers.contains(MapLayer.air)) (airColor(1), l10n.mapLegendAir),
     ];
     if (rows.isEmpty) return const SizedBox.shrink();

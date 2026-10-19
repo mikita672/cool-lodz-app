@@ -78,11 +78,16 @@ class FallbackApiClient implements ApiClient {
         fallback: () async => const <Alert>[],
       );
 
+  /// Offline: the stations without an index («brak danych»), never the
+  /// made-up demo values.
   @override
   Future<List<AirStation>> getAir({GeoBounds? bbox}) => _guard(
     'air',
     () => remote.getAir(bbox: bbox),
-    fallback: () => demo.getAir(bbox: bbox),
+    fallback: () async => [
+      for (final s in await demo.getAir(bbox: bbox))
+        AirStation(id: s.id, name: s.name, lat: s.lat, lon: s.lon),
+    ],
   );
 
   @override

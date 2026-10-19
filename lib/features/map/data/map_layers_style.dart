@@ -26,7 +26,7 @@ IconData layerIcon(MapLayer layer) => switch (layer) {
 };
 
 /// Polygons of [layer] styled for [kind]: shade `primary` (35 % at full
-/// shade), green 30 %, quiet a purple heat map by dB.
+/// shade), green 30 %, quiet purple where it is quiet (darker = quieter).
 List<Polygon> polygonsFor(GeoLayer? layer, MapLayer kind) {
   if (layer == null) return const [];
   return [
@@ -40,18 +40,19 @@ List<Polygon> polygonsFor(GeoLayer? layer, MapLayer kind) {
               alpha: 0.35 * (f.shade ?? 1).clamp(0.2, 1),
             ),
             MapLayer.green => AppColors.greenLayer,
-            MapLayer.quiet => noiseColor(f.db ?? 55),
+            MapLayer.quiet => quietColor(
+              (f.properties['quiet'] as num?)?.toInt() ?? 1,
+            ),
             _ => AppColors.shadeLayer,
           },
         ),
   ];
 }
 
-/// Noise as a purple heat map: darker = louder (45 dB light, 75 dB dark).
-Color noiseColor(double db) {
-  final t = ((db - 45) / 30).clamp(0.0, 1.0);
-  return AppColors.quiet.withValues(alpha: 0.12 + 0.45 * t);
-}
+/// Quiet areas in purple: 1 = quiet (away from loud roads), 2 = very quiet
+/// (also inside a park).
+Color quietColor(int level) =>
+    AppColors.quiet.withValues(alpha: level >= 2 ? 0.42 : 0.22);
 
 /// Official GIOŚ air quality index colours (powietrze.gios.gov.pl).
 const airIndexColors = [
