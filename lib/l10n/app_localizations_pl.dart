@@ -34,4 +34,8 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get placeholderInProgress => 'Ekran w budowie';
+
+  @override
+  String get apiFallbackBanner =>
+      'Brak połączenia z serwerem, pokazujemy ostatnie dane';
 }
