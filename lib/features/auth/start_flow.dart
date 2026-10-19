@@ -233,13 +233,13 @@ class StartFlowNotifier extends Notifier<StartFlowState> {
     try {
       final saved = await profiles.loadComfortProfile(uid);
       if (saved == null) return false;
-      if (ref.mounted) await local.apply(saved);
+      if (ref.mounted) await local.apply(saved, uid: uid);
       return true;
     } catch (e) {
       // No network and nothing cached: a profile chosen on this device is
       // good enough; otherwise ask again.
       debugPrint('Could not read the comfort profile: $e');
-      return ref.mounted && local.hasLocal;
+      return ref.mounted && local.hasLocalFor(uid);
     }
   }
 

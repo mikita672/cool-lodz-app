@@ -196,6 +196,7 @@ void main() {
       prefs = await testPrefs({
         ComfortProfileNotifier.prefsKey:
             '{"id":"tourist","weights":{"shade":70,"time":40,"quiet":30,"air":40},"seniorMode":false}',
+        ComfortProfileNotifier.prefsUidKey: 'u1',
       });
       container = create();
       await settle();

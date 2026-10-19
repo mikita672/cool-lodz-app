@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -14,37 +15,50 @@ import 'comfort_profile.dart';
 class ComfortProfileNotifier extends Notifier<ComfortProfile> {
   static const prefsKey = 'comfortProfile';
 
+  /// Account the profile on this device belongs to.
+  static const prefsUidKey = 'comfortProfileUid';
+
   /// Firestore completes a write only after the server confirms it.
   static const saveTimeout = Duration(seconds: 15);
 
   @override
   ComfortProfile build() => _readLocal() ?? ComfortProfile.fallback;
 
-  /// True once a profile was chosen on this device (S04 done here, or the
-  /// account's profile was loaded).
-  bool get hasLocal => _readLocal() != null;
+  /// True once [uid] chose a profile on this device (S04 done here, or the
+  /// account's profile was loaded). Another account's profile does not count.
+  bool hasLocalFor(String uid) =>
+      _readLocal() != null &&
+      ref.read(sharedPreferencesProvider).getString(prefsUidKey) == uid;
 
-  /// Saves [profile] to the signed-in account, then uses it. Throws when the
-  /// account write fails, so S04 can show an error.
+  /// Uses [profile] right away (also offline) and saves it to the signed-in
+  /// account. Offline the write stays queued and is sent later. Throws when
+  /// the account rejects it; then the previous profile is restored.
   Future<void> save(ComfortProfile profile) async {
     final uid = ref.read(authRepositoryProvider).currentUser?.uid;
-    if (uid != null) {
+    final previous = state;
+    await apply(profile, uid: uid);
+    if (uid == null) return;
+    try {
       await ref
           .read(userProfileRepositoryProvider)
           .saveComfortProfile(uid, profile)
           .timeout(saveTimeout);
+    } on TimeoutException {
+      // Offline: Firestore sends it when the network is back.
+    } catch (_) {
+      await apply(previous, uid: uid);
+      rethrow;
     }
-    await apply(profile);
   }
 
   /// Uses [profile] on this device only (e.g. the account's profile was
-  /// loaded at sign-in).
-  Future<void> apply(ComfortProfile profile) async {
+  /// loaded at sign-in), remembering whose it is.
+  Future<void> apply(ComfortProfile profile, {String? uid}) async {
     state = profile;
     try {
-      await ref
-          .read(sharedPreferencesProvider)
-          .setString(prefsKey, jsonEncode(profile.toJson()));
+      final prefs = ref.read(sharedPreferencesProvider);
+      await prefs.setString(prefsKey, jsonEncode(profile.toJson()));
+      if (uid != null) await prefs.setString(prefsUidKey, uid);
     } catch (e) {
       debugPrint('Could not keep the comfort profile on device: $e');
     }

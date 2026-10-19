@@ -178,18 +178,23 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
       ),
     );
 
-    // Preview the draft's Senior setting on this screen only.
-    if (_draft.seniorMode == appSenior) return content;
+    // Preview the draft's Senior setting on this screen only. Always the
+    // same wrappers, so the list keeps its scroll position on toggle.
     final media = MediaQuery.of(context);
     final base = media.textScaler is SeniorTextScaler
         ? (media.textScaler as SeniorTextScaler).base
         : media.textScaler;
+    final preview = _draft.seniorMode != appSenior;
     return Theme(
-      data: AppTheme.light(senior: _draft.seniorMode),
+      data: preview
+          ? AppTheme.light(senior: _draft.seniorMode)
+          : Theme.of(context),
       child: MediaQuery(
-        data: media.copyWith(
-          textScaler: _draft.seniorMode ? SeniorTextScaler(base) : base,
-        ),
+        data: preview
+            ? media.copyWith(
+                textScaler: _draft.seniorMode ? SeniorTextScaler(base) : base,
+              )
+            : media,
         child: content,
       ),
     );

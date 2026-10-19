@@ -29,13 +29,15 @@ class CoolLodzApp extends ConsumerWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       // Senior mode scales all text ×1.25 on top of the system font size.
+      // Always the same tree, so toggling Senior does not rebuild the app
+      // (and the push handler) from scratch.
       builder: (context, child) {
-        final app = PushHandler(child: child!);
-        if (!senior) return app;
         final media = MediaQuery.of(context);
         return MediaQuery(
-          data: media.copyWith(textScaler: SeniorTextScaler(media.textScaler)),
-          child: app,
+          data: senior
+              ? media.copyWith(textScaler: SeniorTextScaler(media.textScaler))
+              : media,
+          child: PushHandler(child: child!),
         );
       },
     );
