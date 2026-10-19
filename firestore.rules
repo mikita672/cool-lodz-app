@@ -92,26 +92,19 @@ service cloud.firestore {
     }
 
     match /users/{uid} {
-      // Ranking exception (S13, decisions Q-03/Q-09): a signed-in user may read
-      // another user's document only when that user opted in to the ranking
-      // (consents.ranking == true); the leaderboard queries filter on it.
-      // Trade-off: Firestore cannot hide single fields, so the WHOLE document
-      // of an opted-in user is readable by any signed-in user: nickname,
-      // district, points, weekId/weekPoints, badges, but also profile,
-      // consents and fcmToken (an FCM token alone cannot send pushes; that
-      // needs the server key). Users who did not opt in stay private. If this
-      // is too much, move the public fields to a separate rankings/{uid} doc.
-      allow read: if isOwner(uid)
-        || (signedIn() && resource.data.consents.ranking == true);
+      // Owner only (RODO). The public ranking data lives in rankings/{uid}.
+      allow read: if isOwner(uid);
 
       allow create: if isOwner(uid)
         && validUser(incoming())
         && incoming().get('points', 0) <= 200
-        && incoming().get('weekPoints', 0) <= 200;
+        && incoming().get('weekPoints', 0) <= 200
+        && rankingGoneWithoutConsent(uid);
 
       allow update: if isOwner(uid)
         && validUser(incoming())
-        && validUserChange(resource.data, incoming());
+        && validUserChange(resource.data, incoming())
+        && rankingGoneWithoutConsent(uid);
 
       // "Usuń konto" (S16) deletes the user's documents from the client.
       allow delete: if isOwner(uid);
@@ -138,6 +131,43 @@ service cloud.firestore {
           && incoming().keys().hasOnly(['from', 'to', 'departAt', 'variant',
               'sunShare', 'distance_m', 'endPlaceType', 'createdAt']);
       }
+    }
+
+    // ---- user ranking (S13) ----------------------------------------------------
+
+    function userAfter(uid) {
+      return getAfter(/databases/$(database)/documents/users/$(uid)).data;
+    }
+
+    // Withdrawing the ranking consent must delete rankings/{uid} in the same
+    // batch, so nobody keeps seeing the user's nickname and points.
+    function rankingGoneWithoutConsent(uid) {
+      return incoming().get('consents', {}).get('ranking', false) == true
+        || !existsAfter(/databases/$(database)/documents/rankings/$(uid));
+    }
+
+    // Public copy of the ranking fields of users/{uid}, written by the owner
+    // in the same batch as the user document. Only these fields are public;
+    // users/{uid} itself stays private. Consent is checked on the state
+    // after the batch, so opting in and creating this doc can be one batch.
+    function mirrorsUser(uid) {
+      let u = userAfter(uid);
+      let r = incoming();
+      return r.keys().hasOnly(['nickname', 'district', 'points', 'weekId', 'weekPoints', 'updatedAt'])
+        && r.keys().hasAll(['nickname', 'district', 'points', 'weekId', 'weekPoints', 'updatedAt'])
+        && u.get('consents', {}).get('ranking', false) == true
+        && r.nickname == u.nickname
+        && r.district == u.get('district', null)
+        && r.points == u.get('points', 0)
+        && r.weekId == u.get('weekId', null)
+        && r.weekPoints == u.get('weekPoints', 0)
+        && r.updatedAt == request.time;
+    }
+
+    match /rankings/{uid} {
+      allow read: if signedIn();
+      allow create, update: if isOwner(uid) && mirrorsUser(uid);
+      allow delete: if isOwner(uid);
     }
 
     // ---- quest --------------------------------------------------------------

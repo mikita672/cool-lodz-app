@@ -81,7 +81,22 @@ void main() {
     expect(FirestoreDistricts.ids, GameConfig.districts.map(slug).toList());
   });
 
-  test('ranking query path', () {
-    expect(UserFields.consentsRankingPath, 'consents.ranking');
+  test('ranking fields mirror the user fields', () {
+    expect(
+      [
+        RankingFields.nickname,
+        RankingFields.district,
+        RankingFields.points,
+        RankingFields.weekId,
+        RankingFields.weekPoints,
+      ],
+      [
+        UserFields.nickname,
+        UserFields.district,
+        UserFields.points,
+        UserFields.weekId,
+        UserFields.weekPoints,
+      ],
+    );
   });
 }

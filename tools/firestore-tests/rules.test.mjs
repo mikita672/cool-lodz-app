@@ -17,12 +17,14 @@ import {
   getDoc,
   getDocs,
   increment,
+  limit,
   orderBy,
   query,
   serverTimestamp,
   setDoc,
   updateDoc,
   where,
+  writeBatch,
 } from 'firebase/firestore';
 
 const PROJECT_ID = 'demo-coollodz';
@@ -185,51 +187,114 @@ describe('users', () => {
   });
 });
 
-describe('ranking', () => {
-  beforeEach(async () => {
+describe('ranking (rankings/{uid})', () => {
+  const optedIn = (overrides = {}) =>
+    user({ points: 300, weekPoints: 120, consents: { ranking: true }, ...overrides });
+  const mirror = (u) => ({
+    nickname: u.nickname,
+    district: u.district,
+    points: u.points,
+    weekId: u.weekId,
+    weekPoints: u.weekPoints,
+    updatedAt: serverTimestamp(),
+  });
+
+  test('other users can read rankings but not users', async () => {
     await seed({
-      'users/alice': user({ nickname: 'Ala', points: 300, consents: { ranking: true } }),
-      'users/carol': user({ nickname: 'Karo', points: 900, consents: { ranking: false } }),
-      'users/dave': user({ nickname: 'Dawid', points: 50, consents: { ranking: true }, weekId: '2026-W42' }),
+      'users/alice': optedIn(),
+      'rankings/alice': { ...mirror(optedIn()), updatedAt: new Date() },
     });
+    await assertSucceeds(getDoc(doc(db('bob'), 'rankings/alice')));
+    await assertFails(getDoc(doc(db('bob'), 'users/alice')));
+    await assertFails(getDocs(query(collection(db('bob'), 'users'), where('consents.ranking', '==', true))));
   });
 
-  test('opted-in user documents are readable by signed-in users', async () => {
-    await assertSucceeds(getDoc(doc(db('bob'), 'users/alice')));
+  test('owner writes a ranking doc that mirrors the user doc', async () => {
+    await seed({ 'users/alice': optedIn() });
+    await assertSucceeds(setDoc(doc(db('alice'), 'rankings/alice'), mirror(optedIn())));
   });
 
-  test('users who did not opt in stay private', async () => {
-    await assertFails(getDoc(doc(db('bob'), 'users/carol')));
+  test('ranking doc that does not mirror the user doc is rejected', async () => {
+    await seed({ 'users/alice': optedIn() });
+    const ref = doc(db('alice'), 'rankings/alice');
+    await assertFails(setDoc(ref, { ...mirror(optedIn()), points: 9999 }));
+    await assertFails(setDoc(ref, { ...mirror(optedIn()), weekPoints: 121 }));
+    await assertFails(setDoc(ref, { ...mirror(optedIn()), nickname: 'Fake' }));
+    await assertFails(setDoc(ref, { ...mirror(optedIn()), weekId: '2026-W44' }));
+    await assertFails(setDoc(ref, { ...mirror(optedIn()), badges: [] }));
+    await assertFails(setDoc(ref, { ...mirror(optedIn()), updatedAt: new Date(0) }));
   });
 
-  test('all-time leaderboard query works and lists only opted-in users', async () => {
-    const q = query(
-      collection(db('bob'), 'users'),
-      where('consents.ranking', '==', true),
-      orderBy('points', 'desc'),
+  test('points update and ranking update in one batch', async () => {
+    await seed({
+      'users/alice': optedIn(),
+      'rankings/alice': { ...mirror(optedIn()), updatedAt: new Date() },
+    });
+    const alice = db('alice');
+    const after = optedIn({ points: 350, weekPoints: 170 });
+    const ok = writeBatch(alice);
+    ok.update(doc(alice, 'users/alice'), { points: 350, weekPoints: 170 });
+    ok.set(doc(alice, 'rankings/alice'), mirror(after));
+    await assertSucceeds(ok.commit());
+    // Ranking ahead of the user doc (no user update in the batch).
+    await assertFails(setDoc(doc(alice, 'rankings/alice'), mirror(optedIn({ points: 400, weekPoints: 220 }))));
+  });
+
+  test('write without the ranking consent is rejected', async () => {
+    const u = user({ consents: { ranking: false } });
+    await seed({ 'users/alice': u });
+    await assertFails(setDoc(doc(db('alice'), 'rankings/alice'), mirror(u)));
+  });
+
+  test('opting in and creating the ranking doc can be one batch', async () => {
+    await seed({ 'users/alice': user({ consents: { ranking: false } }) });
+    const alice = db('alice');
+    const b = writeBatch(alice);
+    b.update(doc(alice, 'users/alice'), { 'consents.ranking': true });
+    b.set(doc(alice, 'rankings/alice'), mirror(user()));
+    await assertSucceeds(b.commit());
+  });
+
+  test('withdrawing consent must delete the ranking doc in the same batch', async () => {
+    await seed({
+      'users/alice': optedIn(),
+      'rankings/alice': { ...mirror(optedIn()), updatedAt: new Date() },
+    });
+    const alice = db('alice');
+    await assertFails(updateDoc(doc(alice, 'users/alice'), { 'consents.ranking': false }));
+    const b = writeBatch(alice);
+    b.update(doc(alice, 'users/alice'), { 'consents.ranking': false });
+    b.delete(doc(alice, 'rankings/alice'));
+    await assertSucceeds(b.commit());
+  });
+
+  test('owner can delete own ranking doc, others cannot', async () => {
+    await seed({ 'rankings/alice': { ...mirror(optedIn()), updatedAt: new Date() } });
+    await assertFails(deleteDoc(doc(db('bob'), 'rankings/alice')));
+    await assertSucceeds(deleteDoc(doc(db('alice'), 'rankings/alice')));
+  });
+
+  test('another user cannot write my ranking doc', async () => {
+    await seed({ 'users/alice': optedIn() });
+    await assertFails(setDoc(doc(db('bob'), 'rankings/alice'), mirror(optedIn())));
+  });
+
+  test('all-time and weekly leaderboard queries work', async () => {
+    await seed({
+      'rankings/alice': { ...mirror(optedIn()), updatedAt: new Date() },
+      'rankings/dave': { ...mirror(optedIn({ nickname: 'Dawid', points: 50, weekId: '2026-W42', weekPoints: 50 })), updatedAt: new Date() },
+    });
+    const col = collection(db('bob'), 'rankings');
+    const all = await assertSucceeds(getDocs(query(col, orderBy('points', 'desc'), limit(50))));
+    assert.deepEqual(all.docs.map((d) => d.id), ['alice', 'dave']);
+    const week = await assertSucceeds(
+      getDocs(query(col, where('weekId', '==', '2026-W43'), orderBy('weekPoints', 'desc'), limit(50))),
     );
-    const snap = await assertSucceeds(getDocs(q));
-    assert.deepEqual(snap.docs.map((d) => d.id), ['alice', 'dave']);
+    assert.deepEqual(week.docs.map((d) => d.id), ['alice']);
   });
 
-  test('weekly leaderboard query works', async () => {
-    const q = query(
-      collection(db('bob'), 'users'),
-      where('consents.ranking', '==', true),
-      where('weekId', '==', '2026-W43'),
-      orderBy('weekPoints', 'desc'),
-    );
-    const snap = await assertSucceeds(getDocs(q));
-    assert.deepEqual(snap.docs.map((d) => d.id), ['alice']);
-  });
-
-  test('query without the ranking filter is rejected', async () => {
-    await assertFails(getDocs(query(collection(db('bob'), 'users'), orderBy('points', 'desc'))));
-  });
-
-  test('unauthenticated ranking query is rejected', async () => {
-    const q = query(collection(db(null), 'users'), where('consents.ranking', '==', true));
-    await assertFails(getDocs(q));
+  test('unauthenticated users cannot read rankings', async () => {
+    await assertFails(getDocs(collection(db(null), 'rankings')));
   });
 });
 

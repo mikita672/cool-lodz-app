@@ -34,7 +34,7 @@ Collection and field names are in `lib/core/firestore/collections.dart`, togethe
 - `createdAt` in `visits`, `reports` and `pointsLog` is `FieldValue.serverTimestamp()`.
 - `users.points` and `weekPoints` only grow, by at most 200 per write; a new `weekId` resets `weekPoints` (0–200). `badges` only grow. `users.district` is a district id (`baluty`, `gorna`, `polesie`, `srodmiescie`, `widzew`).
 - District totals change only with `FieldValue.increment(1..200)`; the week doc `districts/{id}/weeks/{weekId}` is created by the first `set(..., merge)` with an increment.
-- The ranking queries must filter `consents.ranking == true` (the composite indexes are in `firestore.indexes.json`).
+- `users/{uid}` is readable only by its owner (RODO). The user ranking reads `rankings/{uid}`: nickname, district, points, weekId, weekPoints, updatedAt (server timestamp), written by the owner **in the same batch** as the user document and only while `consents.ranking` is true; the values must equal the user document after the batch. Withdrawing the consent must delete `rankings/{uid}` in the same batch (the rules reject the user update otherwise); "Usuń konto" deletes it too. Queries: `orderBy('points', descending: true).limit(50)` and `where('weekId', isEqualTo: weekId(now)).orderBy('weekPoints', descending: true).limit(50)` (composite index in `firestore.indexes.json`; `points` alone uses the automatic single-field index).
 
 **Tests** (`tools/firestore-tests`, Node 22 + Java 21, `node --test`):
 

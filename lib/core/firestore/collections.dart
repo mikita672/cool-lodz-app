@@ -13,6 +13,7 @@ abstract final class FirestoreCollections {
   static const weeks = 'weeks'; // districts/{id}/weeks/{yyyy-Www}
   static const reports = 'reports';
   static const config = 'config';
+  static const rankings = 'rankings'; // public copy for S13, see RankingFields
 
   /// Document id of the game config: `config/game`.
   static const gameConfigDoc = 'game';
@@ -37,9 +38,22 @@ abstract final class UserFields {
   static const badges = 'badges'; // only grows
   static const fcmToken = 'fcmToken';
   static const createdAt = 'createdAt';
+}
 
-  /// Dotted path for queries: `where('consents.ranking', isEqualTo: true)`.
-  static const consentsRankingPath = '$consents.$consentRanking';
+/// Fields of `rankings/{uid}`: the public part of `users/{uid}` for the user
+/// ranking (S13). Exactly these fields. The owner writes it in the same
+/// batch as the user document and only while `consents.ranking` is true;
+/// the values must equal the user document after the batch. Withdrawing the
+/// consent must delete it in the same batch. `users/{uid}` stays private.
+/// All-time: `orderBy(points, desc).limit(50)`; this week:
+/// `where(weekId == weekId(now)).orderBy(weekPoints, desc).limit(50)`.
+abstract final class RankingFields {
+  static const nickname = 'nickname';
+  static const district = 'district';
+  static const points = 'points';
+  static const weekId = 'weekId';
+  static const weekPoints = 'weekPoints';
+  static const updatedAt = 'updatedAt'; // FieldValue.serverTimestamp()
 }
 
 /// Fields of `users/{uid}/pointsLog/{id}` (create only, points 1..200,
