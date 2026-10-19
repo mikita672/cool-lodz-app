@@ -12,7 +12,9 @@ part 'route_response.g.dart';
 /// `full`, or `approximate` → «Dla tego obszaru cień jest przybliżony».
 enum RouteCoverage { full, approximate }
 
-enum RouteVariantType { shortest, shaded, compromise }
+/// The three named variants, then any further distinct walks
+/// (`alternative`, on-phone API only).
+enum RouteVariantType { shortest, shaded, compromise, alternative }
 
 enum StopType { cool, water }
 

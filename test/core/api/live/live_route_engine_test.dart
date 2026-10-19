@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cool_lodz/core/api/api_client.dart';
 import 'package:cool_lodz/core/api/demo_api_client.dart';
 import 'package:cool_lodz/core/api/live/live_route_engine.dart';
@@ -140,7 +142,11 @@ void main() {
             : jsonBody('{}', 503),
       );
       final response = await engine(adapter).route(request(from, to));
-      expect(response.variants, hasLength(3));
+      // The two distinct OSRM walks: the fastest and the shadier one.
+      expect(response.variants.map((v) => v.variant), [
+        RouteVariantType.shortest,
+        RouteVariantType.shaded,
+      ]);
     });
 
     test('a direct failure is the answer', () async {
@@ -213,11 +219,68 @@ void main() {
       expect(shaded.geometry, hasLength(4));
       expect(shaded.sunShare, lessThan(shortest.sunShare - 0.3));
       expect(shaded.extraTimeVsShortestS, greaterThan(0));
-      // Senior (shade 90, time 20) takes the shade as the compromise too.
-      expect(
-        response.variant(RouteVariantType.compromise)!.geometry,
-        hasLength(4),
+      // Two distinct walks → two variants: the compromise would repeat one.
+      expect(response.variants, hasLength(2));
+      expect(response.variant(RouteVariantType.compromise), isNull);
+    });
+
+    test('a single possible walk → a single variant', () async {
+      final adapter = FakeAdapter(
+        (o) => jsonBody(lineJson(const [a, b], distance: 1000)),
       );
+      final response = await engine(
+        adapter,
+        model: model,
+      ).route(request(a, b, at: '2026-07-15T12:00:00+02:00'));
+      expect(response.variants.single.variant, RouteVariantType.shortest);
+    });
+
+    test('more distinct walks → alternatives after the named ones', () async {
+      // Each via request gets its own walk through a different latitude.
+      var n = 0;
+      final adapter = FakeAdapter((o) {
+        if (pointCount(o) == 2) {
+          // The direct answer with two alternatives further south.
+          final routes = [
+            for (final (i, lat) in [(0, 51.7700), (1, 51.7691), (2, 51.7682)])
+              (jsonDecode(
+                    lineJson([
+                      a,
+                      LatLng(lat, 19.4500),
+                      LatLng(lat, 19.4645),
+                      b,
+                    ], distance: 1000 + 50.0 * i),
+                  )
+                  as Map)['routes'][0],
+          ];
+          return jsonBody(jsonEncode({'code': 'Ok', 'routes': routes}));
+        }
+        n++;
+        final lat = 51.7700 + 0.0009 * n;
+        return jsonBody(
+          lineJson([
+            a,
+            LatLng(lat, 19.4500),
+            LatLng(lat, 19.4645),
+            b,
+          ], distance: 1000 + 60.0 * n),
+        );
+      });
+      final response = await engine(
+        adapter,
+        model: model,
+      ).route(request(a, b, at: '2026-07-15T12:00:00+02:00'));
+      final types = response.variants.map((v) => v.variant).toList();
+      expect(types.length, greaterThan(3));
+      expect(types.length, lessThanOrEqualTo(LiveRouteEngine.maxVariants));
+      expect(types.first, RouteVariantType.shortest);
+      expect(types.last, RouteVariantType.alternative);
+      // Every walk is offered once.
+      final middles = {
+        for (final v in response.variants)
+          v.geometry[v.geometry.length ~/ 2].latitude,
+      };
+      expect(middles, hasLength(types.length));
     });
 
     test('a time-first profile keeps the short walk as compromise', () async {
@@ -237,10 +300,9 @@ void main() {
           ),
         ),
       );
-      expect(
-        response.variant(RouteVariantType.compromise)!.geometry,
-        hasLength(2),
-      );
+      // The compromise is the short walk itself, so it is not repeated.
+      expect(response.variant(RouteVariantType.compromise), isNull);
+      expect(response.shortest!.geometry, hasLength(2));
     });
 
     test('outside the bundled layers → approximate', () async {

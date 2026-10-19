@@ -93,4 +93,5 @@ const _$RouteVariantTypeEnumMap = {
   RouteVariantType.shortest: 'shortest',
   RouteVariantType.shaded: 'shaded',
   RouteVariantType.compromise: 'compromise',
+  RouteVariantType.alternative: 'alternative',
 };

@@ -5,7 +5,7 @@ import '../../l10n/app_localizations.dart';
 import 'app_icons.dart';
 import 'shade_bar.dart';
 
-enum RouteVariant { shortest, shaded, compromise }
+enum RouteVariant { shortest, shaded, compromise, alternative }
 
 /// One route option on S07: name, time and distance, shade share in
 /// Display style with a [ShadeBar], extra minutes and stops on the way.
@@ -21,6 +21,7 @@ class RouteVariantCard extends StatelessWidget {
     this.extraMinutes = 0,
     this.coolStops = 0,
     this.waterStops = 0,
+    this.number = 1,
   });
 
   final RouteVariant variant;
@@ -37,6 +38,9 @@ class RouteVariantCard extends StatelessWidget {
   final bool selected;
   final VoidCallback onTap;
 
+  /// Which alternative this is («Inna trasa 2»); ignored for the others.
+  final int number;
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -44,6 +48,7 @@ class RouteVariantCard extends StatelessWidget {
       RouteVariant.shortest => l10n.dsRouteShortest,
       RouteVariant.shaded => l10n.dsRouteShaded,
       RouteVariant.compromise => l10n.dsRouteCompromise,
+      RouteVariant.alternative => l10n.dsRouteAlternative(number),
     };
     final radius = BorderRadius.circular(AppSizes.radiusCard);
     final secondary = AppTextStyles.bodyS.copyWith(

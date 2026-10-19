@@ -86,12 +86,11 @@ final isDemoModeEffectiveProvider = Provider<bool>(
   (ref) => ref.watch(demoModeProvider),
 );
 
-/// True when the map's shade layer is the bundled 14:30 file: in demo mode,
-/// after a fallback, and with the on-phone API (it serves bundled layers).
+/// True when the map's shade layer is the bundled 14:30 file: in demo mode
+/// and after a fallback. Module D and the on-phone API draw it for any time.
 final staticShadeLayerProvider = Provider<bool>(
   (ref) =>
       ref.watch(isDemoModeEffectiveProvider) ||
-      ref.watch(apiBaseUrlProvider).isEmpty ||
       ref.watch(dataSourceProvider) == DataSource.fallback,
 );
 

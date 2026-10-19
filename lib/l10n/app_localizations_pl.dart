@@ -51,6 +51,11 @@ class AppLocalizationsPl extends AppLocalizations {
   String get dsRouteCompromise => 'Kompromis';
 
   @override
+  String dsRouteAlternative(int number) {
+    return 'Inna trasa $number';
+  }
+
+  @override
   String dsRouteMeta(int minutes, double distance) {
     final intl.NumberFormat distanceNumberFormat =
         intl.NumberFormat.decimalPatternDigits(
@@ -897,7 +902,7 @@ class AppLocalizationsPl extends AppLocalizations {
       'Tryb upału: w najgorętszych godzinach odpocznij w miejscu chłodu';
 
   @override
-  String get mapLegendQuiet => 'Ciemniej = głośniej';
+  String get mapLegendQuiet => 'Ciemniej = ciszej';
 
   @override
   String get mapLegendAir => 'Indeks jakości powietrza GIOŚ';
