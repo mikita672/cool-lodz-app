@@ -81,6 +81,14 @@ abstract interface class AuthRepository {
   Future<void> sendPasswordReset(String email);
 
   Future<void> signOut();
+
+  /// «Usuń konto» (S16): checks [password] again, runs [deleteData] for the
+  /// user's documents, then deletes the Auth user. A wrong password throws
+  /// [AuthFailure.wrongCredentials] before anything is deleted.
+  Future<void> deleteAccount({
+    required String password,
+    required Future<void> Function(String uid) deleteData,
+  });
 }
 
 class FirebaseAuthRepository implements AuthRepository {
@@ -129,6 +137,20 @@ class FirebaseAuthRepository implements AuthRepository {
 
   @override
   Future<void> signOut() => _guard(_auth.signOut);
+
+  @override
+  Future<void> deleteAccount({
+    required String password,
+    required Future<void> Function(String uid) deleteData,
+  }) => _guard(() async {
+    final user = _auth.currentUser;
+    if (user == null) return;
+    await user.reauthenticateWithCredential(
+      EmailAuthProvider.credential(email: user.email ?? '', password: password),
+    );
+    await deleteData(user.uid);
+    await user.delete();
+  });
 
   Future<void> _guard(Future<void> Function() action) async {
     try {

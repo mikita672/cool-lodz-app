@@ -12,6 +12,7 @@ import {
 } from '@firebase/rules-unit-testing';
 import {
   collection,
+  deleteField,
   deleteDoc,
   doc,
   getDoc,
@@ -283,6 +284,93 @@ describe('game award batches (APP-16)', () => {
     const alice = user({ district: null });
     await seed({ 'users/alice': alice });
     await assertSucceeds(award('alice', alice, [{ type: 'scan', points: 50, refId: 'cool-002' }]));
+  });
+});
+
+// The exact writes of FirestoreAccountRepository (S16).
+describe('account settings and removal (APP-19)', () => {
+  const ranked = () => user({
+    nickname: 'Ala', district: 'polesie', points: 300, weekId: '2026-W43', weekPoints: 120,
+    consents: { location: true, push: true, ranking: true, acceptedAt: new Date() }, fcmToken: 'tok',
+  });
+  const mirrorOf = (u) => ({
+    nickname: u.nickname, district: u.district ?? null, points: u.points,
+    weekId: u.weekId ?? null, weekPoints: u.weekPoints, updatedAt: serverTimestamp(),
+  });
+
+  test('district change keeps the ranking copy in step', async () => {
+    const u = ranked();
+    await seed({ 'users/alice': u, 'rankings/alice': { ...mirrorOf(u), updatedAt: new Date() } });
+    const d = db('alice');
+    const batch = writeBatch(d);
+    batch.update(doc(d, 'users/alice'), { district: 'widzew' });
+    batch.set(doc(d, 'rankings/alice'), mirrorOf({ ...u, district: 'widzew' }));
+    await assertSucceeds(batch.commit());
+    // Without the copy the ranking would show the old district: rejected.
+    const lone = writeBatch(d);
+    lone.update(doc(d, 'users/alice'), { district: 'gorna' });
+    lone.set(doc(d, 'rankings/alice'), mirrorOf({ ...u, district: 'widzew' }));
+    await assertFails(lone.commit());
+  });
+
+  test('withdrawing ranking and push: ranking copy and token go away', async () => {
+    const u = ranked();
+    await seed({ 'users/alice': u, 'rankings/alice': { ...mirrorOf(u), updatedAt: new Date() } });
+    const d = db('alice');
+    const batch = writeBatch(d);
+    batch.update(doc(d, 'users/alice'), {
+      'consents.location': true, 'consents.push': false, 'consents.ranking': false, fcmToken: deleteField(),
+    });
+    batch.delete(doc(d, 'rankings/alice'));
+    await assertSucceeds(batch.commit());
+    const after = (await getDoc(doc(d, 'users/alice'))).data();
+    assert.equal(after.consents.ranking, false);
+    assert.equal(after.fcmToken, undefined);
+  });
+
+  test('opting in publishes the copy in the same batch', async () => {
+    const u = { ...ranked(), consents: { location: true, push: false, ranking: false, acceptedAt: new Date() } };
+    await seed({ 'users/alice': u });
+    const d = db('alice');
+    const batch = writeBatch(d);
+    batch.update(doc(d, 'users/alice'), { 'consents.location': true, 'consents.push': false, 'consents.ranking': true });
+    batch.set(doc(d, 'rankings/alice'), mirrorOf(u));
+    await assertSucceeds(batch.commit());
+  });
+
+  test('«Usuń konto» deletes every document of the user', async () => {
+    const day = todayPl();
+    await seed({
+      'users/alice': ranked(),
+      'rankings/alice': { ...mirrorOf(ranked()), updatedAt: new Date() },
+      'users/alice/pointsLog/l1': { type: 'scan', points: 50, refId: PLACE, createdAt: new Date() },
+      'users/alice/routes/r1': { variant: 'shaded', sunShare: 0.2, createdAt: new Date() },
+      [`visits/alice_${PLACE}_${day}`]: { uid: 'alice', placeId: PLACE, code: CODE, createdAt: new Date() },
+      'reports/rep1': { ...report('alice'), createdAt: new Date() },
+      'users/bob': user({ nickname: 'Bob' }),
+    });
+    const d = db('alice');
+    const refs = [];
+    for (const sub of ['pointsLog', 'routes']) {
+      const q = await assertSucceeds(getDocs(collection(d, `users/alice/${sub}`)));
+      refs.push(...q.docs.map((x) => x.ref));
+    }
+    for (const col of ['visits', 'reports']) {
+      const q = await assertSucceeds(getDocs(query(collection(d, col), where('uid', '==', 'alice'))));
+      refs.push(...q.docs.map((x) => x.ref));
+    }
+    refs.push(doc(d, 'rankings/alice'), doc(d, 'users/alice'));
+    assert.equal(refs.length, 6);
+    const batch = writeBatch(d);
+    for (const r of refs) batch.delete(r);
+    await assertSucceeds(batch.commit());
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      const admin = ctx.firestore();
+      assert.equal((await getDoc(doc(admin, 'users/alice'))).exists(), false);
+      assert.equal((await getDocs(collection(admin, 'users/alice/pointsLog'))).size, 0);
+      assert.equal((await getDoc(doc(admin, 'reports/rep1'))).exists(), false);
+      assert.equal((await getDoc(doc(admin, 'users/bob'))).exists(), true);
+    });
   });
 });
 

@@ -17,6 +17,7 @@ abstract final class Routes {
   static const report = '/report'; // S15
   static const profile = '/profile'; // S16, tab
   static const about = '/profile/about'; // S16 «O aplikacji» (child of Profil)
+  static const consentsSettings = '/profile/consents'; // S16 «Zgody»
   static const privacy = '/privacy'; // Polityka prywatności (S03, S16)
   static const debugComponents = '/debug/components'; // APP-06 showcase
 

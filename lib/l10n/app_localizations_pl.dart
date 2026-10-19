@@ -1313,4 +1313,152 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get alertOpenError => 'Nie udało się otworzyć strony';
+
+  @override
+  String get settingsTitle => 'Profil';
+
+  @override
+  String get settingsDistrict => 'Dzielnica';
+
+  @override
+  String get settingsDistrictNone => 'Wybierz dzielnicę';
+
+  @override
+  String get settingsDistrictTitle => 'Twoja dzielnica';
+
+  @override
+  String get settingsDistrictHint =>
+      'Twoje punkty liczą się też dla dzielnicy w rankingu.';
+
+  @override
+  String get settingsPoints => 'Punkty';
+
+  @override
+  String get settingsComfort => 'Mój profil komfortu';
+
+  @override
+  String get settingsSenior => 'Duży tekst i przyciski (tryb Senior)';
+
+  @override
+  String get settingsNotifications => 'Powiadomienia o upale';
+
+  @override
+  String get settingsNotificationsBody => 'Ostrzeżenia IMGW dla Łodzi';
+
+  @override
+  String get settingsConsents => 'Zgody i prywatność';
+
+  @override
+  String get settingsPrivacy => 'Polityka prywatności';
+
+  @override
+  String get settingsAbout => 'O aplikacji i źródła danych';
+
+  @override
+  String get settingsSignOut => 'Wyloguj';
+
+  @override
+  String get settingsDelete => 'Usuń konto';
+
+  @override
+  String get settingsSaveError =>
+      'Nie udało się zapisać zmian. Sprawdź połączenie.';
+
+  @override
+  String get settingsDeleteTitle => 'Usunąć konto?';
+
+  @override
+  String get settingsDeleteBody =>
+      'Usuniemy Twój profil, punkty, odznaki, historię tras, wizyt i zgłoszeń. Tego nie da się cofnąć. Wpisz hasło, aby potwierdzić.';
+
+  @override
+  String get settingsDeletePassword => 'Hasło';
+
+  @override
+  String get settingsDeleteConfirm => 'Usuń na zawsze';
+
+  @override
+  String get settingsDeleteCancel => 'Anuluj';
+
+  @override
+  String get settingsDeleteWrongPassword => 'Nieprawidłowe hasło';
+
+  @override
+  String get settingsDeleteError =>
+      'Nie udało się usunąć konta. Sprawdź połączenie i spróbuj ponownie.';
+
+  @override
+  String get settingsDeleted => 'Konto zostało usunięte';
+
+  @override
+  String get settingsConsentsSave => 'Zapisz';
+
+  @override
+  String get settingsConsentsSaved => 'Zapisano';
+
+  @override
+  String get aboutTitle => 'O aplikacji';
+
+  @override
+  String aboutVersion(String version) {
+    return 'Wersja $version';
+  }
+
+  @override
+  String get aboutDescription =>
+      'Cool Łódź prowadzi przez cień, zieleń i ciche ulice, pokazuje miejsca chłodu i wodę. Projekt zespołu Better Than Never na Hackathon Future Smart City 2026.';
+
+  @override
+  String get aboutMedical =>
+      'Aplikacja nie jest wyrobem medycznym. W razie złego samopoczucia dzwoń 112.';
+
+  @override
+  String get aboutSources => 'Źródła danych';
+
+  @override
+  String get aboutSourceMap => 'Mapa: © OpenStreetMap contributors, © CARTO';
+
+  @override
+  String get aboutSourceSearch =>
+      'Wyszukiwanie adresów: OpenStreetMap Nominatim';
+
+  @override
+  String get aboutSourceAlerts => 'Ostrzeżenia przed upałem: IMGW-PIB';
+
+  @override
+  String get aboutSourceAir => 'Jakość powietrza: GIOŚ';
+
+  @override
+  String get aboutSourceShade =>
+      'Cień, zieleń i hałas: obliczenia Cool Łódź na danych OpenStreetMap i miejskich';
+
+  @override
+  String get aboutSourcePlaces =>
+      'Miejsca chłodu: zebrane przez zespół, godziny ze stron miejsc';
+
+  @override
+  String get aboutLicenses => 'Licencje';
+
+  @override
+  String aboutDemoTapsLeft(int count) {
+    return 'Jeszcze $count — tryb demo';
+  }
+
+  @override
+  String get aboutDemoMode => 'Tryb demo';
+
+  @override
+  String get aboutDemoModeBody =>
+      'Trasy, miejsca i alerty z danych zapisanych w aplikacji, bez serwera.';
+
+  @override
+  String get aboutDemoAlert => 'Alert w trybie demo';
+
+  @override
+  String get aboutDemoAlertNone => 'Brak';
+
+  @override
+  String aboutDemoAlertLevel(int level) {
+    return 'Stopień $level';
+  }
 }

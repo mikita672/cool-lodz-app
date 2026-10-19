@@ -18,6 +18,7 @@ import '../features/reports/report_screen.dart';
 import '../features/route/route_plan_screen.dart';
 import '../features/route/route_result_screen.dart';
 import '../features/settings/about_screen.dart';
+import '../features/settings/consents_settings_screen.dart';
 import '../features/settings/privacy_screen.dart';
 import '../features/settings/profile_tab_screen.dart';
 import '../shared/debug/components_showcase.dart';
@@ -113,6 +114,11 @@ final routerProvider = Provider<GoRouter>((ref) {
                     path: 'about',
                     parentNavigatorKey: rootNavigatorKey,
                     builder: (_, _) => const AboutScreen(),
+                  ),
+                  GoRoute(
+                    path: 'consents',
+                    parentNavigatorKey: rootNavigatorKey,
+                    builder: (_, _) => const ConsentsSettingsScreen(),
                   ),
                 ],
               ),

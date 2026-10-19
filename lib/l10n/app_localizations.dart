@@ -2307,6 +2307,270 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Nie udało się otworzyć strony'**
   String get alertOpenError;
+
+  /// No description provided for @settingsTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Profil'**
+  String get settingsTitle;
+
+  /// No description provided for @settingsDistrict.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dzielnica'**
+  String get settingsDistrict;
+
+  /// No description provided for @settingsDistrictNone.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wybierz dzielnicę'**
+  String get settingsDistrictNone;
+
+  /// No description provided for @settingsDistrictTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Twoja dzielnica'**
+  String get settingsDistrictTitle;
+
+  /// No description provided for @settingsDistrictHint.
+  ///
+  /// In pl, this message translates to:
+  /// **'Twoje punkty liczą się też dla dzielnicy w rankingu.'**
+  String get settingsDistrictHint;
+
+  /// No description provided for @settingsPoints.
+  ///
+  /// In pl, this message translates to:
+  /// **'Punkty'**
+  String get settingsPoints;
+
+  /// No description provided for @settingsComfort.
+  ///
+  /// In pl, this message translates to:
+  /// **'Mój profil komfortu'**
+  String get settingsComfort;
+
+  /// No description provided for @settingsSenior.
+  ///
+  /// In pl, this message translates to:
+  /// **'Duży tekst i przyciski (tryb Senior)'**
+  String get settingsSenior;
+
+  /// No description provided for @settingsNotifications.
+  ///
+  /// In pl, this message translates to:
+  /// **'Powiadomienia o upale'**
+  String get settingsNotifications;
+
+  /// No description provided for @settingsNotificationsBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ostrzeżenia IMGW dla Łodzi'**
+  String get settingsNotificationsBody;
+
+  /// No description provided for @settingsConsents.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zgody i prywatność'**
+  String get settingsConsents;
+
+  /// No description provided for @settingsPrivacy.
+  ///
+  /// In pl, this message translates to:
+  /// **'Polityka prywatności'**
+  String get settingsPrivacy;
+
+  /// No description provided for @settingsAbout.
+  ///
+  /// In pl, this message translates to:
+  /// **'O aplikacji i źródła danych'**
+  String get settingsAbout;
+
+  /// No description provided for @settingsSignOut.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wyloguj'**
+  String get settingsSignOut;
+
+  /// No description provided for @settingsDelete.
+  ///
+  /// In pl, this message translates to:
+  /// **'Usuń konto'**
+  String get settingsDelete;
+
+  /// No description provided for @settingsSaveError.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie udało się zapisać zmian. Sprawdź połączenie.'**
+  String get settingsSaveError;
+
+  /// No description provided for @settingsDeleteTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Usunąć konto?'**
+  String get settingsDeleteTitle;
+
+  /// No description provided for @settingsDeleteBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Usuniemy Twój profil, punkty, odznaki, historię tras, wizyt i zgłoszeń. Tego nie da się cofnąć. Wpisz hasło, aby potwierdzić.'**
+  String get settingsDeleteBody;
+
+  /// No description provided for @settingsDeletePassword.
+  ///
+  /// In pl, this message translates to:
+  /// **'Hasło'**
+  String get settingsDeletePassword;
+
+  /// No description provided for @settingsDeleteConfirm.
+  ///
+  /// In pl, this message translates to:
+  /// **'Usuń na zawsze'**
+  String get settingsDeleteConfirm;
+
+  /// No description provided for @settingsDeleteCancel.
+  ///
+  /// In pl, this message translates to:
+  /// **'Anuluj'**
+  String get settingsDeleteCancel;
+
+  /// No description provided for @settingsDeleteWrongPassword.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nieprawidłowe hasło'**
+  String get settingsDeleteWrongPassword;
+
+  /// No description provided for @settingsDeleteError.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie udało się usunąć konta. Sprawdź połączenie i spróbuj ponownie.'**
+  String get settingsDeleteError;
+
+  /// No description provided for @settingsDeleted.
+  ///
+  /// In pl, this message translates to:
+  /// **'Konto zostało usunięte'**
+  String get settingsDeleted;
+
+  /// No description provided for @settingsConsentsSave.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zapisz'**
+  String get settingsConsentsSave;
+
+  /// No description provided for @settingsConsentsSaved.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zapisano'**
+  String get settingsConsentsSaved;
+
+  /// No description provided for @aboutTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'O aplikacji'**
+  String get aboutTitle;
+
+  /// No description provided for @aboutVersion.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wersja {version}'**
+  String aboutVersion(String version);
+
+  /// No description provided for @aboutDescription.
+  ///
+  /// In pl, this message translates to:
+  /// **'Cool Łódź prowadzi przez cień, zieleń i ciche ulice, pokazuje miejsca chłodu i wodę. Projekt zespołu Better Than Never na Hackathon Future Smart City 2026.'**
+  String get aboutDescription;
+
+  /// No description provided for @aboutMedical.
+  ///
+  /// In pl, this message translates to:
+  /// **'Aplikacja nie jest wyrobem medycznym. W razie złego samopoczucia dzwoń 112.'**
+  String get aboutMedical;
+
+  /// No description provided for @aboutSources.
+  ///
+  /// In pl, this message translates to:
+  /// **'Źródła danych'**
+  String get aboutSources;
+
+  /// No description provided for @aboutSourceMap.
+  ///
+  /// In pl, this message translates to:
+  /// **'Mapa: © OpenStreetMap contributors, © CARTO'**
+  String get aboutSourceMap;
+
+  /// No description provided for @aboutSourceSearch.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wyszukiwanie adresów: OpenStreetMap Nominatim'**
+  String get aboutSourceSearch;
+
+  /// No description provided for @aboutSourceAlerts.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ostrzeżenia przed upałem: IMGW-PIB'**
+  String get aboutSourceAlerts;
+
+  /// No description provided for @aboutSourceAir.
+  ///
+  /// In pl, this message translates to:
+  /// **'Jakość powietrza: GIOŚ'**
+  String get aboutSourceAir;
+
+  /// No description provided for @aboutSourceShade.
+  ///
+  /// In pl, this message translates to:
+  /// **'Cień, zieleń i hałas: obliczenia Cool Łódź na danych OpenStreetMap i miejskich'**
+  String get aboutSourceShade;
+
+  /// No description provided for @aboutSourcePlaces.
+  ///
+  /// In pl, this message translates to:
+  /// **'Miejsca chłodu: zebrane przez zespół, godziny ze stron miejsc'**
+  String get aboutSourcePlaces;
+
+  /// No description provided for @aboutLicenses.
+  ///
+  /// In pl, this message translates to:
+  /// **'Licencje'**
+  String get aboutLicenses;
+
+  /// No description provided for @aboutDemoTapsLeft.
+  ///
+  /// In pl, this message translates to:
+  /// **'Jeszcze {count} — tryb demo'**
+  String aboutDemoTapsLeft(int count);
+
+  /// No description provided for @aboutDemoMode.
+  ///
+  /// In pl, this message translates to:
+  /// **'Tryb demo'**
+  String get aboutDemoMode;
+
+  /// No description provided for @aboutDemoModeBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Trasy, miejsca i alerty z danych zapisanych w aplikacji, bez serwera.'**
+  String get aboutDemoModeBody;
+
+  /// No description provided for @aboutDemoAlert.
+  ///
+  /// In pl, this message translates to:
+  /// **'Alert w trybie demo'**
+  String get aboutDemoAlert;
+
+  /// No description provided for @aboutDemoAlertNone.
+  ///
+  /// In pl, this message translates to:
+  /// **'Brak'**
+  String get aboutDemoAlertNone;
+
+  /// No description provided for @aboutDemoAlertLevel.
+  ///
+  /// In pl, this message translates to:
+  /// **'Stopień {level}'**
+  String aboutDemoAlertLevel(int level);
 }
 
 class _AppLocalizationsDelegate

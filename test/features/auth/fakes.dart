@@ -73,6 +73,25 @@ class FakeAuthRepository implements AuthRepository {
 
   @override
   Future<void> signOut() async => emit(null);
+
+  /// Password accepted by [deleteAccount].
+  String password = 'secret123';
+  final deleted = <String>[];
+
+  @override
+  Future<void> deleteAccount({
+    required String password,
+    required Future<void> Function(String uid) deleteData,
+  }) async {
+    final user = _user;
+    if (user == null) return;
+    if (password != this.password) {
+      throw const AuthException(AuthFailure.wrongCredentials);
+    }
+    await deleteData(user.uid);
+    deleted.add(user.uid);
+    emit(null);
+  }
 }
 
 class FakeUserProfileRepository implements UserProfileRepository {

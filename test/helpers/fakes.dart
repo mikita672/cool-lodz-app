@@ -20,6 +20,7 @@ import 'package:cool_lodz/features/quest/data/quest_repository.dart';
 import 'package:cool_lodz/features/quest/quest_scan_screen.dart';
 import 'package:cool_lodz/features/route/data/address_search.dart';
 import 'package:cool_lodz/features/route/data/route_history_repository.dart';
+import 'package:cool_lodz/features/settings/data/account_repository.dart';
 import 'package:cool_lodz/shared/map/base_map.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -135,7 +136,11 @@ List<Override> appTestOverrides({
   RankingRepository? ranking,
   UserProfileRepository? profiles,
   PushService? push,
+  AccountRepository? account,
 }) => [
+  accountRepositoryProvider.overrideWithValue(
+    account ?? FakeAccountRepository(),
+  ),
   userProfileRepositoryProvider.overrideWithValue(
     profiles ?? FakeUserProfileRepository(),
   ),
@@ -347,4 +352,27 @@ class FakePushService implements PushService {
 
   @override
   Future<PushMessage?> initial() async => initialMessage;
+}
+
+/// Records S16 account changes.
+class FakeAccountRepository implements AccountRepository {
+  final districts = <(String, String)>[];
+  final consents = <(String, Consents)>[];
+  final deletedData = <String>[];
+  Object? error;
+
+  @override
+  Future<void> setDistrict(String uid, String district) async {
+    if (error != null) throw error!;
+    districts.add((uid, district));
+  }
+
+  @override
+  Future<void> setConsents(String uid, Consents value) async {
+    if (error != null) throw error!;
+    consents.add((uid, value));
+  }
+
+  @override
+  Future<void> deleteUserData(String uid) async => deletedData.add(uid);
 }
