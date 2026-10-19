@@ -42,6 +42,26 @@ Check the signature: `apksigner verify --print-certs build/app/outputs/flutter-a
 - Install on a clean phone with Android 7.0+ and go through the demo scenario (spec «Сценарий демо»): set `config/game.heatOverride` = 2, send the test push, S05 → S06 → S07, a QR scan, S13. Cold start under 3 s.
 - Without network (or with a wrong `API_BASE_URL`) the app switches to demo data after 8 s and shows the banner.
 
+## CI: APK on every merge to main
+
+`.github/workflows/release-apk.yml` builds the release APK on each push to `main` (and on demand: Actions → Release APK → Run workflow) and publishes it as the latest GitHub Release `build-<N>`. Stable link to the newest APK:
+
+https://github.com/mikita672/cool-lodz-app/releases/latest/download/cool-lodz.apk
+
+Repository secrets (Settings → Secrets and variables → Actions → New repository secret):
+
+| Secret | Required | Value |
+| --- | --- | --- |
+| `GOOGLE_SERVICES_JSON` | yes | the whole `google-services.json` (Firebase console → Project settings → Your apps → Android `pl.betterthannever.cool_lodz` → download). Plain JSON or base64. Without it the workflow builds nothing and shows a warning. |
+| `ANDROID_KEYSTORE_BASE64` | for updates | `base64 -w0 cool-lodz-release.jks` of the team key from step 1 |
+| `ANDROID_KEYSTORE_PASSWORD` | with the key | store password |
+| `ANDROID_KEY_ALIAS` | with the key | `coollodz` |
+| `ANDROID_KEY_PASSWORD` | optional | key password, if different from the store password |
+
+Without the key secrets every build gets a new throw-away debug key, so Android refuses to install a new build over an older one (uninstall first). The build number is the workflow run number, so `versionCode` always grows.
+
+Optional repository variable `API_BASE_URL` (Variables tab) points the APK at a hosted module D; empty = the on-device API (see api-contract.md).
+
 ## 4. GitHub Release
 
 Tag `v1.0.0`, attach `app-release.apk` (rename to `cool-lodz-1.0.0.apk`), notes below. Give the asset link to the website team for `/pobierz` (DEP-07, #36) and put it in the ChallengeRocket form.

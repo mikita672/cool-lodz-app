@@ -1,0 +1,112 @@
+name: Release APK
+
+# Every push to main builds a release APK and publishes it as the latest
+# GitHub Release. Stable download link:
+# https://github.com/mikita672/cool-lodz-app/releases/latest/download/cool-lodz.apk
+# Secrets: see docs/release.md («CI»).
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: release-apk
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  apk:
+    name: build + publish APK
+    runs-on: ubuntu-latest
+    env:
+      GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+      ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+      ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+      ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+      # Optional: a hosted module D. Empty = the on-device API.
+      API_BASE_URL: ${{ vars.API_BASE_URL }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Firebase config
+        id: firebase
+        run: |
+          if [ -z "$GOOGLE_SERVICES_JSON" ]; then
+            echo "::warning::Secret GOOGLE_SERVICES_JSON is not set, so no APK is built. See docs/release.md (CI)."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          # Accept the file as plain JSON or base64.
+          if printf '%s' "$GOOGLE_SERVICES_JSON" | head -c 1 | grep -q '{'; then
+            printf '%s' "$GOOGLE_SERVICES_JSON" > android/app/google-services.json
+          else
+            printf '%s' "$GOOGLE_SERVICES_JSON" | base64 -d > android/app/google-services.json
+          fi
+          python3 -c "import json; json.load(open('android/app/google-services.json'))"
+          echo "ready=true" >> "$GITHUB_OUTPUT"
+
+      - name: Signing key
+        if: steps.firebase.outputs.ready == 'true'
+        run: |
+          if [ -z "$ANDROID_KEYSTORE_BASE64" ]; then
+            echo "::warning::No release key secrets: the APK is signed with a throw-away debug key, so a new build cannot be installed over an older one."
+            exit 0
+          fi
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/app/release.jks
+          cat > android/key.properties <<EOF
+          storeFile=release.jks
+          storePassword=$ANDROID_KEYSTORE_PASSWORD
+          keyAlias=$ANDROID_KEY_ALIAS
+          keyPassword=${ANDROID_KEY_PASSWORD:-$ANDROID_KEYSTORE_PASSWORD}
+          EOF
+
+      - uses: actions/setup-java@v4
+        if: steps.firebase.outputs.ready == 'true'
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        if: steps.firebase.outputs.ready == 'true'
+        with:
+          channel: stable
+          flutter-version: 3.41.9
+          cache: true
+
+      - name: Build
+        if: steps.firebase.outputs.ready == 'true'
+        run: |
+          flutter pub get
+          flutter build apk --release \
+            --build-number=${{ github.run_number }} \
+            ${API_BASE_URL:+--dart-define=API_BASE_URL=$API_BASE_URL}
+          cp build/app/outputs/flutter-apk/app-release.apk cool-lodz.apk
+
+      - uses: actions/upload-artifact@v4
+        if: steps.firebase.outputs.ready == 'true'
+        with:
+          name: cool-lodz-apk
+          path: cool-lodz.apk
+
+      - name: Publish release
+        if: steps.firebase.outputs.ready == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: Cool Łódź build ${{ github.run_number }}
+          target_commitish: ${{ github.sha }}
+          make_latest: true
+          files: cool-lodz.apk
+          body: |
+            Cool Łódź — Android 7.0+, commit ${{ github.sha }}.
+
+            Instalacja: pobierz `cool-lodz.apk` na telefon i otwórz plik
+            (Android zapyta o zgodę na instalację z tego źródła).
+
+            Tryb demo: Profil → O aplikacji → 5 razy dotknij numeru wersji.
+
+            Aplikacja nie jest wyrobem medycznym. W razie złego samopoczucia dzwoń 112.
