@@ -1,4 +1,5 @@
 import 'package:cool_lodz/app/theme.dart';
+import 'package:cool_lodz/core/api/api_providers.dart';
 import 'package:cool_lodz/core/api/demo_api_client.dart';
 import 'package:cool_lodz/core/location/location_service.dart';
 import 'package:cool_lodz/core/models/models.dart';
@@ -26,7 +27,8 @@ void main() {
   late FakeLocationService location;
 
   setUp(() async {
-    prefs = await testPrefs();
+    // Demo scenarios (July alerts, demo badge thresholds): demo mode on.
+    prefs = await testPrefs({DemoMode.prefsKey: true});
     location = FakeLocationService();
   });
 
@@ -254,13 +256,13 @@ void main() {
     expect(find.text('S07'), findsOneWidget);
   });
 
-  testWidgets('shade time picker offers only 14:30 in demo mode', (
+  testWidgets('shade time picker offers only 14:30 with bundled layers', (
     tester,
   ) async {
     await pump(tester);
     await tester.tap(find.byKey(const Key('map-shade-time')));
     await tester.pumpAndSettle();
-    expect(find.textContaining('W trybie demo'), findsOneWidget);
+    expect(find.text('Mapa cienia jest policzona dla 14:30.'), findsOneWidget);
     expect(find.byType(ChoiceChip), findsOneWidget);
   });
 

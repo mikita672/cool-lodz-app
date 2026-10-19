@@ -27,8 +27,9 @@ Needs `android/app/google-services.json` (see [dev.md](dev.md#firebase)). Releas
 ```sh
 flutter pub get
 flutter analyze && flutter test
-# With module D (APP-20); leave the define out for a demo-only build.
-flutter build apk --release --dart-define=API_BASE_URL=https://<module-d-host>
+flutter build apk --release
+# With a hosted module D instead of the on-phone API (APP-20):
+# flutter build apk --release --dart-define=API_BASE_URL=https://<module-d-host>
 ```
 
 The APK is `build/app/outputs/flutter-apk/app-release.apk`. `versionName` 1.0.0 comes from `pubspec.yaml` (`version: 1.0.0+1`); bump the `+N` build number for every new upload.
@@ -40,7 +41,8 @@ Check the signature: `apksigner verify --print-certs build/app/outputs/flutter-a
 - Firestore rules and indexes are deployed: `firebase deploy --only firestore:rules,firestore:indexes`.
 - The seed ran on the real project (`config/game`, districts, quest places and codes) and the QR codes were printed (APP-15).
 - Install on a clean phone with Android 7.0+ and go through the demo scenario (spec «Сценарий демо»): set `config/game.heatOverride` = 2, send the test push, S05 → S06 → S07, a QR scan, S13. Cold start under 3 s.
-- Without network (or with a wrong `API_BASE_URL`) the app switches to demo data after 8 s and shows the banner.
+- Without network (or with a wrong `API_BASE_URL`) the app switches to cached/demo data after 8 s and shows the banner.
+- With network, a route between two addresses in Śródmieście has three variants without «Dla tego obszaru cień jest przybliżony», S05 shows the GIOŚ stations, and S14 shows a real IMGW heat warning when one is active (otherwise none).
 
 ## CI: APK on every merge to main
 

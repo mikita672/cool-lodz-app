@@ -1,4 +1,5 @@
 import 'package:cool_lodz/app/theme.dart';
+import 'package:cool_lodz/core/api/api_providers.dart';
 import 'package:cool_lodz/core/clock.dart';
 import 'package:cool_lodz/core/game/game_rules.dart';
 import 'package:cool_lodz/features/game/data/game_config_repository.dart';
@@ -42,7 +43,8 @@ void main() {
   late FakeLocationService location;
 
   setUp(() async {
-    prefs = await testPrefs();
+    // Demo scenarios (July alerts, demo badge thresholds): demo mode on.
+    prefs = await testPrefs({DemoMode.prefsKey: true});
     quest = FakeQuestRepository();
     game = FakeGameRepository();
     scanner = FakeQrScanner();
@@ -233,7 +235,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Nowa litera: C'), findsOneWidget);
       expect(find.text('+50 pkt'), findsOneWidget);
-      // Demo mode (no API_BASE_URL in tests): Strażnik chłodu.
+      // Demo mode: Strażnik chłodu after 1 place.
       expect(find.byType(BadgeUnlockedDialog), findsOneWidget);
       await tester.tap(find.text('Super!'));
       await tester.pumpAndSettle();

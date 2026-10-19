@@ -11,7 +11,10 @@ Dio createLiveDio() => Dio(
     sendTimeout: apiTimeout,
     receiveTimeout: apiTimeout,
     responseType: ResponseType.json,
-    headers: {'Accept': 'application/json'},
+    // GIOŚ answers 406 to a bare `application/json`: it serves JSON-LD.
+    headers: {
+      'Accept': 'application/json, application/ld+json;q=0.9, */*;q=0.8',
+    },
   ),
 );
 

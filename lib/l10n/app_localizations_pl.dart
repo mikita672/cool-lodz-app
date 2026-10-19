@@ -873,7 +873,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get mapShadeTimeTitle => 'Cień o godzinie';
 
   @override
-  String get mapShadeDemoNote => 'W trybie demo cień jest policzony dla 14:30.';
+  String get mapShadeDemoNote => 'Mapa cienia jest policzona dla 14:30.';
 
   @override
   String get mapNoLocationTitle => 'Nie widzimy Twojej lokalizacji';
@@ -1421,6 +1421,10 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String get aboutSourceSearch =>
       'Wyszukiwanie adresów: OpenStreetMap Nominatim';
+
+  @override
+  String get aboutSourceRoutes =>
+      'Trasy piesze: OSRM (FOSSGIS) na danych OpenStreetMap';
 
   @override
   String get aboutSourceAlerts => 'Ostrzeżenia przed upałem: IMGW-PIB';

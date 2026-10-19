@@ -51,6 +51,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
     final sources = [
       l10n.aboutSourceMap,
       l10n.aboutSourceSearch,
+      l10n.aboutSourceRoutes,
       l10n.aboutSourceAlerts,
       l10n.aboutSourceAir,
       l10n.aboutSourceShade,

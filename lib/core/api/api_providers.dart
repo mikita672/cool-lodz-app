@@ -6,6 +6,7 @@ import '../storage/preferences.dart';
 import 'api_client.dart';
 import 'demo_api_client.dart';
 import 'fallback_api_client.dart';
+import 'live/live_api_client.dart';
 import 'remote_api_client.dart';
 
 /// `retry:` for data providers: no automatic retries. Screens show the error
@@ -13,7 +14,8 @@ import 'remote_api_client.dart';
 /// to cached/demo data after 8 s.
 Duration? noRetry(int retryCount, Object error) => null;
 
-/// `--dart-define=API_BASE_URL=https://…`; empty = demo mode only.
+/// `--dart-define=API_BASE_URL=https://…` (module D server); empty = the
+/// live API on the phone ([LiveApiClient]).
 final apiBaseUrlProvider = Provider<String>(
   (ref) => const String.fromEnvironment('API_BASE_URL'),
 );
@@ -68,7 +70,7 @@ final usingFallbackProvider = NotifierProvider<UsingFallback, bool>(
 );
 
 enum DataSource {
-  /// Live module D.
+  /// Live data: module D, or the live API on the phone without a server.
   remote,
 
   /// Demo mode: demo files only, no remote calls.
@@ -78,9 +80,19 @@ enum DataSource {
   fallback,
 }
 
-/// True when the app uses only demo data (toggle on or no API_BASE_URL).
+/// True when the app uses only demo data: the hidden toggle (APP-19) is on.
+/// Without API_BASE_URL the app is live too (on-phone API), not demo.
 final isDemoModeEffectiveProvider = Provider<bool>(
-  (ref) => ref.watch(demoModeProvider) || ref.watch(apiBaseUrlProvider).isEmpty,
+  (ref) => ref.watch(demoModeProvider),
+);
+
+/// True when the map's shade layer is the bundled 14:30 file: in demo mode,
+/// after a fallback, and with the on-phone API (it serves bundled layers).
+final staticShadeLayerProvider = Provider<bool>(
+  (ref) =>
+      ref.watch(isDemoModeEffectiveProvider) ||
+      ref.watch(apiBaseUrlProvider).isEmpty ||
+      ref.watch(dataSourceProvider) == DataSource.fallback,
 );
 
 final dataSourceProvider = Provider<DataSource>((ref) {
@@ -101,14 +113,27 @@ final remoteApiClientProvider = Provider<ApiClient>(
   (ref) => RemoteApiClient.create(ref.watch(apiBaseUrlProvider)),
 );
 
-/// The client features use: Demo in demo mode, otherwise Remote with
-/// fallback to cache/Demo after 8 s.
+/// Bundled files for places, layers and the quest; the live API reads them
+/// too, so it does not depend on the demo alert scenario.
+final bundledApiClientProvider = Provider<DemoApiClient>(
+  (ref) => DemoApiClient(loadAsset: ref.watch(assetLoaderProvider)),
+);
+
+final liveApiClientProvider = Provider<ApiClient>(
+  (ref) => LiveApiClient.create(ref.watch(bundledApiClientProvider)),
+);
+
+/// The client features use: Demo when the hidden demo toggle is on; Remote
+/// when API_BASE_URL is set; otherwise Live (on the phone). Remote and Live
+/// fall back to cache/Demo after 8 s or on network errors.
 final apiClientProvider = Provider<ApiClient>((ref) {
   final demo = ref.watch(demoApiClientProvider);
   if (ref.watch(isDemoModeEffectiveProvider)) return demo;
   final flag = ref.read(usingFallbackProvider.notifier);
   return FallbackApiClient(
-    remote: ref.watch(remoteApiClientProvider),
+    remote: ref.watch(apiBaseUrlProvider).isEmpty
+        ? ref.watch(liveApiClientProvider)
+        : ref.watch(remoteApiClientProvider),
     demo: demo,
     cache: ref.watch(offlineCacheProvider),
     onFallback: flag.set,

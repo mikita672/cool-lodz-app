@@ -135,9 +135,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
 
   Future<void> _pickShadeTime() async {
     final l10n = AppLocalizations.of(context);
-    final demo =
-        ref.read(isDemoModeEffectiveProvider) ||
-        ref.read(dataSourceProvider) == DataSource.fallback;
+    final demo = ref.read(staticShadeLayerProvider);
     final current = ref.read(shadeTimeProvider);
     final slot = await showModalBottomSheet<String>(
       context: context,

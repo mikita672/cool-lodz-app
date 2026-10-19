@@ -282,7 +282,11 @@ void main() {
       expect(prefs.getBool('demoMode'), isTrue);
 
       final level3 = find.byKey(const Key('about-demo-alert-level3'));
-      await tester.ensureVisible(level3);
+      await tester.scrollUntilVisible(
+        level3,
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
       await tester.pumpAndSettle();
       await tester.tap(level3);
       await tester.pumpAndSettle();

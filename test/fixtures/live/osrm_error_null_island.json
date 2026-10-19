@@ -1,0 +1,1 @@
+{"message":"Welcome to Null Island. At least one point you entered is 0,0 (Which is in the middle of the ocean. There is only a buoy known as Null Island) which means that this query is not meaningful. Because this is so common, we don't answer requests for 0,0 to preserve resources.","code":"InvalidOptions"}
