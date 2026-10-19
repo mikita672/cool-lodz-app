@@ -29,7 +29,8 @@ class RoutePlanScreen extends ConsumerWidget {
     final picked = await EndpointSearchScreen.open(
       context,
       title: l10n.routeSearchFromTitle,
-      allowMyLocation: true,
+      // Not both ends at the user's position.
+      allowMyLocation: ref.read(routePlanProvider).to is! MyLocation,
     );
     if (picked != null) ref.read(routePlanProvider.notifier).setFrom(picked);
   }
@@ -39,7 +40,7 @@ class RoutePlanScreen extends ConsumerWidget {
     final picked = await EndpointSearchScreen.open(
       context,
       title: l10n.routeSearchToTitle,
-      allowMyLocation: true,
+      allowMyLocation: ref.read(routePlanProvider).from is! MyLocation,
     );
     if (picked != null) ref.read(routePlanProvider.notifier).setTo(picked);
   }

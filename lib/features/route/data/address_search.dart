@@ -44,12 +44,17 @@ class NominatimAddressSearch implements AddressSearch {
   Future<List<RoutePoint>> search(String query) async {
     final q = query.trim();
     if (q.length < 3) return const [];
+    // Reserve this request's slot before waiting, so two searches waiting
+    // at the same time still go out at least 1 s apart.
+    final now = _clock();
     final last = _last;
-    if (last != null) {
-      final wait = minInterval - _clock().difference(last);
-      if (wait > Duration.zero) await Future<void>.delayed(wait);
+    var start = now;
+    if (last != null && now.difference(last) < minInterval) {
+      start = last.add(minInterval);
     }
-    _last = _clock();
+    _last = start;
+    final wait = start.difference(now);
+    if (wait > Duration.zero) await Future<void>.delayed(wait);
     final response = await _dio.get<List<dynamic>>(
       '/search',
       queryParameters: {

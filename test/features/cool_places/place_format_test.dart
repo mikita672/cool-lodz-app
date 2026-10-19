@@ -120,4 +120,22 @@ void main() {
     expect(formatDistance(347, l10n), '350 m');
     expect(formatDistance(2140, l10n), '2,1 km');
   });
+
+  test('open until midnight reads «do 24:00»', () {
+    final late = Place(
+      id: 'l',
+      type: PlaceType.cool,
+      lat: 0,
+      lon: 0,
+      hours: OpeningHours.fromJson({
+        'wed': [
+          ['18:00', '24:00'],
+        ],
+      }),
+    );
+    expect(
+      late.statusText(l10n, DateTime(2026, 7, 15, 20)),
+      'Otwarte teraz · do 24:00',
+    );
+  });
 }

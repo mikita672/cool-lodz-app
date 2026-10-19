@@ -79,7 +79,10 @@ class ShadeTime extends Notifier<String> {
   }
 
   @override
-  String build() => ref.watch(isDemoModeEffectiveProvider)
+  String build() =>
+      // Demo files (also used when module D does not answer) have 14:30 only.
+      ref.watch(isDemoModeEffectiveProvider) ||
+          ref.watch(dataSourceProvider) == DataSource.fallback
       ? demoSlot
       : slotFor(DateTime.now());
 

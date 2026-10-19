@@ -2691,6 +2691,48 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Mapa z pinezką zgłoszenia'**
   String get reportMapSemantics;
+
+  /// No description provided for @placeMon.
+  ///
+  /// In pl, this message translates to:
+  /// **'pon.'**
+  String get placeMon;
+
+  /// No description provided for @placeTue.
+  ///
+  /// In pl, this message translates to:
+  /// **'wt.'**
+  String get placeTue;
+
+  /// No description provided for @placeWed.
+  ///
+  /// In pl, this message translates to:
+  /// **'śr.'**
+  String get placeWed;
+
+  /// No description provided for @placeThu.
+  ///
+  /// In pl, this message translates to:
+  /// **'czw.'**
+  String get placeThu;
+
+  /// No description provided for @placeFri.
+  ///
+  /// In pl, this message translates to:
+  /// **'pt.'**
+  String get placeFri;
+
+  /// No description provided for @placeSat.
+  ///
+  /// In pl, this message translates to:
+  /// **'sob.'**
+  String get placeSat;
+
+  /// No description provided for @placeSun.
+  ///
+  /// In pl, this message translates to:
+  /// **'niedz.'**
+  String get placeSun;
 }
 
 class _AppLocalizationsDelegate

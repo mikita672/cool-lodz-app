@@ -40,13 +40,15 @@ extension PlaceText on Place {
     final closes = h.closingTime(now);
     if (closes != null) {
       // Open past midnight into a closed day counts as "until" that time.
-      return l10n.placeOpenUntil(_hm(closes));
+      return l10n.placeOpenUntil(_closingHm(closes));
     }
     final opens = h.nextOpening(now);
     if (opens == null) return l10n.placeClosed;
     final days = _dayDiff(now, opens);
     if (days == 0) return l10n.dsClosedOpensAt(_hm(opens));
-    final day = days == 1 ? l10n.placeTomorrow : _weekdayShort(opens.weekday);
+    final day = days == 1
+        ? l10n.placeTomorrow
+        : _weekdayShort(opens.weekday, l10n);
     return l10n.placeClosedOpensOn(day, _hm(opens));
   }
 
@@ -87,11 +89,22 @@ double distanceTo(Place place, LatLng from) =>
 
 String _hm(DateTime t) => '${t.hour}:${t.minute.toString().padLeft(2, '0')}';
 
+/// Closing at midnight reads «24:00», not «0:00».
+String _closingHm(DateTime t) =>
+    t.hour == 0 && t.minute == 0 ? '24:00' : _hm(t);
+
 int _dayDiff(DateTime a, DateTime b) => DateTime(
   b.year,
   b.month,
   b.day,
 ).difference(DateTime(a.year, a.month, a.day)).inDays;
 
-String _weekdayShort(int weekday) =>
-    const ['pon.', 'wt.', 'śr.', 'czw.', 'pt.', 'sob.', 'niedz.'][weekday - 1];
+String _weekdayShort(int weekday, AppLocalizations l10n) => [
+  l10n.placeMon,
+  l10n.placeTue,
+  l10n.placeWed,
+  l10n.placeThu,
+  l10n.placeFri,
+  l10n.placeSat,
+  l10n.placeSun,
+][weekday - 1];

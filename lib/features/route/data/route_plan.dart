@@ -125,7 +125,6 @@ Future<RouteRequest> buildRouteRequest({
   required ComfortProfile profile,
   required LocationService location,
   required DateTime now,
-  String myLocationLabel = 'Moja lokalizacja',
 }) async {
   final to = plan.to;
   if (to == null) throw StateError('No destination');
@@ -134,7 +133,8 @@ Future<RouteRequest> buildRouteRequest({
         PointEndpoint(:final point) => point,
         MyLocation() => RoutePoint.fromLatLng(
           await location.current(),
-          label: myLocationLabel,
+          // No label: screens show «Moja lokalizacja» from the ARB.
+          label: null,
         ),
       };
   return RouteRequest(

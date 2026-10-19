@@ -539,5 +539,13 @@
   "reportThanksBody": "+20 pkt po zatwierdzeniu",
   "reportBack": "Wróć",
   "reportError": "Nie udało się wysłać zgłoszenia. Sprawdź połączenie i spróbuj ponownie.",
-  "reportMapSemantics": "Mapa z pinezką zgłoszenia"
+  "reportMapSemantics": "Mapa z pinezką zgłoszenia",
+
+  "placeMon": "pon.",
+  "placeTue": "wt.",
+  "placeWed": "śr.",
+  "placeThu": "czw.",
+  "placeFri": "pt.",
+  "placeSat": "sob.",
+  "placeSun": "niedz."
 }

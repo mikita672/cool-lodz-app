@@ -2,6 +2,7 @@ import 'package:cool_lodz/app/senior_mode.dart';
 import 'package:cool_lodz/app/theme.dart';
 import 'package:cool_lodz/core/api/api_client.dart';
 import 'package:cool_lodz/core/api/reference_routes.dart';
+import 'package:cool_lodz/core/clock.dart';
 import 'package:cool_lodz/core/location/location_service.dart';
 import 'package:cool_lodz/core/models/models.dart';
 import 'package:cool_lodz/core/storage/offline_cache.dart';
@@ -47,6 +48,9 @@ class _NoHourlyApi extends RecordingApiClient {
   }
 }
 
+/// When «Prowadź» is tapped in these tests.
+final _now = DateTime(2026, 7, 15, 14, 30);
+
 void main() {
   late SharedPreferences prefs;
   late RecordingApiClient api;
@@ -74,6 +78,7 @@ void main() {
     addTearDown(tester.view.reset);
     final container = ProviderContainer.test(
       overrides: [
+        clockProvider.overrideWithValue(() => _now),
         ...appTestOverrides(
           prefs: prefs,
           api: api,
@@ -214,7 +219,8 @@ void main() {
     final (uid, route) = history.routes.single;
     expect(uid, 'u1');
     expect(route.variant, RouteVariantType.shaded);
-    expect(route.departAt, DateTime(2026, 7, 15, 14, 30));
+    // The walk starts when «Prowadź» is tapped, not at the planned time.
+    expect(route.departAt, _now);
     expect(route.to.label, 'ul. Piotrkowska (Pasaż Rubinsteina)');
     expect(route.toFirestore().keys, {
       'from',
@@ -327,10 +333,10 @@ void main() {
       // No new request: the hourly shares come with the first answer.
       expect(api.routeRequests, hasLength(1));
 
-      // «Prowadź» now uses 20:00 as the departure.
+      // «Prowadź» still records the real start (the slider only explores).
       await tester.tap(find.byKey(const Key('route-go')));
       await tester.pumpAndSettle();
-      expect(history.routes.single.$2.departAt.hour, 20);
+      expect(history.routes.single.$2.departAt, _now);
     });
 
     testWidgets('hidden without sunShareByHour (DEP-03)', (tester) async {
@@ -376,14 +382,17 @@ void main() {
         ],
       );
       final lines = routePolylines(response, RouteVariantType.shaded);
-      expect(lines, hasLength(4));
+      expect(lines, hasLength(5));
       expect(lines[0].color, AppColors.muted);
       expect(lines[0].strokeWidth, 4);
+      // The whole selected line first: no gaps between segments.
       expect(lines[2].color, AppColors.primary);
-      expect(lines[2].points, hasLength(2));
-      expect(lines[3].color, AppColors.sun);
-      expect(lines[3].points, hasLength(3));
-      expect(lines[3].strokeWidth, 6);
+      expect(lines[2].points, hasLength(4));
+      expect(lines[3].color, AppColors.primary);
+      expect(lines[3].points, hasLength(2));
+      expect(lines[4].color, AppColors.sun);
+      expect(lines[4].points, hasLength(3));
+      expect(lines[4].strokeWidth, 6);
     });
 
     test('without segments the selected line has one colour', () {

@@ -45,11 +45,67 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   double _zoom = MapScreen.startZoom;
   bool _ready = false;
   bool _centeredOnUser = false;
+  LatLng? _pendingCenter;
+  late final AppLifecycleListener _lifecycle;
+
+  /// The last fill layer and what it was built from. A new PolygonLayer
+  /// widget makes flutter_map re-project every polygon (~1 800 here), so
+  /// it is rebuilt only when the active fills or their data change.
+  List<Object?>? _fillsKey;
+  Widget? _fillsLayer;
+
+  @override
+  void initState() {
+    super.initState();
+    // Back from the system settings (location turned on), or after a walk:
+    // read the position again.
+    _lifecycle = AppLifecycleListener(
+      onResume: () => ref.invalidate(userLocationProvider),
+    );
+    // Heat mode: cool places first (spec S14), also when it is on at start.
+    ref.listenManual(heatLevelProvider, (_, level) {
+      if (level >= GameConfig.heatModeLevel) {
+        ref.read(mapLayersProvider.notifier).ensure(MapLayer.cool);
+      }
+    }, fireImmediately: true);
+  }
 
   @override
   void dispose() {
+    _lifecycle.dispose();
     _map.dispose();
     super.dispose();
+  }
+
+  void _onMapReady() {
+    _ready = true;
+    final pending = _pendingCenter;
+    if (pending != null) {
+      _pendingCenter = null;
+      _centeredOnUser = true;
+      _map.move(pending, MapScreen.userZoom);
+    }
+  }
+
+  Widget? _fills(List<MapLayer> layers, Map<MapLayer, GeoLayer?> data) {
+    final key = [
+      for (final l in [MapLayer.green, MapLayer.quiet, MapLayer.shade])
+        if (layers.contains(l)) ...[l, data[l]],
+    ];
+    final same =
+        _fillsKey != null &&
+        _fillsKey!.length == key.length &&
+        [
+          for (var i = 0; i < key.length; i++) identical(_fillsKey![i], key[i]),
+        ].every((x) => x);
+    if (same) return _fillsLayer;
+    final polygons = <Polygon>[
+      for (final l in [MapLayer.green, MapLayer.quiet, MapLayer.shade])
+        if (layers.contains(l)) ...polygonsFor(data[l], l),
+    ];
+    _fillsKey = key;
+    _fillsLayer = polygons.isEmpty ? null : PolygonLayer(polygons: polygons);
+    return _fillsLayer;
   }
 
   void _toggle(MapLayer layer) {
@@ -66,17 +122,22 @@ class _MapScreenState extends ConsumerState<MapScreen> {
 
   Future<void> _myLocation() async {
     final current = ref.read(userLocationProvider).value;
-    if (current?.position case final p?) {
-      _moveTo(p, MapScreen.userZoom);
-      return;
+    if (current?.position == null) {
+      await ref.read(locationServiceProvider).enable();
     }
-    await ref.read(locationServiceProvider).enable();
+    // A fresh fix: the user may have walked since the last one.
     ref.invalidate(userLocationProvider);
+    final fresh = await ref.read(userLocationProvider.future);
+    if (fresh.position case final p? when mounted) {
+      _moveTo(p, MapScreen.userZoom);
+    }
   }
 
   Future<void> _pickShadeTime() async {
     final l10n = AppLocalizations.of(context);
-    final demo = ref.read(isDemoModeEffectiveProvider);
+    final demo =
+        ref.read(isDemoModeEffectiveProvider) ||
+        ref.read(dataSourceProvider) == DataSource.fallback;
     final current = ref.read(shadeTimeProvider);
     final slot = await showModalBottomSheet<String>(
       context: context,
@@ -129,18 +190,16 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     final location = ref.watch(userLocationProvider).value;
     final userPosition = location?.position;
 
-    // Heat mode: cool places first (spec S14).
-    ref.listen(heatLevelProvider, (_, level) {
-      if (level >= GameConfig.heatModeLevel) {
-        ref.read(mapLayersProvider.notifier).ensure(MapLayer.cool);
-      }
-    });
-    // Center on the user once the first position arrives.
+    // Center on the user once the first position arrives (after the map
+    // is ready, or as soon as it is).
     ref.listen(userLocationProvider, (_, next) {
       final p = next.value?.position;
-      if (p != null && !_centeredOnUser) {
+      if (p == null || _centeredOnUser) return;
+      if (_ready) {
         _centeredOnUser = true;
-        _moveTo(p, MapScreen.userZoom);
+        _map.move(p, MapScreen.userZoom);
+      } else {
+        _pendingCenter = p;
       }
     });
 
@@ -148,14 +207,17 @@ class _MapScreenState extends ConsumerState<MapScreen> {
         ref.watch(placesOfTypeProvider(type)).value ?? const [];
     GeoLayer? layer(LayerKind kind) => ref.watch(layerProvider(kind)).value;
 
-    final fills = <Polygon>[
-      if (layers.contains(MapLayer.green))
-        ...polygonsFor(layer(LayerKind.green), MapLayer.green),
-      if (layers.contains(MapLayer.quiet))
-        ...polygonsFor(layer(LayerKind.noise), MapLayer.quiet),
-      if (layers.contains(MapLayer.shade))
-        ...polygonsFor(layer(LayerKind.shade), MapLayer.shade),
-    ];
+    final fills = _fills(layers, {
+      MapLayer.green: layers.contains(MapLayer.green)
+          ? layer(LayerKind.green)
+          : null,
+      MapLayer.quiet: layers.contains(MapLayer.quiet)
+          ? layer(LayerKind.noise)
+          : null,
+      MapLayer.shade: layers.contains(MapLayer.shade)
+          ? layer(LayerKind.shade)
+          : null,
+    });
     final air = layers.contains(MapLayer.air)
         ? ref.watch(airStationsProvider).value ?? const <AirStation>[]
         : const <AirStation>[];
@@ -204,7 +266,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                 interactionOptions: const InteractionOptions(
                   flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
                 ),
-                onMapReady: () => _ready = true,
+                onMapReady: _onMapReady,
                 onPositionChanged: (camera, _) {
                   final crossed =
                       (camera.zoom >= MapScreen.benchMinZoom) !=
@@ -214,7 +276,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                 },
               ),
               children: [
-                if (fills.isNotEmpty) PolygonLayer(polygons: fills),
+                ?fills,
                 if (air.isNotEmpty) ...[
                   CircleLayer(circles: [for (final s in air) airCircle(s)]),
                   MarkerLayer(

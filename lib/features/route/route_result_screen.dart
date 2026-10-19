@@ -10,6 +10,7 @@ import '../../app/senior_mode.dart';
 import '../../app/theme.dart';
 import '../../core/api/api_client.dart';
 import '../../core/api/api_providers.dart';
+import '../../core/clock.dart';
 import '../../core/game/game_config.dart';
 import '../../core/game/game_rules.dart';
 import '../../core/location/location_service.dart';
@@ -27,6 +28,7 @@ import '../../shared/widgets/route_variant_card.dart' as ds;
 import '../../shared/widgets/skeleton.dart';
 import '../achievements/badge_info.dart';
 import '../cool_places/data/places_providers.dart';
+import '../cool_places/place_sheet.dart';
 import '../game/data/game_config_repository.dart';
 import '../game/game_service.dart';
 import '../profile/data/comfort_profile_provider.dart';
@@ -70,6 +72,7 @@ class _RouteResultScreenState extends ConsumerState<RouteResultScreen> {
   /// «Najlepsza pora wyjścia» (APP-22): "HH:mm", null = the asked time.
   String? _slot;
   bool _saving = false;
+  bool _going = false;
 
   /// The departure the cards show: the slider's slot on the asked day.
   DateTime _departure(RouteRequest request) {
@@ -80,6 +83,16 @@ class _RouteResultScreenState extends ConsumerState<RouteResultScreen> {
     return DateTime(d.year, d.month, d.day, m ~/ 60, m % 60);
   }
 
+  /// Sun share for leaving at [time]: the hourly slot when module D sends
+  /// them and [time] is inside 8:00–20:00, else the answer's own value.
+  static double _sunShareAt(RouteVariant v, DateTime time) {
+    final minute = minuteOfDay(time);
+    if (v.sunShareByHour.isEmpty || minute < 8 * 60 || minute > 20 * 60) {
+      return v.sunShare;
+    }
+    return v.sunShareAt(time);
+  }
+
   RouteVariantType _selected(RouteResponse response) {
     final wanted =
         _picked ?? defaultVariant(ref.read(comfortProfileProvider).id);
@@ -88,10 +101,22 @@ class _RouteResultScreenState extends ConsumerState<RouteResultScreen> {
   }
 
   Future<void> _go(RouteRequest request, RouteVariant variant) async {
+    if (_going || variant.geometry.length < 2) return;
+    _going = true;
+    try {
+      await _goNow(request, variant);
+    } finally {
+      _going = false;
+    }
+  }
+
+  Future<void> _goNow(RouteRequest request, RouteVariant variant) async {
     final l10n = AppLocalizations.of(context);
-    final departure = _departure(request);
+    // The walk starts now: that time counts for points, the heat rule and
+    // the morning/evening badges (the slider only explores other times).
+    final startedAt = ref.read(clockProvider)();
     final messenger = ScaffoldMessenger.of(context);
-    final award = _record(request, variant, departure);
+    final award = _record(request, variant, startedAt);
     final ok = await widget
         .launch(GoogleMapsLink.walking(variant.geometry))
         .catchError((Object _) => false);
@@ -105,8 +130,8 @@ class _RouteResultScreenState extends ConsumerState<RouteResultScreen> {
     if (result == null || !mounted) return;
     final routePoints = result.pointsFor(PointsType.route);
     final heatBlocked =
-        variant.shadeShare >= GameConfig.shadedRouteMinShade &&
-        GameRules.isHeatBlocked(departure, ref.read(heatLevelProvider));
+        1 - _sunShareAt(variant, startedAt) >= GameConfig.shadedRouteMinShade &&
+        GameRules.isHeatBlocked(startedAt, ref.read(heatLevelProvider));
     await showAwardFeedback(
       context,
       result,
@@ -123,10 +148,16 @@ class _RouteResultScreenState extends ConsumerState<RouteResultScreen> {
   Future<GameAward?> _record(
     RouteRequest request,
     RouteVariant variant,
-    DateTime departure,
+    DateTime startedAt,
   ) async {
     final to = ref.read(routePlanProvider).to;
-    final place = to is PointEndpoint ? to.place : null;
+    // The place only if it is still this request's destination.
+    final place =
+        to is PointEndpoint &&
+            to.point.lat == request.to.lat &&
+            to.point.lon == request.to.lon
+        ? to.place
+        : null;
     try {
       return await ref
           .read(gameServiceProvider)
@@ -134,9 +165,9 @@ class _RouteResultScreenState extends ConsumerState<RouteResultScreen> {
             StartedRoute(
               from: request.from,
               to: request.to,
-              departAt: departure,
+              departAt: startedAt,
               variant: variant.variant,
-              sunShare: variant.sunShareAt(departure),
+              sunShare: _sunShareAt(variant, startedAt),
               distanceM: variant.distanceM,
               endPlaceType: place?.category?.name,
             ),
@@ -181,15 +212,27 @@ class _RouteResultScreenState extends ConsumerState<RouteResultScreen> {
     final request = requestAsync.value;
     final response = resultAsync.value;
     final error = resultAsync.error ?? requestAsync.error;
-    final loading = response == null && error == null;
+    // A new request (another destination, profile or retry) keeps the old
+    // value while loading: show the skeleton, never the previous route.
+    final loading =
+        requestAsync.isLoading ||
+        resultAsync.isLoading ||
+        (response == null && error == null);
 
     Widget body;
-    if (response != null && request != null) {
+    if (loading) {
+      body = const _Loading();
+    } else if (response != null &&
+        request != null &&
+        (response.variants.isEmpty ||
+            response.variants.every((v) => v.geometry.length < 2))) {
+      body = const _Problem(error: ApiException(ApiErrorKind.notFound));
+    } else if (response != null && request != null && error == null) {
       body = _Result(
         request: request,
         response: response,
         selected: _selected(response),
-        departure: _departure(request),
+        departure: _slot == null ? null : _departure(request),
         onSlot: (slot) => setState(() => _slot = slot),
         onSelect: (v) => setState(() => _picked = v),
         onGo: (v) => _go(request, v),
@@ -197,8 +240,6 @@ class _RouteResultScreenState extends ConsumerState<RouteResultScreen> {
         saving: _saving,
         offline: fallback,
       );
-    } else if (loading) {
-      body = const _Loading();
     } else {
       body = _Problem(error: error!);
     }
@@ -244,18 +285,17 @@ List<Polyline> routePolylines(
         (s) => s.from >= 0 && s.to < chosen.geometry.length && s.to > s.from,
       )
       .toList();
-  if (segments.isEmpty) {
-    lines.add(
-      Polyline(
-        points: chosen.geometry,
-        color: AppColors.primary,
-        strokeWidth: AppSizes.routeSelectedWidth,
-        borderColor: AppColors.surface,
-        borderStrokeWidth: 1.5,
-      ),
-    );
-    return lines;
-  }
+  // The whole line first, so parts without a segment are never missing.
+  lines.add(
+    Polyline(
+      points: chosen.geometry,
+      color: AppColors.primary,
+      strokeWidth: AppSizes.routeSelectedWidth,
+      borderColor: AppColors.surface,
+      borderStrokeWidth: 1.5,
+    ),
+  );
+  if (segments.isEmpty) return lines;
   for (final s in segments) {
     lines.add(
       Polyline(
@@ -291,8 +331,9 @@ class _Result extends ConsumerWidget {
   final RouteResponse response;
   final RouteVariantType selected;
 
-  /// Departure shown on the cards (moved by the time slider).
-  final DateTime departure;
+  /// The slider's departure; null = the asked time (cards then show the
+  /// answer's own shade share).
+  final DateTime? departure;
   final ValueChanged<String> onSlot;
   final ValueChanged<RouteVariantType> onSelect;
   final ValueChanged<RouteVariant> onGo;
@@ -325,7 +366,10 @@ class _Result extends ConsumerWidget {
       },
       minutes: (v.durationS / 60).round(),
       distanceKm: v.distanceM / 1000,
-      shadePercent: ((1 - v.sunShareAt(departure)) * 100).round(),
+      shadePercent:
+          ((departure == null ? v.shadeShare : 1 - v.sunShareAt(departure!)) *
+                  100)
+              .round(),
       extraMinutes: v.variant == RouteVariantType.shortest || shortest == null
           ? 0
           : (v.extraTimeVsShortestS / 60).round(),
@@ -370,7 +414,14 @@ class _Result extends ConsumerWidget {
                               point: place.latLng,
                               width: 28,
                               height: 28,
-                              child: _StopMarker(type: stop.type),
+                              child: Semantics(
+                                button: true,
+                                label: place.name,
+                                child: GestureDetector(
+                                  onTap: () => showPlaceSheet(context, place),
+                                  child: _StopMarker(type: stop.type),
+                                ),
+                              ),
                             ),
                           Marker(
                             point: variant.geometry.first,
@@ -449,7 +500,11 @@ class _Result extends ConsumerWidget {
                         children: [
                           Text(
                             l10n.routeResultDeparture(
-                              formatDeparture(departure, now, l10n),
+                              formatDeparture(
+                                departure ?? request.datetime,
+                                now,
+                                l10n,
+                              ),
                             ),
                             style: theme.textTheme.bodySmall,
                           ),
@@ -469,7 +524,7 @@ class _Result extends ConsumerWidget {
                           if (variant.sunShareByHour.length > 1)
                             _BestTime(
                               variant: variant,
-                              departure: departure,
+                              departure: departure ?? request.datetime,
                               onSlot: onSlot,
                             ),
                         ],

@@ -79,7 +79,8 @@ void main() {
         now: now,
       );
       expect(request.from.lat, 51.77);
-      expect(request.from.label, 'Moja lokalizacja');
+      // No label: the screens show «Moja lokalizacja» from the ARB.
+      expect(request.from.label, isNull);
       expect(request.to.label, 'B');
       expect(request.datetime, now);
       expect(request.profile.id, ProfileId.senior);

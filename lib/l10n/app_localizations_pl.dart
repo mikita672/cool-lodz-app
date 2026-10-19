@@ -1528,4 +1528,25 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get reportMapSemantics => 'Mapa z pinezką zgłoszenia';
+
+  @override
+  String get placeMon => 'pon.';
+
+  @override
+  String get placeTue => 'wt.';
+
+  @override
+  String get placeWed => 'śr.';
+
+  @override
+  String get placeThu => 'czw.';
+
+  @override
+  String get placeFri => 'pt.';
+
+  @override
+  String get placeSat => 'sob.';
+
+  @override
+  String get placeSun => 'niedz.';
 }
