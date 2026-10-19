@@ -1,6 +1,7 @@
 /// Route paths for every screen in the spec (S01–S16).
 /// Tabs (bottom bar): Mapa, Chłód, Quest, Profil.
 abstract final class Routes {
+  static const start = '/start'; // loading while the start flow is checked
   static const onboarding = '/onboarding'; // S01
   static const login = '/login'; // S02
   static const consents = '/consents'; // S03

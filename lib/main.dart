@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app/app.dart';
 import 'core/firebase/firebase_bootstrap.dart';
 import 'core/firebase/messaging_background.dart';
+import 'features/auth/start_flow.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +17,13 @@ Future<void> main() async {
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   // Debug builds use the Emulator Suite, see docs/dev.md#firebase.
   await FirebaseBootstrap.init();
-  runApp(const ProviderScope(child: CoolLodzApp()));
+  runApp(
+    ProviderScope(
+      // Onboarding → login → consents redirects, see start_flow.dart.
+      overrides: startFlowRouterOverrides,
+      child: const CoolLodzApp(),
+    ),
+  );
 }
 
 /// The bundled Inter font is under the SIL Open Font License 1.1.

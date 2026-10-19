@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../features/alerts/alert_screen.dart';
 import '../features/auth/consents_screen.dart';
 import '../features/auth/login_screen.dart';
+import '../features/auth/start_screen.dart';
 import '../features/cool_places/cool_places_screen.dart';
 import '../features/cool_places/place_screen.dart';
 import '../features/map/map_screen.dart';
@@ -26,13 +27,15 @@ import 'routes.dart';
 final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 
 /// Redirect rules for the start flow (onboarding → login → consents → map).
-/// APP-07 overrides this provider; the scaffold lets every route through.
+/// main.dart overrides it with `startFlowRouterOverrides`
+/// (features/auth/start_flow.dart); without overrides (widget tests) every
+/// route is let through.
 /// The router is built once: re-checks must come from [routerRefreshProvider],
 /// never from rebuilding the router (that would drop the navigation stack).
 final routerRedirectProvider = Provider<GoRouterRedirect?>((ref) => null);
 
 /// Something the router listens to, so redirects run again when the
-/// start-flow state changes (set by APP-07).
+/// start-flow state changes (also overridden by `startFlowRouterOverrides`).
 final routerRefreshProvider = Provider<Listenable?>((ref) => null);
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -42,6 +45,7 @@ final routerProvider = Provider<GoRouter>((ref) {
     redirect: ref.read(routerRedirectProvider),
     refreshListenable: ref.read(routerRefreshProvider),
     routes: [
+      GoRoute(path: Routes.start, builder: (_, _) => const StartScreen()),
       GoRoute(
         path: Routes.onboarding,
         builder: (_, _) => const OnboardingScreen(),
