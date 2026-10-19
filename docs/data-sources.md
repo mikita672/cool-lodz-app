@@ -28,7 +28,6 @@ Zasady:
 | cool-011 | Muzeum Miasta Łodzi | [muzeum-lodz.pl/palac-rodziny-poznanskich-zaplanuj-wizyte](https://muzeum-lodz.pl/palac-rodziny-poznanskich-zaplanuj-wizyte/) | 2026-10-19 | Brak osobnych godzin letnich. Platforma schodowa przy wejściu od ul. Zachodniej (z pomocą obsługi), toaleta „Komfortka”. Pałac zamknięty 27–31.10.2026. |
 | cool-012 | Centralne Muzeum Włókiennictwa | [cmwl.pl/public/informacje/godziny-otwarcia](https://cmwl.pl/public/informacje/godziny-otwarcia) | 2026-10-19 | Brak osobnych godzin letnich. Dostępność nie potwierdzona. |
 | cool-013 | Muzeum Kinematografii | [muzeumkinematografii.pl/wizyta/zaplanuj-wizyte](https://muzeumkinematografii.pl/wizyta/zaplanuj-wizyte/) | 2026-10-19 | Brak osobnych godzin letnich. Windy i 3 toalety dostosowane wg [strony o dostępności](https://muzeumkinematografii.pl/wizyta/muzeum-dostepne/). |
-| cool-014 | Palmiarnia Łódź | [botaniczny.lodz.pl/palmiarnia/godziny-otwarcia](https://www.botaniczny.lodz.pl/palmiarnia/godziny-otwarcia/) | 2026-10-19 | Godziny sezonu kwiecień–wrzesień (wt–nd 10:00–18:00). Szklarnia z roślinami tropikalnymi, latem bywa w niej ciepło i wilgotno; chłód daje otaczający park Źródliska. |
 | cool-015 | Park Źródliska I | [zzm.lodz.pl/…/parki-i-zielence](https://zzm.lodz.pl/zarzad-zieleni-miejskiej/zielen/parki-i-zielence/) | 2026-10-19 | ZZM nie podaje godzin; park jest ogrodzony, więc trzeba sprawdzić, czy bramy są zamykane na noc. Staw i zbiorniki wodne. |
 | cool-016 | Park im. H. Sienkiewicza | jw. | 2026-10-19 | Godziny nie podane; fontanna. |
 | cool-017 | Park im. S. Staszica | jw. | 2026-10-19 | Godziny nie podane; staw. Niskie ogrodzenie. |
@@ -51,3 +50,5 @@ Hasło **CHŁODNO**. 7 miejsc tworzy pieszą trasę przez Śródmieście (5 km w
 | 7 | O | cool-003 | Galeria Łódzka |
 
 W poniedziałki nieczynne są MeMo i EC1, w niedziele Biblioteka Wolność i (w niedziele niehandlowe) Galeria Łódzka. Quest nie wymaga zebrania liter jednego dnia.
+
+Palmiarnia (szklarnia tropikalna) celowo nie jest na liście: latem jest w niej ciepło i wilgotno, więc nie nadaje się na miejsce chłodu.

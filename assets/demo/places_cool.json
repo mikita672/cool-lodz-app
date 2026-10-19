@@ -10,14 +10,47 @@
       "lon": 19.4686,
       "hours": {
         "mon": [],
-        "tue": [["10:00", "18:00"]],
-        "wed": [["10:00", "18:00"]],
-        "thu": [["10:00", "18:00"]],
-        "fri": [["10:00", "18:00"]],
-        "sat": [["10:00", "18:00"]],
-        "sun": [["10:00", "18:00"]]
+        "tue": [
+          [
+            "10:00",
+            "18:00"
+          ]
+        ],
+        "wed": [
+          [
+            "10:00",
+            "18:00"
+          ]
+        ],
+        "thu": [
+          [
+            "10:00",
+            "18:00"
+          ]
+        ],
+        "fri": [
+          [
+            "10:00",
+            "18:00"
+          ]
+        ],
+        "sat": [
+          [
+            "10:00",
+            "18:00"
+          ]
+        ],
+        "sun": [
+          [
+            "10:00",
+            "18:00"
+          ]
+        ]
       },
-      "amenities": ["toilet", "wheelchair"],
+      "amenities": [
+        "toilet",
+        "wheelchair"
+      ],
       "accessible": true,
       "questPlace": true,
       "source": "https://ec1lodz.pl/ckini/informacje-praktyczne"
@@ -31,15 +64,54 @@
       "lat": 51.7791,
       "lon": 19.4439,
       "hours": {
-        "mon": [["10:00", "22:00"]],
-        "tue": [["10:00", "22:00"]],
-        "wed": [["10:00", "22:00"]],
-        "thu": [["10:00", "22:00"]],
-        "fri": [["10:00", "22:00"]],
-        "sat": [["10:00", "22:00"]],
-        "sun": [["12:00", "20:00"]]
+        "mon": [
+          [
+            "10:00",
+            "22:00"
+          ]
+        ],
+        "tue": [
+          [
+            "10:00",
+            "22:00"
+          ]
+        ],
+        "wed": [
+          [
+            "10:00",
+            "22:00"
+          ]
+        ],
+        "thu": [
+          [
+            "10:00",
+            "22:00"
+          ]
+        ],
+        "fri": [
+          [
+            "10:00",
+            "22:00"
+          ]
+        ],
+        "sat": [
+          [
+            "10:00",
+            "22:00"
+          ]
+        ],
+        "sun": [
+          [
+            "12:00",
+            "20:00"
+          ]
+        ]
       },
-      "amenities": ["airConditioning", "toilet", "wheelchair"],
+      "amenities": [
+        "airConditioning",
+        "toilet",
+        "wheelchair"
+      ],
       "accessible": true,
       "questPlace": true,
       "source": "https://manufaktura.com/godziny-otwarcia/obiekt"
@@ -53,15 +125,49 @@
       "lat": 51.7589,
       "lon": 19.4645,
       "hours": {
-        "mon": [["09:30", "21:00"]],
-        "tue": [["09:30", "21:00"]],
-        "wed": [["09:30", "21:00"]],
-        "thu": [["09:30", "21:00"]],
-        "fri": [["09:30", "21:00"]],
-        "sat": [["09:30", "21:00"]],
+        "mon": [
+          [
+            "09:30",
+            "21:00"
+          ]
+        ],
+        "tue": [
+          [
+            "09:30",
+            "21:00"
+          ]
+        ],
+        "wed": [
+          [
+            "09:30",
+            "21:00"
+          ]
+        ],
+        "thu": [
+          [
+            "09:30",
+            "21:00"
+          ]
+        ],
+        "fri": [
+          [
+            "09:30",
+            "21:00"
+          ]
+        ],
+        "sat": [
+          [
+            "09:30",
+            "21:00"
+          ]
+        ],
         "sun": []
       },
-      "amenities": ["airConditioning", "toilet", "wheelchair"],
+      "amenities": [
+        "airConditioning",
+        "toilet",
+        "wheelchair"
+      ],
       "accessible": true,
       "questPlace": true,
       "source": "https://www.galeria-lodzka.pl/o-centrum/godziny-otwarcia/"
@@ -75,15 +181,49 @@
       "lat": 51.7033,
       "lon": 19.4152,
       "hours": {
-        "mon": [["10:00", "21:00"]],
-        "tue": [["10:00", "21:00"]],
-        "wed": [["10:00", "21:00"]],
-        "thu": [["10:00", "21:00"]],
-        "fri": [["10:00", "21:00"]],
-        "sat": [["10:00", "21:00"]],
+        "mon": [
+          [
+            "10:00",
+            "21:00"
+          ]
+        ],
+        "tue": [
+          [
+            "10:00",
+            "21:00"
+          ]
+        ],
+        "wed": [
+          [
+            "10:00",
+            "21:00"
+          ]
+        ],
+        "thu": [
+          [
+            "10:00",
+            "21:00"
+          ]
+        ],
+        "fri": [
+          [
+            "10:00",
+            "21:00"
+          ]
+        ],
+        "sat": [
+          [
+            "10:00",
+            "21:00"
+          ]
+        ],
         "sun": []
       },
-      "amenities": ["airConditioning", "toilet", "wheelchair"],
+      "amenities": [
+        "airConditioning",
+        "toilet",
+        "wheelchair"
+      ],
       "accessible": true,
       "questPlace": false,
       "source": "https://portlodz.pl/pl/godziny-otwarcia"
@@ -97,7 +237,10 @@
       "lat": 51.7695,
       "lon": 19.4715,
       "hours": null,
-      "amenities": ["toilet", "wheelchair"],
+      "amenities": [
+        "toilet",
+        "wheelchair"
+      ],
       "accessible": true,
       "questPlace": true,
       "source": "https://www.plk-sa.pl/informacje/dworce/dworzec-lodz-fabryczna/o-dworcu"
@@ -112,14 +255,47 @@
       "lon": 19.4585,
       "hours": {
         "mon": [],
-        "tue": [["10:00", "20:00"]],
-        "wed": [["10:00", "20:00"]],
-        "thu": [["10:00", "20:00"]],
-        "fri": [["10:00", "20:00"]],
-        "sat": [["10:00", "18:00"]],
-        "sun": [["10:00", "18:00"]]
+        "tue": [
+          [
+            "10:00",
+            "20:00"
+          ]
+        ],
+        "wed": [
+          [
+            "10:00",
+            "20:00"
+          ]
+        ],
+        "thu": [
+          [
+            "10:00",
+            "20:00"
+          ]
+        ],
+        "fri": [
+          [
+            "10:00",
+            "20:00"
+          ]
+        ],
+        "sat": [
+          [
+            "10:00",
+            "18:00"
+          ]
+        ],
+        "sun": [
+          [
+            "10:00",
+            "18:00"
+          ]
+        ]
       },
-      "amenities": ["toilet", "wheelchair"],
+      "amenities": [
+        "toilet",
+        "wheelchair"
+      ],
       "accessible": true,
       "questPlace": true,
       "source": "https://www.biblioteka.lodz.pl/filie/filia-nr-29-mediateka-memo/"
@@ -133,15 +309,48 @@
       "lat": 51.7765,
       "lon": 19.4538,
       "hours": {
-        "mon": [["09:00", "19:00"]],
-        "tue": [["09:00", "19:00"]],
-        "wed": [["09:00", "19:00"]],
-        "thu": [["09:00", "19:00"]],
-        "fri": [["09:00", "19:00"]],
-        "sat": [["09:00", "16:00"]],
+        "mon": [
+          [
+            "09:00",
+            "19:00"
+          ]
+        ],
+        "tue": [
+          [
+            "09:00",
+            "19:00"
+          ]
+        ],
+        "wed": [
+          [
+            "09:00",
+            "19:00"
+          ]
+        ],
+        "thu": [
+          [
+            "09:00",
+            "19:00"
+          ]
+        ],
+        "fri": [
+          [
+            "09:00",
+            "19:00"
+          ]
+        ],
+        "sat": [
+          [
+            "09:00",
+            "16:00"
+          ]
+        ],
         "sun": []
       },
-      "amenities": ["toilet", "wheelchair"],
+      "amenities": [
+        "toilet",
+        "wheelchair"
+      ],
       "accessible": true,
       "questPlace": true,
       "source": "https://www.biblioteka.lodz.pl/filie/filia-nr-39-biblioteka-wolnosc/"
@@ -155,15 +364,48 @@
       "lat": 51.7635,
       "lon": 19.451,
       "hours": {
-        "mon": [["08:00", "19:45"]],
-        "tue": [["08:00", "19:45"]],
-        "wed": [["08:00", "19:45"]],
-        "thu": [["08:00", "19:45"]],
-        "fri": [["08:00", "19:45"]],
-        "sat": [["08:00", "15:00"]],
+        "mon": [
+          [
+            "08:00",
+            "19:45"
+          ]
+        ],
+        "tue": [
+          [
+            "08:00",
+            "19:45"
+          ]
+        ],
+        "wed": [
+          [
+            "08:00",
+            "19:45"
+          ]
+        ],
+        "thu": [
+          [
+            "08:00",
+            "19:45"
+          ]
+        ],
+        "fri": [
+          [
+            "08:00",
+            "19:45"
+          ]
+        ],
+        "sat": [
+          [
+            "08:00",
+            "15:00"
+          ]
+        ],
         "sun": []
       },
-      "amenities": ["toilet", "wheelchair"],
+      "amenities": [
+        "toilet",
+        "wheelchair"
+      ],
       "accessible": true,
       "questPlace": false,
       "source": "https://nowa.wbp.lodz.pl/godziny-otwarcia/"
@@ -178,12 +420,42 @@
       "lon": 19.4479,
       "hours": {
         "mon": [],
-        "tue": [["09:00", "16:00"]],
-        "wed": [["09:00", "16:00"]],
-        "thu": [["12:00", "18:00"]],
-        "fri": [["12:00", "20:00"]],
-        "sat": [["12:00", "18:00"]],
-        "sun": [["12:00", "18:00"]]
+        "tue": [
+          [
+            "09:00",
+            "16:00"
+          ]
+        ],
+        "wed": [
+          [
+            "09:00",
+            "16:00"
+          ]
+        ],
+        "thu": [
+          [
+            "12:00",
+            "18:00"
+          ]
+        ],
+        "fri": [
+          [
+            "12:00",
+            "20:00"
+          ]
+        ],
+        "sat": [
+          [
+            "12:00",
+            "18:00"
+          ]
+        ],
+        "sun": [
+          [
+            "12:00",
+            "18:00"
+          ]
+        ]
       },
       "amenities": [],
       "accessible": false,
@@ -200,12 +472,42 @@
       "lon": 19.4465,
       "hours": {
         "mon": [],
-        "tue": [["09:00", "16:00"]],
-        "wed": [["09:00", "16:00"]],
-        "thu": [["12:00", "18:00"]],
-        "fri": [["12:00", "20:00"]],
-        "sat": [["12:00", "18:00"]],
-        "sun": [["12:00", "18:00"]]
+        "tue": [
+          [
+            "09:00",
+            "16:00"
+          ]
+        ],
+        "wed": [
+          [
+            "09:00",
+            "16:00"
+          ]
+        ],
+        "thu": [
+          [
+            "12:00",
+            "18:00"
+          ]
+        ],
+        "fri": [
+          [
+            "12:00",
+            "20:00"
+          ]
+        ],
+        "sat": [
+          [
+            "12:00",
+            "18:00"
+          ]
+        ],
+        "sun": [
+          [
+            "12:00",
+            "18:00"
+          ]
+        ]
       },
       "amenities": [],
       "accessible": false,
@@ -222,14 +524,47 @@
       "lon": 19.451,
       "hours": {
         "mon": [],
-        "tue": [["09:00", "17:00"]],
-        "wed": [["09:00", "17:00"]],
-        "thu": [["09:00", "17:00"]],
-        "fri": [["11:00", "19:00"]],
-        "sat": [["11:00", "19:00"]],
-        "sun": [["11:00", "19:00"]]
+        "tue": [
+          [
+            "09:00",
+            "17:00"
+          ]
+        ],
+        "wed": [
+          [
+            "09:00",
+            "17:00"
+          ]
+        ],
+        "thu": [
+          [
+            "09:00",
+            "17:00"
+          ]
+        ],
+        "fri": [
+          [
+            "11:00",
+            "19:00"
+          ]
+        ],
+        "sat": [
+          [
+            "11:00",
+            "19:00"
+          ]
+        ],
+        "sun": [
+          [
+            "11:00",
+            "19:00"
+          ]
+        ]
       },
-      "amenities": ["toilet", "wheelchair"],
+      "amenities": [
+        "toilet",
+        "wheelchair"
+      ],
       "accessible": true,
       "questPlace": false,
       "source": "https://muzeum-lodz.pl/palac-rodziny-poznanskich-zaplanuj-wizyte/"
@@ -245,11 +580,36 @@
       "hours": {
         "mon": [],
         "tue": [],
-        "wed": [["12:00", "17:00"]],
-        "thu": [["12:00", "19:00"]],
-        "fri": [["12:00", "19:00"]],
-        "sat": [["11:00", "18:00"]],
-        "sun": [["11:00", "17:00"]]
+        "wed": [
+          [
+            "12:00",
+            "17:00"
+          ]
+        ],
+        "thu": [
+          [
+            "12:00",
+            "19:00"
+          ]
+        ],
+        "fri": [
+          [
+            "12:00",
+            "19:00"
+          ]
+        ],
+        "sat": [
+          [
+            "11:00",
+            "18:00"
+          ]
+        ],
+        "sun": [
+          [
+            "11:00",
+            "17:00"
+          ]
+        ]
       },
       "amenities": [],
       "accessible": false,
@@ -267,38 +627,44 @@
       "hours": {
         "mon": [],
         "tue": [],
-        "wed": [["09:00", "16:00"]],
-        "thu": [["09:00", "16:00"]],
-        "fri": [["09:00", "16:00"]],
-        "sat": [["11:00", "18:00"]],
-        "sun": [["11:00", "18:00"]]
+        "wed": [
+          [
+            "09:00",
+            "16:00"
+          ]
+        ],
+        "thu": [
+          [
+            "09:00",
+            "16:00"
+          ]
+        ],
+        "fri": [
+          [
+            "09:00",
+            "16:00"
+          ]
+        ],
+        "sat": [
+          [
+            "11:00",
+            "18:00"
+          ]
+        ],
+        "sun": [
+          [
+            "11:00",
+            "18:00"
+          ]
+        ]
       },
-      "amenities": ["toilet", "wheelchair"],
+      "amenities": [
+        "toilet",
+        "wheelchair"
+      ],
       "accessible": true,
       "questPlace": false,
       "source": "https://muzeumkinematografii.pl/wizyta/zaplanuj-wizyte/"
-    },
-    {
-      "id": "cool-014",
-      "type": "cool",
-      "name": "Palmiarnia Łódź",
-      "category": "other",
-      "address": "al. Piłsudskiego 61, 90-329 Łódź",
-      "lat": 51.7604,
-      "lon": 19.4801,
-      "hours": {
-        "mon": [],
-        "tue": [["10:00", "18:00"]],
-        "wed": [["10:00", "18:00"]],
-        "thu": [["10:00", "18:00"]],
-        "fri": [["10:00", "18:00"]],
-        "sat": [["10:00", "18:00"]],
-        "sun": [["10:00", "18:00"]]
-      },
-      "amenities": [],
-      "accessible": false,
-      "questPlace": false,
-      "source": "https://www.botaniczny.lodz.pl/palmiarnia/godziny-otwarcia/"
     },
     {
       "id": "cool-015",
@@ -351,7 +717,9 @@
       "lat": 51.7544,
       "lon": 19.4423,
       "hours": null,
-      "amenities": ["toilet"],
+      "amenities": [
+        "toilet"
+      ],
       "accessible": false,
       "questPlace": false,
       "source": "https://zzm.lodz.pl/zarzad-zieleni-miejskiej/zielen/parki-i-zielence/"
@@ -379,13 +747,48 @@
       "lat": 51.7583,
       "lon": 19.4089,
       "hours": {
-        "mon": [["09:00", "20:00"]],
-        "tue": [["09:00", "20:00"]],
-        "wed": [["09:00", "20:00"]],
-        "thu": [["09:00", "20:00"]],
-        "fri": [["09:00", "20:00"]],
-        "sat": [["09:00", "20:00"]],
-        "sun": [["09:00", "20:00"]]
+        "mon": [
+          [
+            "09:00",
+            "20:00"
+          ]
+        ],
+        "tue": [
+          [
+            "09:00",
+            "20:00"
+          ]
+        ],
+        "wed": [
+          [
+            "09:00",
+            "20:00"
+          ]
+        ],
+        "thu": [
+          [
+            "09:00",
+            "20:00"
+          ]
+        ],
+        "fri": [
+          [
+            "09:00",
+            "20:00"
+          ]
+        ],
+        "sat": [
+          [
+            "09:00",
+            "20:00"
+          ]
+        ],
+        "sun": [
+          [
+            "09:00",
+            "20:00"
+          ]
+        ]
       },
       "amenities": [],
       "accessible": false,
