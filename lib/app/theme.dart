@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Colour tokens from the spec ("Дизайн-система" → "Цвета").
+/// Colour tokens from the spec ("Design system" → "Colours").
 /// Blue-teal means shade and safety, orange means sun and heat.
 abstract final class AppColors {
   static const primary = Color(0xFF0E6E8C); // cień
@@ -34,7 +34,7 @@ abstract final class AppColors {
   /// Green layer on the map: green at 30 % opacity.
   static const greenLayer = Color(0x4D2E8B57);
 
-  /// Quiet layer on the map: a purple heat map, darker = louder.
+  /// Quiet layer on the map: purple where it is quiet, darker = quieter.
   static const quiet = Color(0xFF6A3D9A);
 
   /// Sunny part of the ShadeBar track: sun at 35 % opacity.
@@ -47,7 +47,7 @@ abstract final class AppColors {
   };
 }
 
-/// Spacing, radii and sizes from the spec ("Отступы и формы").
+/// Spacing, radii and sizes from the spec ("Spacing and shapes").
 abstract final class AppSizes {
   static const s4 = 4.0;
   static const s8 = 8.0;
@@ -275,10 +275,30 @@ abstract final class AppTheme {
           ),
         ),
       ),
+      // Strong contrast: the active tab is a primary pill with a white icon
+      // and a bold primary label; the others are dark grey, not faded.
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: AppColors.surface,
-        indicatorColor: AppColors.primaryContainer,
-        labelTextStyle: WidgetStatePropertyAll(AppTextStyles.label),
+        surfaceTintColor: Colors.transparent,
+        elevation: 3,
+        shadowColor: AppColors.onSurface,
+        indicatorColor: AppColors.primary,
+        iconTheme: WidgetStateProperty.resolveWith(
+          (states) => IconThemeData(
+            size: 24,
+            color: states.contains(WidgetState.selected)
+                ? AppColors.onPrimary
+                : AppColors.onSurfaceVariant,
+          ),
+        ),
+        labelTextStyle: WidgetStateProperty.resolveWith(
+          (states) => states.contains(WidgetState.selected)
+              ? AppTextStyles.label.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w700,
+                )
+              : AppTextStyles.label.copyWith(color: AppColors.onSurfaceVariant),
+        ),
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       ),
       inputDecorationTheme: InputDecorationTheme(
