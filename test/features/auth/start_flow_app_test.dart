@@ -3,6 +3,7 @@ import 'package:cool_lodz/core/models/route_request.dart';
 import 'package:cool_lodz/features/auth/consents_screen.dart';
 import 'package:cool_lodz/features/auth/data/auth_repository.dart';
 import 'package:cool_lodz/features/auth/start_flow.dart';
+import 'package:cool_lodz/features/map/map_screen.dart';
 import 'package:cool_lodz/features/profile/data/comfort_profile.dart';
 import 'package:cool_lodz/features/profile/profile_select_screen.dart';
 import 'package:cool_lodz/features/settings/privacy_screen.dart';
@@ -92,10 +93,10 @@ void main() {
     await tester.tap(find.byKey(const Key('profile-save')));
     await tester.pumpAndSettle();
 
-    expect(find.text('S05'), findsOneWidget);
+    expect(find.byType(MapScreen), findsOneWidget);
     expect(profiles.comfortProfiles['uid-1']!.id, ProfileId.senior);
     expect(profiles.comfortProfiles['uid-1']!.seniorMode, isTrue);
-    final context = tester.element(find.text('S05'));
+    final context = tester.element(find.byType(MapScreen));
     expect(MediaQuery.textScalerOf(context).scale(16), closeTo(20, 0.01));
   });
 
@@ -119,7 +120,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('S05'), findsOneWidget);
+    expect(find.byType(MapScreen), findsOneWidget);
 
     await auth.signOut();
     await tester.pumpAndSettle();

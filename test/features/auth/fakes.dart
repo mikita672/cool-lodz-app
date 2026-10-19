@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:cool_lodz/core/storage/preferences.dart';
 import 'package:cool_lodz/features/auth/data/auth_repository.dart';
 import 'package:cool_lodz/features/auth/data/system_permissions.dart';
 import 'package:cool_lodz/features/auth/data/user_profile_repository.dart';
@@ -8,6 +7,8 @@ import 'package:cool_lodz/features/onboarding/data/onboarding_store.dart';
 import 'package:cool_lodz/features/profile/data/comfort_profile.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../helpers/fakes.dart';
 
 class FakeAuthRepository implements AuthRepository {
   FakeAuthRepository({AppUser? user}) : _user = user;
@@ -153,7 +154,7 @@ List<Override> fakeAuthOverrides({
   FakeOnboardingStore? onboarding,
   FakeSystemPermissions? permissions,
 }) => [
-  sharedPreferencesProvider.overrideWithValue(prefs),
+  ...appTestOverrides(prefs: prefs),
   authRepositoryProvider.overrideWithValue(auth),
   userProfileRepositoryProvider.overrideWithValue(
     profiles ?? FakeUserProfileRepository(),

@@ -1359,6 +1359,312 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'na słońcu'**
   String get routeLegendSun;
+
+  /// No description provided for @placeCategoryLibrary.
+  ///
+  /// In pl, this message translates to:
+  /// **'Biblioteka'**
+  String get placeCategoryLibrary;
+
+  /// No description provided for @placeCategoryMuseum.
+  ///
+  /// In pl, this message translates to:
+  /// **'Muzeum'**
+  String get placeCategoryMuseum;
+
+  /// No description provided for @placeCategoryCulture.
+  ///
+  /// In pl, this message translates to:
+  /// **'Kultura'**
+  String get placeCategoryCulture;
+
+  /// No description provided for @placeCategoryMall.
+  ///
+  /// In pl, this message translates to:
+  /// **'Centrum handlowe'**
+  String get placeCategoryMall;
+
+  /// No description provided for @placeCategoryPark.
+  ///
+  /// In pl, this message translates to:
+  /// **'Park'**
+  String get placeCategoryPark;
+
+  /// No description provided for @placeCategoryStation.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dworzec'**
+  String get placeCategoryStation;
+
+  /// No description provided for @placeCategoryChurch.
+  ///
+  /// In pl, this message translates to:
+  /// **'Kościół'**
+  String get placeCategoryChurch;
+
+  /// No description provided for @placeCategoryOther.
+  ///
+  /// In pl, this message translates to:
+  /// **'Miejsce chłodu'**
+  String get placeCategoryOther;
+
+  /// No description provided for @placeWaterName.
+  ///
+  /// In pl, this message translates to:
+  /// **'Poidełko'**
+  String get placeWaterName;
+
+  /// No description provided for @placeBenchName.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ławka'**
+  String get placeBenchName;
+
+  /// No description provided for @placeOpenUntil.
+  ///
+  /// In pl, this message translates to:
+  /// **'Otwarte teraz · do {time}'**
+  String placeOpenUntil(String time);
+
+  /// No description provided for @placeOpenAllDay.
+  ///
+  /// In pl, this message translates to:
+  /// **'Otwarte całą dobę'**
+  String get placeOpenAllDay;
+
+  /// No description provided for @placeClosedOpensOn.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zamknięte, otwarcie {day} o {time}'**
+  String placeClosedOpensOn(String day, String time);
+
+  /// No description provided for @placeClosed.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zamknięte'**
+  String get placeClosed;
+
+  /// No description provided for @placeTomorrow.
+  ///
+  /// In pl, this message translates to:
+  /// **'jutro'**
+  String get placeTomorrow;
+
+  /// No description provided for @placeTodayHours.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dziś {hours}'**
+  String placeTodayHours(String hours);
+
+  /// No description provided for @placeTodayClosed.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dziś nieczynne'**
+  String get placeTodayClosed;
+
+  /// No description provided for @placeDistanceM.
+  ///
+  /// In pl, this message translates to:
+  /// **'{meters} m'**
+  String placeDistanceM(int meters);
+
+  /// No description provided for @placeDistanceKm.
+  ///
+  /// In pl, this message translates to:
+  /// **'{km} km'**
+  String placeDistanceKm(double km);
+
+  /// No description provided for @placeSourceLink.
+  ///
+  /// In pl, this message translates to:
+  /// **'Źródło godzin otwarcia'**
+  String get placeSourceLink;
+
+  /// No description provided for @placeNotFound.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie znaleźliśmy tego miejsca'**
+  String get placeNotFound;
+
+  /// No description provided for @mapLayerShade.
+  ///
+  /// In pl, this message translates to:
+  /// **'Cień'**
+  String get mapLayerShade;
+
+  /// No description provided for @mapLayerGreen.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zieleń'**
+  String get mapLayerGreen;
+
+  /// No description provided for @mapLayerQuiet.
+  ///
+  /// In pl, this message translates to:
+  /// **'Cisza'**
+  String get mapLayerQuiet;
+
+  /// No description provided for @mapLayerAir.
+  ///
+  /// In pl, this message translates to:
+  /// **'Powietrze'**
+  String get mapLayerAir;
+
+  /// No description provided for @mapLayerWater.
+  ///
+  /// In pl, this message translates to:
+  /// **'Woda'**
+  String get mapLayerWater;
+
+  /// No description provided for @mapLayerCool.
+  ///
+  /// In pl, this message translates to:
+  /// **'Miejsca chłodu'**
+  String get mapLayerCool;
+
+  /// No description provided for @mapFillLimit.
+  ///
+  /// In pl, this message translates to:
+  /// **'Na mapie mogą być naraz 2 warstwy obszarów. Wyłączyliśmy: {layer}.'**
+  String mapFillLimit(String layer);
+
+  /// No description provided for @mapShadeAt.
+  ///
+  /// In pl, this message translates to:
+  /// **'Cień o {time}'**
+  String mapShadeAt(String time);
+
+  /// No description provided for @mapShadeChangeTime.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zmień godzinę cienia'**
+  String get mapShadeChangeTime;
+
+  /// No description provided for @mapShadeTimeTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Cień o godzinie'**
+  String get mapShadeTimeTitle;
+
+  /// No description provided for @mapShadeDemoNote.
+  ///
+  /// In pl, this message translates to:
+  /// **'W trybie demo cień jest policzony dla 14:30.'**
+  String get mapShadeDemoNote;
+
+  /// No description provided for @mapNoLocationTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie widzimy Twojej lokalizacji'**
+  String get mapNoLocationTitle;
+
+  /// No description provided for @mapNoLocationBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pokazujemy Śródmieście.'**
+  String get mapNoLocationBody;
+
+  /// No description provided for @mapEnableLocation.
+  ///
+  /// In pl, this message translates to:
+  /// **'Włącz lokalizację'**
+  String get mapEnableLocation;
+
+  /// No description provided for @mapMyLocation.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pokaż moją lokalizację'**
+  String get mapMyLocation;
+
+  /// No description provided for @mapAlertSubtitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'{source} · do {time}'**
+  String mapAlertSubtitle(String source, String time);
+
+  /// No description provided for @mapHeatModeHint.
+  ///
+  /// In pl, this message translates to:
+  /// **'Tryb upału: w najgorętszych godzinach odpocznij w miejscu chłodu'**
+  String get mapHeatModeHint;
+
+  /// No description provided for @mapLegendQuiet.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ciemniej = głośniej'**
+  String get mapLegendQuiet;
+
+  /// No description provided for @mapLegendAir.
+  ///
+  /// In pl, this message translates to:
+  /// **'Indeks jakości powietrza GIOŚ'**
+  String get mapLegendAir;
+
+  /// No description provided for @mapAirVeryGood.
+  ///
+  /// In pl, this message translates to:
+  /// **'Bardzo dobry'**
+  String get mapAirVeryGood;
+
+  /// No description provided for @mapAirGood.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dobry'**
+  String get mapAirGood;
+
+  /// No description provided for @mapAirModerate.
+  ///
+  /// In pl, this message translates to:
+  /// **'Umiarkowany'**
+  String get mapAirModerate;
+
+  /// No description provided for @mapAirSufficient.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dostateczny'**
+  String get mapAirSufficient;
+
+  /// No description provided for @mapAirBad.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zły'**
+  String get mapAirBad;
+
+  /// No description provided for @mapAirVeryBad.
+  ///
+  /// In pl, this message translates to:
+  /// **'Bardzo zły'**
+  String get mapAirVeryBad;
+
+  /// No description provided for @mapAirNoData.
+  ///
+  /// In pl, this message translates to:
+  /// **'Brak danych'**
+  String get mapAirNoData;
+
+  /// No description provided for @mapAirStation.
+  ///
+  /// In pl, this message translates to:
+  /// **'{name}: {level}'**
+  String mapAirStation(String name, String level);
+
+  /// No description provided for @mapLayerError.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie udało się wczytać warstwy {layer}'**
+  String mapLayerError(String layer);
+
+  /// No description provided for @mapSemantics.
+  ///
+  /// In pl, this message translates to:
+  /// **'Mapa Łodzi. Warstwy: {layers}.'**
+  String mapSemantics(String layers);
+
+  /// No description provided for @mapBenchesZoomHint.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ławki widać po przybliżeniu mapy'**
+  String get mapBenchesZoomHint;
 }
 
 class _AppLocalizationsDelegate

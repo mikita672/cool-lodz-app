@@ -1,11 +1,12 @@
 import 'package:cool_lodz/app/app.dart';
 import 'package:cool_lodz/app/senior_mode.dart';
 import 'package:cool_lodz/app/theme.dart';
-import 'package:cool_lodz/core/storage/preferences.dart';
+import 'package:cool_lodz/features/map/map_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../helpers/fakes.dart';
 import '../helpers/test_app.dart';
 
 void main() {
@@ -14,16 +15,14 @@ void main() {
   ) async {
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [
-          sharedPreferencesProvider.overrideWithValue(await testPrefs()),
-        ],
+        overrides: [...appTestOverrides(prefs: await testPrefs())],
         child: const CoolLodzApp(),
       ),
     );
     await tester.pumpAndSettle();
 
     expect(find.text('Mapa'), findsWidgets);
-    expect(find.text('S05'), findsOneWidget);
+    expect(find.byType(MapScreen), findsOneWidget);
 
     await tester.tap(find.text('Chłód'));
     await tester.pumpAndSettle();
@@ -67,7 +66,7 @@ void main() {
   testWidgets('senior mode scales text by 1.25', (tester) async {
     final container = ProviderContainer.test(
       overrides: [
-        sharedPreferencesProvider.overrideWithValue(await testPrefs()),
+        ...appTestOverrides(prefs: await testPrefs()),
         seniorModeProvider.overrideWithValue(true),
       ],
     );
@@ -78,7 +77,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    final context = tester.element(find.text('S05'));
+    final context = tester.element(find.byType(MapScreen));
     expect(MediaQuery.textScalerOf(context).scale(16), closeTo(20, 0.01));
   });
 }

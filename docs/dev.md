@@ -85,6 +85,8 @@ Routes for every screen already exist in `lib/app/router.dart`; a feature ticket
 
 **S07 actions (Q-08).** «Prowadź» opens Google Maps walking directions (start, end and up to 8 points of the chosen line) and writes the route to `users/{uid}/routes` — that is the route that counts for points and badges. «Zapisz» only keeps the route on the device (`OfflineCache`), no points. Map tiles: `BaseMap` in `lib/shared/map/` (CARTO Voyager, OSM attribution); widget tests override `mapTilesEnabledProvider` with `false`, and use `RecordingApiClient` from `test/helpers/fakes.dart` (it reads the demo files from disk: `rootBundle` decodes big assets in an isolate the test does not wait for).
 
+**Map (S05).** `mapLayersProvider` keeps the active filters; turning on a third fill (Cień, Zieleń, Cisza, Powietrze) switches off the oldest one with a message. Layers come from `layerProvider(kind)` (demo GeoJSON until `/v1/layers`, DEP-04); in demo mode the shade layer exists only for 14:30, so the time picker offers only that slot. Quest places use the normal cool pin: a letter on the map would give the password away. Every widget test that builds the app uses `appTestOverrides()` (`test/helpers/fakes.dart`).
+
 ## Rules
 
 - **State:** Riverpod 3 (`flutter_riverpod`), no code generation. Repositories and clients are providers, so tests and demo mode can override them.

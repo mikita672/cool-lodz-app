@@ -757,4 +757,187 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get routeLegendSun => 'na słońcu';
+
+  @override
+  String get placeCategoryLibrary => 'Biblioteka';
+
+  @override
+  String get placeCategoryMuseum => 'Muzeum';
+
+  @override
+  String get placeCategoryCulture => 'Kultura';
+
+  @override
+  String get placeCategoryMall => 'Centrum handlowe';
+
+  @override
+  String get placeCategoryPark => 'Park';
+
+  @override
+  String get placeCategoryStation => 'Dworzec';
+
+  @override
+  String get placeCategoryChurch => 'Kościół';
+
+  @override
+  String get placeCategoryOther => 'Miejsce chłodu';
+
+  @override
+  String get placeWaterName => 'Poidełko';
+
+  @override
+  String get placeBenchName => 'Ławka';
+
+  @override
+  String placeOpenUntil(String time) {
+    return 'Otwarte teraz · do $time';
+  }
+
+  @override
+  String get placeOpenAllDay => 'Otwarte całą dobę';
+
+  @override
+  String placeClosedOpensOn(String day, String time) {
+    return 'Zamknięte, otwarcie $day o $time';
+  }
+
+  @override
+  String get placeClosed => 'Zamknięte';
+
+  @override
+  String get placeTomorrow => 'jutro';
+
+  @override
+  String placeTodayHours(String hours) {
+    return 'Dziś $hours';
+  }
+
+  @override
+  String get placeTodayClosed => 'Dziś nieczynne';
+
+  @override
+  String placeDistanceM(int meters) {
+    return '$meters m';
+  }
+
+  @override
+  String placeDistanceKm(double km) {
+    final intl.NumberFormat kmNumberFormat =
+        intl.NumberFormat.decimalPatternDigits(
+          locale: localeName,
+          decimalDigits: 1,
+        );
+    final String kmString = kmNumberFormat.format(km);
+
+    return '$kmString km';
+  }
+
+  @override
+  String get placeSourceLink => 'Źródło godzin otwarcia';
+
+  @override
+  String get placeNotFound => 'Nie znaleźliśmy tego miejsca';
+
+  @override
+  String get mapLayerShade => 'Cień';
+
+  @override
+  String get mapLayerGreen => 'Zieleń';
+
+  @override
+  String get mapLayerQuiet => 'Cisza';
+
+  @override
+  String get mapLayerAir => 'Powietrze';
+
+  @override
+  String get mapLayerWater => 'Woda';
+
+  @override
+  String get mapLayerCool => 'Miejsca chłodu';
+
+  @override
+  String mapFillLimit(String layer) {
+    return 'Na mapie mogą być naraz 2 warstwy obszarów. Wyłączyliśmy: $layer.';
+  }
+
+  @override
+  String mapShadeAt(String time) {
+    return 'Cień o $time';
+  }
+
+  @override
+  String get mapShadeChangeTime => 'Zmień godzinę cienia';
+
+  @override
+  String get mapShadeTimeTitle => 'Cień o godzinie';
+
+  @override
+  String get mapShadeDemoNote => 'W trybie demo cień jest policzony dla 14:30.';
+
+  @override
+  String get mapNoLocationTitle => 'Nie widzimy Twojej lokalizacji';
+
+  @override
+  String get mapNoLocationBody => 'Pokazujemy Śródmieście.';
+
+  @override
+  String get mapEnableLocation => 'Włącz lokalizację';
+
+  @override
+  String get mapMyLocation => 'Pokaż moją lokalizację';
+
+  @override
+  String mapAlertSubtitle(String source, String time) {
+    return '$source · do $time';
+  }
+
+  @override
+  String get mapHeatModeHint =>
+      'Tryb upału: w najgorętszych godzinach odpocznij w miejscu chłodu';
+
+  @override
+  String get mapLegendQuiet => 'Ciemniej = głośniej';
+
+  @override
+  String get mapLegendAir => 'Indeks jakości powietrza GIOŚ';
+
+  @override
+  String get mapAirVeryGood => 'Bardzo dobry';
+
+  @override
+  String get mapAirGood => 'Dobry';
+
+  @override
+  String get mapAirModerate => 'Umiarkowany';
+
+  @override
+  String get mapAirSufficient => 'Dostateczny';
+
+  @override
+  String get mapAirBad => 'Zły';
+
+  @override
+  String get mapAirVeryBad => 'Bardzo zły';
+
+  @override
+  String get mapAirNoData => 'Brak danych';
+
+  @override
+  String mapAirStation(String name, String level) {
+    return '$name: $level';
+  }
+
+  @override
+  String mapLayerError(String layer) {
+    return 'Nie udało się wczytać warstwy $layer';
+  }
+
+  @override
+  String mapSemantics(String layers) {
+    return 'Mapa Łodzi. Warstwy: $layers.';
+  }
+
+  @override
+  String get mapBenchesZoomHint => 'Ławki widać po przybliżeniu mapy';
 }

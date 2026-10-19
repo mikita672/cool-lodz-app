@@ -1,11 +1,16 @@
 import 'dart:io';
 
 import 'package:cool_lodz/core/api/api_client.dart';
+import 'package:cool_lodz/core/api/api_providers.dart';
 import 'package:cool_lodz/core/api/demo_api_client.dart';
 import 'package:cool_lodz/core/location/location_service.dart';
 import 'package:cool_lodz/core/models/models.dart';
+import 'package:cool_lodz/core/storage/preferences.dart';
 import 'package:cool_lodz/features/route/data/address_search.dart';
+import 'package:cool_lodz/shared/map/base_map.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:latlong2/latlong.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Reads `assets/demo/…` from disk synchronously. `rootBundle` decodes big
 /// files in an isolate that widget tests do not wait for.
@@ -99,3 +104,16 @@ class FakeAddressSearch implements AddressSearch {
     return results;
   }
 }
+
+/// Overrides every app-level dependency that would reach the network or a
+/// platform plugin: preferences, module D (demo files), location, tiles.
+List<Override> appTestOverrides({
+  required SharedPreferences prefs,
+  ApiClient? api,
+  LocationService? location,
+}) => [
+  sharedPreferencesProvider.overrideWithValue(prefs),
+  apiClientProvider.overrideWithValue(api ?? RecordingApiClient()),
+  locationServiceProvider.overrideWithValue(location ?? FakeLocationService()),
+  mapTilesEnabledProvider.overrideWithValue(false),
+];

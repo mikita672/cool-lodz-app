@@ -8,6 +8,11 @@ import 'demo_api_client.dart';
 import 'fallback_api_client.dart';
 import 'remote_api_client.dart';
 
+/// `retry:` for data providers: no automatic retries. Screens show the error
+/// with a «Spróbuj ponownie» button, and the API client already falls back
+/// to cached/demo data after 8 s.
+Duration? noRetry(int retryCount, Object error) => null;
+
 /// `--dart-define=API_BASE_URL=https://…`; empty = demo mode only.
 final apiBaseUrlProvider = Provider<String>(
   (ref) => const String.fromEnvironment('API_BASE_URL'),

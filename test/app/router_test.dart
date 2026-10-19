@@ -1,12 +1,12 @@
 import 'package:cool_lodz/app/app.dart';
 import 'package:cool_lodz/app/router.dart';
 import 'package:cool_lodz/app/routes.dart';
-import 'package:cool_lodz/core/storage/preferences.dart';
 import 'package:cool_lodz/features/route/route_plan_screen.dart';
 import 'package:cool_lodz/features/route/route_result_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../helpers/fakes.dart';
 import '../helpers/test_app.dart';
 
 void main() {
@@ -14,9 +14,7 @@ void main() {
     tester,
   ) async {
     final container = ProviderContainer.test(
-      overrides: [
-        sharedPreferencesProvider.overrideWithValue(await testPrefs()),
-      ],
+      overrides: [...appTestOverrides(prefs: await testPrefs())],
     );
     await tester.pumpWidget(
       UncontrolledProviderScope(
@@ -39,9 +37,7 @@ void main() {
 
   testWidgets('route result sits on top of route planning', (tester) async {
     final container = ProviderContainer.test(
-      overrides: [
-        sharedPreferencesProvider.overrideWithValue(await testPrefs()),
-      ],
+      overrides: [...appTestOverrides(prefs: await testPrefs())],
     );
     await tester.pumpWidget(
       UncontrolledProviderScope(
