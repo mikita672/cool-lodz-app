@@ -114,6 +114,16 @@ class FakeUserProfileRepository implements UserProfileRepository {
   }) async => created.add((uid: uid, nickname: nickname));
 
   @override
+  Future<void> ensureProfile({
+    required String uid,
+    required String nickname,
+  }) async {
+    if (!created.any((c) => c.uid == uid)) {
+      created.add((uid: uid, nickname: nickname));
+    }
+  }
+
+  @override
   Future<void> saveConsents(String uid, Consents consents) async {
     if (saveError != null) throw saveError!;
     saved.add((uid, consents));

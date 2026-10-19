@@ -60,6 +60,10 @@ class OfflineCache {
   List<Place>? coolPlaces() =>
       _read(coolPlacesKey, (json) => PlacesResponse.fromJson(json).places);
 
+  /// Forgets the user's own data (sign-out, account removal). The cool
+  /// places list is public and stays.
+  Future<void> clearPersonal() => _prefs.remove(lastRouteKey);
+
   T? _read<T>(String key, T Function(Map<String, dynamic> json) parse) {
     final text = _prefs.getString(key);
     if (text == null) return null;

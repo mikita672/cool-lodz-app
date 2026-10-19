@@ -17,11 +17,18 @@ class _MockDoc extends Mock
 class _MockSnapshot extends Mock
     implements DocumentSnapshot<Map<String, dynamic>> {}
 
+class _MockBatch extends Mock implements WriteBatch {}
+
 void main() {
   late _MockDoc doc;
+  late _MockDoc ranking;
+  late _MockBatch batch;
   late FirestoreUserProfileRepository repo;
 
-  setUpAll(() => registerFallbackValue(SetOptions(merge: true)));
+  setUpAll(() {
+    registerFallbackValue(SetOptions(merge: true));
+    registerFallbackValue(_MockDoc());
+  });
 
   setUp(() {
     final firestore = _MockFirestore();
@@ -30,6 +37,13 @@ void main() {
     when(() => firestore.collection('users')).thenReturn(users);
     when(() => users.doc('u1')).thenReturn(doc);
     when(() => doc.set(any(), any())).thenAnswer((_) async {});
+    final rankings = _MockCollection();
+    ranking = _MockDoc();
+    batch = _MockBatch();
+    when(() => firestore.collection('rankings')).thenReturn(rankings);
+    when(() => rankings.doc('u1')).thenReturn(ranking);
+    when(firestore.batch).thenReturn(batch);
+    when(batch.commit).thenAnswer((_) async {});
     repo = FirestoreUserProfileRepository(firestore);
   });
 
@@ -55,11 +69,28 @@ void main() {
       const Consents(location: true, push: false, ranking: true),
     );
 
-    final consents = lastWrite()['consents'] as Map<String, dynamic>;
+    final data =
+        verify(
+              () => batch.set<Map<String, dynamic>>(doc, captureAny(), any()),
+            ).captured.single
+            as Map<String, dynamic>;
+    final consents = data['consents'] as Map<String, dynamic>;
     expect(consents['location'], isTrue);
     expect(consents['push'], isFalse);
     expect(consents['ranking'], isTrue);
     expect(consents['acceptedAt'], isA<FieldValue>());
+    expect(data['fcmToken'], isA<FieldValue>()); // push off → token removed
+    verifyNever(() => batch.delete(any()));
+    verify(batch.commit).called(1);
+  });
+
+  test('saveConsents without the ranking deletes the public copy', () async {
+    await repo.saveConsents(
+      'u1',
+      const Consents(location: true, push: true, ranking: false),
+    );
+    verify(() => batch.delete(ranking)).called(1);
+    verify(batch.commit).called(1);
   });
 
   test('hasAcceptedConsents is true only when consents exist', () async {

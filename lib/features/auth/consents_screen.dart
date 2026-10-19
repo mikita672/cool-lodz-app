@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -5,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../app/routes.dart';
 import '../../app/theme.dart';
 import '../../l10n/app_localizations.dart';
+import '../alerts/data/push_token_sync.dart';
 import 'data/auth_repository.dart';
 import 'data/system_permissions.dart';
 import 'data/user_profile_repository.dart';
@@ -62,7 +65,10 @@ class _ConsentsScreenState extends ConsumerState<ConsentsScreen> {
 
     final permissions = ref.read(systemPermissionsProvider);
     if (consents.location) await permissions.requestLocation();
-    if (consents.push) await permissions.requestNotifications();
+    if (consents.push) {
+      await permissions.requestNotifications();
+      unawaited(ref.read(pushTokenSyncProvider).sync(uid));
+    }
     if (!mounted) return;
     ref.read(startFlowProvider.notifier).markConsentsAccepted();
   }

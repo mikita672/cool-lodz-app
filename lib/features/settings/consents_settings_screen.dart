@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +9,7 @@ import '../../app/theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/app_button.dart';
 import '../../shared/widgets/app_toast.dart';
+import '../alerts/data/push_token_sync.dart';
 import '../auth/data/auth_repository.dart';
 import '../auth/data/system_permissions.dart';
 import '../auth/data/user_profile_repository.dart';
@@ -45,6 +48,7 @@ class _ConsentsSettingsScreenState
         await permissions.requestNotifications();
       }
       await ref.read(accountRepositoryProvider).setConsents(uid, draft);
+      if (draft.push) unawaited(ref.read(pushTokenSyncProvider).sync(uid));
       ref
         ..invalidate(consentsProvider)
         ..invalidate(playerProvider);

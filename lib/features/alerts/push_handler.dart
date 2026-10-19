@@ -7,8 +7,8 @@ import '../../app/router.dart';
 import '../../app/routes.dart';
 import '../../l10n/app_localizations.dart';
 import '../auth/data/auth_repository.dart';
-import '../auth/data/user_profile_repository.dart';
 import 'data/push_service.dart';
+import 'data/push_token_sync.dart';
 
 /// Messenger of the whole app, for messages shown outside a screen.
 final rootMessengerKey = GlobalKey<ScaffoldMessengerState>(
@@ -31,6 +31,11 @@ class PushHandler extends ConsumerStatefulWidget {
 class _PushHandlerState extends ConsumerState<PushHandler> {
   final _subs = <StreamSubscription<Object?>>[];
   String? _uid;
+
+  /// A tapped notification that arrived before the start flow finished
+  /// (the start-flow redirect would swallow it); opened once it is done.
+  bool _pendingAlert = false;
+  Listenable? _refresh;
 
   @override
   void initState() {
@@ -55,6 +60,7 @@ class _PushHandlerState extends ConsumerState<PushHandler> {
 
   @override
   void dispose() {
+    _refresh?.removeListener(_flushPending);
     for (final s in _subs) {
       s.cancel();
     }
@@ -63,7 +69,22 @@ class _PushHandlerState extends ConsumerState<PushHandler> {
 
   void _openAlert() {
     if (!mounted) return;
+    if (!ref.read(routerReadyProvider)()) {
+      _pendingAlert = true;
+      _refresh ??= ref.read(routerRefreshProvider)?..addListener(_flushPending);
+      return;
+    }
+    _pendingAlert = false;
     unawaited(ref.read(routerProvider).push(Routes.alert));
+  }
+
+  void _flushPending() {
+    if (!_pendingAlert || !mounted || !ref.read(routerReadyProvider)()) return;
+    _pendingAlert = false;
+    // After the router's own redirect for this change (start → map).
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) ref.read(routerProvider).go(Routes.alert);
+    });
   }
 
   void _showBanner(PushMessage m) {
@@ -86,15 +107,7 @@ class _PushHandlerState extends ConsumerState<PushHandler> {
   Future<void> _saveToken({String? token}) async {
     final uid = _uid;
     if (uid == null) return;
-    final profiles = ref.read(userProfileRepositoryProvider);
-    try {
-      final consents = await profiles.loadConsents(uid);
-      if (consents == null || !consents.push) return;
-      final value = token ?? await ref.read(pushServiceProvider).token();
-      if (value != null) await profiles.saveFcmToken(uid, value);
-    } catch (e) {
-      debugPrint('Saving the FCM token failed: $e');
-    }
+    await ref.read(pushTokenSyncProvider).sync(uid, token: token);
   }
 
   @override

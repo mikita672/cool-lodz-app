@@ -118,7 +118,12 @@ class RemoteApiClient implements ApiClient {
       case DioExceptionType.badResponse:
         final status = e.response?.statusCode;
         return ApiException(
-          status == 404 ? ApiErrorKind.notFound : ApiErrorKind.server,
+          switch (status) {
+            404 => ApiErrorKind.notFound,
+            408 || 429 => ApiErrorKind.server,
+            final s? when s >= 400 && s < 500 => ApiErrorKind.badRequest,
+            _ => ApiErrorKind.server,
+          },
           _errorCode(e.response?.data) ?? e.message,
           status,
         );

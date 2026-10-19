@@ -68,7 +68,7 @@ void main() {
     ).thenThrow(const ApiException(ApiErrorKind.network));
     final c = await container();
     final alerts = await c.read(apiClientProvider).getAlerts(lat: 1, lon: 2);
-    expect(alerts.single.level, 2); // default demo scenario
+    expect(alerts, isEmpty); // no made-up warning offline
     expect(c.read(usingFallbackProvider), isTrue);
     expect(c.read(dataSourceProvider), DataSource.fallback);
   });

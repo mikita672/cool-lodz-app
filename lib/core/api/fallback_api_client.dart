@@ -69,7 +69,9 @@ class FallbackApiClient implements ApiClient {
   Future<List<Alert>> getAlerts({required double lat, required double lon}) =>
       _guard(
         () => remote.getAlerts(lat: lat, lon: lon),
-        fallback: () => demo.getAlerts(lat: lat, lon: lon),
+        // No made-up warning when the server is down: «no alert» is the
+        // safe answer (the demo ones exist only in demo mode).
+        fallback: () async => const <Alert>[],
       );
 
   @override

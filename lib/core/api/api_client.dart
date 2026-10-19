@@ -43,7 +43,11 @@ enum ApiErrorKind {
   /// 404, e.g. `route_not_found`, or a missing demo file.
   notFound,
 
-  /// Any other HTTP error or a response that does not match the contract.
+  /// A 4xx other than 404, 408 and 429: the request itself is wrong (e.g.
+  /// `invalid_point`). Demo data would only hide it.
+  badRequest,
+
+  /// 5xx, 408, 429 or a response that does not match the contract.
   server,
 }
 

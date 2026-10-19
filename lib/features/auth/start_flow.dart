@@ -270,4 +270,8 @@ final startFlowRouterOverrides = [
   routerRefreshProvider.overrideWith(
     (ref) => ref.read(startFlowProvider.notifier).changes,
   ),
+  routerReadyProvider.overrideWith(
+    (ref) =>
+        () => ref.read(startFlowProvider).requiredRoute == null,
+  ),
 ];

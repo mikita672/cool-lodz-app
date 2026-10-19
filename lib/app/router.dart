@@ -40,6 +40,14 @@ final routerRedirectProvider = Provider<GoRouterRedirect?>((ref) => null);
 /// start-flow state changes (also overridden by `startFlowRouterOverrides`).
 final routerRefreshProvider = Provider<Listenable?>((ref) => null);
 
+/// Whether app screens (beyond the start flow) are reachable now. A push
+/// tapped at cold start waits for this (overridden by
+/// `startFlowRouterOverrides`; open by default).
+final routerReadyProvider = Provider<bool Function()>(
+  (ref) =>
+      () => true,
+);
+
 final routerProvider = Provider<GoRouter>((ref) {
   final router = GoRouter(
     navigatorKey: rootNavigatorKey,

@@ -5,8 +5,10 @@ import 'package:go_router/go_router.dart';
 import '../../app/routes.dart';
 import '../../app/theme.dart';
 import '../../core/firestore/collections.dart';
+import '../../core/storage/offline_cache.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/app_toast.dart';
+import '../alerts/data/push_token_sync.dart';
 import '../auth/data/auth_repository.dart';
 import '../auth/data/system_permissions.dart';
 import '../auth/data/user_profile_repository.dart';
@@ -126,6 +128,15 @@ class ProfileTabScreen extends ConsumerWidget {
         kind: ToastKind.success,
       );
     }
+  }
+
+  /// Removes this phone's push token and the user's cached route first:
+  /// both belong to the account, not the device.
+  static Future<void> _signOut(WidgetRef ref) async {
+    final uid = ref.read(authRepositoryProvider).currentUser?.uid;
+    if (uid != null) await ref.read(pushTokenSyncProvider).clear(uid);
+    await ref.read(offlineCacheProvider).clearPersonal();
+    await ref.read(authRepositoryProvider).signOut();
   }
 
   static Future<void> _guard(
@@ -268,10 +279,7 @@ class ProfileTabScreen extends ConsumerWidget {
             key: const Key('settings-sign-out'),
             leading: const Icon(Icons.logout_rounded),
             title: Text(l10n.settingsSignOut),
-            onTap: () => _guard(
-              context,
-              () => ref.read(authRepositoryProvider).signOut(),
-            ),
+            onTap: () => _guard(context, () => _signOut(ref)),
           ),
           ListTile(
             key: const Key('settings-delete'),
@@ -324,6 +332,7 @@ class _DeleteAccountDialogState extends ConsumerState<_DeleteAccountDialog> {
             password: _password.text,
             deleteData: ref.read(accountRepositoryProvider).deleteUserData,
           );
+      await ref.read(offlineCacheProvider).clearPersonal();
       if (mounted) Navigator.of(context).pop(true);
     } on AuthException catch (e) {
       setState(() {

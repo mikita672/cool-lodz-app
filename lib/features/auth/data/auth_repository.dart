@@ -108,12 +108,25 @@ class FirebaseAuthRepository implements AuthRepository {
 
   @override
   Future<void> signIn({required String email, required String password}) =>
-      _guard(
-        () => _auth.signInWithEmailAndPassword(
+      _guard(() async {
+        final credential = await _auth.signInWithEmailAndPassword(
           email: email.trim(),
           password: password,
-        ),
-      );
+        );
+        final user = credential.user;
+        if (user == null) return;
+        try {
+          await _profiles
+              .ensureProfile(
+                uid: user.uid,
+                nickname: nicknameFromEmail(user.email ?? email),
+              )
+              .timeout(const Duration(seconds: 10));
+        } catch (e) {
+          // Signed in anyway; the next sign-in tries again.
+          debugPrint('Could not check users/${user.uid}: $e');
+        }
+      });
 
   @override
   Future<void> register({
@@ -125,10 +138,18 @@ class FirebaseAuthRepository implements AuthRepository {
       email: email.trim(),
       password: password,
     );
-    await _profiles.createProfile(
-      uid: credential.user!.uid,
-      nickname: nickname.trim(),
-    );
+    final user = credential.user!;
+    try {
+      await _profiles.createProfile(uid: user.uid, nickname: nickname.trim());
+    } catch (_) {
+      // No half-made account: the user can register again with this e-mail.
+      try {
+        await user.delete();
+      } catch (e) {
+        debugPrint('Could not undo the sign-up: $e');
+      }
+      rethrow;
+    }
   });
 
   @override
@@ -160,6 +181,14 @@ class FirebaseAuthRepository implements AuthRepository {
       throw AuthException(authFailureFromCode(e.code));
     }
   }
+}
+
+/// A ranking nickname from the e-mail's local part (2–24 characters), for
+/// an account whose `users/{uid}` is missing.
+String nicknameFromEmail(String email) {
+  final local = email.split('@').first.replaceAll(RegExp(r'[^\w.\-]'), '');
+  if (local.length < 2) return 'Gracz';
+  return local.length > 24 ? local.substring(0, 24) : local;
 }
 
 final authRepositoryProvider = Provider<AuthRepository>(

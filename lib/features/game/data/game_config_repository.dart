@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/clock.dart';
 import '../../../core/firebase/firebase_providers.dart';
 import '../../../core/firestore/collections.dart';
 import '../../../core/models/models.dart';
@@ -50,7 +51,7 @@ final currentAlertProvider = Provider<Alert?>((ref) {
   final alert = ref.watch(activeAlertProvider).value;
   final override = ref.watch(gameSettingsProvider).value?.heatOverride ?? 0;
   if (override <= (alert?.level ?? 0)) return alert;
-  final now = DateTime.now();
+  final now = ref.read(clockProvider)();
   final today = DateTime(now.year, now.month, now.day);
   return Alert(
     id: 'heatOverride-$override',
