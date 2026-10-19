@@ -108,6 +108,9 @@ class DemoApiClient implements ApiClient {
     return _parse(() => QuestData.fromJson(json!)).ordered;
   }
 
+  /// Any other bundled file of [dir], decoded (e.g. `streets_core.geojson`).
+  Future<Object?> readJson(String file) => _json('$dir/$file');
+
   /// Decoded file, read once; a failed read is retried next time.
   Future<Object?> _json(String path) {
     final cached = _cache[path];

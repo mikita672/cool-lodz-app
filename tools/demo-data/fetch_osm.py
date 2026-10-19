@@ -7,6 +7,7 @@ Three Overpass queries (green + trees + benches in Śródmieście, streets in
 Usage: python3 -I fetch_osm.py [raw_dir]
 """
 
+import os
 import sys
 import time
 import urllib.parse
@@ -16,7 +17,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # -I drops the script dir
 from common import BBOX_CENTRE, RAW_DEFAULT, USER_AGENT  # noqa: E402
 
-OVERPASS = "https://overpass-api.de/api/interpreter"
+# OVERPASS_URL overrides the instance (e.g. a mirror when the main one is busy).
+OVERPASS = os.environ.get("OVERPASS_URL", "https://overpass-api.de/api/interpreter")
 
 S, W, N, E = BBOX_CENTRE["south"], BBOX_CENTRE["west"], BBOX_CENTRE["north"], BBOX_CENTRE["east"]
 BB = f"({S},{W},{N},{E})"
