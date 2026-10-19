@@ -5,11 +5,25 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../app/theme.dart';
 
-/// Raster tiles: CARTO Voyager, no key (decision Q-04, #41). The app never
-/// uses tile.openstreetmap.org.
+/// Raster tiles: CARTO Voyager (decision Q-04, #41). The app never uses
+/// tile.openstreetmap.org.
 abstract final class MapTiles {
-  static const urlTemplate =
-      'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+  /// Free CARTO basemaps key (carto.com/basemaps/apikey), from
+  /// `--dart-define=MAP_TILES_KEY=…`. Without it CARTO serves tiles that
+  /// only say «API KEY REQUIRED».
+  static const apiKey = String.fromEnvironment('MAP_TILES_KEY');
+
+  static String get urlTemplate => urlFor(apiKey);
+
+  static String urlFor(String key) {
+    const base =
+        'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+    final trimmed = key.trim();
+    return trimmed.isEmpty
+        ? base
+        : '$base?key=${Uri.encodeQueryComponent(trimmed)}';
+  }
+
   static const subdomains = ['a', 'b', 'c', 'd'];
   static const userAgentPackageName = 'pl.betterthannever.cool_lodz';
   static const attribution = '© OpenStreetMap contributors © CARTO';

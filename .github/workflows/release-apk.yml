@@ -29,6 +29,8 @@ jobs:
       ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
       # Optional: a hosted module D. Empty = the on-device API.
       API_BASE_URL: ${{ vars.API_BASE_URL }}
+      # CARTO basemaps key; without it the map shows «API KEY REQUIRED».
+      MAP_TILES_KEY: ${{ secrets.MAP_TILES_KEY }}
     steps:
       - uses: actions/checkout@v4
 
@@ -80,10 +82,14 @@ jobs:
       - name: Build
         if: steps.firebase.outputs.ready == 'true'
         run: |
+          if [ -z "$MAP_TILES_KEY" ]; then
+            echo "::warning::Secret MAP_TILES_KEY is not set: map tiles will only say API KEY REQUIRED. See docs/release.md (CI)."
+          fi
           flutter pub get
           flutter build apk --release \
             --build-number=${{ github.run_number }} \
-            ${API_BASE_URL:+--dart-define=API_BASE_URL=$API_BASE_URL}
+            ${API_BASE_URL:+--dart-define=API_BASE_URL=$API_BASE_URL} \
+            ${MAP_TILES_KEY:+--dart-define=MAP_TILES_KEY=$MAP_TILES_KEY}
           cp build/app/outputs/flutter-apk/app-release.apk cool-lodz.apk
 
       - uses: actions/upload-artifact@v4
