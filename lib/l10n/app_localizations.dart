@@ -1665,6 +1665,78 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Ławki widać po przybliżeniu mapy'**
   String get mapBenchesZoomHint;
+
+  /// No description provided for @coolTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Miejsca chłodu'**
+  String get coolTitle;
+
+  /// No description provided for @coolViewList.
+  ///
+  /// In pl, this message translates to:
+  /// **'Lista'**
+  String get coolViewList;
+
+  /// No description provided for @coolViewMap.
+  ///
+  /// In pl, this message translates to:
+  /// **'Mapa'**
+  String get coolViewMap;
+
+  /// No description provided for @coolFilterOpen.
+  ///
+  /// In pl, this message translates to:
+  /// **'Otwarte teraz'**
+  String get coolFilterOpen;
+
+  /// No description provided for @coolFilterWater.
+  ///
+  /// In pl, this message translates to:
+  /// **'Z wodą'**
+  String get coolFilterWater;
+
+  /// No description provided for @coolFilterAccessible.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dostępne'**
+  String get coolFilterAccessible;
+
+  /// No description provided for @coolFilterQuest.
+  ///
+  /// In pl, this message translates to:
+  /// **'W queście'**
+  String get coolFilterQuest;
+
+  /// No description provided for @coolEmptyTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Brak otwartych miejsc w pobliżu'**
+  String get coolEmptyTitle;
+
+  /// No description provided for @coolEmptyBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zmień filtry, aby zobaczyć więcej miejsc.'**
+  String get coolEmptyBody;
+
+  /// No description provided for @coolShowAll.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pokaż wszystkie'**
+  String get coolShowAll;
+
+  /// No description provided for @coolNoLocationNote.
+  ///
+  /// In pl, this message translates to:
+  /// **'Odległości od centrum Łodzi — włącz lokalizację, aby liczyć od Ciebie.'**
+  String get coolNoLocationNote;
+
+  /// No description provided for @coolLoadError.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie udało się wczytać miejsc chłodu'**
+  String get coolLoadError;
 }
 
 class _AppLocalizationsDelegate

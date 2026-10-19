@@ -342,5 +342,18 @@
   "@mapLayerError": {"placeholders": {"layer": {"type": "String"}}},
   "mapSemantics": "Mapa Łodzi. Warstwy: {layers}.",
   "@mapSemantics": {"placeholders": {"layers": {"type": "String"}}},
-  "mapBenchesZoomHint": "Ławki widać po przybliżeniu mapy"
+  "mapBenchesZoomHint": "Ławki widać po przybliżeniu mapy",
+
+  "coolTitle": "Miejsca chłodu",
+  "coolViewList": "Lista",
+  "coolViewMap": "Mapa",
+  "coolFilterOpen": "Otwarte teraz",
+  "coolFilterWater": "Z wodą",
+  "coolFilterAccessible": "Dostępne",
+  "coolFilterQuest": "W queście",
+  "coolEmptyTitle": "Brak otwartych miejsc w pobliżu",
+  "coolEmptyBody": "Zmień filtry, aby zobaczyć więcej miejsc.",
+  "coolShowAll": "Pokaż wszystkie",
+  "coolNoLocationNote": "Odległości od centrum Łodzi — włącz lokalizację, aby liczyć od Ciebie.",
+  "coolLoadError": "Nie udało się wczytać miejsc chłodu"
 }

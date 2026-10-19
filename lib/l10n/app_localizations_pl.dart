@@ -940,4 +940,41 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get mapBenchesZoomHint => 'Ławki widać po przybliżeniu mapy';
+
+  @override
+  String get coolTitle => 'Miejsca chłodu';
+
+  @override
+  String get coolViewList => 'Lista';
+
+  @override
+  String get coolViewMap => 'Mapa';
+
+  @override
+  String get coolFilterOpen => 'Otwarte teraz';
+
+  @override
+  String get coolFilterWater => 'Z wodą';
+
+  @override
+  String get coolFilterAccessible => 'Dostępne';
+
+  @override
+  String get coolFilterQuest => 'W queście';
+
+  @override
+  String get coolEmptyTitle => 'Brak otwartych miejsc w pobliżu';
+
+  @override
+  String get coolEmptyBody => 'Zmień filtry, aby zobaczyć więcej miejsc.';
+
+  @override
+  String get coolShowAll => 'Pokaż wszystkie';
+
+  @override
+  String get coolNoLocationNote =>
+      'Odległości od centrum Łodzi — włącz lokalizację, aby liczyć od Ciebie.';
+
+  @override
+  String get coolLoadError => 'Nie udało się wczytać miejsc chłodu';
 }

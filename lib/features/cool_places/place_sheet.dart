@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/routes.dart';
+import '../../core/clock.dart';
 import '../../core/models/models.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/place_sheet_content.dart';
@@ -21,15 +22,14 @@ Future<void> showPlaceSheet(BuildContext context, Place place) =>
     );
 
 class PlaceSheet extends ConsumerWidget {
-  const PlaceSheet({super.key, required this.place, this.clock = DateTime.now});
+  const PlaceSheet({super.key, required this.place});
 
   final Place place;
-  final DateTime Function() clock;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final now = clock();
+    final now = ref.watch(clockProvider)();
     return SingleChildScrollView(
       child: PlaceSheetContent(
         name: place.title(l10n),
