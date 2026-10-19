@@ -147,14 +147,14 @@ The app writes reports straight to Firestore `reports`; this endpoint is the alt
 
 ### `quest.json`
 
-Not a module D endpoint (the game lives in Firestore); the app reads the bundled file. Fields match Firestore `questPlaces/{placeId}`; `placeId` is the `id` from `places_cool.json`. The password itself is not stored here.
+Not a module D endpoint (the game lives in Firestore); the app reads the bundled file. `placeId` is the `id` from `places_cool.json` (name and coordinates come from there); `order` is the 1-based letter position.
 
 ```jsonc
 {
-  "questId": "chlodne-haslo",          // optional
-  "title": "Chłodne hasło",            // optional
+  "questId": "chlodne-haslo-2026",     // optional
+  "password": "CHŁODNO",               // optional
   "places": [                          // 7 places; a bare array of places is also accepted
-    { "placeId": "cool-001", "name": "EC1 Łódź – Miasto Kultury", "letter": "C", "order": 1, "lat": 51.7684, "lon": 19.4694 }
+    { "placeId": "cool-002", "letter": "C", "order": 1 }   // optional: name, lat, lon (as in Firestore questPlaces)
   ]
 }
 ```

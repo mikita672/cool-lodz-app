@@ -5,7 +5,12 @@ part 'quest_place.g.dart';
 /// `assets/demo/quest.json`, the seed for Firestore `questPlaces`.
 @JsonSerializable()
 class QuestData {
-  const QuestData({this.questId, this.title, required this.places});
+  const QuestData({
+    this.questId,
+    this.title,
+    this.password,
+    required this.places,
+  });
 
   /// Accepts `{"places": [...]}` or a bare list of places.
   factory QuestData.fromJson(Object json) => json is List
@@ -19,6 +24,9 @@ class QuestData {
 
   final String? questId;
   final String? title;
+
+  /// The quest password (e.g. `CHŁODNO`), if the file carries it.
+  final String? password;
   final List<QuestPlace> places;
 
   /// Places in quest order.

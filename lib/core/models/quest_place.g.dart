@@ -9,6 +9,7 @@ part of 'quest_place.dart';
 QuestData _$QuestDataFromJson(Map<String, dynamic> json) => QuestData(
   questId: json['questId'] as String?,
   title: json['title'] as String?,
+  password: json['password'] as String?,
   places: (json['places'] as List<dynamic>)
       .map((e) => QuestPlace.fromJson(e as Map<String, dynamic>))
       .toList(),
@@ -17,6 +18,7 @@ QuestData _$QuestDataFromJson(Map<String, dynamic> json) => QuestData(
 Map<String, dynamic> _$QuestDataToJson(QuestData instance) => <String, dynamic>{
   'questId': ?instance.questId,
   'title': ?instance.title,
+  'password': ?instance.password,
   'places': instance.places.map((e) => e.toJson()).toList(),
 };
 
