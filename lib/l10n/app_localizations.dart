@@ -1227,6 +1227,138 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Wyszukiwanie: © OpenStreetMap (Nominatim)'**
   String get routeSearchAttribution;
+
+  /// No description provided for @routeResultTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Trasy'**
+  String get routeResultTitle;
+
+  /// No description provided for @routeResultHeader.
+  ///
+  /// In pl, this message translates to:
+  /// **'{from} → {to}'**
+  String routeResultHeader(String from, String to);
+
+  /// No description provided for @routeResultDeparture.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wyjście: {time}'**
+  String routeResultDeparture(String time);
+
+  /// No description provided for @routeApproximate.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dla tego obszaru cień jest przybliżony'**
+  String get routeApproximate;
+
+  /// No description provided for @routeGo.
+  ///
+  /// In pl, this message translates to:
+  /// **'Prowadź'**
+  String get routeGo;
+
+  /// No description provided for @routeSave.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zapisz'**
+  String get routeSave;
+
+  /// No description provided for @routeSaved.
+  ///
+  /// In pl, this message translates to:
+  /// **'Trasa zapisana. Zobaczysz ją także bez internetu.'**
+  String get routeSaved;
+
+  /// No description provided for @routeSaveError.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie udało się zapisać trasy'**
+  String get routeSaveError;
+
+  /// No description provided for @routeMapsError.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie udało się otworzyć Map Google'**
+  String get routeMapsError;
+
+  /// No description provided for @routeNotFoundTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie znaleźliśmy trasy'**
+  String get routeNotFoundTitle;
+
+  /// No description provided for @routeNotFoundBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Spróbuj wybrać inne miejsce startu lub celu.'**
+  String get routeNotFoundBody;
+
+  /// No description provided for @routeChangePoints.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zmień punkty'**
+  String get routeChangePoints;
+
+  /// No description provided for @routeNoLocationTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie znamy Twojej lokalizacji'**
+  String get routeNoLocationTitle;
+
+  /// No description provided for @routeNoLocationBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Włącz lokalizację albo wybierz punkt startu ręcznie.'**
+  String get routeNoLocationBody;
+
+  /// No description provided for @routeEnableLocation.
+  ///
+  /// In pl, this message translates to:
+  /// **'Włącz lokalizację'**
+  String get routeEnableLocation;
+
+  /// No description provided for @routeChooseStart.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wybierz punkt startu'**
+  String get routeChooseStart;
+
+  /// No description provided for @routeVariantsPage.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wariant {index} z {count}'**
+  String routeVariantsPage(int index, int count);
+
+  /// No description provided for @routePrevVariant.
+  ///
+  /// In pl, this message translates to:
+  /// **'Poprzedni wariant'**
+  String get routePrevVariant;
+
+  /// No description provided for @routeNextVariant.
+  ///
+  /// In pl, this message translates to:
+  /// **'Następny wariant'**
+  String get routeNextVariant;
+
+  /// No description provided for @routeMapSemantics.
+  ///
+  /// In pl, this message translates to:
+  /// **'Mapa z trzema trasami. Wybrana: {name}, {percent} procent w cieniu.'**
+  String routeMapSemantics(String name, int percent);
+
+  /// No description provided for @routeLegendShade.
+  ///
+  /// In pl, this message translates to:
+  /// **'w cieniu'**
+  String get routeLegendShade;
+
+  /// No description provided for @routeLegendSun.
+  ///
+  /// In pl, this message translates to:
+  /// **'na słońcu'**
+  String get routeLegendSun;
 }
 
 class _AppLocalizationsDelegate

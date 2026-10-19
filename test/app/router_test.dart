@@ -3,6 +3,7 @@ import 'package:cool_lodz/app/router.dart';
 import 'package:cool_lodz/app/routes.dart';
 import 'package:cool_lodz/core/storage/preferences.dart';
 import 'package:cool_lodz/features/route/route_plan_screen.dart';
+import 'package:cool_lodz/features/route/route_result_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -53,7 +54,7 @@ void main() {
     final router = container.read(routerProvider);
     router.go(Routes.routeResult);
     await tester.pumpAndSettle();
-    expect(find.text('S07'), findsOneWidget);
+    expect(find.byType(RouteResultScreen), findsOneWidget);
     router.pop();
     await tester.pumpAndSettle();
     expect(find.byType(RoutePlanScreen), findsOneWidget);

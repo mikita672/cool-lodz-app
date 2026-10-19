@@ -83,6 +83,8 @@ Routes for every screen already exist in `lib/app/router.dart`; a feature ticket
 
 **Route planning (S06 → S07).** `routePlanProvider` (`features/route/data/route_plan.dart`) holds from / to / departure (`null` = «Teraz»); S06 and «Prowadź tam» (S08) fill it. `routeRequestProvider` turns it into the `POST /v1/routes` body (resolves «Moja lokalizacja» through `locationServiceProvider`, adds the comfort profile) and `routeResultProvider` asks `apiClientProvider`. Address search uses Nominatim (decision Q-04): only inside Łódź (`viewbox` + `bounded=1`), app User-Agent, typing debounced 1 s and at most 1 request per second; cool places are searched on the device.
 
+**S07 actions (Q-08).** «Prowadź» opens Google Maps walking directions (start, end and up to 8 points of the chosen line) and writes the route to `users/{uid}/routes` — that is the route that counts for points and badges. «Zapisz» only keeps the route on the device (`OfflineCache`), no points. Map tiles: `BaseMap` in `lib/shared/map/` (CARTO Voyager, OSM attribution); widget tests override `mapTilesEnabledProvider` with `false`, and use `RecordingApiClient` from `test/helpers/fakes.dart` (it reads the demo files from disk: `rootBundle` decodes big assets in an isolate the test does not wait for).
+
 ## Rules
 
 - **State:** Riverpod 3 (`flutter_riverpod`), no code generation. Repositories and clients are providers, so tests and demo mode can override them.

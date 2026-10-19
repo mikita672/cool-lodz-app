@@ -1,12 +1,729 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-import '../../shared/widgets/placeholder_screen.dart';
+import '../../app/senior_mode.dart';
+import '../../app/theme.dart';
+import '../../core/api/api_client.dart';
+import '../../core/api/api_providers.dart';
+import '../../core/location/location_service.dart';
+import '../../core/models/models.dart';
+import '../../core/storage/offline_cache.dart';
+import '../../l10n/app_localizations.dart';
+import '../../shared/map/base_map.dart';
+import '../../shared/widgets/app_button.dart';
+import '../../shared/widgets/app_icons.dart';
+import '../../shared/widgets/app_toast.dart';
+import '../../shared/widgets/empty_state.dart';
+import '../../shared/widgets/error_state.dart';
+import '../../shared/widgets/offline_banner.dart';
+import '../../shared/widgets/route_variant_card.dart' as ds;
+import '../../shared/widgets/skeleton.dart';
+import '../auth/data/auth_repository.dart';
+import '../cool_places/data/places_providers.dart';
+import '../profile/data/comfort_profile_provider.dart';
+import 'data/google_maps.dart';
+import 'data/route_history_repository.dart';
+import 'data/route_plan.dart';
+import 'route_plan_screen.dart';
 
-/// S07 Wynik trasy. Placeholder from APP-01; the feature ticket replaces it.
-class RouteResultScreen extends StatelessWidget {
-  const RouteResultScreen({super.key});
+/// S07 Wynik trasy: three variants on the map, cards to compare them,
+/// «Prowadź» (Google Maps, counts for the game) and «Zapisz» (offline).
+class RouteResultScreen extends ConsumerStatefulWidget {
+  const RouteResultScreen({super.key, this.launch = _launchExternal});
+
+  /// Opens a URL outside the app; injected in tests.
+  final Future<bool> Function(Uri url) launch;
+
+  static Future<bool> _launchExternal(Uri url) =>
+      launchUrl(url, mode: LaunchMode.externalApplication);
 
   @override
-  Widget build(BuildContext context) =>
-      const PlaceholderScreen(code: 'S07', title: 'Wynik trasy');
+  ConsumerState<RouteResultScreen> createState() => _RouteResultScreenState();
+}
+
+/// Kompromis by default, Zacieniona for the Senior profile.
+RouteVariantType defaultVariant(ProfileId profile) =>
+    profile == ProfileId.senior
+    ? RouteVariantType.shaded
+    : RouteVariantType.compromise;
+
+/// Order of the cards and of the Senior pages.
+const variantOrder = [
+  RouteVariantType.shortest,
+  RouteVariantType.shaded,
+  RouteVariantType.compromise,
+];
+
+class _RouteResultScreenState extends ConsumerState<RouteResultScreen> {
+  /// The user's pick; null = the profile default.
+  RouteVariantType? _picked;
+  bool _saving = false;
+
+  RouteVariantType _selected(RouteResponse response) {
+    final wanted =
+        _picked ?? defaultVariant(ref.read(comfortProfileProvider).id);
+    if (response.variant(wanted) != null) return wanted;
+    return response.variants.first.variant;
+  }
+
+  Future<void> _go(RouteRequest request, RouteVariant variant) async {
+    final l10n = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    unawaited(_record(request, variant));
+    final ok = await widget
+        .launch(GoogleMapsLink.walking(variant.geometry))
+        .catchError((Object _) => false);
+    if (!ok) {
+      messenger
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text(l10n.routeMapsError)));
+    }
+  }
+
+  /// «Prowadź» counts the route (Q-08): it goes to `users/{uid}/routes`.
+  Future<void> _record(RouteRequest request, RouteVariant variant) async {
+    final uid = ref.read(authRepositoryProvider).currentUser?.uid;
+    if (uid == null) return;
+    final to = ref.read(routePlanProvider).to;
+    final place = to is PointEndpoint ? to.place : null;
+    try {
+      await ref
+          .read(routeHistoryRepositoryProvider)
+          .add(
+            uid,
+            StartedRoute(
+              from: request.from,
+              to: request.to,
+              departAt: request.datetime,
+              variant: variant.variant,
+              sunShare: variant.sunShareAt(request.datetime),
+              distanceM: variant.distanceM,
+              endPlaceType: place?.category?.name,
+            ),
+          );
+    } catch (e) {
+      // Offline writes are queued by Firestore; anything else is logged.
+      debugPrint('Recording the route failed: $e');
+    }
+  }
+
+  Future<void> _save(RouteRequest request, RouteResponse response) async {
+    final l10n = AppLocalizations.of(context);
+    setState(() => _saving = true);
+    try {
+      await ref.read(offlineCacheProvider).saveLastRoute(request, response);
+      if (mounted) {
+        showAppToast(context, l10n.routeSaved, kind: ToastKind.success);
+      }
+    } catch (e) {
+      debugPrint('Saving the route failed: $e');
+      if (mounted) {
+        showAppToast(context, l10n.routeSaveError, kind: ToastKind.error);
+      }
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final requestAsync = ref.watch(routeRequestProvider);
+    final resultAsync = ref.watch(routeResultProvider);
+    final fallback = ref.watch(dataSourceProvider) == DataSource.fallback;
+    // A new profile default applies when nothing was picked by hand.
+    ref.watch(comfortProfileProvider.select((p) => p.id));
+    ref.listen(routeResultProvider, (_, _) => _picked = null);
+
+    final request = requestAsync.value;
+    final response = resultAsync.value;
+    final error = resultAsync.error ?? requestAsync.error;
+    final loading = response == null && error == null;
+
+    Widget body;
+    if (response != null && request != null) {
+      body = _Result(
+        request: request,
+        response: response,
+        selected: _selected(response),
+        onSelect: (v) => setState(() => _picked = v),
+        onGo: (v) => _go(request, v),
+        onSave: () => _save(request, response),
+        saving: _saving,
+        offline: fallback,
+      );
+    } else if (loading) {
+      body = const _Loading();
+    } else {
+      body = _Problem(error: error!);
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          request == null
+              ? l10n.routeResultTitle
+              : l10n.routeResultHeader(
+                  request.from.label ?? l10n.routeMyLocation,
+                  request.to.label ?? '',
+                ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ),
+      body: body,
+    );
+  }
+}
+
+/// Map lines for [response]: the others thin and grey underneath, the
+/// selected one on top, split into shade (primary) and sun (orange) parts
+/// by `segments`, or in one colour when module D sends none (DEP-03).
+List<Polyline> routePolylines(
+  RouteResponse response,
+  RouteVariantType selected,
+) {
+  final lines = <Polyline>[
+    for (final v in response.variants)
+      if (v.variant != selected)
+        Polyline(
+          points: v.geometry,
+          color: AppColors.muted,
+          strokeWidth: AppSizes.routeOtherWidth,
+        ),
+  ];
+  final chosen = response.variant(selected);
+  if (chosen == null) return lines;
+  final segments = chosen.segments
+      .where(
+        (s) => s.from >= 0 && s.to < chosen.geometry.length && s.to > s.from,
+      )
+      .toList();
+  if (segments.isEmpty) {
+    lines.add(
+      Polyline(
+        points: chosen.geometry,
+        color: AppColors.primary,
+        strokeWidth: AppSizes.routeSelectedWidth,
+        borderColor: AppColors.surface,
+        borderStrokeWidth: 1.5,
+      ),
+    );
+    return lines;
+  }
+  for (final s in segments) {
+    lines.add(
+      Polyline(
+        points: chosen.geometry.sublist(s.from, s.to + 1),
+        color: isSunny(s) ? AppColors.sun : AppColors.primary,
+        strokeWidth: AppSizes.routeSelectedWidth,
+        borderColor: AppColors.surface,
+        borderStrokeWidth: 1.5,
+      ),
+    );
+  }
+  return lines;
+}
+
+/// A segment counts as sunny when at least half of it is in the sun.
+bool isSunny(RouteSegment segment) => segment.sunShare >= 0.5;
+
+class _Result extends ConsumerWidget {
+  const _Result({
+    required this.request,
+    required this.response,
+    required this.selected,
+    required this.onSelect,
+    required this.onGo,
+    required this.onSave,
+    required this.saving,
+    required this.offline,
+  });
+
+  final RouteRequest request;
+  final RouteResponse response;
+  final RouteVariantType selected;
+  final ValueChanged<RouteVariantType> onSelect;
+  final ValueChanged<RouteVariant> onGo;
+  final VoidCallback onSave;
+  final bool saving;
+  final bool offline;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final senior = ref.watch(seniorModeProvider);
+    final places = ref.watch(placeByIdProvider);
+    final variant = response.variant(selected)!;
+    final shortest = response.shortest;
+    final now = DateTime.now();
+
+    final all = [for (final v in response.variants) ...v.geometry];
+    final stops = [
+      for (final s in variant.stops)
+        if (places[s.placeId] case final place?) (s, place),
+    ];
+
+    ds.RouteVariantCard card(RouteVariant v) => ds.RouteVariantCard(
+      key: Key('route-card-${v.variant.name}'),
+      variant: switch (v.variant) {
+        RouteVariantType.shortest => ds.RouteVariant.shortest,
+        RouteVariantType.shaded => ds.RouteVariant.shaded,
+        RouteVariantType.compromise => ds.RouteVariant.compromise,
+      },
+      minutes: (v.durationS / 60).round(),
+      distanceKm: v.distanceM / 1000,
+      shadePercent: (v.shadeShare * 100).round(),
+      extraMinutes: v.variant == RouteVariantType.shortest || shortest == null
+          ? 0
+          : (v.extraTimeVsShortestS / 60).round(),
+      coolStops: v.stops.where((s) => s.type == StopType.cool).length,
+      waterStops: v.stops.where((s) => s.type == StopType.water).length,
+      selected: v.variant == selected,
+      onTap: () => onSelect(v.variant),
+    );
+
+    final ordered = [for (final t in variantOrder) ?response.variant(t)];
+
+    return Column(
+      children: [
+        Expanded(
+          child: Stack(
+            children: [
+              Semantics(
+                label: l10n.routeMapSemantics(
+                  _name(selected, l10n),
+                  (variant.shadeShare * 100).round(),
+                ),
+                child: ExcludeSemantics(
+                  child: BaseMap(
+                    // A new selection keeps the camera; new data refits it.
+                    key: ValueKey(response),
+                    options: MapOptions(
+                      initialCameraFit: CameraFit.bounds(
+                        bounds: LatLngBounds.fromPoints(all),
+                        padding: const EdgeInsets.all(AppSizes.s32),
+                      ),
+                      minZoom: MapTiles.minZoom,
+                      maxZoom: MapTiles.maxZoom,
+                    ),
+                    children: [
+                      PolylineLayer(
+                        polylines: routePolylines(response, selected),
+                      ),
+                      MarkerLayer(
+                        markers: [
+                          for (final (stop, place) in stops)
+                            Marker(
+                              point: place.latLng,
+                              width: 28,
+                              height: 28,
+                              child: _StopMarker(type: stop.type),
+                            ),
+                          Marker(
+                            point: variant.geometry.first,
+                            width: 24,
+                            height: 24,
+                            child: const _EndMarker(start: true),
+                          ),
+                          Marker(
+                            point: variant.geometry.last,
+                            width: 32,
+                            height: 32,
+                            alignment: Alignment.topCenter,
+                            child: const _EndMarker(start: false),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Positioned(
+                left: AppSizes.s12,
+                right: AppSizes.s12,
+                top: AppSizes.s12,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (offline) ...[
+                      const OfflineBanner(),
+                      const SizedBox(height: AppSizes.s8),
+                    ],
+                    if (response.isApproximate)
+                      _Notice(
+                        key: const Key('route-approximate'),
+                        text: l10n.routeApproximate,
+                      ),
+                  ],
+                ),
+              ),
+              const Positioned(
+                left: AppSizes.s12,
+                bottom: AppSizes.s32,
+                child: _Legend(),
+              ),
+            ],
+          ),
+        ),
+        Material(
+          color: AppColors.surface,
+          elevation: 8,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(AppSizes.radiusSheet),
+            ),
+          ),
+          child: SafeArea(
+            top: false,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.sizeOf(context).height * 0.62,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Flexible(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.fromLTRB(
+                        AppSizes.screenPadding,
+                        AppSizes.s12,
+                        AppSizes.screenPadding,
+                        0,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            l10n.routeResultDeparture(
+                              formatDeparture(request.datetime, now, l10n),
+                            ),
+                            style: theme.textTheme.bodySmall,
+                          ),
+                          const SizedBox(height: AppSizes.s8),
+                          if (senior)
+                            _SeniorPager(
+                              variants: ordered,
+                              selected: selected,
+                              onSelect: onSelect,
+                              card: card,
+                            )
+                          else
+                            for (final v in ordered) ...[
+                              card(v),
+                              const SizedBox(height: AppSizes.s8),
+                            ],
+                        ],
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      AppSizes.screenPadding,
+                      AppSizes.s8,
+                      AppSizes.screenPadding,
+                      AppSizes.screenPadding,
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: AppButton(
+                            key: const Key('route-save'),
+                            label: l10n.routeSave,
+                            icon: Icons.bookmark_add_rounded,
+                            variant: AppButtonVariant.secondary,
+                            loading: saving,
+                            onPressed: onSave,
+                            expand: true,
+                          ),
+                        ),
+                        const SizedBox(width: AppSizes.s12),
+                        Expanded(
+                          flex: 2,
+                          child: AppButton(
+                            key: const Key('route-go'),
+                            label: l10n.routeGo,
+                            icon: Icons.navigation_rounded,
+                            onPressed: () => onGo(variant),
+                            expand: true,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  static String _name(RouteVariantType type, AppLocalizations l10n) =>
+      switch (type) {
+        RouteVariantType.shortest => l10n.dsRouteShortest,
+        RouteVariantType.shaded => l10n.dsRouteShaded,
+        RouteVariantType.compromise => l10n.dsRouteCompromise,
+      };
+}
+
+/// Senior mode: one whole card at a time; swipe or use the arrows.
+class _SeniorPager extends StatelessWidget {
+  const _SeniorPager({
+    required this.variants,
+    required this.selected,
+    required this.onSelect,
+    required this.card,
+  });
+
+  final List<RouteVariant> variants;
+  final RouteVariantType selected;
+  final ValueChanged<RouteVariantType> onSelect;
+  final Widget Function(RouteVariant) card;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final index = variants.indexWhere((v) => v.variant == selected);
+    void go(int i) {
+      if (i >= 0 && i < variants.length) onSelect(variants[i].variant);
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        GestureDetector(
+          key: const Key('route-senior-pager'),
+          onHorizontalDragEnd: (d) {
+            final v = d.primaryVelocity ?? 0;
+            if (v < -200) go(index + 1);
+            if (v > 200) go(index - 1);
+          },
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 200),
+            child: KeyedSubtree(
+              key: ValueKey(selected),
+              child: card(variants[index]),
+            ),
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconButton(
+              tooltip: l10n.routePrevVariant,
+              onPressed: index > 0 ? () => go(index - 1) : null,
+              icon: const Icon(Icons.chevron_left_rounded),
+            ),
+            Text(
+              l10n.routeVariantsPage(index + 1, variants.length),
+              style: Theme.of(context).textTheme.labelMedium,
+            ),
+            IconButton(
+              tooltip: l10n.routeNextVariant,
+              onPressed: index < variants.length - 1
+                  ? () => go(index + 1)
+                  : null,
+              icon: const Icon(Icons.chevron_right_rounded),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _Loading extends StatelessWidget {
+  const _Loading();
+
+  @override
+  Widget build(BuildContext context) => ListView(
+    padding: const EdgeInsets.all(AppSizes.screenPadding),
+    children: const [
+      SkeletonBox(height: 220),
+      SizedBox(height: AppSizes.s16),
+      SkeletonRouteCard(),
+      SizedBox(height: AppSizes.s8),
+      SkeletonRouteCard(),
+      SizedBox(height: AppSizes.s8),
+      SkeletonRouteCard(),
+    ],
+  );
+}
+
+/// No route, no location, or an error.
+class _Problem extends ConsumerWidget {
+  const _Problem({required this.error});
+
+  final Object error;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final err = error;
+    void retry() => ref.invalidate(routeRequestProvider);
+
+    if (err is LocationUnavailable) {
+      return Center(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              EmptyState(
+                icon: Icons.location_off_rounded,
+                title: l10n.routeNoLocationTitle,
+                message: l10n.routeNoLocationBody,
+                actionLabel: l10n.routeEnableLocation,
+                onAction: () async {
+                  await ref.read(locationServiceProvider).enable();
+                  retry();
+                },
+              ),
+              AppButton(
+                key: const Key('route-choose-start'),
+                label: l10n.routeChooseStart,
+                variant: AppButtonVariant.text,
+                onPressed: () => _backToPlan(context),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    if (err is ApiException && err.kind == ApiErrorKind.notFound) {
+      return Center(
+        child: EmptyState(
+          icon: Icons.wrong_location_rounded,
+          title: l10n.routeNotFoundTitle,
+          message: l10n.routeNotFoundBody,
+          actionLabel: l10n.routeChangePoints,
+          onAction: () => _backToPlan(context),
+        ),
+      );
+    }
+    debugPrint('Routes failed: $err');
+    return Center(child: ErrorState(onRetry: retry));
+  }
+
+  /// Back to S06 (it is underneath when we came from it).
+  static void _backToPlan(BuildContext context) {
+    final router = GoRouter.of(context);
+    if (router.canPop()) {
+      router.pop();
+    } else {
+      router.go('/route');
+    }
+  }
+}
+
+class _Notice extends StatelessWidget {
+  const _Notice({super.key, required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    liveRegion: true,
+    child: Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSizes.s12,
+        vertical: AppSizes.s8,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppSizes.radiusChip),
+        border: Border.all(color: AppColors.sun),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.info_outline_rounded, size: 18),
+          const SizedBox(width: AppSizes.s8),
+          Expanded(child: Text(text, style: AppTextStyles.label)),
+        ],
+      ),
+    ),
+  );
+}
+
+/// What the line colours mean (colour is never the only signal: the cards
+/// show the shade share as a number).
+class _Legend extends StatelessWidget {
+  const _Legend();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    Widget item(Color color, String text) => Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(width: 16, height: 4, color: color),
+        const SizedBox(width: AppSizes.s4),
+        Text(text, style: AppTextStyles.label),
+      ],
+    );
+    return ExcludeSemantics(
+      child: Container(
+        padding: const EdgeInsets.all(AppSizes.s8),
+        decoration: BoxDecoration(
+          color: AppColors.surface.withValues(alpha: 0.9),
+          borderRadius: BorderRadius.circular(AppSizes.radiusChip),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            item(AppColors.primary, l10n.routeLegendShade),
+            const SizedBox(height: AppSizes.s4),
+            item(AppColors.sun, l10n.routeLegendSun),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _StopMarker extends StatelessWidget {
+  const _StopMarker({required this.type});
+
+  final StopType type;
+
+  @override
+  Widget build(BuildContext context) => DecoratedBox(
+    decoration: BoxDecoration(
+      color: AppColors.surface,
+      shape: BoxShape.circle,
+      border: Border.all(
+        color: type == StopType.cool ? AppColors.cool : AppColors.water,
+        width: 2,
+      ),
+    ),
+    child: Center(
+      child: type == StopType.cool
+          ? const CoolPlaceIcon(size: 16, color: AppColors.primary)
+          : const WaterTapIcon(size: 16, color: AppColors.water),
+    ),
+  );
+}
+
+class _EndMarker extends StatelessWidget {
+  const _EndMarker({required this.start});
+
+  final bool start;
+
+  @override
+  Widget build(BuildContext context) => start
+      ? DecoratedBox(
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            shape: BoxShape.circle,
+            border: Border.all(color: AppColors.onSurface, width: 4),
+          ),
+        )
+      : const Icon(Icons.place_rounded, color: AppColors.onSurface, size: 32);
 }

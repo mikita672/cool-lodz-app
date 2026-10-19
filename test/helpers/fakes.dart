@@ -1,9 +1,16 @@
+import 'dart:io';
+
 import 'package:cool_lodz/core/api/api_client.dart';
 import 'package:cool_lodz/core/api/demo_api_client.dart';
 import 'package:cool_lodz/core/location/location_service.dart';
 import 'package:cool_lodz/core/models/models.dart';
 import 'package:cool_lodz/features/route/data/address_search.dart';
 import 'package:latlong2/latlong.dart';
+
+/// Reads `assets/demo/…` from disk synchronously. `rootBundle` decodes big
+/// files in an isolate that widget tests do not wait for.
+Future<String> readAssetFile(String path) async =>
+    File(path).readAsStringSync();
 
 /// Location with a fixed answer; [problem] makes it unavailable.
 class FakeLocationService implements LocationService {
@@ -35,7 +42,8 @@ class FakeLocationService implements LocationService {
 /// The demo client (real `assets/demo/` files) that records route requests.
 /// [routeError] makes `getRoutes` throw.
 class RecordingApiClient implements ApiClient {
-  RecordingApiClient({DemoApiClient? demo}) : _demo = demo ?? DemoApiClient();
+  RecordingApiClient({DemoApiClient? demo})
+    : _demo = demo ?? DemoApiClient(loadAsset: readAssetFile);
 
   final DemoApiClient _demo;
   final routeRequests = <RouteRequest>[];

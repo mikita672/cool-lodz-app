@@ -145,6 +145,11 @@ Future<RouteRequest> buildRouteRequest({
   );
 }
 
+/// No automatic retries: S07 shows the error and a button instead (a
+/// missing route or location does not fix itself; the API client already
+/// falls back to demo data).
+Duration? noRetry(int retryCount, Object error) => null;
+
 /// The request S07 shows, built from the plan and the comfort profile.
 final routeRequestProvider = FutureProvider<RouteRequest>((ref) {
   return buildRouteRequest(
@@ -153,11 +158,11 @@ final routeRequestProvider = FutureProvider<RouteRequest>((ref) {
     location: ref.watch(locationServiceProvider),
     now: DateTime.now(),
   );
-});
+}, retry: noRetry);
 
 /// The three variants for [routeRequestProvider]. Remote with fallback to
 /// cache/demo after 8 s (see `apiClientProvider`).
 final routeResultProvider = FutureProvider<RouteResponse>((ref) async {
   final request = await ref.watch(routeRequestProvider.future);
   return ref.watch(apiClientProvider).getRoutes(request);
-});
+}, retry: noRetry);

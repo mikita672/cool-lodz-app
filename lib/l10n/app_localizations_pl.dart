@@ -681,4 +681,80 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String get routeSearchAttribution =>
       'Wyszukiwanie: © OpenStreetMap (Nominatim)';
+
+  @override
+  String get routeResultTitle => 'Trasy';
+
+  @override
+  String routeResultHeader(String from, String to) {
+    return '$from → $to';
+  }
+
+  @override
+  String routeResultDeparture(String time) {
+    return 'Wyjście: $time';
+  }
+
+  @override
+  String get routeApproximate => 'Dla tego obszaru cień jest przybliżony';
+
+  @override
+  String get routeGo => 'Prowadź';
+
+  @override
+  String get routeSave => 'Zapisz';
+
+  @override
+  String get routeSaved => 'Trasa zapisana. Zobaczysz ją także bez internetu.';
+
+  @override
+  String get routeSaveError => 'Nie udało się zapisać trasy';
+
+  @override
+  String get routeMapsError => 'Nie udało się otworzyć Map Google';
+
+  @override
+  String get routeNotFoundTitle => 'Nie znaleźliśmy trasy';
+
+  @override
+  String get routeNotFoundBody =>
+      'Spróbuj wybrać inne miejsce startu lub celu.';
+
+  @override
+  String get routeChangePoints => 'Zmień punkty';
+
+  @override
+  String get routeNoLocationTitle => 'Nie znamy Twojej lokalizacji';
+
+  @override
+  String get routeNoLocationBody =>
+      'Włącz lokalizację albo wybierz punkt startu ręcznie.';
+
+  @override
+  String get routeEnableLocation => 'Włącz lokalizację';
+
+  @override
+  String get routeChooseStart => 'Wybierz punkt startu';
+
+  @override
+  String routeVariantsPage(int index, int count) {
+    return 'Wariant $index z $count';
+  }
+
+  @override
+  String get routePrevVariant => 'Poprzedni wariant';
+
+  @override
+  String get routeNextVariant => 'Następny wariant';
+
+  @override
+  String routeMapSemantics(String name, int percent) {
+    return 'Mapa z trzema trasami. Wybrana: $name, $percent procent w cieniu.';
+  }
+
+  @override
+  String get routeLegendShade => 'w cieniu';
+
+  @override
+  String get routeLegendSun => 'na słońcu';
 }
