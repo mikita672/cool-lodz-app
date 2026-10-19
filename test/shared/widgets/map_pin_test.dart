@@ -37,6 +37,9 @@ void main() {
         greaterThanOrEqualTo(AppSizes.minTouchTarget),
       );
     }
+    for (final pin in MapPinType.values) {
+      expectTapAction(tester, find.byType(MapPin).at(pin.index));
+    }
     await tester.tap(find.bySemanticsLabel('Poidełko'));
     expect(tapped, [MapPinType.water]);
     semantics.dispose();
@@ -61,5 +64,31 @@ void main() {
     expect(find.text('C'), findsOneWidget);
     expect(find.bySemanticsLabel('C'), findsNothing);
     semantics.dispose();
+  });
+
+  testWidgets('Senior mode shows labels; cool pin glyph is dark', (
+    tester,
+  ) async {
+    await pumpComponent(
+      tester,
+      Wrap(
+        children: [
+          for (final type in MapPinType.values) MapPin(type: type, letter: 'Ł'),
+        ],
+      ),
+      senior: true,
+    );
+    for (final label in ['Chłód', 'Woda', 'Ławka', 'Litera Ł']) {
+      expect(find.text(label), findsOneWidget);
+    }
+    expect(
+      tester.widget<Icon>(find.byIcon(Icons.ac_unit_rounded)).color,
+      AppColors.onSurface,
+    );
+  });
+
+  testWidgets('labels are hidden by default in normal mode', (tester) async {
+    await pumpComponent(tester, const MapPin(type: MapPinType.water));
+    expect(find.text('Woda'), findsNothing);
   });
 }

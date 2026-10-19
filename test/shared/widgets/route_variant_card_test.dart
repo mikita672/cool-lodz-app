@@ -1,6 +1,7 @@
 import 'dart:ui' show Tristate;
 
 import 'package:cool_lodz/app/theme.dart';
+import 'package:cool_lodz/shared/widgets/app_icons.dart';
 import 'package:cool_lodz/shared/widgets/route_variant_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -42,6 +43,7 @@ void main() {
     expect(node.flagsCollection.isSelected, Tristate.isTrue);
     expect(node.flagsCollection.isButton, isTrue);
 
+    expectTapAction(tester, find.byType(RouteVariantCard));
     await tester.tap(find.byType(RouteVariantCard));
     expect(taps, 1);
     semantics.dispose();
@@ -95,5 +97,32 @@ void main() {
           .first,
     );
     expect(material.color, AppColors.primaryContainer);
+  });
+
+  testWidgets('Senior mode labels the stop icons; cool icon is primary', (
+    tester,
+  ) async {
+    await pumpComponent(
+      tester,
+      RouteVariantCard(
+        variant: RouteVariant.shaded,
+        minutes: 26,
+        distanceKm: 2.1,
+        shadePercent: 72,
+        extraMinutes: 4,
+        coolStops: 2,
+        waterStops: 1,
+        selected: true,
+        onTap: () {},
+      ),
+      senior: true,
+    );
+    expect(tester.takeException(), isNull);
+    expect(find.text('Miejsca chłodu: 2'), findsOneWidget);
+    expect(find.text('Poidełka: 1'), findsOneWidget);
+    expect(
+      tester.widget<CoolPlaceIcon>(find.byType(CoolPlaceIcon)).color,
+      AppColors.primary,
+    );
   });
 }

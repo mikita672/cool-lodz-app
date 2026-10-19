@@ -19,6 +19,9 @@ void main() {
     );
     expect(find.text('Prowadź tam'), findsOneWidget);
     expect(find.byIcon(Icons.navigation_rounded), findsOneWidget);
+    final semantics = tester.ensureSemantics();
+    expectTapAction(tester, find.byType(AppButton));
+    semantics.dispose();
     await tester.tap(find.text('Prowadź tam'));
     expect(taps, 1);
     expect(tester.getSize(find.byType(FilledButton)).height, 52);

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../app/theme.dart';
 
-enum ToastKind { info, success, warning }
+enum ToastKind { info, success, warning, error }
 
 /// Shows a short message as a floating SnackBar styled by the theme.
 ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showAppToast(
@@ -36,6 +36,8 @@ class AppToastContent extends StatelessWidget {
       ToastKind.info => (Icons.info_rounded, AppColors.cool),
       ToastKind.success => (Icons.check_circle_rounded, AppColors.green),
       ToastKind.warning => (Icons.warning_rounded, AppColors.sun),
+      // heat3 keeps 3:1 contrast on the dark toast background.
+      ToastKind.error => (Icons.error_rounded, AppColors.heat3),
     };
     return Row(
       children: [

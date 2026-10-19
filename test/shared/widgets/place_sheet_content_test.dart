@@ -1,3 +1,4 @@
+import 'package:cool_lodz/app/theme.dart';
 import 'package:cool_lodz/shared/widgets/place_sheet_content.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -33,6 +34,8 @@ void main() {
       expect(find.text(label), findsOneWidget);
       expect(find.bySemanticsLabel(label), findsOneWidget);
     }
+    expectTapAction(tester, find.text('Prowadź tam'));
+    expectTapAction(tester, find.text('Zgłoś problem'));
     await tester.tap(find.text('Prowadź tam'));
     await tester.tap(find.text('Zgłoś problem'));
     expect(navigate, 1);
@@ -56,5 +59,51 @@ void main() {
     expect(find.text('Litera do zdobycia'), findsNothing);
     expect(find.byIcon(Icons.navigation_rounded), findsOneWidget);
     expect(find.byIcon(Icons.flag_rounded), findsOneWidget);
+  });
+
+  testWidgets('amenity labels stay on one line in Senior mode', (tester) async {
+    await pumpComponent(
+      tester,
+      PlaceSheetContent(
+        name: 'Manufaktura',
+        subtitle: 'Centrum handlowe',
+        status: PlaceOpenStatus.open,
+        statusText: 'Otwarte teraz',
+        amenities: PlaceAmenity.values,
+        onNavigate: () {},
+        onReport: () {},
+      ),
+      senior: true,
+    );
+    expect(tester.takeException(), isNull);
+    for (final label in ['Klimatyzacja', 'Woda', 'Toaleta', 'Dostępne']) {
+      // Label 12/16 × 1.25 = one 20 dp line.
+      expect(tester.getSize(find.text(label)).height, closeTo(20, 0.5));
+    }
+  });
+
+  testWidgets('open status text uses the AA successText colour', (
+    tester,
+  ) async {
+    await pumpComponent(
+      tester,
+      PlaceSheetContent(
+        name: 'EC1',
+        subtitle: 'Centrum kultury',
+        status: PlaceOpenStatus.open,
+        statusText: 'Otwarte teraz',
+        onNavigate: () {},
+        onReport: () {},
+      ),
+    );
+    final rich = tester.widget<RichText>(
+      find.textContaining('Otwarte teraz', findRichText: true),
+    );
+    TextSpan? span;
+    rich.text.visitChildren((s) {
+      if (s is TextSpan && s.text == 'Otwarte teraz') span = s;
+      return span == null;
+    });
+    expect(span!.style!.color, AppColors.successText);
   });
 }

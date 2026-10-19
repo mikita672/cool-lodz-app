@@ -43,9 +43,9 @@ class PlaceStatusLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = status == PlaceOpenStatus.open
-        ? AppColors.success
-        : AppColors.error;
+    final open = status == PlaceOpenStatus.open;
+    final dotColor = open ? AppColors.success : AppColors.error;
+    final textColor = open ? AppColors.successText : AppColors.error;
     final textScaler = MediaQuery.textScalerOf(context);
     return Text.rich(
       TextSpan(
@@ -57,14 +57,17 @@ class PlaceStatusLine extends StatelessWidget {
               child: Container(
                 width: textScaler.scale(8),
                 height: textScaler.scale(8),
-                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+                decoration: BoxDecoration(
+                  color: dotColor,
+                  shape: BoxShape.circle,
+                ),
               ),
             ),
           ),
           TextSpan(
             text: text,
             style: AppTextStyles.bodyS.copyWith(
-              color: color,
+              color: textColor,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -122,21 +125,29 @@ class AmenityBadge extends StatelessWidget {
     return Semantics(
       label: label,
       excludeSemantics: true,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: const BoxDecoration(
-              color: AppColors.surfaceVariant,
-              shape: BoxShape.circle,
+      // Width follows the label, so words never break in the middle.
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minWidth: 64),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: const BoxDecoration(
+                color: AppColors.surfaceVariant,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(amenity.icon, color: AppColors.primary, size: 22),
             ),
-            child: Icon(amenity.icon, color: AppColors.primary, size: 22),
-          ),
-          const SizedBox(height: AppSizes.s4),
-          Text(label, style: AppTextStyles.label, textAlign: TextAlign.center),
-        ],
+            const SizedBox(height: AppSizes.s4),
+            Text(
+              label,
+              style: AppTextStyles.label,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }

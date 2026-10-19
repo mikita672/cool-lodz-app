@@ -64,11 +64,13 @@ class SkeletonCard extends StatelessWidget {
                     SizedBox(height: AppSizes.s8),
                     FractionallySizedBox(
                       widthFactor: 0.7,
+                      alignment: Alignment.centerLeft,
                       child: SkeletonBox(height: 12, animate: false),
                     ),
                     SizedBox(height: AppSizes.s8),
                     FractionallySizedBox(
                       widthFactor: 0.4,
+                      alignment: Alignment.centerLeft,
                       child: SkeletonBox(height: 12, animate: false),
                     ),
                   ],
@@ -121,4 +123,65 @@ class _SkeletonPulseState extends State<SkeletonPulse>
   @override
   Widget build(BuildContext context) =>
       FadeTransition(opacity: _controller, child: widget.child);
+}
+
+/// Placeholder for a [RouteVariantCard] while routes are computed (S07).
+class SkeletonRouteCard extends StatelessWidget {
+  const SkeletonRouteCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      label: AppLocalizations.of(context).dsLoading,
+      excludeSemantics: true,
+      child: SkeletonPulse(
+        child: Container(
+          padding: const EdgeInsets.all(AppSizes.s16),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(AppSizes.radiusCard),
+            border: Border.all(color: AppColors.surfaceVariant),
+          ),
+          child: const Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        FractionallySizedBox(
+                          widthFactor: 0.5,
+                          alignment: Alignment.centerLeft,
+                          child: SkeletonBox(height: 16, animate: false),
+                        ),
+                        SizedBox(height: AppSizes.s8),
+                        FractionallySizedBox(
+                          widthFactor: 0.7,
+                          alignment: Alignment.centerLeft,
+                          child: SkeletonBox(height: 12, animate: false),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: AppSizes.s16),
+                  SkeletonBox(width: 72, height: 40, animate: false),
+                ],
+              ),
+              SizedBox(height: AppSizes.s12),
+              SkeletonBox(height: 8, animate: false),
+              SizedBox(height: AppSizes.s12),
+              FractionallySizedBox(
+                widthFactor: 0.6,
+                alignment: Alignment.centerLeft,
+                child: SkeletonBox(height: 12, animate: false),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }

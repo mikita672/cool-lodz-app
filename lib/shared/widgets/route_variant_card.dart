@@ -50,6 +50,26 @@ class RouteVariantCard extends StatelessWidget {
       color: AppColors.onSurfaceVariant,
     );
 
+    final senior = context.palette.senior;
+    final extraText = extraMinutes > 0
+        ? l10n.dsExtraMinutes(extraMinutes)
+        : l10n.dsFastestRoute;
+    final stops = [
+      if (coolStops > 0)
+        _Stop(
+          // Primary, not `cool`: keeps 3:1 contrast on the selected card.
+          icon: const CoolPlaceIcon(size: 18, color: AppColors.primary),
+          text: senior ? l10n.dsCoolStopsLabel(coolStops) : '$coolStops',
+          label: l10n.dsCoolStopsSemantics(coolStops),
+        ),
+      if (waterStops > 0)
+        _Stop(
+          icon: const WaterTapIcon(size: 18, color: AppColors.water),
+          text: senior ? l10n.dsWaterStopsLabel(waterStops) : '$waterStops',
+          label: l10n.dsWaterStopsSemantics(waterStops),
+        ),
+    ];
+
     return MergeSemantics(
       child: Semantics(
         button: true,
@@ -112,36 +132,28 @@ class RouteVariantCard extends StatelessWidget {
                   const SizedBox(height: AppSizes.s8),
                   ShadeBar(percent: shadePercent, showPercent: false),
                   const SizedBox(height: AppSizes.s8),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          extraMinutes > 0
-                              ? l10n.dsExtraMinutes(extraMinutes)
-                              : l10n.dsFastestRoute,
-                          style: secondary,
-                        ),
+                  if (senior) ...[
+                    // Senior: every icon gets a visible label.
+                    Text(extraText, style: secondary),
+                    if (stops.isNotEmpty) ...[
+                      const SizedBox(height: AppSizes.s4),
+                      Wrap(
+                        spacing: AppSizes.s12,
+                        runSpacing: AppSizes.s4,
+                        children: stops,
                       ),
-                      if (coolStops > 0)
-                        _Stop(
-                          icon: const CoolPlaceIcon(
-                            size: 18,
-                            color: AppColors.cool,
-                          ),
-                          count: coolStops,
-                          label: l10n.dsCoolStopsSemantics(coolStops),
-                        ),
-                      if (waterStops > 0)
-                        _Stop(
-                          icon: const WaterTapIcon(
-                            size: 18,
-                            color: AppColors.water,
-                          ),
-                          count: waterStops,
-                          label: l10n.dsWaterStopsSemantics(waterStops),
-                        ),
                     ],
-                  ),
+                  ] else
+                    Row(
+                      children: [
+                        Expanded(child: Text(extraText, style: secondary)),
+                        for (final stop in stops)
+                          Padding(
+                            padding: const EdgeInsets.only(left: AppSizes.s8),
+                            child: stop,
+                          ),
+                      ],
+                    ),
                 ],
               ),
             ),
@@ -153,10 +165,12 @@ class RouteVariantCard extends StatelessWidget {
 }
 
 class _Stop extends StatelessWidget {
-  const _Stop({required this.icon, required this.count, required this.label});
+  const _Stop({required this.icon, required this.text, required this.label});
 
   final Widget icon;
-  final int count;
+
+  /// The count, or «Miejsca chłodu: 2» in Senior mode.
+  final String text;
   final String label;
 
   @override
@@ -164,16 +178,13 @@ class _Stop extends StatelessWidget {
     return Semantics(
       label: label,
       excludeSemantics: true,
-      child: Padding(
-        padding: const EdgeInsets.only(left: AppSizes.s8),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            icon,
-            const SizedBox(width: 2),
-            Text('$count', style: AppTextStyles.label),
-          ],
-        ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          icon,
+          const SizedBox(width: 2),
+          Text(text, style: AppTextStyles.label),
+        ],
       ),
     );
   }

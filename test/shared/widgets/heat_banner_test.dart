@@ -62,6 +62,7 @@ void main() {
       ),
       findsOneWidget,
     );
+    expectTapAction(tester, find.byType(HeatBanner));
     await tester.tap(find.byType(HeatBanner));
     expect(taps, 1);
     expect(find.byIcon(Icons.chevron_right_rounded), findsOneWidget);

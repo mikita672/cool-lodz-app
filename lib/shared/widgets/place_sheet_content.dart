@@ -79,10 +79,7 @@ class PlaceSheetContent extends StatelessWidget {
             Wrap(
               spacing: AppSizes.s12,
               runSpacing: AppSizes.s12,
-              children: [
-                for (final a in amenities)
-                  SizedBox(width: 76, child: AmenityBadge(amenity: a)),
-              ],
+              children: [for (final a in amenities) AmenityBadge(amenity: a)],
             ),
           ],
           const SizedBox(height: AppSizes.s16),

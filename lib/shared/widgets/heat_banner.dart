@@ -36,6 +36,8 @@ class HeatBanner extends StatelessWidget {
       liveRegion: true,
       label: [heading, ?subtitle].join('. '),
       excludeSemantics: true,
+      // The tap action must live here: excludeSemantics drops the InkWell one.
+      onTap: onTap,
       child: Material(
         color: AppColors.heat(lvl),
         borderRadius: radius,

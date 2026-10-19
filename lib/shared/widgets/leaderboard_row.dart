@@ -43,10 +43,14 @@ class LeaderboardRow extends StatelessWidget {
         ),
         child: Row(
           children: [
-            SizedBox(
-              width: 32,
+            // Grows for 4-digit ranks instead of wrapping.
+            Container(
+              constraints: const BoxConstraints(minWidth: 32),
+              padding: const EdgeInsets.only(right: AppSizes.s4),
               child: Text(
                 '$rank',
+                maxLines: 1,
+                softWrap: false,
                 style: AppTextStyles.bodyS.copyWith(
                   fontWeight: FontWeight.w600,
                   color: AppColors.onSurfaceVariant,
@@ -67,13 +71,27 @@ class LeaderboardRow extends StatelessWidget {
               ),
             ),
             const SizedBox(width: AppSizes.s12),
-            Expanded(child: Text(displayName, style: AppTextStyles.bodyS)),
+            Expanded(
+              flex: 3,
+              child: Text(displayName, style: AppTextStyles.bodyS),
+            ),
             const SizedBox(width: AppSizes.s8),
-            Text(
-              l10n.dsPoints(points),
-              style: AppTextStyles.bodyS.copyWith(
-                fontWeight: FontWeight.w700,
-                color: own ? AppColors.primary : AppColors.onSurface,
+            // Long scores shrink rather than overflow at 360 dp in Senior.
+            Flexible(
+              flex: 2,
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    l10n.dsPoints(points),
+                    maxLines: 1,
+                    style: AppTextStyles.bodyS.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: own ? AppColors.primary : AppColors.onSurface,
+                    ),
+                  ),
+                ),
               ),
             ),
           ],

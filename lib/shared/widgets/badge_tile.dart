@@ -79,6 +79,8 @@ class BadgeTile extends StatelessWidget {
           '${earned ? l10n.dsBadgeEarnedSemantics(name) : l10n.dsBadgeLockedSemantics(name)}. $caption',
       button: onTap != null,
       excludeSemantics: true,
+      // The tap action must live here: excludeSemantics drops the InkWell one.
+      onTap: onTap,
       child: onTap == null
           ? content
           : InkWell(

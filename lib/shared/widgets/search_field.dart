@@ -21,6 +21,8 @@ class SearchField extends StatelessWidget {
       button: true,
       label: text,
       excludeSemantics: true,
+      // The tap action must live here: excludeSemantics drops the InkWell one.
+      onTap: onTap,
       child: Material(
         color: AppColors.surface,
         elevation: 2,

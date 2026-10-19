@@ -25,6 +25,7 @@ void main() {
     expect(find.text('Brak miejsc'), findsOneWidget);
     expect(find.text('Spróbuj później.'), findsOneWidget);
     expect(find.bySemanticsLabel('Brak miejsc'), findsOneWidget);
+    expectTapAction(tester, find.text('Pokaż wszystkie'));
     await tester.tap(find.text('Pokaż wszystkie'));
     expect(taps, 1);
     semantics.dispose();
@@ -97,6 +98,22 @@ void main() {
     const text = 'Brak połączenia z serwerem, pokazujemy ostatnie dane';
     expect(find.text(text), findsOneWidget);
     expect(find.bySemanticsLabel(text), findsOneWidget);
+    semantics.dispose();
+  });
+
+  testWidgets('error toast and route card skeleton', (tester) async {
+    final semantics = tester.ensureSemantics();
+    await pumpComponent(
+      tester,
+      const Column(
+        children: [
+          AppToastContent(message: 'Kod nieważny', kind: ToastKind.error),
+          SkeletonRouteCard(),
+        ],
+      ),
+    );
+    expect(find.byIcon(Icons.error_rounded), findsOneWidget);
+    expect(find.bySemanticsLabel('Ładowanie'), findsOneWidget);
     semantics.dispose();
   });
 }

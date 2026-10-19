@@ -28,6 +28,7 @@ void main() {
     final node = tester.getSemantics(find.byType(PlaceListItem));
     expect(node.label, contains('Biblioteka Miejska'));
     expect(node.label, contains('Otwarte teraz'));
+    expectTapAction(tester, find.byType(PlaceListItem));
     await tester.tap(find.byType(PlaceListItem));
     expect(taps, 1);
     semantics.dispose();

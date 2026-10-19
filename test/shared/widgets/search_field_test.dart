@@ -10,6 +10,7 @@ void main() {
     await pumpComponent(tester, SearchField(onTap: () => taps++));
     expect(find.text('Dokąd idziesz?'), findsOneWidget);
     expect(find.bySemanticsLabel('Dokąd idziesz?'), findsOneWidget);
+    expectTapAction(tester, find.byType(SearchField));
     await tester.tap(find.byType(SearchField));
     expect(taps, 1);
     expect(tester.getSize(find.byType(SearchField)).height, greaterThan(48));

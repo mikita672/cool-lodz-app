@@ -42,9 +42,19 @@ class LetterTile extends StatelessWidget {
       label: found ? l10n.dsLetterFound(letter!) : l10n.dsLetterEmpty,
       button: onTap != null,
       excludeSemantics: true,
+      // The tap action must live here: excludeSemantics drops the InkWell one.
+      onTap: onTap,
       child: onTap == null
           ? tile
-          : InkWell(onTap: onTap, borderRadius: radius, child: tile),
+          // 40 dp wide visual, 48 × 48 dp tap area.
+          : InkWell(
+              onTap: onTap,
+              borderRadius: radius,
+              child: SizedBox.square(
+                dimension: AppSizes.minTouchTarget,
+                child: Center(child: tile),
+              ),
+            ),
     );
   }
 }

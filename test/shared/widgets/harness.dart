@@ -2,6 +2,7 @@ import 'package:cool_lodz/app/senior_mode.dart';
 import 'package:cool_lodz/app/theme.dart';
 import 'package:cool_lodz/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -55,4 +56,14 @@ Future<void> pumpComponent(
   } else {
     await tester.pump();
   }
+}
+
+/// Asserts that TalkBack can activate [finder] (needs `ensureSemantics`).
+void expectTapAction(WidgetTester tester, Finder finder) {
+  final data = tester.getSemantics(finder).getSemanticsData();
+  expect(
+    data.hasAction(SemanticsAction.tap),
+    isTrue,
+    reason: 'no tap action on ${finder.describeMatch(Plurality.one)}',
+  );
 }

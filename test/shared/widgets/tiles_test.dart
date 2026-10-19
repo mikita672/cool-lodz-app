@@ -31,6 +31,8 @@ void main() {
         find.bySemanticsLabel('Litera jeszcze nieodkryta'),
         findsOneWidget,
       );
+      expectTapAction(tester, find.byType(LetterTile).first);
+      expect(tester.getSize(find.byType(LetterTile).first), const Size(48, 48));
       await tester.tap(find.text('C'));
       expect(taps, 1);
       semantics.dispose();
@@ -86,6 +88,7 @@ void main() {
         ),
         findsOneWidget,
       );
+      expectTapAction(tester, find.byType(BadgeTile).first);
       await tester.tap(find.text('Łowca parków'));
       expect(taps, 1);
       semantics.dispose();
@@ -115,12 +118,53 @@ void main() {
       expect(find.text('Ty · cienista_ania'), findsOneWidget);
       expect(find.text('420 pkt'), findsOneWidget);
       expect(
-        find.bySemanticsLabel('Miejsce 14, Ty · cienista_ania, 420 pkt'),
+        find.bySemanticsLabel('Miejsce 14, Ty · cienista_ania, 420 punktów'),
         findsOneWidget,
       );
       final own = tester.getSemantics(find.byType(LeaderboardRow).last);
       expect(own.flagsCollection.isSelected, Tristate.isTrue);
       semantics.dispose();
+    });
+  });
+
+  group('LeaderboardRow plural and layout', () {
+    testWidgets('semantics uses Polish plural forms of punkt', (tester) async {
+      final semantics = tester.ensureSemantics();
+      await pumpComponent(
+        tester,
+        const Column(
+          children: [
+            LeaderboardRow(rank: 1, name: 'a', points: 1),
+            LeaderboardRow(rank: 2, name: 'b', points: 3),
+            LeaderboardRow(rank: 3, name: 'c', points: 12),
+            LeaderboardRow(rank: 4, name: 'd', points: 22),
+          ],
+        ),
+      );
+      expect(find.bySemanticsLabel('Miejsce 1, a, 1 punkt'), findsOneWidget);
+      expect(find.bySemanticsLabel('Miejsce 2, b, 3 punkty'), findsOneWidget);
+      expect(find.bySemanticsLabel('Miejsce 3, c, 12 punktów'), findsOneWidget);
+      expect(find.bySemanticsLabel('Miejsce 4, d, 22 punkty'), findsOneWidget);
+      semantics.dispose();
+    });
+
+    testWidgets('4-digit rank and big score fit at 360 dp in Senior', (
+      tester,
+    ) async {
+      await pumpComponent(
+        tester,
+        const LeaderboardRow(
+          rank: 1234,
+          name: 'bardzo_dlugi_pseudonim_gracza',
+          points: 1234567,
+          own: true,
+        ),
+        senior: true,
+      );
+      expect(tester.takeException(), isNull);
+      final rank = tester.getSize(find.text('1234'));
+      // One line: height equals the scaled line height (14 × 20/14 × 1.25).
+      expect(rank.height, closeTo(25, 0.5));
     });
   });
 }
