@@ -447,6 +447,12 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Ekran w budowie'**
   String get placeholderInProgress;
+
+  /// Banner when the remote API failed and cached or demo data is shown
+  ///
+  /// In pl, this message translates to:
+  /// **'Brak połączenia z serwerem, pokazujemy ostatnie dane'**
+  String get apiFallbackBanner;
 }
 
 class _AppLocalizationsDelegate

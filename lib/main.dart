@@ -3,10 +3,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app/app.dart';
 import 'core/firebase/firebase_bootstrap.dart';
 import 'core/firebase/messaging_background.dart';
+import 'core/storage/preferences.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +18,13 @@ Future<void> main() async {
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   // Debug builds use the Emulator Suite, see docs/dev.md#firebase.
   await FirebaseBootstrap.init();
-  runApp(const ProviderScope(child: CoolLodzApp()));
+  final prefs = await SharedPreferences.getInstance();
+  runApp(
+    ProviderScope(
+      overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+      child: const CoolLodzApp(),
+    ),
+  );
 }
 
 /// The bundled Inter font is under the SIL Open Font License 1.1.

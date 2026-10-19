@@ -100,5 +100,8 @@
   "dsBadgeNew": "Nowa odznaka!",
   "dsBadgeDialogOk": "Super!",
 
-  "placeholderInProgress": "Ekran w budowie"
+  "placeholderInProgress": "Ekran w budowie",
+
+  "apiFallbackBanner": "Brak połączenia z serwerem, pokazujemy ostatnie dane",
+  "@apiFallbackBanner": {"description": "Banner when the remote API failed and cached or demo data is shown"}
 }

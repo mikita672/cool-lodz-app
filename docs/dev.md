@@ -80,6 +80,7 @@ Routes for every screen already exist in `lib/app/router.dart`; a feature ticket
 - **Firebase:** collection and field names come from `lib/core/firestore/collections.dart`; go through repositories in the feature or `core/`; widgets never call `FirebaseFirestore.instance` directly. Debug builds talk to the Firebase Emulator Suite.
 - **Game numbers:** only in `lib/core/game/game_config.dart`.
 - **Models:** `json_serializable`; generated `*.g.dart` files are committed (`dart run build_runner build --delete-conflicting-outputs`).
+- **API:** features read `apiClientProvider` (`lib/core/api/api_providers.dart`). It is `DemoApiClient` when `API_BASE_URL` is empty (`--dart-define=API_BASE_URL=https://…`) or `demoModeProvider` is on, otherwise `FallbackApiClient` (Remote, then cache/demo after 8 s). Show the `apiFallbackBanner` banner when `dataSourceProvider` is `DataSource.fallback`. Contract: [api-contract.md](api-contract.md). Widget tests that touch the API override `sharedPreferencesProvider` (see `test/core/api/api_providers_test.dart`) and `assetLoaderProvider`.
 - **Tests:** unit tests for logic (game rules, parsing, opening hours), widget tests for screens. Keep `flutter analyze` clean and code formatted with `dart format`.
 
 ## Git
