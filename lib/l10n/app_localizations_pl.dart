@@ -1461,4 +1461,21 @@ class AppLocalizationsPl extends AppLocalizations {
   String aboutDemoAlertLevel(int level) {
     return 'Stopień $level';
   }
+
+  @override
+  String get routeBestTimeTitle => 'Najlepsza pora wyjścia';
+
+  @override
+  String routeBestTimeHint(String time, int percent) {
+    return 'Najwięcej cienia o $time: $percent%';
+  }
+
+  @override
+  String routeBestTimeSlider(String time, int percent) {
+    return 'Wyjście o $time, $percent procent trasy w cieniu';
+  }
+
+  @override
+  String get routeBestTimeChart =>
+      'Udział cienia w ciągu dnia dla wybranej trasy';
 }

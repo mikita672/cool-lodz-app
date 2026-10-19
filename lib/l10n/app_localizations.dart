@@ -2571,6 +2571,30 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Stopień {level}'**
   String aboutDemoAlertLevel(int level);
+
+  /// No description provided for @routeBestTimeTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Najlepsza pora wyjścia'**
+  String get routeBestTimeTitle;
+
+  /// No description provided for @routeBestTimeHint.
+  ///
+  /// In pl, this message translates to:
+  /// **'Najwięcej cienia o {time}: {percent}%'**
+  String routeBestTimeHint(String time, int percent);
+
+  /// No description provided for @routeBestTimeSlider.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wyjście o {time}, {percent} procent trasy w cieniu'**
+  String routeBestTimeSlider(String time, int percent);
+
+  /// No description provided for @routeBestTimeChart.
+  ///
+  /// In pl, this message translates to:
+  /// **'Udział cienia w ciągu dnia dla wybranej trasy'**
+  String get routeBestTimeChart;
 }
 
 class _AppLocalizationsDelegate

@@ -66,7 +66,19 @@ const variantOrder = [
 class _RouteResultScreenState extends ConsumerState<RouteResultScreen> {
   /// The user's pick; null = the profile default.
   RouteVariantType? _picked;
+
+  /// «Najlepsza pora wyjścia» (APP-22): "HH:mm", null = the asked time.
+  String? _slot;
   bool _saving = false;
+
+  /// The departure the cards show: the slider's slot on the asked day.
+  DateTime _departure(RouteRequest request) {
+    final slot = _slot;
+    if (slot == null) return request.datetime;
+    final m = parseHhMm(slot);
+    final d = request.datetime;
+    return DateTime(d.year, d.month, d.day, m ~/ 60, m % 60);
+  }
 
   RouteVariantType _selected(RouteResponse response) {
     final wanted =
@@ -77,8 +89,9 @@ class _RouteResultScreenState extends ConsumerState<RouteResultScreen> {
 
   Future<void> _go(RouteRequest request, RouteVariant variant) async {
     final l10n = AppLocalizations.of(context);
+    final departure = _departure(request);
     final messenger = ScaffoldMessenger.of(context);
-    final award = _record(request, variant);
+    final award = _record(request, variant, departure);
     final ok = await widget
         .launch(GoogleMapsLink.walking(variant.geometry))
         .catchError((Object _) => false);
@@ -93,7 +106,7 @@ class _RouteResultScreenState extends ConsumerState<RouteResultScreen> {
     final routePoints = result.pointsFor(PointsType.route);
     final heatBlocked =
         variant.shadeShare >= GameConfig.shadedRouteMinShade &&
-        GameRules.isHeatBlocked(request.datetime, ref.read(heatLevelProvider));
+        GameRules.isHeatBlocked(departure, ref.read(heatLevelProvider));
     await showAwardFeedback(
       context,
       result,
@@ -107,7 +120,11 @@ class _RouteResultScreenState extends ConsumerState<RouteResultScreen> {
 
   /// «Prowadź» counts the route (Q-08): it goes to `users/{uid}/routes` and
   /// through the points and badges rules.
-  Future<GameAward?> _record(RouteRequest request, RouteVariant variant) async {
+  Future<GameAward?> _record(
+    RouteRequest request,
+    RouteVariant variant,
+    DateTime departure,
+  ) async {
     final to = ref.read(routePlanProvider).to;
     final place = to is PointEndpoint ? to.place : null;
     try {
@@ -117,9 +134,9 @@ class _RouteResultScreenState extends ConsumerState<RouteResultScreen> {
             StartedRoute(
               from: request.from,
               to: request.to,
-              departAt: request.datetime,
+              departAt: departure,
               variant: variant.variant,
-              sunShare: variant.sunShareAt(request.datetime),
+              sunShare: variant.sunShareAt(departure),
               distanceM: variant.distanceM,
               endPlaceType: place?.category?.name,
             ),
@@ -156,7 +173,10 @@ class _RouteResultScreenState extends ConsumerState<RouteResultScreen> {
     final fallback = ref.watch(dataSourceProvider) == DataSource.fallback;
     // A new profile default applies when nothing was picked by hand.
     ref.watch(comfortProfileProvider.select((p) => p.id));
-    ref.listen(routeResultProvider, (_, _) => _picked = null);
+    ref.listen(routeResultProvider, (_, _) {
+      _picked = null;
+      _slot = null;
+    });
 
     final request = requestAsync.value;
     final response = resultAsync.value;
@@ -169,6 +189,8 @@ class _RouteResultScreenState extends ConsumerState<RouteResultScreen> {
         request: request,
         response: response,
         selected: _selected(response),
+        departure: _departure(request),
+        onSlot: (slot) => setState(() => _slot = slot),
         onSelect: (v) => setState(() => _picked = v),
         onGo: (v) => _go(request, v),
         onSave: () => _save(request, response),
@@ -256,6 +278,8 @@ class _Result extends ConsumerWidget {
     required this.request,
     required this.response,
     required this.selected,
+    required this.departure,
+    required this.onSlot,
     required this.onSelect,
     required this.onGo,
     required this.onSave,
@@ -266,6 +290,10 @@ class _Result extends ConsumerWidget {
   final RouteRequest request;
   final RouteResponse response;
   final RouteVariantType selected;
+
+  /// Departure shown on the cards (moved by the time slider).
+  final DateTime departure;
+  final ValueChanged<String> onSlot;
   final ValueChanged<RouteVariantType> onSelect;
   final ValueChanged<RouteVariant> onGo;
   final VoidCallback onSave;
@@ -297,7 +325,7 @@ class _Result extends ConsumerWidget {
       },
       minutes: (v.durationS / 60).round(),
       distanceKm: v.distanceM / 1000,
-      shadePercent: (v.shadeShare * 100).round(),
+      shadePercent: ((1 - v.sunShareAt(departure)) * 100).round(),
       extraMinutes: v.variant == RouteVariantType.shortest || shortest == null
           ? 0
           : (v.extraTimeVsShortestS / 60).round(),
@@ -421,7 +449,7 @@ class _Result extends ConsumerWidget {
                         children: [
                           Text(
                             l10n.routeResultDeparture(
-                              formatDeparture(request.datetime, now, l10n),
+                              formatDeparture(departure, now, l10n),
                             ),
                             style: theme.textTheme.bodySmall,
                           ),
@@ -438,6 +466,12 @@ class _Result extends ConsumerWidget {
                               card(v),
                               const SizedBox(height: AppSizes.s8),
                             ],
+                          if (variant.sunShareByHour.length > 1)
+                            _BestTime(
+                              variant: variant,
+                              departure: departure,
+                              onSlot: onSlot,
+                            ),
                         ],
                       ),
                     ),
@@ -491,6 +525,99 @@ class _Result extends ConsumerWidget {
         RouteVariantType.shaded => l10n.dsRouteShaded,
         RouteVariantType.compromise => l10n.dsRouteCompromise,
       };
+}
+
+/// «Najlepsza pora wyjścia» (APP-22): 30-minute slots of the selected
+/// variant with a mini chart of its shade share. Moving it changes the
+/// shade on every card from `sunShareByHour`, without a new request.
+class _BestTime extends StatelessWidget {
+  const _BestTime({
+    required this.variant,
+    required this.departure,
+    required this.onSlot,
+  });
+
+  final RouteVariant variant;
+  final DateTime departure;
+  final ValueChanged<String> onSlot;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final slots = variant.sunShareByHour.keys.toList();
+    final current = nearestTimeKey(slots, minuteOfDay(departure))!;
+    final index = slots.indexOf(current);
+    final best = variant.bestDepartureSlot!;
+    int shade(String slot) =>
+        ((1 - variant.sunShareByHour[slot]!) * 100).round();
+    String label(String slot) =>
+        slot.startsWith('0') ? slot.substring(1) : slot;
+
+    return Column(
+      key: const Key('route-best-time'),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const SizedBox(height: AppSizes.s8),
+        Text(l10n.routeBestTimeTitle, style: theme.textTheme.titleSmall),
+        Text(
+          l10n.routeBestTimeHint(label(best), shade(best)),
+          style: theme.textTheme.bodySmall,
+        ),
+        const SizedBox(height: AppSizes.s8),
+        Semantics(
+          label: l10n.routeBestTimeChart,
+          excludeSemantics: true,
+          child: SizedBox(
+            height: 40,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                for (final s in slots)
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 1),
+                      child: FractionallySizedBox(
+                        heightFactor: (shade(s) / 100).clamp(0.05, 1.0),
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: s == current
+                                ? AppColors.primary
+                                : AppColors.primaryContainer,
+                            borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(2),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+        Slider(
+          key: const Key('route-time-slider'),
+          value: index.toDouble(),
+          max: (slots.length - 1).toDouble(),
+          divisions: slots.length - 1,
+          label: label(current),
+          semanticFormatterCallback: (v) {
+            final s = slots[v.round()];
+            return l10n.routeBestTimeSlider(label(s), shade(s));
+          },
+          onChanged: (v) => onSlot(slots[v.round()]),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(label(slots.first), style: theme.textTheme.labelSmall),
+            Text(label(slots.last), style: theme.textTheme.labelSmall),
+          ],
+        ),
+      ],
+    );
+  }
 }
 
 /// Senior mode: one whole card at a time; swipe or use the arrows.

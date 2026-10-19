@@ -11,6 +11,7 @@ import 'package:cool_lodz/features/route/data/google_maps.dart';
 import 'package:cool_lodz/features/route/data/route_plan.dart';
 import 'package:cool_lodz/features/route/route_result_screen.dart';
 import 'package:cool_lodz/l10n/app_localizations.dart';
+import 'package:cool_lodz/shared/widgets/route_variant_card.dart' as ds;
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,6 +22,30 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../helpers/fakes.dart';
 import '../../helpers/test_app.dart';
+
+/// Module D without `sunShareByHour` (DEP-03 not agreed).
+class _NoHourlyApi extends RecordingApiClient {
+  @override
+  Future<RouteResponse> getRoutes(RouteRequest request) async {
+    final full = await super.getRoutes(request);
+    return RouteResponse(
+      coverage: full.coverage,
+      variants: [
+        for (final v in full.variants)
+          RouteVariant(
+            variant: v.variant,
+            geometry: v.geometry,
+            segments: v.segments,
+            distanceM: v.distanceM,
+            durationS: v.durationS,
+            sunShare: v.sunShare,
+            extraTimeVsShortestS: v.extraTimeVsShortestS,
+            stops: v.stops,
+          ),
+      ],
+    );
+  }
+}
 
 void main() {
   late SharedPreferences prefs;
@@ -276,6 +301,44 @@ void main() {
     expect(find.text('Kompromis'), findsOneWidget);
     expect(find.text('Wariant 3 z 3'), findsOneWidget);
     expect(tester.takeException(), isNull);
+  });
+
+  group('Najlepsza pora wyjścia (APP-22)', () {
+    int shadeOf(WidgetTester tester, String variant) => tester
+        .widget<ds.RouteVariantCard>(find.byKey(Key('route-card-$variant')))
+        .shadePercent;
+
+    testWidgets('moving the slider changes the shade on the cards', (
+      tester,
+    ) async {
+      await pump(tester, size: const Size(400, 1400));
+      expect(find.byKey(const Key('route-best-time')), findsOneWidget);
+      expect(find.textContaining('Najwięcej cienia o'), findsOneWidget);
+      final before = shadeOf(tester, 'shaded');
+      // 14:30 is in the middle; drag to the right end (20:00).
+      await tester.drag(
+        find.byKey(const Key('route-time-slider')),
+        const Offset(400, 0),
+      );
+      await tester.pumpAndSettle();
+      final after = shadeOf(tester, 'shaded');
+      expect(after, isNot(before));
+      expect(find.textContaining('20:00'), findsWidgets);
+      // No new request: the hourly shares come with the first answer.
+      expect(api.routeRequests, hasLength(1));
+
+      // «Prowadź» now uses 20:00 as the departure.
+      await tester.tap(find.byKey(const Key('route-go')));
+      await tester.pumpAndSettle();
+      expect(history.routes.single.$2.departAt.hour, 20);
+    });
+
+    testWidgets('hidden without sunShareByHour (DEP-03)', (tester) async {
+      api = _NoHourlyApi();
+      await pump(tester);
+      expect(find.byKey(const Key('route-best-time')), findsNothing);
+      expect(find.text('Kompromis'), findsOneWidget);
+    });
   });
 
   group('routePolylines', () {
