@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../app/app_shell.dart';
 import '../../app/senior_mode.dart';
 import '../../app/theme.dart';
 import '../../l10n/app_localizations.dart';
@@ -41,12 +42,17 @@ class _ComponentsShowcaseState extends State<ComponentsShowcase> {
   var _shadeLayer = true;
   var _greenLayer = false;
   var _loading = false;
+  var _tab = 0;
 
-  void _tap() => showAppToast(context, 'Tap');
+  final _messenger = GlobalKey<ScaffoldMessengerState>();
 
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
+  void _tap() => _messenger.currentState
+    ?..hideCurrentSnackBar()
+    ..showSnackBar(const SnackBar(content: AppToastContent(message: 'Tap')));
+
+  /// Applies the previewed theme and text size. Dialogs are pushed above
+  /// this page, so they are wrapped again when opened.
+  Widget _preview(BuildContext context, Widget child) {
     final media = MediaQuery.of(context);
     return Theme(
       data: AppTheme.light(senior: _senior),
@@ -54,6 +60,19 @@ class _ComponentsShowcaseState extends State<ComponentsShowcase> {
         data: _senior
             ? media.copyWith(textScaler: SeniorTextScaler(media.textScaler))
             : media,
+        child: child,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return _preview(
+      context,
+      // Own messenger: toasts render inside the previewed theme.
+      ScaffoldMessenger(
+        key: _messenger,
         child: Scaffold(
           appBar: AppBar(title: Text(l10n.dsShowcaseTitle)),
           body: SingleChildScrollView(
@@ -70,6 +89,10 @@ class _ComponentsShowcaseState extends State<ComponentsShowcase> {
                 ..._sections(context, l10n),
               ],
             ),
+          ),
+          bottomNavigationBar: AppNavigationBar(
+            selectedIndex: _tab,
+            onDestinationSelected: (i) => setState(() => _tab = i),
           ),
         ),
       ),
@@ -305,12 +328,14 @@ class _ComponentsShowcaseState extends State<ComponentsShowcase> {
     ]),
     const _Section('Skeleton', [
       SkeletonCard(),
+      SkeletonRouteCard(),
       SkeletonBox(height: 120, radius: AppSizes.radiusCard),
     ]),
     _Section('Toast', [
       for (final (kind, text) in const [
         (ToastKind.success, '+50 pkt · litera Ł odkryta'),
-        (ToastKind.warning, 'Kod nieważny'),
+        (ToastKind.error, 'Kod nieważny'),
+        (ToastKind.warning, 'Jesteś za daleko od miejsca'),
         (ToastKind.info, 'Trasa zapisana'),
       ]) ...[
         Container(
@@ -338,17 +363,27 @@ class _ComponentsShowcaseState extends State<ComponentsShowcase> {
           label: l10n.dsBadgeNew,
           variant: AppButtonVariant.secondary,
           expand: true,
-          onPressed: () => showBadgeUnlockedDialog(
-            context,
-            icon: Icons.home_rounded,
-            name: 'Strażnik chłodu',
-            description:
-                'Odwiedziłeś 5 różnych miejsc chłodu. '
-                'Tak trzymaj w upalne dni.',
-            points: 30,
+          onPressed: () => showDialog<void>(
+            context: context,
+            builder: (dialogContext) => _preview(
+              dialogContext,
+              BadgeUnlockedDialog(
+                icon: Icons.home_rounded,
+                name: 'Strażnik chłodu',
+                description:
+                    'Odwiedziłeś 5 różnych miejsc chłodu. '
+                    'Tak trzymaj w upalne dni.',
+                points: 30,
+                onClose: () => Navigator.of(dialogContext).pop(),
+              ),
+            ),
           ),
         ),
       ),
+    ]),
+    _Section('BottomNav', [
+      for (final i in [0, 2])
+        AppNavigationBar(selectedIndex: i, onDestinationSelected: (_) {}),
     ]),
     _Section('MapPin', [
       Wrap(
