@@ -29,7 +29,11 @@ final _request = RouteRequest(
 );
 
 void main() {
-  setUpAll(() => registerFallbackValue(_request));
+  setUpAll(() {
+    registerFallbackValue(_request);
+    registerFallbackValue(LayerKind.shade);
+    registerFallbackValue(DateTime(2026));
+  });
 
   late MockApiClient remote;
   late DemoApiClient demo;
@@ -92,6 +96,30 @@ void main() {
       expect(flags, [true, true, false]);
     },
   );
+
+  test('the flag stays while any kind of call is failing', () async {
+    when(
+      () => remote.getAir(bbox: any(named: 'bbox')),
+    ).thenThrow(const ApiException(ApiErrorKind.network));
+    when(
+      () => remote.getLayer(
+        any(),
+        bbox: any(named: 'bbox'),
+        datetime: any(named: 'datetime'),
+      ),
+    ).thenAnswer((_) async => const GeoLayer(features: []));
+    final api = client();
+    await api.getAir();
+    // Another source answering does not hide the air fallback.
+    await api.getLayer(LayerKind.green, datetime: DateTime(2026));
+    expect(flags, [true, true]);
+
+    when(
+      () => remote.getAir(bbox: any(named: 'bbox')),
+    ).thenAnswer((_) async => const []);
+    await api.getAir();
+    expect(flags, [true, true, false]);
+  });
 
   test('notFound is a real answer: rethrown, no fallback', () async {
     when(() => remote.getRoutes(any())).thenThrow(

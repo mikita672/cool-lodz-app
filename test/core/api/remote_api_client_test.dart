@@ -5,6 +5,7 @@ import 'package:cool_lodz/core/api/demo_api_client.dart';
 import 'package:cool_lodz/core/api/reference_routes.dart';
 import 'package:cool_lodz/core/api/remote_api_client.dart';
 import 'package:cool_lodz/core/models/models.dart';
+import 'package:cool_lodz/core/warsaw_time.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -60,7 +61,7 @@ void main() {
     });
 
     test('routes', () async {
-      final request = manufakturaAt(DateTime(2026, 7, 15, 14, 30));
+      final request = manufakturaAt(warsawWallClockToUtc(2026, 7, 15, 14, 30));
       expect(
         encoded(await remote.getRoutes(request)),
         encoded(await demo.getRoutes(request)),
@@ -85,7 +86,7 @@ void main() {
         encoded(await demo.getAlerts(lat: 51.77, lon: 19.45)),
       );
       expect(encoded(await remote.getAir()), encoded(await demo.getAir()));
-      final time = DateTime(2026, 7, 15, 14, 30);
+      final time = warsawWallClockToUtc(2026, 7, 15, 14, 30);
       for (final kind in [LayerKind.shade, LayerKind.green]) {
         expect(
           encoded(await remote.getLayer(kind, datetime: time)),

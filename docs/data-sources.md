@@ -101,16 +101,26 @@ Each edge of a route gets a sun share from:
 
 OSM maps only part of the street trees in Łódź, so the raw model barely tells the variants apart. Each variant is therefore calibrated with one exponent (`sun' = sun^γ`) so that its share at 14:30 matches the numbers from the spec (Zacieniona ≈ 72 % shade vs Najkrótsza ≈ 31 %). The model still decides where along the route the sun is and how it changes over the day. Replace all of this with module D results when they arrive.
 
-`layer_shade_1430.geojson` uses the same inputs at 14:30: parks (`shade` 0.55–0.9 by mapped trees per hectare, woods 0.9), 8 m buffers around tree rows (0.7), 12 m buffers along tree-lined stretches of streets (0.4–0.85), and building-shadow strips on the sun side of streets in the tenement grid (0.85).
+`layer_shade_1430.geojson` uses the same inputs at 14:30 (each polygon has `source`: `trees` or `buildings`; the live route engine uses only `trees` and computes building shadow for the actual time): parks (`shade` 0.55–0.9 by mapped trees per hectare, woods 0.9), 8 m buffers around tree rows (0.7), 12 m buffers along tree-lined stretches of streets (0.4–0.85), and building-shadow strips on the sun side of streets in the tenement grid (0.85).
 
 `layer_noise.geojson`: a 15 m band per road at its level and, for roads ≥ 63 dB, a 40 m band 8 dB lower. Levels by class (trunk 72, primary 68, secondary 63, tertiary 58 dB) with overrides for the main arteries (al. Włókniarzy 75, al. Piłsudskiego and al. Mickiewicza 72, Zachodnia 70, al. Kościuszki 68, Narutowicza 66, Kilińskiego and Północna 65, Żeromskiego 64). These are estimates, not measurements from the Łódź noise map.
+
+### Live sources (on the phone)
+
+Without a module D server the app calls these public APIs itself (`lib/core/api/live/`, see [api-contract.md](api-contract.md#live-mode-liveapiclient)). The parsers were checked against real answers on 2026-10-19; the test fixtures in `test/fixtures/live/` are trimmed real responses.
+
+| Source | URL | What we found in the real payloads |
+| --- | --- | --- |
+| IMGW-PIB meteorological warnings | `https://danepubliczne.imgw.pl/api/data/warningsmeteo` | A list of `{id, nazwa_zdarzenia, stopien, prawdopodobienstwo, obowiazuje_od, obowiazuje_do, opublikowano, tresc, komentarz, biuro, teryt}`; `stopien` is a string, times are Warsaw wall clock without offset (`2026-08-15 12:02:00`), `teryt` is a list of 4-digit county codes (Łódź = `1061`, the county around it = `1062`). With no warnings in Poland the API answers `{"message": "Brak ostrzeżeń meteorologicznych"}` instead of `[]`. No heat warning was active on 2026-10-19, so the heat fixture is the real warning `Sk20260815100248479` (Upał, 1st degree, Łódź, 15–16 Aug 2026) from the public archive [StormFunnel/stormfunnel-pl-recorder](https://github.com/StormFunnel/stormfunnel-pl-recorder). |
+| GIOŚ air quality | `https://api.gios.gov.pl/pjp-api/v1/rest/station/findAll?size=500`, `…/aqindex/getIndex/{id}` | JSON-LD with Polish keys (`Lista stacji pomiarowych`, `Identyfikator stacji`, `WGS84 φ N` as a string, `AqIndex.Wartość indeksu`). The server answers **406** to `Accept: application/json` alone, so the app also accepts `application/ld+json`. The old paths without `/v1` answer **410 Gone**. A station without an index (Łódź, ul. Legionów) gets every field `null`. Łódź stations: 295 Czernika, 296 Gdańska, 302 Legionów, 10058 Al. Jana Pawła II. |
+| OSRM foot router (FOSSGIS) | `https://routing.openstreetmap.de/routed-foot/route/v1/foot/{lon,lat;…}?overview=full&geometries=geojson&alternatives=2` | `{code: "Ok", routes: [{geometry, distance, duration, …}]}`; walking speed ≈ 1.28 m/s. Errors come as HTTP 400 `{code, message}` (`NoRoute`, `NoSegment`, `InvalidQuery`, `InvalidOptions` for `0,0`). It routes anywhere reachable, ferries included, so the app refuses straight lines over 25 km. |
 
 ### Licences
 
 - OpenStreetMap data: © OpenStreetMap contributors, [ODbL 1.0](https://opendatacommons.org/licenses/odbl/). The app must show the attribution on the map.
 - Routes: computed by the FOSSGIS OSRM service on OSM data (ODbL).
 - Air-quality stations: Główny Inspektorat Ochrony Środowiska (GIOŚ), open data from the PJP API.
-- Heat warnings: format and levels of the IMGW-PIB warnings; the texts here are our own.
+- Heat warnings: format and levels of the IMGW-PIB warnings; the texts here are our own. Live: IMGW-PIB public data (source: IMGW-PIB).
 
 ### Regenerate
 

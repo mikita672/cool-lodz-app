@@ -1,5 +1,6 @@
 import 'package:cool_lodz/app/app.dart';
 import 'package:cool_lodz/app/router.dart';
+import 'package:cool_lodz/core/api/api_providers.dart';
 import 'package:cool_lodz/core/api/demo_api_client.dart';
 import 'package:cool_lodz/features/alerts/alert_screen.dart';
 import 'package:cool_lodz/features/alerts/data/push_service.dart';
@@ -23,7 +24,8 @@ void main() {
   late List<Uri> launched;
 
   setUp(() async {
-    prefs = await testPrefs();
+    // Demo scenarios (July alerts, demo badge thresholds): demo mode on.
+    prefs = await testPrefs({DemoMode.prefsKey: true});
     push = FakePushService();
     profiles = FakeUserProfileRepository()..accepted['u1'] = true;
     launched = [];

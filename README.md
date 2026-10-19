@@ -21,7 +21,7 @@ flutter run
 
 Устройство кода, правила и git-процесс — в [docs/dev.md](docs/dev.md). Release APK, подпись и GitHub Release — в [docs/release.md](docs/release.md).
 
-**Demo-режим:** без `--dart-define=API_BASE_URL=…` приложение работает на данных из `assets/demo/`. В сборке с API: Profil → O aplikacji → 5 нажатий на версию → «Tryb demo»; там же выбирается степень алерта для демо.
+**Источники данных:** без `--dart-define=API_BASE_URL=…` приложение само считает API модуля D на телефоне (`lib/core/api/live/`): маршруты OSRM + модель тени, алерты IMGW, воздух GIOŚ, места и слои из `assets/demo/` (см. [docs/api-contract.md](docs/api-contract.md#live-mode-liveapiclient)). С `API_BASE_URL` — сервер модуля D. **Demo-режим** (только данные из `assets/demo/`, без сети): Profil → O aplikacji → 5 нажатий на версию → «Tryb demo»; там же выбирается степень алерта для демо.
 
 ## Как работаем
 

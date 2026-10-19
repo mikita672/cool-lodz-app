@@ -1549,7 +1549,7 @@ abstract class AppLocalizations {
   /// No description provided for @mapShadeDemoNote.
   ///
   /// In pl, this message translates to:
-  /// **'W trybie demo cień jest policzony dla 14:30.'**
+  /// **'Mapa cienia jest policzona dla 14:30.'**
   String get mapShadeDemoNote;
 
   /// No description provided for @mapNoLocationTitle.
@@ -2505,6 +2505,12 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Wyszukiwanie adresów: OpenStreetMap Nominatim'**
   String get aboutSourceSearch;
+
+  /// No description provided for @aboutSourceRoutes.
+  ///
+  /// In pl, this message translates to:
+  /// **'Trasy piesze: OSRM (FOSSGIS) na danych OpenStreetMap'**
+  String get aboutSourceRoutes;
 
   /// No description provided for @aboutSourceAlerts.
   ///

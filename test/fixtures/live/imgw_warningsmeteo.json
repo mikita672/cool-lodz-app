@@ -1,0 +1,78 @@
+[
+  {
+    "id": "Sk20260815100248479",
+    "nazwa_zdarzenia": "Upał",
+    "stopien": "1",
+    "prawdopodobienstwo": "80",
+    "obowiazuje_do": "2026-08-16 18:00:00",
+    "obowiazuje_od": "2026-08-15 12:02:00",
+    "opublikowano": "2026-08-15 12:02:00",
+    "tresc": "Prognozuje się upał. Temperatura maksymalna od 30°C do 32°C. Temperatura minimalna od 15°C do 17°C.",
+    "komentarz": "Zmiana dotyczy wydłużenia ważności ostrzeżenia.",
+    "biuro": "Centralne Biuro Prognoz Meteorologicznych w Warszawie",
+    "teryt": [
+      "1003",
+      "1008",
+      "1014",
+      "1019",
+      "1061"
+    ]
+  },
+  {
+    "id": "Gd20260814094159060",
+    "nazwa_zdarzenia": "Upał",
+    "stopien": "2",
+    "prawdopodobienstwo": "80",
+    "obowiazuje_do": "2026-08-16 21:00:00",
+    "obowiazuje_od": "2026-08-15 13:00:00",
+    "opublikowano": "2026-08-14 11:41:00",
+    "tresc": "Prognozuje się upały. Temperatura maksymalna w dzień od 30°C do 34°C. Temperatura minimalna w nocy od 17°C do 20°C.",
+    "komentarz": "Ostrzeżenie może być aktualizowane.",
+    "biuro": "Centralne Biuro Prognoz Meteorologicznych w Warszawie",
+    "teryt": [
+      "1001",
+      "1009",
+      "1010",
+      "1012",
+      "1017",
+      "1018",
+      "1062"
+    ]
+  },
+  {
+    "id": "Sk20260815100238357",
+    "nazwa_zdarzenia": "Upał",
+    "stopien": "1",
+    "prawdopodobienstwo": "80",
+    "obowiazuje_do": "2026-08-16 18:00:00",
+    "obowiazuje_od": "2026-08-15 13:00:00",
+    "opublikowano": "2026-08-15 12:02:00",
+    "tresc": "Prognozuje się upał. Temperatura maksymalna w dzień od 29°C do 31°C. Temperatura minimalna w nocy od 14°C do 16°C.",
+    "komentarz": "Zmiana dotyczy wydłużenia ważności ostrzeżenia.",
+    "biuro": "Centralne Biuro Prognoz Meteorologicznych w Warszawie",
+    "teryt": [
+      "0208"
+    ]
+  },
+  {
+    "id": "Po20260828075405364",
+    "nazwa_zdarzenia": "Burze",
+    "stopien": "1",
+    "prawdopodobienstwo": "80",
+    "obowiazuje_do": "2026-08-29 10:00:00",
+    "obowiazuje_od": "2026-08-29 02:00:00",
+    "opublikowano": "2026-08-28 09:54:00",
+    "tresc": "Prognozowane są burze, którym miejscami będą towarzyszyć opady deszczu od 15 mm do 25 mm oraz porywy wiatru do 65 km/h.",
+    "komentarz": "Brak.",
+    "biuro": "Centralne Biuro Prognoz Meteorologicznych w Warszawie",
+    "teryt": [
+      "1001",
+      "1002",
+      "1003",
+      "1004",
+      "1006",
+      "1008",
+      "1061"
+    ]
+  }
+]

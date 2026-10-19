@@ -603,14 +603,14 @@ def build_shade(osm: Osm) -> None:
                         trees += 1
         shade = 0.9 if kind == "forest" else 0.55 + 0.35 * min(1.0, trees / max(area_ha, 0.05) / 60)
         ring = simplify(ring, 3.0)
-        feats.append(feature([[r6(x), r6(y)] for x, y in ring], {"shade": round(shade, 2)}))
+        feats.append(feature([[r6(x), r6(y)] for x, y in ring], {"shade": round(shade, 2), "source": "trees"}))
     # 2. tree rows
     for line in osm.tree_rows:
         if not clip_ok(line):
             continue
         poly = buffer_line(simplify(line, 2.0), 8.0)
         if poly:
-            feats.append(feature(poly, {"shade": 0.7}))
+            feats.append(feature(poly, {"shade": 0.7, "source": "trees"}))
     # 3. streets: tree-lined runs and building shadows on the sun side
     for name, hw, line in merged_streets(osm):
         if not clip_ok(line):
@@ -647,13 +647,13 @@ def build_shade(osm: Osm) -> None:
         for coords, values in treed:
             poly = buffer_line(simplify(coords, 3.0), 12.0)
             if poly:
-                feats.append(feature(poly, {"shade": round(sum(values) / len(values), 2)}))
+                feats.append(feature(poly, {"shade": round(sum(values) / len(values), 2), "source": "trees"}))
         for coords, ws, side in shadow:
             coords = simplify(coords, 3.0)
             w = sum(ws) / len(ws)
             outer = offset_line(coords, side * width / 2)
             inner = offset_line(coords, side * (width / 2 - w))
-            feats.append(feature(outer + inner[::-1] + [outer[0]], {"shade": 0.85}))
+            feats.append(feature(outer + inner[::-1] + [outer[0]], {"shade": 0.85, "source": "buildings"}))
     write("layer_shade_1430.geojson", collection(feats))
 
 

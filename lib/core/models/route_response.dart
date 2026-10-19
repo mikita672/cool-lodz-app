@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:latlong2/latlong.dart';
 
+import '../warsaw_time.dart';
 import 'date_time_converter.dart';
 import 'geo.dart';
 
@@ -123,10 +124,10 @@ class RouteVariant {
 
   Duration get extraTimeVsShortest => Duration(seconds: extraTimeVsShortestS);
 
-  /// Sun share for the `sunShareByHour` slot closest to [time] (wall clock);
-  /// falls back to [sunShare] when there are no slots.
+  /// Sun share for the `sunShareByHour` slot closest to [time] (slots are
+  /// Warsaw wall clock); falls back to [sunShare] when there are no slots.
   double sunShareAt(DateTime time) {
-    final key = nearestTimeKey(sunShareByHour.keys, minuteOfDay(time));
+    final key = nearestTimeKey(sunShareByHour.keys, warsawMinuteOfDay(time));
     return key == null ? sunShare : sunShareByHour[key]!;
   }
 
