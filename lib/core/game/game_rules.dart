@@ -198,6 +198,7 @@ abstract final class GameRules {
     RouteRecord? route,
     bool heatAlertToday = false,
     int coolGuardPlaces = GameConfig.badgeCoolGuardPlaces,
+    int shadedTenRoutes = GameConfig.badgeShadedTenCount,
   }) {
     final earned = <GameBadge>{};
     final routes = history.routes;
@@ -205,7 +206,7 @@ abstract final class GameRules {
     final shaded = routes
         .where((r) => r.shadeShare >= GameConfig.badgeShadedTenMinShade)
         .length;
-    if (shaded >= GameConfig.badgeShadedTenCount) {
+    if (shaded >= shadedTenRoutes) {
       earned.add(GameBadge.shadedTen);
     }
     if (history.scannedPlaces.length >= coolGuardPlaces) {

@@ -64,13 +64,14 @@ abstract interface class GameRepository {
 
   Future<void> addRoute(String uid, StartedRoute route);
 
-  /// Writes [entries] (+ [badges]) in batches of at most 200 points: log
-  /// entries, `users/{uid}` totals and week, the `rankings/{uid}` mirror
-  /// (with consent) and the district totals (when a district is set).
+  /// Writes [entries] in batches of at most 200 points: log entries,
+  /// `users/{uid}` totals and week, the `rankings/{uid}` mirror (with
+  /// consent) and the district totals (when a district is set). A badge
+  /// entry (`refId` = badge id) adds the badge in the same batch as its
+  /// 30 points, so a badge is never saved without them.
   Future<void> award(
     String uid,
     List<PointsEntry> entries, {
-    Set<GameBadge> badges = const {},
     required DateTime now,
   });
 
@@ -79,6 +80,12 @@ abstract interface class GameRepository {
   /// The latest [limit] log entries, newest first.
   Stream<List<PointsEntry>> watchLog(String uid, {int limit = 10});
 }
+
+/// Badges whose 30 points are in [entries].
+Set<GameBadge> badgesIn(Iterable<PointsEntry> entries) => {
+  for (final e in entries)
+    if (e.type == PointsType.badge) ?GameBadge.fromId(e.refId ?? ''),
+};
 
 class FirestoreGameRepository implements GameRepository {
   FirestoreGameRepository(this._db, this._routes);
@@ -132,17 +139,15 @@ class FirestoreGameRepository implements GameRepository {
   Future<void> award(
     String uid,
     List<PointsEntry> entries, {
-    Set<GameBadge> badges = const {},
     required DateTime now,
   }) async {
     final week = weekId(now);
-    var pendingBadges = badges;
     for (final chunk in GameRules.chunk(entries)) {
       final sum = chunk.fold(0, (a, e) => a + e.points);
       final before = await player(uid);
       final points = before.points + sum;
       final weekPoints = before.weekPointsIn(week) + sum;
-      final allBadges = {...before.badges, ...pendingBadges};
+      final allBadges = {...before.badges, ...badgesIn(chunk)};
       final batch = _db.batch();
       for (final e in chunk) {
         batch.set(_log(uid).doc(), {
@@ -180,10 +185,15 @@ class FirestoreGameRepository implements GameRepository {
           SetOptions(merge: true),
         );
       }
-      await batch.commit();
-      pendingBadges = const {};
+      // Offline, a commit only completes when the server confirms it; the
+      // batch is already applied locally (and queued), so go on after a
+      // short wait instead of hanging the screen.
+      await batch.commit().timeout(commitWait, onTimeout: () {});
     }
   }
+
+  /// How long [award] waits for the server per batch.
+  static const commitWait = Duration(seconds: 5);
 
   @override
   Stream<PlayerState> watchPlayer(String uid) =>

@@ -211,7 +211,6 @@ class FakeGameRepository implements GameRepository {
   Future<void> award(
     String uid,
     List<PointsEntry> entries, {
-    Set<GameBadge> badges = const {},
     required DateTime now,
   }) async {
     for (final chunk in GameRules.chunk(entries)) {
@@ -226,7 +225,7 @@ class FakeGameRepository implements GameRepository {
         points: state.points + sum,
         weekId: week,
         weekPoints: state.weekPointsIn(week) + sum,
-        badges: {...state.badges, ...badges},
+        badges: {...state.badges, ...badgesIn(chunk)},
       );
       log.addAll([
         for (final e in chunk)
@@ -388,8 +387,14 @@ class FakeReportRepository implements ReportRepository {
       <({ReportType type, double lat, double lon, String? comment})>[];
   Object? error;
 
+  var _ids = 0;
+
+  @override
+  String newId() => 'report-${++_ids}';
+
   @override
   Future<void> create({
+    required String id,
     required String uid,
     required ReportType type,
     required double lat,

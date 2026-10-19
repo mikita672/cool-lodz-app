@@ -144,17 +144,15 @@ final rankingRepositoryProvider = Provider<RankingRepository>(
   (ref) => FirestoreRankingRepository(ref.watch(firestoreProvider)),
 );
 
-/// Current ISO week in Poland, e.g. `2026-W43`.
-final currentWeekProvider = Provider<String>(
+/// Current ISO week in Poland, e.g. `2026-W43`. Read again every time S13
+/// is opened (the ranking providers are auto-disposed).
+final currentWeekProvider = Provider.autoDispose<String>(
   (ref) => weekId(ref.watch(clockProvider)()),
 );
 
 /// The rows of one S13 view.
-final rankingProvider =
-    FutureProvider.family<List<RankingEntry>, (RankingScope, RankingPeriod)>((
-      ref,
-      key,
-    ) {
+final rankingProvider = FutureProvider.autoDispose
+    .family<List<RankingEntry>, (RankingScope, RankingPeriod)>((ref, key) {
       final (scope, period) = key;
       final repo = ref.watch(rankingRepositoryProvider);
       final week = ref.watch(currentWeekProvider);
@@ -166,12 +164,9 @@ final rankingProvider =
     }, retry: noRetry);
 
 /// The user's own row: null when they do not take part (no consent).
-final ownRankingProvider =
-    FutureProvider.family<(int, RankingEntry)?, RankingPeriod>((
-      ref,
-      period,
-    ) async {
-      final uid = ref.watch(authRepositoryProvider).currentUser?.uid;
+final ownRankingProvider = FutureProvider.autoDispose
+    .family<(int, RankingEntry)?, RankingPeriod>((ref, period) async {
+      final uid = ref.watch(currentUidProvider);
       final player = await ref.watch(playerProvider.future);
       if (uid == null || !player.rankingConsent) return null;
       final week = ref.watch(currentWeekProvider);

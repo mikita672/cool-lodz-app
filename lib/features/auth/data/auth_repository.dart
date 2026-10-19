@@ -173,3 +173,13 @@ final authRepositoryProvider = Provider<AuthRepository>(
 final currentUserProvider = StreamProvider<AppUser?>(
   (ref) => ref.watch(authRepositoryProvider).userChanges(),
 );
+
+/// The signed-in user's id, following sign-in and sign-out. Providers that
+/// read per-user data watch this, so they rebuild for another account
+/// instead of keeping the previous user's data (RODO).
+final currentUidProvider = Provider<String?>((ref) {
+  final user = ref.watch(currentUserProvider);
+  return user.hasValue
+      ? user.value?.uid
+      : ref.read(authRepositoryProvider).currentUser?.uid;
+});

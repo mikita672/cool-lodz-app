@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/widgets.dart' show StringCharacters;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/firebase/firebase_providers.dart';
@@ -19,7 +20,13 @@ enum ReportType {
 /// `reports/{id}`: created by the author with status `new`; the status is
 /// changed by hand in the Firebase console (approved → +20 points).
 abstract interface class ReportRepository {
+  /// A new id for one report: S15 keeps it, so a retry after a timeout
+  /// writes the same document (the rules allow create only) instead of a
+  /// duplicate report.
+  String newId();
+
   Future<void> create({
+    required String id,
     required String uid,
     required ReportType type,
     required double lat,
@@ -34,7 +41,11 @@ class FirestoreReportRepository implements ReportRepository {
   final FirebaseFirestore _db;
 
   @override
+  String newId() => _db.collection(FirestoreCollections.reports).doc().id;
+
+  @override
   Future<void> create({
+    required String id,
     required String uid,
     required ReportType type,
     required double lat,
@@ -42,15 +53,15 @@ class FirestoreReportRepository implements ReportRepository {
     String? comment,
   }) {
     final text = comment?.trim();
-    return _db.collection(FirestoreCollections.reports).add({
+    return _db.collection(FirestoreCollections.reports).doc(id).set({
       ReportFields.uid: uid,
       ReportFields.type: type.id,
       ReportFields.lat: lat,
       ReportFields.lon: lon,
       if (text != null && text.isNotEmpty)
-        ReportFields.comment: text.length > FirestoreReports.commentMaxLength
-            ? text.substring(0, FirestoreReports.commentMaxLength)
-            : text,
+        ReportFields.comment: text.characters
+            .take(FirestoreReports.commentMaxLength)
+            .toString(),
       ReportFields.status: FirestoreReports.statusNew,
       ReportFields.createdAt: FieldValue.serverTimestamp(),
     });

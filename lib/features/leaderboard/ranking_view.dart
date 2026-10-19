@@ -135,7 +135,10 @@ class _RankingViewState extends ConsumerState<RankingView> {
     final int pinnedRank;
     if (_scope == RankingScope.users) {
       pinned = own?.$2;
-      pinnedRank = own?.$1 ?? 0;
+      // In the list, the list position wins (ties share points but not
+      // places); outside the top 50 the counted rank is used.
+      final i = entries.indexWhere((e) => e.id == own?.$2.id);
+      pinnedRank = i >= 0 ? i + 1 : (own?.$1 ?? 0);
     } else {
       final i = entries.indexWhere((e) => e.id == player?.district);
       pinned = i < 0 ? null : entries[i];

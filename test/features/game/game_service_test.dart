@@ -136,4 +136,29 @@ void main() {
     expect(award.points, 0);
     expect(repo.routes, isEmpty);
   });
+
+  test('events at the same time do not lose or double points', () async {
+    repo.approvedReportIds.addAll({'r1'});
+    final c = await make();
+    final game = c.read(gameServiceProvider);
+    final results = await Future.wait([
+      game.routeStarted(_route()),
+      game.syncReports(),
+      game.syncReports(),
+      game.placeScanned('cool-002'),
+    ]);
+    // 10 route + 30 Pierwszy krok + 20 report (once) + 50 scan.
+    expect(results.fold(0, (a, r) => a + r.points), 110);
+    expect(repo.state.points, 110);
+    expect(repo.log.where((e) => e.type == PointsType.report), hasLength(1));
+  });
+
+  test('a badge is saved in the same write as its 30 points', () async {
+    final c = await make(demo: true);
+    await c.read(gameServiceProvider).passwordSolved('q');
+    // Password (200) and, in demo, no scan badge; then a scan: 50 + 30.
+    await c.read(gameServiceProvider).placeScanned('cool-002');
+    expect(repo.writes, [200, 80]);
+    expect(repo.state.badges, {GameBadge.coolGuard});
+  });
 }

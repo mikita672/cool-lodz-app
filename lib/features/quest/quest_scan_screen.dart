@@ -143,7 +143,10 @@ class _CameraScanner extends StatefulWidget {
 class _CameraScannerState extends State<_CameraScanner> {
   final _controller = MobileScannerController(
     formats: const [BarcodeFormat.qrCode],
-    detectionSpeed: DetectionSpeed.noDuplicates,
+    // Not noDuplicates: after «Skanuj ponownie» the same code must be read
+    // again (e.g. the user walked closer). The screen ignores codes while a
+    // scan is checked or its result is shown.
+    detectionSpeed: DetectionSpeed.normal,
   );
 
   @override

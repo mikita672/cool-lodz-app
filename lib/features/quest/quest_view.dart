@@ -19,9 +19,19 @@ import '../game/data/game_repository.dart';
 import '../game/game_service.dart';
 import 'data/quest_repository.dart';
 
+/// Pays today's visits that have no scan points yet (the award failed, or
+/// the visit was queued offline). Runs while S10 is open.
+final scanSyncProvider = FutureProvider.autoDispose<GameAward>((ref) async {
+  final uid = ref.watch(currentUidProvider);
+  if (uid == null) return GameAward.none;
+  final visits = ref.watch(visitedTodayProvider).value ?? const <String>{};
+  if (visits.isEmpty) return GameAward.none;
+  return ref.read(gameServiceProvider).syncScans(visits);
+}, retry: (_, _) => null);
+
 /// Whether the signed-in user solved [Quest.id] (a `password` points entry).
 final questSolvedProvider = FutureProvider<bool>((ref) async {
-  final uid = ref.watch(authRepositoryProvider).currentUser?.uid;
+  final uid = ref.watch(currentUidProvider);
   if (uid == null) return false;
   final quest = await ref.watch(questProvider.future);
   final history = await ref.watch(gameRepositoryProvider).history(uid);
@@ -56,6 +66,10 @@ class QuestView extends ConsumerWidget {
     final visited = ref.watch(visitedPlacesProvider).value ?? const {};
     final heat = ref.watch(heatLevelProvider) >= GameConfig.heatModeLevel;
     final solved = ref.watch(questSolvedProvider).value ?? false;
+    ref.listen(scanSyncProvider, (_, next) {
+      final award = next.value;
+      if (award != null && award.points > 0) showAwardFeedback(context, award);
+    });
 
     final quest = questAsync.value;
     if (quest == null) {
@@ -283,6 +297,7 @@ class _PasswordFormState extends ConsumerState<_PasswordForm> {
   }
 
   Future<void> _check() async {
+    if (_checking) return;
     final l10n = AppLocalizations.of(context);
     if (!widget.quest.checkPassword(_controller.text)) {
       setState(() => _error = l10n.questPasswordWrong);
@@ -321,6 +336,7 @@ class _PasswordFormState extends ConsumerState<_PasswordForm> {
             TextField(
               key: const Key('quest-password'),
               controller: _controller,
+              enabled: !_checking,
               textCapitalization: TextCapitalization.characters,
               textInputAction: TextInputAction.done,
               onSubmitted: (_) => _check(),

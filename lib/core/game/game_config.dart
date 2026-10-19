@@ -22,6 +22,8 @@ abstract final class GameConfig {
 
   // Badges.
   static const badgeShadedTenCount = 10; // Cienista dziesiątka
+  // Demo mode: 3 shaded routes, so the badge can be shown in the demo.
+  static const demoBadgeShadedTenCount = 3;
   static const badgeShadedTenMinShade = 0.60;
   static const badgeCoolGuardPlaces = 5; // Strażnik chłodu
   // In demo mode one scan is enough, so the demo scenario (step 6) shows

@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/api/api_providers.dart';
+import '../../../core/clock.dart';
 import '../../../core/firebase/firebase_providers.dart';
 import '../../../core/firestore/collections.dart';
 import '../../../core/models/models.dart';
@@ -136,12 +137,28 @@ final questRepositoryProvider = Provider<QuestRepository>(
 
 /// Place ids the user has visited (any day).
 final visitedPlacesProvider = StreamProvider<Set<String>>((ref) {
-  final uid = ref.watch(authRepositoryProvider).currentUser?.uid;
+  final uid = ref.watch(currentUidProvider);
   if (uid == null) return Stream.value(const {});
   return ref
       .watch(questRepositoryProvider)
       .watchVisits(uid)
       .map((ids) => {for (final id in ids) ?placeIdOfVisit(id, uid)});
+});
+
+/// Place ids visited today (Polish date of the device).
+final visitedTodayProvider = StreamProvider.autoDispose<Set<String>>((ref) {
+  final uid = ref.watch(currentUidProvider);
+  if (uid == null) return Stream.value(const {});
+  final today = visitId('', '', ref.read(clockProvider)()).substring(2);
+  return ref
+      .watch(questRepositoryProvider)
+      .watchVisits(uid)
+      .map(
+        (ids) => {
+          for (final id in ids)
+            if (id.endsWith(today)) ?placeIdOfVisit(id, uid),
+        },
+      );
 });
 
 /// `{uid}_{placeId}_{yyyyMMdd}` → placeId.

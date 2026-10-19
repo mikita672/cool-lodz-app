@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
@@ -53,6 +55,9 @@ class ScanFailure extends ScanResult {
 class QuestScanService {
   QuestScanService(this._ref);
 
+  /// Firestore completes a write only after the server confirms it.
+  static const visitWriteTimeout = Duration(seconds: 15);
+
   final Ref _ref;
 
   Future<ScanResult> scan(String raw) async {
@@ -101,11 +106,20 @@ class QuestScanService {
             lat: position.latitude,
             lon: position.longitude,
             now: now,
-          );
+          )
+          .timeout(visitWriteTimeout);
     } on VisitRejected {
-      // The repeat case was checked above, so the code is wrong (or the
-      // place's code was rotated).
-      return const ScanFailure(ScanProblem.invalidCode);
+      // Normally the repeat was caught above; if the visit list could not
+      // be read then, the rules rejected a repeat. Otherwise the code is
+      // wrong (or was rotated).
+      final again = await _visitIds(uid);
+      return again.contains(visitId(uid, code.placeId, now))
+          ? const ScanFailure(ScanProblem.alreadyToday)
+          : const ScanFailure(ScanProblem.invalidCode);
+    } on TimeoutException {
+      // Offline: the visit stays queued and is sent later; its points are
+      // paid when S10 opens next (GameService.syncScans).
+      return const ScanFailure(ScanProblem.failed);
     } catch (e) {
       debugPrint('Saving the visit failed: $e');
       return const ScanFailure(ScanProblem.failed);
@@ -115,7 +129,7 @@ class QuestScanService {
     try {
       award = await _ref.read(gameServiceProvider).placeScanned(code.placeId);
     } catch (e) {
-      // The visit counts; points may be missing until the next event.
+      // The visit counts; GameService.syncScans pays it when S10 opens.
       debugPrint('Awarding the scan failed: $e');
       award = GameAward.none;
     }

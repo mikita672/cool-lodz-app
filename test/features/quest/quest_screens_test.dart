@@ -1,5 +1,6 @@
 import 'package:cool_lodz/app/theme.dart';
 import 'package:cool_lodz/core/clock.dart';
+import 'package:cool_lodz/core/game/game_rules.dart';
 import 'package:cool_lodz/features/game/data/game_config_repository.dart';
 import 'package:cool_lodz/features/quest/quest_scan_screen.dart';
 import 'package:cool_lodz/features/quest/quest_view.dart';
@@ -123,6 +124,18 @@ void main() {
   ];
 
   group('S10', () {
+    testWidgets('a visit today without points is paid when S10 opens', (
+      tester,
+    ) async {
+      quest.visits.add('u1_cool-007_20260715');
+      await pump(tester);
+      expect(game.state.points, greaterThanOrEqualTo(50));
+      expect(
+        game.log.where((e) => e.type == PointsType.scan).single.refId,
+        'cool-007',
+      );
+    });
+
     testWidgets('board with empty tiles, 0 z 7, places to visit', (
       tester,
     ) async {
@@ -246,6 +259,15 @@ void main() {
 
     testWidgets('repeat today and invalid code messages', (tester) async {
       quest.visits.add('u1_cool-002_20260715');
+      // That earlier scan was paid already.
+      game.log.add(
+        PointsEntry(
+          type: PointsType.scan,
+          points: 50,
+          refId: 'cool-002',
+          at: _now,
+        ),
+      );
       await pump(tester, initial: '/quest/scan');
       scanner.scan('coollodz://quest/cool-002?c=K7M2QX');
       await tester.pumpAndSettle();

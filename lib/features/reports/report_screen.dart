@@ -37,6 +37,10 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
   bool _sent = false;
   String? _typeError;
 
+  /// One document id per screen: a retry after a timeout writes the same
+  /// report again instead of a second one.
+  late final String _reportId = ref.read(reportRepositoryProvider).newId();
+
   @override
   void initState() {
     super.initState();
@@ -79,6 +83,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
       await ref
           .read(reportRepositoryProvider)
           .create(
+            id: _reportId,
             uid: uid,
             type: type,
             lat: position.latitude,
