@@ -87,6 +87,8 @@ Routes for every screen already exist in `lib/app/router.dart`; a feature ticket
 
 **Map (S05).** `mapLayersProvider` keeps the active filters; turning on a third fill (Cień, Zieleń, Cisza, Powietrze) switches off the oldest one with a message. Layers come from `layerProvider(kind)` (demo GeoJSON until `/v1/layers`, DEP-04); in demo mode the shade layer exists only for 14:30, so the time picker offers only that slot. Quest places use the normal cool pin: a letter on the map would give the password away. Every widget test that builds the app uses `appTestOverrides()` (`test/helpers/fakes.dart`).
 
+**Game (APP-16).** Rules are pure functions in `lib/core/game/game_rules.dart` (numbers in `game_config.dart`); `GameService` (`features/game/`) applies them to events — «Prowadź» (S07), a QR scan, the quest password — and `FirestoreGameRepository.award` writes the result: `pointsLog` entries, absolute `points`/`weekId`/`weekPoints`/`badges` on `users/{uid}`, the `rankings/{uid}` mirror (with consent) and `FieldValue.increment` on the district and its week. Every batch carries at most 200 points (the rules cap each write), so «hasło» (200) and a badge (30) go in two batches. The heat level is the stronger of the IMGW alert and `config/game.heatOverride`. In demo mode Strażnik chłodu needs 1 place instead of 5 (`GameConfig.demoBadgeCoolGuardPlaces`).
+
 ## Rules
 
 - **State:** Riverpod 3 (`flutter_riverpod`), no code generation. Repositories and clients are providers, so tests and demo mode can override them.

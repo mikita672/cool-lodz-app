@@ -23,8 +23,10 @@ abstract final class GameConfig {
   // Badges.
   static const badgeShadedTenCount = 10; // Cienista dziesiątka
   static const badgeShadedTenMinShade = 0.60;
-  static const badgeCoolGuardPlaces =
-      5; // Strażnik chłodu (spec allows lowering it for the demo)
+  static const badgeCoolGuardPlaces = 5; // Strażnik chłodu
+  // In demo mode one scan is enough, so the demo scenario (step 6) shows
+  // the badge after the first QR code (spec allows lowering it for demos).
+  static const demoBadgeCoolGuardPlaces = 1;
   static const badgeEarlyBirdFromHour = 6; // Ranny ptaszek 6:00–10:00
   static const badgeEarlyBirdToHour = 10;
   static const badgeEveningFromHour = 19; // Wieczorny spacerowicz 19:00–22:00

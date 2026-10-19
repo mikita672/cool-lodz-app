@@ -1,6 +1,7 @@
 import 'package:cool_lodz/app/app.dart';
 import 'package:cool_lodz/app/senior_mode.dart';
 import 'package:cool_lodz/app/theme.dart';
+import 'package:cool_lodz/features/achievements/badges_view.dart';
 import 'package:cool_lodz/features/cool_places/cool_places_screen.dart';
 import 'package:cool_lodz/features/map/map_screen.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +35,7 @@ void main() {
     expect(find.text('S10'), findsOneWidget);
     await tester.tap(find.text('Odznaki'));
     await tester.pumpAndSettle();
-    expect(find.text('S12'), findsOneWidget);
+    expect(find.byType(BadgesView), findsOneWidget);
 
     await tester.tap(find.text('Profil'));
     await tester.pumpAndSettle();

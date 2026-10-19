@@ -221,6 +221,70 @@ describe('users: app writes (S02 register, S03 consents, S04 profile)', () => {
   });
 });
 
+// The exact batches FirestoreGameRepository.award writes.
+describe('game award batches (APP-16)', () => {
+  async function award(uid, before, entries, week = '2026-W43') {
+    const d = db(uid);
+    const sum = entries.reduce((a, e) => a + e.points, 0);
+    const batch = writeBatch(d);
+    for (const e of entries) {
+      batch.set(doc(collection(d, `users/${uid}/pointsLog`)), {
+        type: e.type, points: e.points, refId: e.refId ?? null, createdAt: serverTimestamp(),
+      });
+    }
+    const points = before.points + sum;
+    const weekPoints = (before.weekId === week ? before.weekPoints : 0) + sum;
+    const badges = [...new Set([...before.badges, ...(entries.badges ?? [])])];
+    batch.update(doc(d, `users/${uid}`), { points, weekId: week, weekPoints, badges });
+    if (before.consents.ranking) {
+      batch.set(doc(d, `rankings/${uid}`), {
+        nickname: before.nickname, district: before.district ?? null,
+        points, weekId: week, weekPoints, updatedAt: serverTimestamp(),
+      });
+    }
+    if (before.district) {
+      batch.update(doc(d, `districts/${before.district}`), { points: increment(sum) });
+      batch.set(doc(d, `districts/${before.district}/weeks/${week}`), { points: increment(sum) }, { merge: true });
+    }
+    await batch.commit();
+    return { ...before, points, weekId: week, weekPoints, badges };
+  }
+
+  test('route + badge with ranking and district, then password split in two', async () => {
+    let alice = user({ consents: { location: true, push: false, ranking: true, acceptedAt: new Date() }, weekId: '2026-W42', weekPoints: 90, points: 90 });
+    await seed({ 'users/alice': alice, 'rankings/alice': { nickname: 'Ala', district: 'polesie', points: 90, weekId: '2026-W42', weekPoints: 90, updatedAt: new Date() } });
+    const route = [{ type: 'route', points: 10 }, { type: 'badge', points: 30, refId: 'firstStep' }];
+    route.badges = ['firstStep'];
+    alice = await assertSucceeds(award('alice', alice, route));
+    alice = await assertSucceeds(award('alice', alice, [{ type: 'password', points: 200, refId: 'chlodne-haslo-2026' }]));
+    alice = await assertSucceeds(award('alice', alice, [{ type: 'badge', points: 30, refId: 'coolGuard' }]));
+    const u = (await getDoc(doc(db('alice'), 'users/alice'))).data();
+    assert.equal(u.points, 360);
+    assert.equal(u.weekPoints, 270); // new week: reset, then 40 + 200 + 30
+    const district = (await getDoc(doc(db('alice'), 'districts/polesie'))).data();
+    assert.equal(district.points, 270);
+    const week = (await getDoc(doc(db('alice'), 'districts/polesie/weeks/2026-W43'))).data();
+    assert.equal(week.points, 270);
+    const r = (await getDoc(doc(db('bob'), 'rankings/alice'))).data();
+    assert.equal(r.points, 360);
+  });
+
+  test('password and badge in one write (230) is rejected', async () => {
+    const alice = user();
+    await seed({ 'users/alice': alice });
+    await assertFails(award('alice', alice, [
+      { type: 'password', points: 200, refId: 'q' },
+      { type: 'badge', points: 30, refId: 'coolGuard' },
+    ]));
+  });
+
+  test('without district and ranking only the user doc and log change', async () => {
+    const alice = user({ district: null });
+    await seed({ 'users/alice': alice });
+    await assertSucceeds(award('alice', alice, [{ type: 'scan', points: 50, refId: 'cool-002' }]));
+  });
+});
+
 describe('ranking (rankings/{uid})', () => {
   const optedIn = (overrides = {}) =>
     user({ points: 300, weekPoints: 120, consents: { ranking: true }, ...overrides });

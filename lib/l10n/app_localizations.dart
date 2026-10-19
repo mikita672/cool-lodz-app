@@ -1737,6 +1737,216 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Nie udało się wczytać miejsc chłodu'**
   String get coolLoadError;
+
+  /// No description provided for @badgeFirstStepName.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pierwszy krok'**
+  String get badgeFirstStepName;
+
+  /// No description provided for @badgeFirstStepCondition.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ruszaj pierwszą trasą z «Prowadź»'**
+  String get badgeFirstStepCondition;
+
+  /// No description provided for @badgeFirstStepDescription.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pierwsza trasa za Tobą. Dobrze, że wybierasz cień.'**
+  String get badgeFirstStepDescription;
+
+  /// No description provided for @badgeShadedTenName.
+  ///
+  /// In pl, this message translates to:
+  /// **'Cienista dziesiątka'**
+  String get badgeShadedTenName;
+
+  /// No description provided for @badgeShadedTenCondition.
+  ///
+  /// In pl, this message translates to:
+  /// **'10 tras z co najmniej 60% cienia'**
+  String get badgeShadedTenCondition;
+
+  /// No description provided for @badgeShadedTenDescription.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dziesięć tras w cieniu. Twoje stopy i głowa dziękują.'**
+  String get badgeShadedTenDescription;
+
+  /// No description provided for @badgeCoolGuardName.
+  ///
+  /// In pl, this message translates to:
+  /// **'Strażnik chłodu'**
+  String get badgeCoolGuardName;
+
+  /// No description provided for @badgeCoolGuardCondition.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zeskanuj kody w {count} różnych miejscach chłodu'**
+  String badgeCoolGuardCondition(int count);
+
+  /// No description provided for @badgeCoolGuardDescription.
+  ///
+  /// In pl, this message translates to:
+  /// **'Znasz miejsca, w których można odpocząć od upału.'**
+  String get badgeCoolGuardDescription;
+
+  /// No description provided for @badgeEarlyBirdName.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ranny ptaszek'**
+  String get badgeEarlyBirdName;
+
+  /// No description provided for @badgeEarlyBirdCondition.
+  ///
+  /// In pl, this message translates to:
+  /// **'Trasa z wyjściem 6:00–10:00 w dzień ostrzeżenia przed upałem'**
+  String get badgeEarlyBirdCondition;
+
+  /// No description provided for @badgeEarlyBirdDescription.
+  ///
+  /// In pl, this message translates to:
+  /// **'Rano jest chłodniej. Świetny wybór w upalny dzień.'**
+  String get badgeEarlyBirdDescription;
+
+  /// No description provided for @badgeEveningName.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wieczorny spacerowicz'**
+  String get badgeEveningName;
+
+  /// No description provided for @badgeEveningCondition.
+  ///
+  /// In pl, this message translates to:
+  /// **'Trasa z wyjściem 19:00–22:00 w dzień ostrzeżenia przed upałem'**
+  String get badgeEveningCondition;
+
+  /// No description provided for @badgeEveningDescription.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wieczorem upał odpuszcza. Miłego spaceru.'**
+  String get badgeEveningDescription;
+
+  /// No description provided for @badgeParkHunterName.
+  ///
+  /// In pl, this message translates to:
+  /// **'Łowca parków'**
+  String get badgeParkHunterName;
+
+  /// No description provided for @badgeParkHunterCondition.
+  ///
+  /// In pl, this message translates to:
+  /// **'5 tras kończących się w parku'**
+  String get badgeParkHunterCondition;
+
+  /// No description provided for @badgeParkHunterDescription.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pięć tras do parku. Zieleń to najlepszy cień.'**
+  String get badgeParkHunterDescription;
+
+  /// No description provided for @badgeCityHelperName.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pomocnik miasta'**
+  String get badgeCityHelperName;
+
+  /// No description provided for @badgeCityHelperCondition.
+  ///
+  /// In pl, this message translates to:
+  /// **'3 zatwierdzone zgłoszenia'**
+  String get badgeCityHelperCondition;
+
+  /// No description provided for @badgeCityHelperDescription.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dzięki Twoim zgłoszeniom miasto wie, gdzie brakuje cienia i wody.'**
+  String get badgeCityHelperDescription;
+
+  /// No description provided for @badgesEarned.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zdobyta'**
+  String get badgesEarned;
+
+  /// No description provided for @badgesTotal.
+  ///
+  /// In pl, this message translates to:
+  /// **'Twoje punkty'**
+  String get badgesTotal;
+
+  /// No description provided for @badgesTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Odznaki'**
+  String get badgesTitle;
+
+  /// No description provided for @badgesRecent.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ostatnie punkty'**
+  String get badgesRecent;
+
+  /// No description provided for @badgesNoPoints.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie masz jeszcze punktów. Wybierz trasę w cieniu albo zeskanuj kod QR w miejscu chłodu.'**
+  String get badgesNoPoints;
+
+  /// No description provided for @badgesLogRoute.
+  ///
+  /// In pl, this message translates to:
+  /// **'Trasa w cieniu'**
+  String get badgesLogRoute;
+
+  /// No description provided for @badgesLogScan.
+  ///
+  /// In pl, this message translates to:
+  /// **'Kod QR w miejscu chłodu'**
+  String get badgesLogScan;
+
+  /// No description provided for @badgesLogPassword.
+  ///
+  /// In pl, this message translates to:
+  /// **'Hasło questu'**
+  String get badgesLogPassword;
+
+  /// No description provided for @badgesLogBadge.
+  ///
+  /// In pl, this message translates to:
+  /// **'Odznaka: {name}'**
+  String badgesLogBadge(String name);
+
+  /// No description provided for @badgesLogReport.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zatwierdzone zgłoszenie'**
+  String get badgesLogReport;
+
+  /// No description provided for @badgesLoadError.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie udało się wczytać punktów'**
+  String get badgesLoadError;
+
+  /// No description provided for @gamePointsToast.
+  ///
+  /// In pl, this message translates to:
+  /// **'+{points} pkt'**
+  String gamePointsToast(int points);
+
+  /// No description provided for @gameRoutePointsToast.
+  ///
+  /// In pl, this message translates to:
+  /// **'+{points} pkt za trasę w cieniu'**
+  String gameRoutePointsToast(int points);
+
+  /// No description provided for @gameHeatNoPoints.
+  ///
+  /// In pl, this message translates to:
+  /// **'W trybie upału trasy z wyjściem 11:00–17:00 nie dają punktów. Wybierz poranek lub wieczór.'**
+  String get gameHeatNoPoints;
 }
 
 class _AppLocalizationsDelegate

@@ -154,8 +154,7 @@ List<Override> fakeAuthOverrides({
   FakeOnboardingStore? onboarding,
   FakeSystemPermissions? permissions,
 }) => [
-  ...appTestOverrides(prefs: prefs),
-  authRepositoryProvider.overrideWithValue(auth),
+  ...appTestOverrides(prefs: prefs, auth: auth),
   userProfileRepositoryProvider.overrideWithValue(
     profiles ?? FakeUserProfileRepository(),
   ),

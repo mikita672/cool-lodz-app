@@ -1,21 +1,16 @@
 import 'package:cool_lodz/app/senior_mode.dart';
 import 'package:cool_lodz/app/theme.dart';
 import 'package:cool_lodz/core/api/api_client.dart';
-import 'package:cool_lodz/core/api/api_providers.dart';
 import 'package:cool_lodz/core/api/reference_routes.dart';
 import 'package:cool_lodz/core/location/location_service.dart';
 import 'package:cool_lodz/core/models/models.dart';
 import 'package:cool_lodz/core/storage/offline_cache.dart';
-import 'package:cool_lodz/core/storage/preferences.dart';
-import 'package:cool_lodz/features/auth/data/auth_repository.dart';
 import 'package:cool_lodz/features/profile/data/comfort_profile.dart';
 import 'package:cool_lodz/features/profile/data/comfort_profile_provider.dart';
 import 'package:cool_lodz/features/route/data/google_maps.dart';
-import 'package:cool_lodz/features/route/data/route_history_repository.dart';
 import 'package:cool_lodz/features/route/data/route_plan.dart';
 import 'package:cool_lodz/features/route/route_result_screen.dart';
 import 'package:cool_lodz/l10n/app_localizations.dart';
-import 'package:cool_lodz/shared/map/base_map.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,28 +21,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../helpers/fakes.dart';
 import '../../helpers/test_app.dart';
-import '../auth/fakes.dart';
-
-class _FakeHistory implements RouteHistoryRepository {
-  final added = <(String, StartedRoute)>[];
-
-  @override
-  Future<void> add(String uid, StartedRoute route) async =>
-      added.add((uid, route));
-}
 
 void main() {
   late SharedPreferences prefs;
   late RecordingApiClient api;
   late FakeLocationService location;
-  late _FakeHistory history;
+  late FakeGameRepository history;
   late List<Uri> launched;
 
   setUp(() async {
     prefs = await testPrefs();
     api = RecordingApiClient();
     location = FakeLocationService();
-    history = _FakeHistory();
+    history = FakeGameRepository();
     launched = [];
   });
 
@@ -63,14 +49,12 @@ void main() {
     addTearDown(tester.view.reset);
     final container = ProviderContainer.test(
       overrides: [
-        sharedPreferencesProvider.overrideWithValue(prefs),
-        apiClientProvider.overrideWithValue(api),
-        locationServiceProvider.overrideWithValue(location),
-        mapTilesEnabledProvider.overrideWithValue(false),
-        authRepositoryProvider.overrideWithValue(
-          FakeAuthRepository(user: const AppUser(uid: 'u1')),
+        ...appTestOverrides(
+          prefs: prefs,
+          api: api,
+          location: location,
+          game: history,
         ),
-        routeHistoryRepositoryProvider.overrideWithValue(history),
       ],
     );
     await container
@@ -197,7 +181,12 @@ void main() {
     expect(url.queryParameters['travelmode'], 'walking');
     expect(url.queryParameters['origin'], startsWith('51.77'));
 
-    final (uid, route) = history.added.single;
+    // Back from Google Maps: +10 for the shaded route, Pierwszy krok.
+    expect(find.text('+10 pkt za trasę w cieniu'), findsOneWidget);
+    expect(find.text('Pierwszy krok'), findsOneWidget);
+    expect(history.state.points, 40);
+
+    final (uid, route) = history.routes.single;
     expect(uid, 'u1');
     expect(route.variant, RouteVariantType.shaded);
     expect(route.departAt, DateTime(2026, 7, 15, 14, 30));
@@ -221,7 +210,8 @@ void main() {
     expect(find.textContaining('Trasa zapisana'), findsOneWidget);
     final cached = container.read(offlineCacheProvider).lastRoute()!;
     expect(cached.response.variants, hasLength(3));
-    expect(history.added, isEmpty); // «Zapisz» does not count (Q-08)
+    expect(history.routes, isEmpty); // «Zapisz» does not count (Q-08)
+    expect(history.log, isEmpty);
   });
 
   testWidgets('a synthetic route says shade is approximate', (tester) async {

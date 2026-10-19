@@ -23,6 +23,7 @@ import '../alerts/data/alert_providers.dart';
 import '../cool_places/data/places_providers.dart';
 import '../cool_places/place_format.dart';
 import '../cool_places/place_sheet.dart';
+import '../game/data/game_config_repository.dart';
 import 'data/map_layers_style.dart';
 import 'data/map_providers.dart';
 
@@ -124,14 +125,14 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     final layers = ref.watch(mapLayersProvider);
     final senior = ref.watch(seniorModeProvider);
     final alert = ref.watch(activeAlertProvider).value;
-    final heatMode = (alert?.level ?? 0) >= GameConfig.heatModeLevel;
+    final heatMode = ref.watch(heatLevelProvider) >= GameConfig.heatModeLevel;
     final offline = ref.watch(dataSourceProvider) == DataSource.fallback;
     final location = ref.watch(userLocationProvider).value;
     final userPosition = location?.position;
 
     // Heat mode: cool places first (spec S14).
-    ref.listen(activeAlertProvider, (_, next) {
-      if ((next.value?.level ?? 0) >= GameConfig.heatModeLevel) {
+    ref.listen(heatLevelProvider, (_, level) {
+      if (level >= GameConfig.heatModeLevel) {
         ref.read(mapLayersProvider.notifier).ensure(MapLayer.cool);
       }
     });

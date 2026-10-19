@@ -977,4 +977,128 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get coolLoadError => 'Nie udało się wczytać miejsc chłodu';
+
+  @override
+  String get badgeFirstStepName => 'Pierwszy krok';
+
+  @override
+  String get badgeFirstStepCondition => 'Ruszaj pierwszą trasą z «Prowadź»';
+
+  @override
+  String get badgeFirstStepDescription =>
+      'Pierwsza trasa za Tobą. Dobrze, że wybierasz cień.';
+
+  @override
+  String get badgeShadedTenName => 'Cienista dziesiątka';
+
+  @override
+  String get badgeShadedTenCondition => '10 tras z co najmniej 60% cienia';
+
+  @override
+  String get badgeShadedTenDescription =>
+      'Dziesięć tras w cieniu. Twoje stopy i głowa dziękują.';
+
+  @override
+  String get badgeCoolGuardName => 'Strażnik chłodu';
+
+  @override
+  String badgeCoolGuardCondition(int count) {
+    return 'Zeskanuj kody w $count różnych miejscach chłodu';
+  }
+
+  @override
+  String get badgeCoolGuardDescription =>
+      'Znasz miejsca, w których można odpocząć od upału.';
+
+  @override
+  String get badgeEarlyBirdName => 'Ranny ptaszek';
+
+  @override
+  String get badgeEarlyBirdCondition =>
+      'Trasa z wyjściem 6:00–10:00 w dzień ostrzeżenia przed upałem';
+
+  @override
+  String get badgeEarlyBirdDescription =>
+      'Rano jest chłodniej. Świetny wybór w upalny dzień.';
+
+  @override
+  String get badgeEveningName => 'Wieczorny spacerowicz';
+
+  @override
+  String get badgeEveningCondition =>
+      'Trasa z wyjściem 19:00–22:00 w dzień ostrzeżenia przed upałem';
+
+  @override
+  String get badgeEveningDescription =>
+      'Wieczorem upał odpuszcza. Miłego spaceru.';
+
+  @override
+  String get badgeParkHunterName => 'Łowca parków';
+
+  @override
+  String get badgeParkHunterCondition => '5 tras kończących się w parku';
+
+  @override
+  String get badgeParkHunterDescription =>
+      'Pięć tras do parku. Zieleń to najlepszy cień.';
+
+  @override
+  String get badgeCityHelperName => 'Pomocnik miasta';
+
+  @override
+  String get badgeCityHelperCondition => '3 zatwierdzone zgłoszenia';
+
+  @override
+  String get badgeCityHelperDescription =>
+      'Dzięki Twoim zgłoszeniom miasto wie, gdzie brakuje cienia i wody.';
+
+  @override
+  String get badgesEarned => 'Zdobyta';
+
+  @override
+  String get badgesTotal => 'Twoje punkty';
+
+  @override
+  String get badgesTitle => 'Odznaki';
+
+  @override
+  String get badgesRecent => 'Ostatnie punkty';
+
+  @override
+  String get badgesNoPoints =>
+      'Nie masz jeszcze punktów. Wybierz trasę w cieniu albo zeskanuj kod QR w miejscu chłodu.';
+
+  @override
+  String get badgesLogRoute => 'Trasa w cieniu';
+
+  @override
+  String get badgesLogScan => 'Kod QR w miejscu chłodu';
+
+  @override
+  String get badgesLogPassword => 'Hasło questu';
+
+  @override
+  String badgesLogBadge(String name) {
+    return 'Odznaka: $name';
+  }
+
+  @override
+  String get badgesLogReport => 'Zatwierdzone zgłoszenie';
+
+  @override
+  String get badgesLoadError => 'Nie udało się wczytać punktów';
+
+  @override
+  String gamePointsToast(int points) {
+    return '+$points pkt';
+  }
+
+  @override
+  String gameRoutePointsToast(int points) {
+    return '+$points pkt za trasę w cieniu';
+  }
+
+  @override
+  String get gameHeatNoPoints =>
+      'W trybie upału trasy z wyjściem 11:00–17:00 nie dają punktów. Wybierz poranek lub wieczór.';
 }

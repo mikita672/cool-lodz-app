@@ -10,6 +10,8 @@ import '../../app/senior_mode.dart';
 import '../../app/theme.dart';
 import '../../core/api/api_client.dart';
 import '../../core/api/api_providers.dart';
+import '../../core/game/game_config.dart';
+import '../../core/game/game_rules.dart';
 import '../../core/location/location_service.dart';
 import '../../core/models/models.dart';
 import '../../core/storage/offline_cache.dart';
@@ -23,8 +25,10 @@ import '../../shared/widgets/error_state.dart';
 import '../../shared/widgets/offline_banner.dart';
 import '../../shared/widgets/route_variant_card.dart' as ds;
 import '../../shared/widgets/skeleton.dart';
-import '../auth/data/auth_repository.dart';
+import '../achievements/badge_info.dart';
 import '../cool_places/data/places_providers.dart';
+import '../game/data/game_config_repository.dart';
+import '../game/game_service.dart';
 import '../profile/data/comfort_profile_provider.dart';
 import 'data/google_maps.dart';
 import 'data/route_history_repository.dart';
@@ -74,7 +78,7 @@ class _RouteResultScreenState extends ConsumerState<RouteResultScreen> {
   Future<void> _go(RouteRequest request, RouteVariant variant) async {
     final l10n = AppLocalizations.of(context);
     final messenger = ScaffoldMessenger.of(context);
-    unawaited(_record(request, variant));
+    final award = _record(request, variant);
     final ok = await widget
         .launch(GoogleMapsLink.walking(variant.geometry))
         .catchError((Object _) => false);
@@ -83,19 +87,33 @@ class _RouteResultScreenState extends ConsumerState<RouteResultScreen> {
         ..hideCurrentSnackBar()
         ..showSnackBar(SnackBar(content: Text(l10n.routeMapsError)));
     }
+    // Shown when the user is back from Google Maps.
+    final result = await award;
+    if (result == null || !mounted) return;
+    final routePoints = result.pointsFor(PointsType.route);
+    final heatBlocked =
+        variant.shadeShare >= GameConfig.shadedRouteMinShade &&
+        GameRules.isHeatBlocked(request.datetime, ref.read(heatLevelProvider));
+    await showAwardFeedback(
+      context,
+      result,
+      message: routePoints > 0
+          ? l10n.gameRoutePointsToast(routePoints)
+          : heatBlocked
+          ? l10n.gameHeatNoPoints
+          : null,
+    );
   }
 
-  /// «Prowadź» counts the route (Q-08): it goes to `users/{uid}/routes`.
-  Future<void> _record(RouteRequest request, RouteVariant variant) async {
-    final uid = ref.read(authRepositoryProvider).currentUser?.uid;
-    if (uid == null) return;
+  /// «Prowadź» counts the route (Q-08): it goes to `users/{uid}/routes` and
+  /// through the points and badges rules.
+  Future<GameAward?> _record(RouteRequest request, RouteVariant variant) async {
     final to = ref.read(routePlanProvider).to;
     final place = to is PointEndpoint ? to.place : null;
     try {
-      await ref
-          .read(routeHistoryRepositoryProvider)
-          .add(
-            uid,
+      return await ref
+          .read(gameServiceProvider)
+          .routeStarted(
             StartedRoute(
               from: request.from,
               to: request.to,
@@ -107,8 +125,8 @@ class _RouteResultScreenState extends ConsumerState<RouteResultScreen> {
             ),
           );
     } catch (e) {
-      // Offline writes are queued by Firestore; anything else is logged.
       debugPrint('Recording the route failed: $e');
+      return null;
     }
   }
 
