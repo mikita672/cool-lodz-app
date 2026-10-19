@@ -30,6 +30,9 @@ abstract final class AppColors {
   /// Green layer on the map: green at 30 % opacity.
   static const greenLayer = Color(0x4D2E8B57);
 
+  /// Sunny part of the ShadeBar track: sun at 35 % opacity.
+  static const sunTrack = Color(0x59F28C28);
+
   static Color heat(int level) => switch (level) {
     1 => heat1,
     2 => heat2,
