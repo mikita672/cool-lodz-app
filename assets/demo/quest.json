@@ -1,0 +1,13 @@
+{
+  "questId": "chlodne-haslo-2026",
+  "password": "CHŁODNO",
+  "places": [
+    {"placeId": "cool-002", "letter": "C", "order": 1},
+    {"placeId": "cool-007", "letter": "H", "order": 2},
+    {"placeId": "cool-006", "letter": "Ł", "order": 3},
+    {"placeId": "cool-017", "letter": "O", "order": 4},
+    {"placeId": "cool-005", "letter": "D", "order": 5},
+    {"placeId": "cool-001", "letter": "N", "order": 6},
+    {"placeId": "cool-003", "letter": "O", "order": 7}
+  ]
+}
