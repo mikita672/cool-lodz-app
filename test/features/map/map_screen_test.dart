@@ -335,6 +335,12 @@ void main() {
     // Tomorrow, then 15:00 from the hourly strip (rain, wind).
     await tester.tap(find.byKey(const Key('time-wheel-day-1')));
     await tester.pumpAndSettle();
+    // The strip opens near the current hour: back to midnight first.
+    await tester.drag(
+      find.byKey(const Key('time-wheel-strip')),
+      const Offset(3000, 0),
+    );
+    await tester.pumpAndSettle();
     await tester.scrollUntilVisible(
       find.byKey(const Key('time-wheel-strip-15')),
       200,
@@ -343,6 +349,8 @@ void main() {
         matching: find.byType(Scrollable),
       ),
     );
+    await tester.ensureVisible(find.byKey(const Key('time-wheel-strip-15')));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('time-wheel-strip-15')));
     await tester.pumpAndSettle();
     expect(find.textContaining('Deszcz'), findsWidgets);
