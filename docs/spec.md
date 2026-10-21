@@ -130,6 +130,7 @@ S07 «Wynik trasy» is highlighted — the app exists for its sake and the demo 
 - Map of Łódź, centred on the user, or on Śródmieście if location is off.
 - At the top, the field «Dokąd idziesz?» → opens S06.
 - A row of filter chips: Cień, Zieleń, Cisza, Powietrze, Woda, Miejsca chłodu. An active chip shows its layer; at most 2 fill layers (cień, zieleń, cisza, powietrze) at once, plus any point layers.
+- «Ryzyko upałowe dziś» chip (low / moderate / high / very high): the rest of today's peak feels-like temperature from Open-Meteo on the UTCI heat-stress steps (26 / 32 / 38 °C, seniors 2 °C lower), never below the IMGW warning's level. The details show the feels-like now and at the peak, the hottest hours, UV (WHO category), an asphalt estimate, advice for the profile and «Źle się czujesz? Sprawdź objawy». With «Chodzę z psem» (Profil) a paw icon and warning appear from 45 °C asphalt (52 °C: too hot), also on S07.
 - Shade layer: semi-transparent blue fill; above the map a time label «Cień o 14:30» with the weather icon and a button to change the time. The time is picked like an alarm clock: day chips (today + 7 days), hour and minute wheels (5-minute steps), the weather of the chosen time (sky icon, temperature, wind, heat, rain chance) and an hourly strip with icons.
 - Points: miejsca chłodu (snowflake), water (drop), benches (only at zoom ≥ 17).
 - If a heat alert is active — a banner at the top «Ostrzeżenie przed upałem, stopień 2» (colour by level); tapping it opens S14.
@@ -150,6 +151,7 @@ S07 «Wynik trasy» is highlighted — the app exists for its sake and the demo 
 - Bottom sheet with three cards: **Najkrótsza**, **Zacieniona**, **Kompromis**. On a card: time (min), length (km), shade share (%, large, with a bar), «+4 min względem najkrótszej», icons for stops on the way (miejsca chłodu, water).
 - Kompromis is selected by default; for the Senior profile — Zacieniona.
 - (S) Slider «Najlepsza pora wyjścia»: hours 8:00–20:00, with a mini chart of the selected variant's shade share below it.
+- «Udostępnij trasę» on S07: from, to, departure, arrival, minutes, shade share and a Google Maps walking link through the share sheet.
 - «Kiedy najlepiej iść?» on S06: up to three departures (an hour apart) ranked by shade on the walk, the weather (heat over 26 °C, rain, storm, wind, darkness count against) and opening hours (the destination when it is a cool place, open cool places on the way). A tap sets the departure. The departure time uses the same alarm-style picker as the shade.
 - Button «Prowadź» opens the route in Google Maps (navigation is out of scope); button «Zapisz».
 - States: loading (card skeleton), route not found, outside the shade calculation area («Dla tego obszaru cień jest przybliżony»).
@@ -212,6 +214,7 @@ S07 «Wynik trasy» is highlighted — the app exists for its sake and the demo 
 - Items: Mój profil komfortu, Powiadomienia, Zgody i prywatność, Polityka prywatności, O aplikacji i źródła danych, Wyloguj, Usuń konto.
 - «Usuń konto»: confirmation by entering the password; deletes the user and all their documents.
 - «O aplikacji»: version (5 taps → demo mode switch), data sources and OSM attribution.
+- «Objawy przegrzania» (Profil, S14, heat risk details): five yes/no questions; a heatstroke red flag (confusion, fainting, hot dry skin) → «Zadzwoń 112» with first aid; heat exhaustion signs → the nearest open cool place and 112 if no improvement in 30 min. Not a diagnosis.
 - «Alarm upałowy» (opt-in): while it is hot (IMGW heat warning, or ≥ 28 °C / feels like ≥ 30 °C from Open-Meteo; «Tylko w upał» can be switched off), the phone watches its location. After walking somewhere (≥ 100 m in the 10 min before) and staying within 40 m for the set time (3–15 min, default 7, Senior 5), it asks «Wszystko w porządku?» on a full-screen alarm over the lock screen. No answer: after 30 s the siren plays at half volume (alarm stream, works in silent mode), after another 30 s at full volume with the flashlight blinking, and an SMS with the location goes from the user's own SIM to up to 3 trusted contacts. The alarm screen then tells passers-by what to do in heatstroke and has a big «Zadzwoń 112» button. No checks at home or at cool places; «OK» silences the same stop for 30 min; «Potrzebuję pomocy» goes straight to the full alarm. The app never calls 112 by itself. «Przetestuj alarm» runs the whole check in 5-second steps without the SMS.
 
 ## Design system
@@ -325,6 +328,11 @@ Ambasador (referral code) and Wspólny spacer are kolejne kroki.
 - on S05, S10 and S14 a banner with a link to the official zalecenia.
 
 **Known limitation:** without Cloud Functions the client awards points, and the Firestore rules only limit the size of the increment. This is acceptable for the competition; server-side validation is in kolejne kroki.
+
+### Weekly challenge and impact (added 22.10)
+
+- «Wyzwanie tygodnia» on S10: one goal per ISO week in rotation — 3 shaded routes, 2 quest places, 5 km, 2 walks before 10:00 or from 19:00, 2 routes past a water point — counted from `users/{uid}/routes` and the scan entries. Completing it pays +50 once (`pointsLog` type `challenge`, `refId` = the week). `config/game.challenge` (a kind name) picks one for a demo; demo mode needs 1.
+- «Twój wpływ» on S12: walks, distance, minutes in shade, sun avoided compared with the shortest walk at the same time, water points on the way, quest places and CO₂ a car would have emitted (0.17 kg/km). Routes store `duration_s`, `shortestSunShare` and `waterStops` for it.
 
 ## Data
 

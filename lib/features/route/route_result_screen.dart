@@ -14,12 +14,14 @@ import '../../core/api/api_providers.dart';
 import '../../core/clock.dart';
 import '../../core/game/game_config.dart';
 import '../../core/game/game_rules.dart';
+import '../../core/heat/heat_risk.dart';
 import '../../core/location/location_service.dart';
 import '../../core/models/models.dart';
 import '../../core/storage/offline_cache.dart';
 import '../../core/warsaw_time.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/map/base_map.dart';
+import '../../shared/share.dart';
 import '../../shared/widgets/app_button.dart';
 import '../../shared/widgets/app_icons.dart';
 import '../../shared/widgets/app_toast.dart';
@@ -33,10 +35,12 @@ import '../cool_places/data/places_providers.dart';
 import '../cool_places/place_sheet.dart';
 import '../game/data/game_config_repository.dart';
 import '../game/game_service.dart';
+import '../heat_risk/data/heat_risk_providers.dart';
 import '../profile/data/comfort_profile_provider.dart';
 import 'data/google_maps.dart';
 import 'data/route_history_repository.dart';
 import 'data/route_plan.dart';
+import 'data/route_share.dart';
 import 'route_plan_screen.dart';
 
 /// S07 Wynik trasy: three variants on the map, cards to compare them,
@@ -121,6 +125,25 @@ class _RouteResultScreenState extends ConsumerState<RouteResultScreen> {
         orderedVariants(response).first;
   }
 
+  /// «Udostępnij trasę»: from, to, departure, arrival, shade and a Google
+  /// Maps link, through the share sheet.
+  Future<void> _share(RouteRequest request, RouteVariant variant) async {
+    final l10n = AppLocalizations.of(context);
+    final departure = _departure(request);
+    final shared = await ref.read(shareTextProvider)(
+      routeShareText(
+        request: request,
+        variant: variant,
+        departure: departure,
+        shadeShare: 1 - _sunShareAt(variant, departure),
+        now: ref.read(clockProvider)(),
+        l10n: l10n,
+      ),
+      title: l10n.routeShare,
+    );
+    if (!shared && mounted) showAppToast(context, l10n.routeShareCopied);
+  }
+
   Future<void> _go(RouteRequest request, RouteVariant variant) async {
     if (_going || variant.geometry.length < 2) return;
     _going = true;
@@ -179,6 +202,8 @@ class _RouteResultScreenState extends ConsumerState<RouteResultScreen> {
             to.point.lon == request.to.lon
         ? to.place
         : null;
+    // «Twój wpływ»: the sun the shortest walk would have had.
+    final shortest = ref.read(routeResultProvider).value?.shortest;
     try {
       return await ref
           .read(gameServiceProvider)
@@ -191,6 +216,13 @@ class _RouteResultScreenState extends ConsumerState<RouteResultScreen> {
               sunShare: _sunShareAt(variant, startedAt),
               distanceM: variant.distanceM,
               endPlaceType: place?.category?.name,
+              durationS: variant.durationS,
+              shortestSunShare: shortest == null
+                  ? null
+                  : _sunShareAt(shortest, startedAt),
+              waterStops: variant.stops
+                  .where((s) => s.type == StopType.water)
+                  .length,
             ),
           );
     } catch (e) {
@@ -277,6 +309,15 @@ class _RouteResultScreenState extends ConsumerState<RouteResultScreen> {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
+        actions: [
+          if (body is _Result && request != null && response != null)
+            IconButton(
+              key: const Key('route-share'),
+              tooltip: l10n.routeShare,
+              icon: const Icon(Icons.share_rounded),
+              onPressed: () => _share(request, _selected(response)),
+            ),
+        ],
       ),
       body: body,
     );
@@ -373,6 +414,10 @@ class _Result extends ConsumerWidget {
     int number(RouteVariant v) => alternatives.indexOf(v) + 1;
     final shortest = response.shortest;
     final now = DateTime.now();
+    // «Chodzę z psem»: how hot the asphalt is at the departure.
+    final asphalt = ref.watch(walksWithDogProvider)
+        ? ref.watch(asphaltAtProvider(departure ?? request.datetime)).value
+        : null;
 
     final all = [for (final v in response.variants) ...v.geometry];
     final stops = [
@@ -493,6 +538,18 @@ class _Result extends ConsumerWidget {
                         text: w.sunStrength <= 0.01
                             ? l10n.routeNoSun
                             : l10n.routeCloudy,
+                      ),
+                    ],
+                    if (asphalt != null && asphalt >= asphaltCaution) ...[
+                      if (response.isApproximate ||
+                          (response.weather?.littleSun ?? false))
+                        const SizedBox(height: AppSizes.s8),
+                      _Notice(
+                        key: const Key('route-paws'),
+                        icon: Icons.pets_rounded,
+                        text: asphalt >= asphaltDanger
+                            ? l10n.routePawWarning(asphalt.round())
+                            : l10n.routePawCaution(asphalt.round()),
                       ),
                     ],
                   ],
@@ -868,9 +925,14 @@ class _Problem extends ConsumerWidget {
 }
 
 class _Notice extends StatelessWidget {
-  const _Notice({super.key, required this.text});
+  const _Notice({
+    super.key,
+    required this.text,
+    this.icon = Icons.info_outline_rounded,
+  });
 
   final String text;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) => Semantics(
@@ -887,7 +949,7 @@ class _Notice extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(Icons.info_outline_rounded, size: 18),
+          Icon(icon, size: 18),
           const SizedBox(width: AppSizes.s8),
           Expanded(child: Text(text, style: AppTextStyles.label)),
         ],

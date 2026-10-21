@@ -124,12 +124,23 @@ service cloud.firestore {
           && incoming().createdAt == request.time;
       }
 
-      // Routes started with "Prowadź" (Q-08), used for badges.
+      // Routes started with "Prowadź" (Q-08), used for badges, the weekly
+      // challenge and «Twój wpływ» (duration_s, shortestSunShare and
+      // waterStops are optional: older routes lack them).
       match /routes/{routeId} {
         allow read, delete: if isOwner(uid);
         allow create: if isOwner(uid)
           && incoming().keys().hasOnly(['from', 'to', 'departAt', 'variant',
-              'sunShare', 'distance_m', 'endPlaceType', 'createdAt']);
+              'sunShare', 'distance_m', 'endPlaceType', 'createdAt',
+              'duration_s', 'shortestSunShare', 'waterStops'])
+          && (!('duration_s' in incoming())
+              || (incoming().duration_s is int && incoming().duration_s >= 0))
+          && (!('shortestSunShare' in incoming())
+              || (incoming().shortestSunShare is number
+                  && incoming().shortestSunShare >= 0
+                  && incoming().shortestSunShare <= 1))
+          && (!('waterStops' in incoming())
+              || (incoming().waterStops is int && incoming().waterStops >= 0));
       }
     }
 

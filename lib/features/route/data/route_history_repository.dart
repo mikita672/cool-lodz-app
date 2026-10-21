@@ -19,6 +19,9 @@ class StartedRoute {
     required this.sunShare,
     required this.distanceM,
     this.endPlaceType,
+    this.durationS,
+    this.shortestSunShare,
+    this.waterStops,
   });
 
   final RoutePoint from;
@@ -34,6 +37,16 @@ class StartedRoute {
   /// address.
   final String? endPlaceType;
 
+  /// Walking time of the chosen variant.
+  final int? durationS;
+
+  /// The shortest variant's sun share at [departAt] («Twój wpływ»: sun
+  /// avoided).
+  final double? shortestSunShare;
+
+  /// Drinking water points along the way.
+  final int? waterStops;
+
   double get shadeShare => 1 - sunShare;
 
   Map<String, Object?> toFirestore() => {
@@ -45,6 +58,9 @@ class StartedRoute {
     RouteFields.distanceM: distanceM,
     RouteFields.endPlaceType: endPlaceType,
     RouteFields.createdAt: FieldValue.serverTimestamp(),
+    RouteFields.durationS: ?durationS,
+    RouteFields.shortestSunShare: ?shortestSunShare,
+    RouteFields.waterStops: ?waterStops,
   };
 
   static Map<String, Object?> _point(RoutePoint p) => {

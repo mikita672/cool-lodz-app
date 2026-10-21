@@ -30,6 +30,12 @@ A list for the competition documentation (MD hands it to Mikita Kutsenka). The d
 - The alert push is sent manually from the Firebase console (a test message); there is no automatic sending based on IMGW data — that needs a server side.
 - Heat mode for the demo is turned on with the `config/game.heatOverride` field.
 
+**Heat risk, pavement, symptoms**
+- The heat risk uses the feels-like temperature on UTCI-like steps, not a full UTCI calculation; the asphalt temperature is an estimate from air temperature and sun (no surface sensors).
+- The symptom check is fixed advice from NHS/GIS guidance, not a diagnosis.
+- «Twój wpływ» counts only walks started with «Prowadź»; routes saved before 22.10 estimate their time from the distance and have no «Mniej słońca». CO₂ assumes an average car.
+- The weekly challenge, like all points, is awarded by the client (no Cloud Functions).
+
 **Alarm upałowy**
 - Android only, in the APK from GitHub releases: Google Play allows SMS sending and background location only after a review.
 - It must keep running in the background: swiping the app away from recent apps or aggressive battery savers (Xiaomi, Huawei, some Samsungs) can stop it. The settings screen lists what to allow; the service restarts after the system kills it, but not after a reboot (open the app once).

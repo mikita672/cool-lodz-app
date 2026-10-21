@@ -1938,6 +1938,419 @@ class AppLocalizationsPl extends AppLocalizations {
   String get heatNativeSmsNoPlace => 'Lokalizacja nieznana.';
 
   @override
+  String get heatRiskTitle => 'Ryzyko upałowe dziś';
+
+  @override
+  String heatRiskChip(String level) {
+    return 'Ryzyko upałowe: $level';
+  }
+
+  @override
+  String heatRiskChipTemp(String level, int temp) {
+    return 'Ryzyko upałowe: $level · $temp°C';
+  }
+
+  @override
+  String get heatRiskLow => 'niskie';
+
+  @override
+  String get heatRiskModerate => 'umiarkowane';
+
+  @override
+  String get heatRiskHigh => 'wysokie';
+
+  @override
+  String get heatRiskExtreme => 'bardzo wysokie';
+
+  @override
+  String heatRiskFeelsNow(int temp) {
+    return 'Odczuwalna teraz: $temp°C';
+  }
+
+  @override
+  String heatRiskPeak(int temp, String time) {
+    return 'Najwyżej $temp°C około $time';
+  }
+
+  @override
+  String heatRiskHours(String from, String to) {
+    return 'Najgorętsze godziny: $from–$to';
+  }
+
+  @override
+  String heatRiskUv(int uv, String category) {
+    return 'UV do $uv: $category';
+  }
+
+  @override
+  String get heatRiskUvLow => 'niski';
+
+  @override
+  String get heatRiskUvModerate => 'umiarkowany';
+
+  @override
+  String get heatRiskUvHigh => 'wysoki';
+
+  @override
+  String get heatRiskUvVeryHigh => 'bardzo wysoki';
+
+  @override
+  String get heatRiskUvExtreme => 'ekstremalny';
+
+  @override
+  String get heatRiskUvAdvice =>
+      'Krem z filtrem, nakrycie głowy i okulary przeciwsłoneczne.';
+
+  @override
+  String get heatRiskUvAdviceHigh =>
+      'Unikaj słońca w południe, krem z filtrem SPF 50.';
+
+  @override
+  String heatRiskAsphalt(int temp) {
+    return 'Asfalt w słońcu: do ok. $temp°C';
+  }
+
+  @override
+  String get heatRiskAdviceTitle => 'Co robić';
+
+  @override
+  String get heatRiskAdviceLow => 'Dobry czas na spacer. Miej przy sobie wodę.';
+
+  @override
+  String get heatRiskAdviceWater =>
+      'Pij wodę regularnie, nawet bez pragnienia.';
+
+  @override
+  String get heatRiskAdviceShade =>
+      'Wybieraj trasy w cieniu i rób przerwy w miejscach chłodu.';
+
+  @override
+  String get heatRiskAdviceAvoid =>
+      'W najgorętszych godzinach unikaj wysiłku i słońca.';
+
+  @override
+  String get heatRiskAdviceClothes => 'Lekkie, jasne ubranie i nakrycie głowy.';
+
+  @override
+  String get heatRiskAdviceOnlyIfNeeded =>
+      'Wychodź tylko, jeśli musisz: rano albo wieczorem.';
+
+  @override
+  String get heatRiskAdviceCheckOthers =>
+      'Zadzwoń do bliskich seniorów: czy mają chłodno i wodę?';
+
+  @override
+  String get heatRiskAdviceSenior =>
+      'Seniorzy: zostań w chłodnym miejscu w najgorętszych godzinach, poproś kogoś o telefon w ciągu dnia i włącz alarm upałowy w Profilu.';
+
+  @override
+  String get heatRiskAdviceTourist =>
+      'W południe zwiedzaj muzea i miejsca z klimatyzacją, a spaceruj rano i wieczorem.';
+
+  @override
+  String get heatRiskPawCaution =>
+      'Łapy psa: przyłóż dłoń do asfaltu na 7 sekund. Jeśli parzy, idź po trawie i w cieniu.';
+
+  @override
+  String heatRiskPawDanger(int temp) {
+    return 'Za gorąco dla łap psa (asfalt ok. $temp°C). Wychodź rano lub wieczorem, chodź po trawie i zabierz wodę dla psa.';
+  }
+
+  @override
+  String get heatRiskPawOk => 'Łapy psa: asfalt nie powinien parzyć.';
+
+  @override
+  String get heatRiskSymptoms => 'Źle się czujesz? Sprawdź objawy';
+
+  @override
+  String get heatRiskSource =>
+      'Prognoza: Open-Meteo. Progi wg skali UTCI, dla seniorów o 2°C niższe. Temperatura asfaltu to szacunek.';
+
+  @override
+  String get heatRiskDemo => 'Tryb demo: przykładowy upalny dzień.';
+
+  @override
+  String get heatRiskAlertOnly => 'Według ostrzeżenia IMGW (brak prognozy).';
+
+  @override
+  String get settingsDog => 'Chodzę z psem';
+
+  @override
+  String get settingsDogBody => 'Ostrzeżenia o gorącym asfalcie dla łap';
+
+  @override
+  String routePawWarning(int temp) {
+    return 'Asfalt ok. $temp°C: za gorąco dla łap psa. Wybierz trasę w cieniu i idź po trawie.';
+  }
+
+  @override
+  String routePawCaution(int temp) {
+    return 'Asfalt ok. $temp°C: sprawdź dłonią, czy nie parzy łap psa.';
+  }
+
+  @override
+  String get routeShare => 'Udostępnij trasę';
+
+  @override
+  String get routeShareNow => 'teraz';
+
+  @override
+  String get routeShareDestination => 'cel';
+
+  @override
+  String routeShareText(
+    String from,
+    String to,
+    String when,
+    String eta,
+    int minutes,
+    int shade,
+    String link,
+  ) {
+    return 'Idę pieszo: $from → $to.\nWyjście: $when, na miejscu ok. $eta ($minutes min, $shade% w cieniu).\nTrasa: $link\nCool Łódź';
+  }
+
+  @override
+  String get routeShareCopied =>
+      'Skopiowano opis trasy. Wklej go w wiadomości.';
+
+  @override
+  String get impactTitle => 'Twój wpływ';
+
+  @override
+  String get impactEmpty =>
+      'Rozpocznij spacer przyciskiem «Prowadź», a tu zobaczysz, ile słońca omijasz i ile CO₂ oszczędzasz.';
+
+  @override
+  String get impactWalks => 'Spacery';
+
+  @override
+  String get impactDistance => 'Dystans';
+
+  @override
+  String get impactShade => 'W cieniu';
+
+  @override
+  String get impactSunAvoided => 'Mniej słońca';
+
+  @override
+  String get impactWater => 'Woda po drodze';
+
+  @override
+  String get impactCool => 'Miejsca chłodu';
+
+  @override
+  String get impactCo2 => 'CO₂ mniej niż autem';
+
+  @override
+  String impactMinutes(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String impactKm(String km) {
+    return '$km km';
+  }
+
+  @override
+  String impactKg(String kg) {
+    return '$kg kg';
+  }
+
+  @override
+  String get impactNote =>
+      'Z tras rozpoczętych przyciskiem «Prowadź». «Mniej słońca»: w porównaniu z najkrótszą trasą o tej samej porze. CO₂: średnie auto, 0,17 kg/km.';
+
+  @override
+  String get symptomsTitle => 'Objawy przegrzania';
+
+  @override
+  String get symptomsIntro =>
+      'Odpowiedz za siebie albo za osobę, której pomagasz. Pięć pytań, to nie jest diagnoza.';
+
+  @override
+  String get symptomsQ1 =>
+      'Czy jest splątanie, dziwne zachowanie albo trudność z mówieniem?';
+
+  @override
+  String get symptomsQ2 =>
+      'Czy było omdlenie, utrata przytomności albo drgawki?';
+
+  @override
+  String get symptomsQ3 =>
+      'Czy skóra jest gorąca i sucha (brak potu), mimo upału?';
+
+  @override
+  String get symptomsQ4 =>
+      'Czy boli głowa, kręci się w głowie albo są nudności lub wymioty?';
+
+  @override
+  String get symptomsQ5 =>
+      'Czy są skurcze mięśni, duże osłabienie albo bardzo silne pragnienie?';
+
+  @override
+  String get symptomsYes => 'Tak';
+
+  @override
+  String get symptomsNo => 'Nie';
+
+  @override
+  String get symptomsAnswerAll =>
+      'Odpowiedz na wszystkie pytania, aby zobaczyć, co robić.';
+
+  @override
+  String get symptomsUrgentTitle =>
+      'Możliwy udar cieplny. Zadzwoń pod 112 teraz.';
+
+  @override
+  String get symptomsUrgentLead => 'Do przyjazdu pomocy:';
+
+  @override
+  String get symptomsExhaustionTitle =>
+      'Możliwe wyczerpanie cieplne. Idź do chłodu teraz.';
+
+  @override
+  String get symptomsExhaustion1 => 'Usiądź lub połóż się w chłodnym miejscu.';
+
+  @override
+  String get symptomsExhaustion2 => 'Pij wodę małymi łykami.';
+
+  @override
+  String get symptomsExhaustion3 =>
+      'Chłodź skórę: mokry ręcznik albo woda na kark i ręce.';
+
+  @override
+  String get symptomsExhaustion4 =>
+      'Jeśli po 30 minutach nie ma poprawy albo jest gorzej, dzwoń pod 112.';
+
+  @override
+  String get symptomsOkTitle => 'Brak typowych objawów przegrzania.';
+
+  @override
+  String get symptomsOkBody =>
+      'Pij wodę, odpoczywaj w cieniu i obserwuj samopoczucie. Gdy coś się zmieni, sprawdź jeszcze raz.';
+
+  @override
+  String get symptomsNearest => 'Najbliższe otwarte miejsce chłodu';
+
+  @override
+  String get symptomsNoPlace =>
+      'Nie znam Twojej lokalizacji. Zobacz listę miejsc chłodu.';
+
+  @override
+  String get symptomsShowPlaces => 'Miejsca chłodu';
+
+  @override
+  String get symptomsDisclaimer =>
+      'To nie jest porada medyczna ani diagnoza. W razie wątpliwości dzwoń pod 112. Na podstawie zaleceń NHS i GIS dotyczących udaru cieplnego.';
+
+  @override
+  String get settingsSymptoms => 'Objawy przegrzania';
+
+  @override
+  String get settingsSymptomsBody =>
+      '5 pytań: co robić, gdy źle się czujesz w upale';
+
+  @override
+  String get challengeTitle => 'Wyzwanie tygodnia';
+
+  @override
+  String challengeShadedRoutes(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Przejdź $count tras z co najmniej 60% cienia',
+      many: 'Przejdź $count tras z co najmniej 60% cienia',
+      few: 'Przejdź $count trasy z co najmniej 60% cienia',
+      one: 'Przejdź 1 trasę z co najmniej 60% cienia',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String challengeCoolScans(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Odwiedź $count miejsc chłodu z questu (kody QR)',
+      many: 'Odwiedź $count miejsc chłodu z questu (kody QR)',
+      few: 'Odwiedź $count miejsca chłodu z questu (kody QR)',
+      one: 'Odwiedź 1 miejsce chłodu z questu (kod QR)',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String challengeDistance(int count) {
+    return 'Przejdź pieszo $count km z przyciskiem «Prowadź»';
+  }
+
+  @override
+  String challengeCoolHours(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count spacerów rano (przed 10:00) albo wieczorem (od 19:00)',
+      many: '$count spacerów rano (przed 10:00) albo wieczorem (od 19:00)',
+      few: '$count spacery rano (przed 10:00) albo wieczorem (od 19:00)',
+      one: '1 spacer rano (przed 10:00) albo wieczorem (od 19:00)',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String challengeWaterRoutes(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count tras z punktem z wodą po drodze',
+      many: '$count tras z punktem z wodą po drodze',
+      few: '$count trasy z punktem z wodą po drodze',
+      one: '1 trasa z punktem z wodą po drodze',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String challengeProgress(int done, int target) {
+    return '$done z $target';
+  }
+
+  @override
+  String challengeBonus(int points) {
+    return '+$points pkt';
+  }
+
+  @override
+  String challengeDaysLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'zostało $count dni',
+      many: 'zostało $count dni',
+      few: 'zostały $count dni',
+      one: 'został 1 dzień',
+      zero: 'ostatni dzień',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String challengeDone(int points) {
+    return 'Ukończone! +$points pkt';
+  }
+
+  @override
+  String get challengeHint =>
+      'Liczą się trasy rozpoczęte przyciskiem «Prowadź» i skany kodów QR w tym tygodniu (od poniedziałku).';
+
+  @override
+  String get challengeUnlocked => 'Wyzwanie tygodnia ukończone';
+
+  @override
+  String get badgesLogChallenge => 'Wyzwanie tygodnia';
+
+  @override
   String get placeThu => 'czw.';
 
   @override

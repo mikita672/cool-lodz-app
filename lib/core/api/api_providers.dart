@@ -1,10 +1,12 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../clock.dart';
 import '../storage/offline_cache.dart';
 import '../storage/preferences.dart';
 import 'api_client.dart';
 import 'demo_api_client.dart';
+import 'demo_weather.dart';
 import 'fallback_api_client.dart';
 import 'live/live_api_client.dart';
 import 'live/weather.dart';
@@ -127,10 +129,13 @@ final weatherClientProvider = Provider<OpenMeteoClient>(
   (ref) => OpenMeteoClient.create(),
 );
 
-/// The Open-Meteo forecast for the time pickers' weather; null in demo
-/// mode (offline and repeatable) or when it cannot be had.
-final forecastProvider = FutureProvider<WeatherForecast?>((ref) {
-  if (ref.watch(isDemoModeEffectiveProvider)) return null;
+/// The Open-Meteo forecast for the time pickers' weather and the heat risk
+/// card; in demo mode a bundled hot July day ([DemoWeather], offline and
+/// repeatable). Null when it cannot be had.
+final forecastProvider = FutureProvider<WeatherForecast?>((ref) async {
+  if (ref.watch(isDemoModeEffectiveProvider)) {
+    return DemoWeather.forecast(ref.read(clockProvider)());
+  }
   return ref.watch(weatherClientProvider).forecastOrNull();
 }, retry: noRetry);
 

@@ -1,5 +1,6 @@
 import 'package:cool_lodz/core/api/api_providers.dart';
 import 'package:cool_lodz/core/clock.dart';
+import 'package:cool_lodz/core/game/challenges.dart';
 import 'package:cool_lodz/core/game/game_rules.dart';
 import 'package:cool_lodz/core/models/models.dart';
 import 'package:cool_lodz/features/game/data/game_config_repository.dart';
@@ -119,6 +120,73 @@ void main() {
     expect(solved.points, 200);
     expect(repo.writes, [200]);
     expect((await game.passwordSolved('chlodne-haslo-2026')).points, 0);
+  });
+
+  test(
+    'the weekly challenge pays +50 once, with the event that ends it',
+    () async {
+      final prefs = await testPrefs();
+      final c = ProviderContainer.test(
+        overrides: [
+          ...appTestOverrides(
+            prefs: prefs,
+            game: repo,
+            settings: const GameSettings(challenge: 'shadedRoutes'),
+          ),
+          clockProvider.overrideWithValue(() => DateTime(2026, 7, 15, 12)),
+          isDemoModeEffectiveProvider.overrideWithValue(false),
+        ],
+      );
+      await settle(c);
+      final game = c.read(gameServiceProvider);
+      expect((await game.routeStarted(_route(hour: 9))).challenge, isNull);
+      expect((await game.routeStarted(_route(hour: 10))).challenge, isNull);
+      final third = await game.routeStarted(_route(hour: 11));
+      expect(third.challenge?.challenge.kind, ChallengeKind.shadedRoutes);
+      expect(
+        third.entries,
+        contains(
+          const PointsEntry(
+            type: PointsType.challenge,
+            points: 50,
+            refId: '2026-W29',
+          ),
+        ),
+      );
+      final fourth = await game.routeStarted(_route(hour: 12));
+      expect(fourth.challenge, isNull);
+      expect(
+        repo.log.where((e) => e.type == PointsType.challenge),
+        hasLength(1),
+      );
+      // Nothing left to pay.
+      expect((await game.syncChallenge()).points, 0);
+    },
+  );
+
+  test('a challenge completed without its bonus is paid on sync', () async {
+    final prefs = await testPrefs();
+    final c = ProviderContainer.test(
+      overrides: [
+        ...appTestOverrides(
+          prefs: prefs,
+          game: repo,
+          settings: const GameSettings(challenge: 'shadedRoutes'),
+        ),
+        clockProvider.overrideWithValue(() => DateTime(2026, 7, 15, 12)),
+        // Demo: one shaded route is enough.
+        isDemoModeEffectiveProvider.overrideWithValue(true),
+      ],
+    );
+    await settle(c);
+    // Stored earlier, when the bonus could not be written (offline).
+    repo.routes.add(('u1', _route(hour: 8)));
+    final game = c.read(gameServiceProvider);
+    final award = await game.syncChallenge();
+    // +50 for the challenge (and the missing Pierwszy krok badge).
+    expect(award.pointsFor(PointsType.challenge), 50);
+    expect(award.challenge?.target, 1);
+    expect((await game.syncChallenge()).points, 0);
   });
 
   test('signed out: nothing happens', () async {

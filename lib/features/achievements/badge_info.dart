@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../../app/theme.dart';
+import '../../core/game/challenges.dart';
 import '../../core/game/game_config.dart';
 import '../../core/game/game_rules.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/app_toast.dart';
 import '../../shared/widgets/badge_unlocked_dialog.dart';
 import '../game/game_service.dart';
+import '../quest/challenge_card.dart';
 
 /// Name, unlock condition, description, icon and colour of a badge.
 @immutable
@@ -96,6 +98,16 @@ Future<void> showAwardFeedback(
       context,
       message ?? l10n.gamePointsToast(points),
       kind: ToastKind.success,
+    );
+  }
+  if (award.challenge case final c? when context.mounted) {
+    await showBadgeUnlockedDialog(
+      context,
+      icon: challengeIcon(c.challenge.kind),
+      name: l10n.challengeUnlocked,
+      description: challengeText(c.challenge, c.target, l10n),
+      points: Challenge.bonus,
+      kicker: l10n.challengeTitle,
     );
   }
   for (final badge in GameBadge.values) {

@@ -10,6 +10,7 @@ import '../../shared/widgets/badge_tile.dart';
 import '../../shared/widgets/error_state.dart';
 import '../game/game_service.dart';
 import 'badge_info.dart';
+import 'impact_card.dart';
 
 /// S12 Odznaki i punkty: total points, the last 10 entries and the badge
 /// grid (3 per row; earned in colour, locked grey with the condition).
@@ -71,6 +72,8 @@ class BadgesView extends ConsumerWidget {
             ),
           ),
         ),
+        const SizedBox(height: AppSizes.s12),
+        const ImpactCard(),
         const SizedBox(height: AppSizes.s24),
         Semantics(
           header: true,
@@ -149,6 +152,7 @@ class BadgesView extends ConsumerWidget {
     PointsType.password => Icons.password_rounded,
     PointsType.badge => Icons.emoji_events_rounded,
     PointsType.report => Icons.flag_rounded,
+    PointsType.challenge => Icons.emoji_flags_rounded,
   };
 
   static String _logLabel(PointsEntry e, AppLocalizations l10n) =>
@@ -163,6 +167,7 @@ class BadgesView extends ConsumerWidget {
           null => e.refId ?? '',
         }),
         PointsType.report => l10n.badgesLogReport,
+        PointsType.challenge => l10n.badgesLogChallenge,
       };
 
   static String _formatAt(DateTime at) {

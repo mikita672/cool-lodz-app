@@ -1,21 +1,26 @@
 import 'package:cool_lodz/app/senior_mode.dart';
 import 'package:cool_lodz/app/theme.dart';
 import 'package:cool_lodz/core/api/api_client.dart';
+import 'package:cool_lodz/core/api/api_providers.dart';
+import 'package:cool_lodz/core/api/demo_weather.dart';
 import 'package:cool_lodz/core/api/reference_routes.dart';
 import 'package:cool_lodz/core/clock.dart';
 import 'package:cool_lodz/core/location/location_service.dart';
 import 'package:cool_lodz/core/models/models.dart';
 import 'package:cool_lodz/core/storage/offline_cache.dart';
+import 'package:cool_lodz/features/heat_risk/data/heat_risk_providers.dart';
 import 'package:cool_lodz/features/profile/data/comfort_profile.dart';
 import 'package:cool_lodz/features/profile/data/comfort_profile_provider.dart';
 import 'package:cool_lodz/features/route/data/google_maps.dart';
 import 'package:cool_lodz/features/route/data/route_plan.dart';
 import 'package:cool_lodz/features/route/route_result_screen.dart';
 import 'package:cool_lodz/l10n/app_localizations.dart';
+import 'package:cool_lodz/shared/share.dart';
 import 'package:cool_lodz/shared/widgets/route_variant_card.dart' as ds;
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
@@ -119,6 +124,7 @@ void main() {
     RoutePlan? plan,
     bool senior = false,
     Size size = const Size(400, 900),
+    List<Override> extra = const [],
   }) async {
     tester.view.physicalSize = size;
     tester.view.devicePixelRatio = 1;
@@ -132,6 +138,7 @@ void main() {
           location: location,
           game: history,
         ),
+        ...extra,
       ],
     );
     await container
@@ -236,6 +243,67 @@ void main() {
     expect(api.routeRequests.last.profile.id, ProfileId.tourist);
   });
 
+  testWidgets('a dog walker is warned about hot asphalt', (tester) async {
+    await prefs.setBool(WalksWithDog.prefsKey, true);
+    await pump(
+      tester,
+      extra: [
+        forecastProvider.overrideWith((ref) => DemoWeather.forecast(_now)),
+      ],
+    );
+    expect(find.byKey(const Key('route-paws')), findsOneWidget);
+    expect(find.textContaining('za gorąco dla łap psa'), findsOneWidget);
+  });
+
+  testWidgets('no paw warning without a dog', (tester) async {
+    await pump(
+      tester,
+      extra: [
+        forecastProvider.overrideWith((ref) => DemoWeather.forecast(_now)),
+      ],
+    );
+    expect(find.byKey(const Key('route-paws')), findsNothing);
+  });
+
+  testWidgets('«Udostępnij trasę» sends from, to, times, shade and a link', (
+    tester,
+  ) async {
+    final shared = <String>[];
+    await pump(
+      tester,
+      extra: [
+        shareTextProvider.overrideWithValue((text, {title}) async {
+          shared.add(text);
+          return true;
+        }),
+      ],
+    );
+    await tester.tap(find.byKey(const Key('route-share')));
+    await tester.pumpAndSettle();
+    expect(shared, hasLength(1));
+    final text = shared.single;
+    expect(text, startsWith('Idę pieszo: Manufaktura → '));
+    expect(text, contains('Wyjście: teraz, na miejscu ok. '));
+    expect(text, contains('% w cieniu)'));
+    expect(text, contains('https://www.google.com/maps/dir/?api=1'));
+    expect(text, contains('travelmode=walking'));
+  });
+
+  testWidgets('without a share sheet the text is copied', (tester) async {
+    await pump(
+      tester,
+      extra: [
+        shareTextProvider.overrideWithValue((text, {title}) async => false),
+      ],
+    );
+    await tester.tap(find.byKey(const Key('route-share')));
+    await tester.pump();
+    expect(
+      find.text('Skopiowano opis trasy. Wklej go w wiadomości.'),
+      findsOneWidget,
+    );
+  });
+
   testWidgets('tapping a card selects it', (tester) async {
     await pump(tester);
     await tester.tap(find.byKey(const Key('route-card-shortest')));
@@ -278,7 +346,14 @@ void main() {
       'distance_m',
       'endPlaceType',
       'createdAt',
+      'duration_s',
+      'shortestSunShare',
+      'waterStops',
     });
+    // «Twój wpływ»: the walk's time, the shortest one's sun, water on the way.
+    expect(route.durationS, greaterThan(0));
+    expect(route.shortestSunShare, greaterThan(route.sunShare));
+    expect(route.waterStops, isNotNull);
   });
 
   testWidgets('«Zapisz» keeps the route for offline use', (tester) async {

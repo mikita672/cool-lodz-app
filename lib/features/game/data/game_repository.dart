@@ -214,6 +214,10 @@ class FirestoreGameRepository implements GameRepository {
       departAt: departAt.toDate(),
       shadeShare: 1 - sun.toDouble(),
       endPlaceType: d[RouteFields.endPlaceType] as String?,
+      distanceM: (d[RouteFields.distanceM] as num?)?.toInt() ?? 0,
+      durationS: (d[RouteFields.durationS] as num?)?.toInt(),
+      shortestSunShare: (d[RouteFields.shortestSunShare] as num?)?.toDouble(),
+      waterStops: (d[RouteFields.waterStops] as num?)?.toInt() ?? 0,
     );
   }
 

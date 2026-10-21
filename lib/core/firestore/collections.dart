@@ -75,6 +75,11 @@ abstract final class RouteFields {
   static const distanceM = 'distance_m';
   static const endPlaceType = 'endPlaceType';
   static const createdAt = 'createdAt';
+
+  // «Twój wpływ» (optional, routes saved before 22.10.2026 lack them).
+  static const durationS = 'duration_s';
+  static const shortestSunShare = 'shortestSunShare';
+  static const waterStops = 'waterStops';
 }
 
 /// Fields of `visits/{visitId}` (see visitId()). `createdAt` must be the
@@ -133,6 +138,9 @@ abstract final class FirestoreReports {
 abstract final class GameConfigFields {
   static const heatOverride = 'heatOverride'; // 0–3
   static const activeQuestId = 'activeQuestId';
+
+  /// A ChallengeKind name: this week's challenge for a demo.
+  static const challenge = 'challenge';
 }
 
 /// ISO 8601 week id of [date]'s calendar day, e.g. `2026-W43`. Used for

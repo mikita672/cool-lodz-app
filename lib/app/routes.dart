@@ -20,6 +20,7 @@ abstract final class Routes {
   static const consentsSettings = '/profile/consents'; // S16 «Zgody»
   static const heatGuard = '/profile/heat-guard'; // «Alarm upałowy»
   static const heatCheck = '/heat-check'; // «Wszystko w porządku?»
+  static const symptoms = '/symptoms'; // heatstroke symptom check
   static const privacy = '/privacy'; // Polityka prywatności (S03, S16)
   static const debugComponents = '/debug/components'; // APP-06 showcase
 

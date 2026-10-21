@@ -17,6 +17,7 @@ import '../cool_places/place_sheet.dart';
 import '../game/data/game_config_repository.dart';
 import '../game/data/game_repository.dart';
 import '../game/game_service.dart';
+import 'challenge_card.dart';
 import 'data/quest_repository.dart';
 
 /// Pays today's visits that have no scan points yet (the award failed, or
@@ -70,6 +71,11 @@ class QuestView extends ConsumerWidget {
       final award = next.value;
       if (award != null && award.points > 0) showAwardFeedback(context, award);
     });
+    // A challenge completed earlier whose bonus is missing.
+    ref.listen(challengeSyncProvider, (_, next) {
+      final award = next.value;
+      if (award != null && award.points > 0) showAwardFeedback(context, award);
+    });
 
     final quest = questAsync.value;
     if (quest == null) {
@@ -106,6 +112,8 @@ class QuestView extends ConsumerWidget {
           _HeatHint(text: l10n.questHeatHint),
           const SizedBox(height: AppSizes.s12),
         ],
+        const ChallengeCard(),
+        const SizedBox(height: AppSizes.s12),
         Semantics(
           header: true,
           child: Text(l10n.questTitle, style: theme.textTheme.titleLarge),

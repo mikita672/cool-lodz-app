@@ -14,6 +14,7 @@ import '../auth/data/system_permissions.dart';
 import '../auth/data/user_profile_repository.dart';
 import '../game/game_service.dart';
 import '../heat_guard/data/heat_guard_settings.dart';
+import '../heat_risk/data/heat_risk_providers.dart';
 import '../leaderboard/data/ranking_repository.dart';
 import '../profile/data/comfort_profile_provider.dart';
 import '../profile/profile_select_screen.dart';
@@ -249,12 +250,28 @@ class ProfileTabScreen extends ConsumerWidget {
             trailing: const Icon(Icons.chevron_right_rounded),
             onTap: () => context.push(Routes.heatGuard),
           ),
+          ListTile(
+            key: const Key('settings-symptoms'),
+            leading: const Icon(Icons.medical_information_rounded),
+            title: Text(l10n.settingsSymptoms),
+            subtitle: Text(l10n.settingsSymptomsBody),
+            trailing: const Icon(Icons.chevron_right_rounded),
+            onTap: () => context.push(Routes.symptoms),
+          ),
           SwitchListTile(
             key: const Key('settings-senior'),
             secondary: const Icon(Icons.text_increase_rounded),
             title: Text(l10n.settingsSenior),
             value: profile.seniorMode,
             onChanged: (v) => _setSenior(context, ref, v),
+          ),
+          SwitchListTile(
+            key: const Key('settings-dog'),
+            secondary: const Icon(Icons.pets_rounded),
+            title: Text(l10n.settingsDog),
+            subtitle: Text(l10n.settingsDogBody),
+            value: ref.watch(walksWithDogProvider),
+            onChanged: (v) => ref.read(walksWithDogProvider.notifier).set(v),
           ),
           SwitchListTile(
             key: const Key('settings-push'),

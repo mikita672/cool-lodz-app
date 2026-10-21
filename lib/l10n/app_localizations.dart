@@ -3358,6 +3358,590 @@ abstract class AppLocalizations {
   /// **'Lokalizacja nieznana.'**
   String get heatNativeSmsNoPlace;
 
+  /// No description provided for @heatRiskTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ryzyko upałowe dziś'**
+  String get heatRiskTitle;
+
+  /// No description provided for @heatRiskChip.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ryzyko upałowe: {level}'**
+  String heatRiskChip(String level);
+
+  /// No description provided for @heatRiskChipTemp.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ryzyko upałowe: {level} · {temp}°C'**
+  String heatRiskChipTemp(String level, int temp);
+
+  /// No description provided for @heatRiskLow.
+  ///
+  /// In pl, this message translates to:
+  /// **'niskie'**
+  String get heatRiskLow;
+
+  /// No description provided for @heatRiskModerate.
+  ///
+  /// In pl, this message translates to:
+  /// **'umiarkowane'**
+  String get heatRiskModerate;
+
+  /// No description provided for @heatRiskHigh.
+  ///
+  /// In pl, this message translates to:
+  /// **'wysokie'**
+  String get heatRiskHigh;
+
+  /// No description provided for @heatRiskExtreme.
+  ///
+  /// In pl, this message translates to:
+  /// **'bardzo wysokie'**
+  String get heatRiskExtreme;
+
+  /// No description provided for @heatRiskFeelsNow.
+  ///
+  /// In pl, this message translates to:
+  /// **'Odczuwalna teraz: {temp}°C'**
+  String heatRiskFeelsNow(int temp);
+
+  /// No description provided for @heatRiskPeak.
+  ///
+  /// In pl, this message translates to:
+  /// **'Najwyżej {temp}°C około {time}'**
+  String heatRiskPeak(int temp, String time);
+
+  /// No description provided for @heatRiskHours.
+  ///
+  /// In pl, this message translates to:
+  /// **'Najgorętsze godziny: {from}–{to}'**
+  String heatRiskHours(String from, String to);
+
+  /// No description provided for @heatRiskUv.
+  ///
+  /// In pl, this message translates to:
+  /// **'UV do {uv}: {category}'**
+  String heatRiskUv(int uv, String category);
+
+  /// No description provided for @heatRiskUvLow.
+  ///
+  /// In pl, this message translates to:
+  /// **'niski'**
+  String get heatRiskUvLow;
+
+  /// No description provided for @heatRiskUvModerate.
+  ///
+  /// In pl, this message translates to:
+  /// **'umiarkowany'**
+  String get heatRiskUvModerate;
+
+  /// No description provided for @heatRiskUvHigh.
+  ///
+  /// In pl, this message translates to:
+  /// **'wysoki'**
+  String get heatRiskUvHigh;
+
+  /// No description provided for @heatRiskUvVeryHigh.
+  ///
+  /// In pl, this message translates to:
+  /// **'bardzo wysoki'**
+  String get heatRiskUvVeryHigh;
+
+  /// No description provided for @heatRiskUvExtreme.
+  ///
+  /// In pl, this message translates to:
+  /// **'ekstremalny'**
+  String get heatRiskUvExtreme;
+
+  /// No description provided for @heatRiskUvAdvice.
+  ///
+  /// In pl, this message translates to:
+  /// **'Krem z filtrem, nakrycie głowy i okulary przeciwsłoneczne.'**
+  String get heatRiskUvAdvice;
+
+  /// No description provided for @heatRiskUvAdviceHigh.
+  ///
+  /// In pl, this message translates to:
+  /// **'Unikaj słońca w południe, krem z filtrem SPF 50.'**
+  String get heatRiskUvAdviceHigh;
+
+  /// No description provided for @heatRiskAsphalt.
+  ///
+  /// In pl, this message translates to:
+  /// **'Asfalt w słońcu: do ok. {temp}°C'**
+  String heatRiskAsphalt(int temp);
+
+  /// No description provided for @heatRiskAdviceTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Co robić'**
+  String get heatRiskAdviceTitle;
+
+  /// No description provided for @heatRiskAdviceLow.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dobry czas na spacer. Miej przy sobie wodę.'**
+  String get heatRiskAdviceLow;
+
+  /// No description provided for @heatRiskAdviceWater.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pij wodę regularnie, nawet bez pragnienia.'**
+  String get heatRiskAdviceWater;
+
+  /// No description provided for @heatRiskAdviceShade.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wybieraj trasy w cieniu i rób przerwy w miejscach chłodu.'**
+  String get heatRiskAdviceShade;
+
+  /// No description provided for @heatRiskAdviceAvoid.
+  ///
+  /// In pl, this message translates to:
+  /// **'W najgorętszych godzinach unikaj wysiłku i słońca.'**
+  String get heatRiskAdviceAvoid;
+
+  /// No description provided for @heatRiskAdviceClothes.
+  ///
+  /// In pl, this message translates to:
+  /// **'Lekkie, jasne ubranie i nakrycie głowy.'**
+  String get heatRiskAdviceClothes;
+
+  /// No description provided for @heatRiskAdviceOnlyIfNeeded.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wychodź tylko, jeśli musisz: rano albo wieczorem.'**
+  String get heatRiskAdviceOnlyIfNeeded;
+
+  /// No description provided for @heatRiskAdviceCheckOthers.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zadzwoń do bliskich seniorów: czy mają chłodno i wodę?'**
+  String get heatRiskAdviceCheckOthers;
+
+  /// No description provided for @heatRiskAdviceSenior.
+  ///
+  /// In pl, this message translates to:
+  /// **'Seniorzy: zostań w chłodnym miejscu w najgorętszych godzinach, poproś kogoś o telefon w ciągu dnia i włącz alarm upałowy w Profilu.'**
+  String get heatRiskAdviceSenior;
+
+  /// No description provided for @heatRiskAdviceTourist.
+  ///
+  /// In pl, this message translates to:
+  /// **'W południe zwiedzaj muzea i miejsca z klimatyzacją, a spaceruj rano i wieczorem.'**
+  String get heatRiskAdviceTourist;
+
+  /// No description provided for @heatRiskPawCaution.
+  ///
+  /// In pl, this message translates to:
+  /// **'Łapy psa: przyłóż dłoń do asfaltu na 7 sekund. Jeśli parzy, idź po trawie i w cieniu.'**
+  String get heatRiskPawCaution;
+
+  /// No description provided for @heatRiskPawDanger.
+  ///
+  /// In pl, this message translates to:
+  /// **'Za gorąco dla łap psa (asfalt ok. {temp}°C). Wychodź rano lub wieczorem, chodź po trawie i zabierz wodę dla psa.'**
+  String heatRiskPawDanger(int temp);
+
+  /// No description provided for @heatRiskPawOk.
+  ///
+  /// In pl, this message translates to:
+  /// **'Łapy psa: asfalt nie powinien parzyć.'**
+  String get heatRiskPawOk;
+
+  /// No description provided for @heatRiskSymptoms.
+  ///
+  /// In pl, this message translates to:
+  /// **'Źle się czujesz? Sprawdź objawy'**
+  String get heatRiskSymptoms;
+
+  /// No description provided for @heatRiskSource.
+  ///
+  /// In pl, this message translates to:
+  /// **'Prognoza: Open-Meteo. Progi wg skali UTCI, dla seniorów o 2°C niższe. Temperatura asfaltu to szacunek.'**
+  String get heatRiskSource;
+
+  /// No description provided for @heatRiskDemo.
+  ///
+  /// In pl, this message translates to:
+  /// **'Tryb demo: przykładowy upalny dzień.'**
+  String get heatRiskDemo;
+
+  /// No description provided for @heatRiskAlertOnly.
+  ///
+  /// In pl, this message translates to:
+  /// **'Według ostrzeżenia IMGW (brak prognozy).'**
+  String get heatRiskAlertOnly;
+
+  /// No description provided for @settingsDog.
+  ///
+  /// In pl, this message translates to:
+  /// **'Chodzę z psem'**
+  String get settingsDog;
+
+  /// No description provided for @settingsDogBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ostrzeżenia o gorącym asfalcie dla łap'**
+  String get settingsDogBody;
+
+  /// No description provided for @routePawWarning.
+  ///
+  /// In pl, this message translates to:
+  /// **'Asfalt ok. {temp}°C: za gorąco dla łap psa. Wybierz trasę w cieniu i idź po trawie.'**
+  String routePawWarning(int temp);
+
+  /// No description provided for @routePawCaution.
+  ///
+  /// In pl, this message translates to:
+  /// **'Asfalt ok. {temp}°C: sprawdź dłonią, czy nie parzy łap psa.'**
+  String routePawCaution(int temp);
+
+  /// No description provided for @routeShare.
+  ///
+  /// In pl, this message translates to:
+  /// **'Udostępnij trasę'**
+  String get routeShare;
+
+  /// No description provided for @routeShareNow.
+  ///
+  /// In pl, this message translates to:
+  /// **'teraz'**
+  String get routeShareNow;
+
+  /// No description provided for @routeShareDestination.
+  ///
+  /// In pl, this message translates to:
+  /// **'cel'**
+  String get routeShareDestination;
+
+  /// No description provided for @routeShareText.
+  ///
+  /// In pl, this message translates to:
+  /// **'Idę pieszo: {from} → {to}.\nWyjście: {when}, na miejscu ok. {eta} ({minutes} min, {shade}% w cieniu).\nTrasa: {link}\nCool Łódź'**
+  String routeShareText(
+    String from,
+    String to,
+    String when,
+    String eta,
+    int minutes,
+    int shade,
+    String link,
+  );
+
+  /// No description provided for @routeShareCopied.
+  ///
+  /// In pl, this message translates to:
+  /// **'Skopiowano opis trasy. Wklej go w wiadomości.'**
+  String get routeShareCopied;
+
+  /// No description provided for @impactTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Twój wpływ'**
+  String get impactTitle;
+
+  /// No description provided for @impactEmpty.
+  ///
+  /// In pl, this message translates to:
+  /// **'Rozpocznij spacer przyciskiem «Prowadź», a tu zobaczysz, ile słońca omijasz i ile CO₂ oszczędzasz.'**
+  String get impactEmpty;
+
+  /// No description provided for @impactWalks.
+  ///
+  /// In pl, this message translates to:
+  /// **'Spacery'**
+  String get impactWalks;
+
+  /// No description provided for @impactDistance.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dystans'**
+  String get impactDistance;
+
+  /// No description provided for @impactShade.
+  ///
+  /// In pl, this message translates to:
+  /// **'W cieniu'**
+  String get impactShade;
+
+  /// No description provided for @impactSunAvoided.
+  ///
+  /// In pl, this message translates to:
+  /// **'Mniej słońca'**
+  String get impactSunAvoided;
+
+  /// No description provided for @impactWater.
+  ///
+  /// In pl, this message translates to:
+  /// **'Woda po drodze'**
+  String get impactWater;
+
+  /// No description provided for @impactCool.
+  ///
+  /// In pl, this message translates to:
+  /// **'Miejsca chłodu'**
+  String get impactCool;
+
+  /// No description provided for @impactCo2.
+  ///
+  /// In pl, this message translates to:
+  /// **'CO₂ mniej niż autem'**
+  String get impactCo2;
+
+  /// No description provided for @impactMinutes.
+  ///
+  /// In pl, this message translates to:
+  /// **'{minutes} min'**
+  String impactMinutes(int minutes);
+
+  /// No description provided for @impactKm.
+  ///
+  /// In pl, this message translates to:
+  /// **'{km} km'**
+  String impactKm(String km);
+
+  /// No description provided for @impactKg.
+  ///
+  /// In pl, this message translates to:
+  /// **'{kg} kg'**
+  String impactKg(String kg);
+
+  /// No description provided for @impactNote.
+  ///
+  /// In pl, this message translates to:
+  /// **'Z tras rozpoczętych przyciskiem «Prowadź». «Mniej słońca»: w porównaniu z najkrótszą trasą o tej samej porze. CO₂: średnie auto, 0,17 kg/km.'**
+  String get impactNote;
+
+  /// No description provided for @symptomsTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Objawy przegrzania'**
+  String get symptomsTitle;
+
+  /// No description provided for @symptomsIntro.
+  ///
+  /// In pl, this message translates to:
+  /// **'Odpowiedz za siebie albo za osobę, której pomagasz. Pięć pytań, to nie jest diagnoza.'**
+  String get symptomsIntro;
+
+  /// No description provided for @symptomsQ1.
+  ///
+  /// In pl, this message translates to:
+  /// **'Czy jest splątanie, dziwne zachowanie albo trudność z mówieniem?'**
+  String get symptomsQ1;
+
+  /// No description provided for @symptomsQ2.
+  ///
+  /// In pl, this message translates to:
+  /// **'Czy było omdlenie, utrata przytomności albo drgawki?'**
+  String get symptomsQ2;
+
+  /// No description provided for @symptomsQ3.
+  ///
+  /// In pl, this message translates to:
+  /// **'Czy skóra jest gorąca i sucha (brak potu), mimo upału?'**
+  String get symptomsQ3;
+
+  /// No description provided for @symptomsQ4.
+  ///
+  /// In pl, this message translates to:
+  /// **'Czy boli głowa, kręci się w głowie albo są nudności lub wymioty?'**
+  String get symptomsQ4;
+
+  /// No description provided for @symptomsQ5.
+  ///
+  /// In pl, this message translates to:
+  /// **'Czy są skurcze mięśni, duże osłabienie albo bardzo silne pragnienie?'**
+  String get symptomsQ5;
+
+  /// No description provided for @symptomsYes.
+  ///
+  /// In pl, this message translates to:
+  /// **'Tak'**
+  String get symptomsYes;
+
+  /// No description provided for @symptomsNo.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie'**
+  String get symptomsNo;
+
+  /// No description provided for @symptomsAnswerAll.
+  ///
+  /// In pl, this message translates to:
+  /// **'Odpowiedz na wszystkie pytania, aby zobaczyć, co robić.'**
+  String get symptomsAnswerAll;
+
+  /// No description provided for @symptomsUrgentTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Możliwy udar cieplny. Zadzwoń pod 112 teraz.'**
+  String get symptomsUrgentTitle;
+
+  /// No description provided for @symptomsUrgentLead.
+  ///
+  /// In pl, this message translates to:
+  /// **'Do przyjazdu pomocy:'**
+  String get symptomsUrgentLead;
+
+  /// No description provided for @symptomsExhaustionTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Możliwe wyczerpanie cieplne. Idź do chłodu teraz.'**
+  String get symptomsExhaustionTitle;
+
+  /// No description provided for @symptomsExhaustion1.
+  ///
+  /// In pl, this message translates to:
+  /// **'Usiądź lub połóż się w chłodnym miejscu.'**
+  String get symptomsExhaustion1;
+
+  /// No description provided for @symptomsExhaustion2.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pij wodę małymi łykami.'**
+  String get symptomsExhaustion2;
+
+  /// No description provided for @symptomsExhaustion3.
+  ///
+  /// In pl, this message translates to:
+  /// **'Chłodź skórę: mokry ręcznik albo woda na kark i ręce.'**
+  String get symptomsExhaustion3;
+
+  /// No description provided for @symptomsExhaustion4.
+  ///
+  /// In pl, this message translates to:
+  /// **'Jeśli po 30 minutach nie ma poprawy albo jest gorzej, dzwoń pod 112.'**
+  String get symptomsExhaustion4;
+
+  /// No description provided for @symptomsOkTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Brak typowych objawów przegrzania.'**
+  String get symptomsOkTitle;
+
+  /// No description provided for @symptomsOkBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pij wodę, odpoczywaj w cieniu i obserwuj samopoczucie. Gdy coś się zmieni, sprawdź jeszcze raz.'**
+  String get symptomsOkBody;
+
+  /// No description provided for @symptomsNearest.
+  ///
+  /// In pl, this message translates to:
+  /// **'Najbliższe otwarte miejsce chłodu'**
+  String get symptomsNearest;
+
+  /// No description provided for @symptomsNoPlace.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie znam Twojej lokalizacji. Zobacz listę miejsc chłodu.'**
+  String get symptomsNoPlace;
+
+  /// No description provided for @symptomsShowPlaces.
+  ///
+  /// In pl, this message translates to:
+  /// **'Miejsca chłodu'**
+  String get symptomsShowPlaces;
+
+  /// No description provided for @symptomsDisclaimer.
+  ///
+  /// In pl, this message translates to:
+  /// **'To nie jest porada medyczna ani diagnoza. W razie wątpliwości dzwoń pod 112. Na podstawie zaleceń NHS i GIS dotyczących udaru cieplnego.'**
+  String get symptomsDisclaimer;
+
+  /// No description provided for @settingsSymptoms.
+  ///
+  /// In pl, this message translates to:
+  /// **'Objawy przegrzania'**
+  String get settingsSymptoms;
+
+  /// No description provided for @settingsSymptomsBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'5 pytań: co robić, gdy źle się czujesz w upale'**
+  String get settingsSymptomsBody;
+
+  /// No description provided for @challengeTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wyzwanie tygodnia'**
+  String get challengeTitle;
+
+  /// No description provided for @challengeShadedRoutes.
+  ///
+  /// In pl, this message translates to:
+  /// **'{count, plural, =1{Przejdź 1 trasę z co najmniej 60% cienia} few{Przejdź {count} trasy z co najmniej 60% cienia} many{Przejdź {count} tras z co najmniej 60% cienia} other{Przejdź {count} tras z co najmniej 60% cienia}}'**
+  String challengeShadedRoutes(int count);
+
+  /// No description provided for @challengeCoolScans.
+  ///
+  /// In pl, this message translates to:
+  /// **'{count, plural, =1{Odwiedź 1 miejsce chłodu z questu (kod QR)} few{Odwiedź {count} miejsca chłodu z questu (kody QR)} many{Odwiedź {count} miejsc chłodu z questu (kody QR)} other{Odwiedź {count} miejsc chłodu z questu (kody QR)}}'**
+  String challengeCoolScans(int count);
+
+  /// No description provided for @challengeDistance.
+  ///
+  /// In pl, this message translates to:
+  /// **'Przejdź pieszo {count} km z przyciskiem «Prowadź»'**
+  String challengeDistance(int count);
+
+  /// No description provided for @challengeCoolHours.
+  ///
+  /// In pl, this message translates to:
+  /// **'{count, plural, =1{1 spacer rano (przed 10:00) albo wieczorem (od 19:00)} few{{count} spacery rano (przed 10:00) albo wieczorem (od 19:00)} many{{count} spacerów rano (przed 10:00) albo wieczorem (od 19:00)} other{{count} spacerów rano (przed 10:00) albo wieczorem (od 19:00)}}'**
+  String challengeCoolHours(int count);
+
+  /// No description provided for @challengeWaterRoutes.
+  ///
+  /// In pl, this message translates to:
+  /// **'{count, plural, =1{1 trasa z punktem z wodą po drodze} few{{count} trasy z punktem z wodą po drodze} many{{count} tras z punktem z wodą po drodze} other{{count} tras z punktem z wodą po drodze}}'**
+  String challengeWaterRoutes(int count);
+
+  /// No description provided for @challengeProgress.
+  ///
+  /// In pl, this message translates to:
+  /// **'{done} z {target}'**
+  String challengeProgress(int done, int target);
+
+  /// No description provided for @challengeBonus.
+  ///
+  /// In pl, this message translates to:
+  /// **'+{points} pkt'**
+  String challengeBonus(int points);
+
+  /// No description provided for @challengeDaysLeft.
+  ///
+  /// In pl, this message translates to:
+  /// **'{count, plural, =0{ostatni dzień} =1{został 1 dzień} few{zostały {count} dni} many{zostało {count} dni} other{zostało {count} dni}}'**
+  String challengeDaysLeft(int count);
+
+  /// No description provided for @challengeDone.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ukończone! +{points} pkt'**
+  String challengeDone(int points);
+
+  /// No description provided for @challengeHint.
+  ///
+  /// In pl, this message translates to:
+  /// **'Liczą się trasy rozpoczęte przyciskiem «Prowadź» i skany kodów QR w tym tygodniu (od poniedziałku).'**
+  String get challengeHint;
+
+  /// No description provided for @challengeUnlocked.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wyzwanie tygodnia ukończone'**
+  String get challengeUnlocked;
+
+  /// No description provided for @badgesLogChallenge.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wyzwanie tygodnia'**
+  String get badgesLogChallenge;
+
   /// No description provided for @placeThu.
   ///
   /// In pl, this message translates to:
