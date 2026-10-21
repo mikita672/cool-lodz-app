@@ -55,7 +55,7 @@ void main() {
     WidgetTester tester, {
     String initial = '/quest',
     int heatOverride = 0,
-    Size size = const Size(400, 1600),
+    Size size = const Size(400, 2000),
     double textScale = 1,
   }) async {
     tester.view.physicalSize = size;
@@ -146,6 +146,10 @@ void main() {
       expect(letters(tester), List.filled(7, null));
       expect(find.text('0 z 7 liter'), findsOneWidget);
       expect(find.text('Do odwiedzenia'), findsNWidgets(7));
+      // «Wyzwanie tygodnia» above the board.
+      expect(find.byKey(const Key('challenge-card')), findsOneWidget);
+      expect(find.text('Wyzwanie tygodnia'), findsOneWidget);
+      expect(find.text('+50 pkt'), findsOneWidget);
       expect(find.byKey(const Key('quest-scan')), findsOneWidget);
     });
 

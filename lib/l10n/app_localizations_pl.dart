@@ -2252,6 +2252,105 @@ class AppLocalizationsPl extends AppLocalizations {
       '5 pytań: co robić, gdy źle się czujesz w upale';
 
   @override
+  String get challengeTitle => 'Wyzwanie tygodnia';
+
+  @override
+  String challengeShadedRoutes(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Przejdź $count tras z co najmniej 60% cienia',
+      many: 'Przejdź $count tras z co najmniej 60% cienia',
+      few: 'Przejdź $count trasy z co najmniej 60% cienia',
+      one: 'Przejdź 1 trasę z co najmniej 60% cienia',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String challengeCoolScans(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Odwiedź $count miejsc chłodu z questu (kody QR)',
+      many: 'Odwiedź $count miejsc chłodu z questu (kody QR)',
+      few: 'Odwiedź $count miejsca chłodu z questu (kody QR)',
+      one: 'Odwiedź 1 miejsce chłodu z questu (kod QR)',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String challengeDistance(int count) {
+    return 'Przejdź pieszo $count km z przyciskiem «Prowadź»';
+  }
+
+  @override
+  String challengeCoolHours(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count spacerów rano (przed 10:00) albo wieczorem (od 19:00)',
+      many: '$count spacerów rano (przed 10:00) albo wieczorem (od 19:00)',
+      few: '$count spacery rano (przed 10:00) albo wieczorem (od 19:00)',
+      one: '1 spacer rano (przed 10:00) albo wieczorem (od 19:00)',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String challengeWaterRoutes(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count tras z punktem z wodą po drodze',
+      many: '$count tras z punktem z wodą po drodze',
+      few: '$count trasy z punktem z wodą po drodze',
+      one: '1 trasa z punktem z wodą po drodze',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String challengeProgress(int done, int target) {
+    return '$done z $target';
+  }
+
+  @override
+  String challengeBonus(int points) {
+    return '+$points pkt';
+  }
+
+  @override
+  String challengeDaysLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'zostało $count dni',
+      many: 'zostało $count dni',
+      few: 'zostały $count dni',
+      one: 'został 1 dzień',
+      zero: 'ostatni dzień',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String challengeDone(int points) {
+    return 'Ukończone! +$points pkt';
+  }
+
+  @override
+  String get challengeHint =>
+      'Liczą się trasy rozpoczęte przyciskiem «Prowadź» i skany kodów QR w tym tygodniu (od poniedziałku).';
+
+  @override
+  String get challengeUnlocked => 'Wyzwanie tygodnia ukończone';
+
+  @override
+  String get badgesLogChallenge => 'Wyzwanie tygodnia';
+
+  @override
   String get placeThu => 'czw.';
 
   @override

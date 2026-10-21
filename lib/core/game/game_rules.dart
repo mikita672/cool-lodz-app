@@ -30,7 +30,8 @@ enum PointsType {
   scan('scan'),
   password('password'),
   badge('badge'),
-  report('report');
+  report('report'),
+  challenge('challenge'); // refId: the week, e.g. 2026-W43
 
   const PointsType(this.id);
 

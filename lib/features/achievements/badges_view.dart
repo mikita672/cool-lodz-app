@@ -152,6 +152,7 @@ class BadgesView extends ConsumerWidget {
     PointsType.password => Icons.password_rounded,
     PointsType.badge => Icons.emoji_events_rounded,
     PointsType.report => Icons.flag_rounded,
+    PointsType.challenge => Icons.emoji_flags_rounded,
   };
 
   static String _logLabel(PointsEntry e, AppLocalizations l10n) =>
@@ -166,6 +167,7 @@ class BadgesView extends ConsumerWidget {
           null => e.refId ?? '',
         }),
         PointsType.report => l10n.badgesLogReport,
+        PointsType.challenge => l10n.badgesLogChallenge,
       };
 
   static String _formatAt(DateTime at) {

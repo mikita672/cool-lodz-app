@@ -138,6 +138,9 @@ abstract final class FirestoreReports {
 abstract final class GameConfigFields {
   static const heatOverride = 'heatOverride'; // 0–3
   static const activeQuestId = 'activeQuestId';
+
+  /// A ChallengeKind name: this week's challenge for a demo.
+  static const challenge = 'challenge';
 }
 
 /// ISO 8601 week id of [date]'s calendar day, e.g. `2026-W43`. Used for

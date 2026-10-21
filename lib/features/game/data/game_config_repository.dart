@@ -10,17 +10,25 @@ import '../../alerts/data/alert_providers.dart';
 /// `config/game`: set by hand in the Firebase console for the demo.
 @immutable
 class GameSettings {
-  const GameSettings({this.heatOverride = 0, this.activeQuestId});
+  const GameSettings({
+    this.heatOverride = 0,
+    this.activeQuestId,
+    this.challenge,
+  });
 
   factory GameSettings.fromDoc(Map<String, dynamic>? d) => GameSettings(
     heatOverride: ((d?[GameConfigFields.heatOverride] as num?)?.toInt() ?? 0)
         .clamp(0, 3),
     activeQuestId: d?[GameConfigFields.activeQuestId] as String?,
+    challenge: d?[GameConfigFields.challenge] as String?,
   );
 
   /// 0–3: forces at least this heat level (demo: «heatOverride = 2»).
   final int heatOverride;
   final String? activeQuestId;
+
+  /// Picks this week's challenge (a ChallengeKind name) for a demo.
+  final String? challenge;
 }
 
 /// Live `config/game`; defaults when it cannot be read (signed out,

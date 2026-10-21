@@ -13,6 +13,7 @@ Future<void> showBadgeUnlockedDialog(
   required String name,
   required String description,
   required int points,
+  String? kicker,
 }) {
   return showDialog<void>(
     context: context,
@@ -21,6 +22,7 @@ Future<void> showBadgeUnlockedDialog(
       name: name,
       description: description,
       points: points,
+      kicker: kicker,
       onClose: () => Navigator.of(dialogContext).pop(),
     ),
   );
@@ -35,6 +37,7 @@ class BadgeUnlockedDialog extends StatelessWidget {
     required this.description,
     required this.points,
     required this.onClose,
+    this.kicker,
   });
 
   final IconData icon;
@@ -42,6 +45,9 @@ class BadgeUnlockedDialog extends StatelessWidget {
   final String description;
   final int points;
   final VoidCallback onClose;
+
+  /// The small line above the name; «Nowa odznaka!» by default.
+  final String? kicker;
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +89,7 @@ class BadgeUnlockedDialog extends StatelessWidget {
             ),
             const SizedBox(height: AppSizes.s8),
             Text(
-              l10n.dsBadgeNew,
+              kicker ?? l10n.dsBadgeNew,
               style: AppTextStyles.label.copyWith(color: AppColors.primary),
             ),
             const SizedBox(height: AppSizes.s8),

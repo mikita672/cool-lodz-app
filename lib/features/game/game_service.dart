@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/api/api_providers.dart';
 import '../../core/clock.dart';
+import '../../core/game/challenges.dart';
 import '../../core/game/game_config.dart';
 import '../../core/game/game_rules.dart';
 import '../auth/data/auth_repository.dart';
@@ -13,12 +14,19 @@ import 'data/game_repository.dart';
 /// What one game event gave the user.
 @immutable
 class GameAward {
-  const GameAward({this.entries = const [], this.badges = const {}});
+  const GameAward({
+    this.entries = const [],
+    this.badges = const {},
+    this.challenge,
+  });
 
   static const none = GameAward();
 
   final List<PointsEntry> entries;
   final Set<GameBadge> badges;
+
+  /// The weekly challenge this award completed (its bonus is in [entries]).
+  final ChallengeState? challenge;
 
   int get points => entries.fold(0, (a, e) => a + e.points);
 
@@ -154,6 +162,24 @@ class GameService {
     ]);
   }
 
+  /// This week's challenge, when it was completed but its bonus is not in
+  /// the log yet (e.g. the award failed offline). Called when S10 opens.
+  Future<GameAward> syncChallenge() => _serial(() async {
+    final uid = _uid;
+    if (uid == null) return GameAward.none;
+    final history = await _repo.history(uid);
+    if (!challengeState(history).due) return GameAward.none;
+    return _award(uid, history, const []);
+  });
+
+  /// This week's challenge for [history].
+  ChallengeState challengeState(GameHistory history) => ChallengeState.of(
+    history,
+    _now,
+    override: _ref.read(gameSettingsProvider).value?.challenge,
+    demo: _ref.read(isDemoModeEffectiveProvider),
+  );
+
   /// Visits saved today whose scan points are missing (the award failed or
   /// the visit was sent later from offline): 50 each. Called when S10 opens.
   Future<GameAward> syncScans(Iterable<String> placeIdsVisitedToday) =>
@@ -200,8 +226,24 @@ class GameService {
           ? GameConfig.demoBadgeShadedTenCount
           : GameConfig.badgeShadedTenCount,
     );
+    // The event may complete this week's challenge: +50 once.
+    final challenge = challengeState(
+      GameHistory(
+        routes: history.routes,
+        log: [...history.log, ...entries],
+        badges: history.badges,
+        approvedReports: history.approvedReports,
+        approvedReportIds: history.approvedReportIds,
+      ),
+    );
     final all = [
       ...entries,
+      if (challenge.due)
+        PointsEntry(
+          type: PointsType.challenge,
+          points: Challenge.bonus,
+          refId: challenge.week,
+        ),
       for (final b in GameBadge.values)
         if (badges.contains(b))
           PointsEntry(
@@ -212,11 +254,34 @@ class GameService {
     ];
     if (all.isEmpty) return GameAward.none;
     await _repo.award(uid, all, now: _now);
-    return GameAward(entries: all, badges: badges);
+    return GameAward(
+      entries: all,
+      badges: badges,
+      challenge: challenge.due ? challenge : null,
+    );
   }
 }
 
 final gameServiceProvider = Provider<GameService>(GameService.new);
+
+/// Runs [GameService.syncChallenge] while S10 is open; its result is the
+/// award to show (if any).
+final challengeSyncProvider = FutureProvider.autoDispose<GameAward>(
+  (ref) => ref.read(gameServiceProvider).syncChallenge(),
+  retry: (_, _) => null,
+);
+
+/// «Wyzwanie tygodnia» for S10, refreshed when the points change.
+final challengeProvider = FutureProvider.autoDispose<ChallengeState?>((
+  ref,
+) async {
+  final uid = ref.watch(currentUidProvider);
+  if (uid == null) return null;
+  ref.watch(playerProvider.select((p) => p.value?.points));
+  ref.watch(gameSettingsProvider.select((s) => s.value?.challenge));
+  final history = await ref.watch(gameRepositoryProvider).history(uid);
+  return ref.read(gameServiceProvider).challengeState(history);
+}, retry: (_, _) => null);
 
 /// Runs [GameService.syncReports] while S12 is open; its result is the
 /// award to show (if any).

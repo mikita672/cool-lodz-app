@@ -3864,6 +3864,84 @@ abstract class AppLocalizations {
   /// **'5 pytań: co robić, gdy źle się czujesz w upale'**
   String get settingsSymptomsBody;
 
+  /// No description provided for @challengeTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wyzwanie tygodnia'**
+  String get challengeTitle;
+
+  /// No description provided for @challengeShadedRoutes.
+  ///
+  /// In pl, this message translates to:
+  /// **'{count, plural, =1{Przejdź 1 trasę z co najmniej 60% cienia} few{Przejdź {count} trasy z co najmniej 60% cienia} many{Przejdź {count} tras z co najmniej 60% cienia} other{Przejdź {count} tras z co najmniej 60% cienia}}'**
+  String challengeShadedRoutes(int count);
+
+  /// No description provided for @challengeCoolScans.
+  ///
+  /// In pl, this message translates to:
+  /// **'{count, plural, =1{Odwiedź 1 miejsce chłodu z questu (kod QR)} few{Odwiedź {count} miejsca chłodu z questu (kody QR)} many{Odwiedź {count} miejsc chłodu z questu (kody QR)} other{Odwiedź {count} miejsc chłodu z questu (kody QR)}}'**
+  String challengeCoolScans(int count);
+
+  /// No description provided for @challengeDistance.
+  ///
+  /// In pl, this message translates to:
+  /// **'Przejdź pieszo {count} km z przyciskiem «Prowadź»'**
+  String challengeDistance(int count);
+
+  /// No description provided for @challengeCoolHours.
+  ///
+  /// In pl, this message translates to:
+  /// **'{count, plural, =1{1 spacer rano (przed 10:00) albo wieczorem (od 19:00)} few{{count} spacery rano (przed 10:00) albo wieczorem (od 19:00)} many{{count} spacerów rano (przed 10:00) albo wieczorem (od 19:00)} other{{count} spacerów rano (przed 10:00) albo wieczorem (od 19:00)}}'**
+  String challengeCoolHours(int count);
+
+  /// No description provided for @challengeWaterRoutes.
+  ///
+  /// In pl, this message translates to:
+  /// **'{count, plural, =1{1 trasa z punktem z wodą po drodze} few{{count} trasy z punktem z wodą po drodze} many{{count} tras z punktem z wodą po drodze} other{{count} tras z punktem z wodą po drodze}}'**
+  String challengeWaterRoutes(int count);
+
+  /// No description provided for @challengeProgress.
+  ///
+  /// In pl, this message translates to:
+  /// **'{done} z {target}'**
+  String challengeProgress(int done, int target);
+
+  /// No description provided for @challengeBonus.
+  ///
+  /// In pl, this message translates to:
+  /// **'+{points} pkt'**
+  String challengeBonus(int points);
+
+  /// No description provided for @challengeDaysLeft.
+  ///
+  /// In pl, this message translates to:
+  /// **'{count, plural, =0{ostatni dzień} =1{został 1 dzień} few{zostały {count} dni} many{zostało {count} dni} other{zostało {count} dni}}'**
+  String challengeDaysLeft(int count);
+
+  /// No description provided for @challengeDone.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ukończone! +{points} pkt'**
+  String challengeDone(int points);
+
+  /// No description provided for @challengeHint.
+  ///
+  /// In pl, this message translates to:
+  /// **'Liczą się trasy rozpoczęte przyciskiem «Prowadź» i skany kodów QR w tym tygodniu (od poniedziałku).'**
+  String get challengeHint;
+
+  /// No description provided for @challengeUnlocked.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wyzwanie tygodnia ukończone'**
+  String get challengeUnlocked;
+
+  /// No description provided for @badgesLogChallenge.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wyzwanie tygodnia'**
+  String get badgesLogChallenge;
+
   /// No description provided for @placeThu.
   ///
   /// In pl, this message translates to:
