@@ -1621,14 +1621,14 @@ abstract class AppLocalizations {
   /// No description provided for @mapLegendShade.
   ///
   /// In pl, this message translates to:
-  /// **'Cień'**
+  /// **'Cień budynków i drzew'**
   String get mapLegendShade;
 
-  /// No description provided for @mapLegendSun.
+  /// No description provided for @mapShadowZoomIn.
   ///
   /// In pl, this message translates to:
-  /// **'Słońce (blednie, gdy pochmurno)'**
-  String get mapLegendSun;
+  /// **'Przybliż mapę, aby zobaczyć cienie'**
+  String get mapShadowZoomIn;
 
   /// No description provided for @mapWeatherNight.
   ///

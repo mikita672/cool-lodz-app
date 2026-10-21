@@ -916,10 +916,10 @@ class AppLocalizationsPl extends AppLocalizations {
   String get mapLegendQuiet => 'Ciemniej = ciszej';
 
   @override
-  String get mapLegendShade => 'Cień';
+  String get mapLegendShade => 'Cień budynków i drzew';
 
   @override
-  String get mapLegendSun => 'Słońce (blednie, gdy pochmurno)';
+  String get mapShadowZoomIn => 'Przybliż mapę, aby zobaczyć cienie';
 
   @override
   String get mapWeatherNight => 'po zachodzie słońca';

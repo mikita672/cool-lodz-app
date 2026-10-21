@@ -5,14 +5,16 @@ import 'gios_air.dart';
 import 'imgw_alerts.dart';
 import 'live_route_engine.dart';
 import 'osrm_client.dart';
-import 'shade_layer.dart';
 import 'shade_model.dart';
+import 'shadows.dart';
+import 'sun.dart';
 import 'weather.dart';
 
 /// Module D on the phone, while it has no server: routes from
 /// [LiveRouteEngine] (OSRM + shade model), heat warnings from IMGW-PIB, air
-/// quality from GIOŚ; the shade layer is drawn for the asked time
-/// ([ShadeLayerBuilder]); places, the other layers and the quest come from
+/// quality from GIOŚ; the shade layer is the real shadows of buildings and
+/// trees at the asked time ([shadeLayerAt]); places, the other layers and
+/// the quest come from
 /// the bundled files, as in [DemoApiClient].
 class LiveApiClient implements ApiClient {
   LiveApiClient({
@@ -52,17 +54,22 @@ class LiveApiClient implements ApiClient {
   final DateTime Function() _clock;
 
   Future<ShadeModel>? _model;
-  Future<ShadeLayerBuilder>? _shadeLayer;
   final _shadeLayers = <String, GeoLayer>{};
 
-  /// Built once from the bundled layers; a failed load is retried next time.
+  /// Built once from the bundled files (shade, green, the buildings and
+  /// trees); a failed load is retried next time.
   Future<ShadeModel> _shadeModel() => _model ??= () async {
     try {
-      final layers = await Future.wait([
+      final results = await Future.wait<Object?>([
         bundled.getLayer(LayerKind.shade, datetime: _clock()),
         bundled.getLayer(LayerKind.green, datetime: _clock()),
+        bundled.readJson('shadow_casters.json'),
       ]);
-      return ShadeModel.fromLayers(shade: layers[0], green: layers[1]);
+      return ShadeModel.fromLayers(
+        shade: results[0]! as GeoLayer,
+        green: results[1]! as GeoLayer,
+        casters: ShadowCasters.fromJson(results[2]),
+      );
     } catch (_) {
       _model = null;
       rethrow;
@@ -90,8 +97,9 @@ class LiveApiClient implements ApiClient {
       if (bbox == null || bbox.contains(s.lat, s.lon)) s,
   ];
 
-  /// Shade for [datetime] (trees, building shadows and sunny street parts at
-  /// that time and weather); green and noise are the bundled files.
+  /// Shade for [datetime] inside [bbox]: the shadows the buildings and
+  /// trees cast at that moment (paler under clouds, none at night) and the
+  /// parks; green and noise are the bundled files.
   @override
   Future<GeoLayer> getLayer(
     LayerKind kind, {
@@ -101,7 +109,7 @@ class LiveApiClient implements ApiClient {
     if (kind != LayerKind.shade) {
       return bundled.getLayer(kind, bbox: bbox, datetime: datetime);
     }
-    final builder = await _shadeBuilder();
+    final model = await _shadeModel();
     WeatherForecast? forecast;
     try {
       forecast = await weather?.forecastOrNull().timeout(
@@ -111,34 +119,46 @@ class LiveApiClient implements ApiClient {
       // Slow: a clear sky.
     }
     final strength = sunStrength(forecast, datetime);
-    // One layer per minute and sun strength is plenty; keep the last few.
     final key =
         '${datetime.toUtc().millisecondsSinceEpoch ~/ 60000}:'
-        '${(strength * 100).round()}';
+        '${(strength * 100).round()}:${bbox?.toQuery()}';
     final cached = _shadeLayers[key];
     if (cached != null) return cached;
-    if (_shadeLayers.length >= 8) _shadeLayers.remove(_shadeLayers.keys.first);
-    return _shadeLayers[key] = builder.at(datetime, strength: strength);
+    if (_shadeLayers.length >= 6) _shadeLayers.remove(_shadeLayers.keys.first);
+    return _shadeLayers[key] = shadeLayerAt(
+      model,
+      datetime,
+      bbox: bbox,
+      strength: strength,
+    );
   }
-
-  Future<ShadeLayerBuilder> _shadeBuilder() => _shadeLayer ??= () async {
-    try {
-      final results = await Future.wait<Object?>([
-        bundled.getLayer(LayerKind.shade, datetime: _clock()),
-        bundled.readJson('streets_core.geojson'),
-        _shadeModel(),
-      ]);
-      return ShadeLayerBuilder(
-        bundledShade: results[0]! as GeoLayer,
-        streets: parseStreets(results[1]),
-        model: results[2]! as ShadeModel,
-      );
-    } catch (_) {
-      _shadeLayer = null;
-      rethrow;
-    }
-  }();
 
   @override
   Future<List<QuestPlace>> getQuestPlaces() => bundled.getQuestPlaces();
+}
+
+/// The map's shade at [time]: the parks (light, they are shady all day) and,
+/// while the sun is up and strong enough, the shadows of buildings and tree
+/// crowns inside [bbox] (`{"source": "shadow"}`), as dark as the sun is
+/// strong.
+GeoLayer shadeLayerAt(
+  ShadeModel model,
+  DateTime time, {
+  GeoBounds? bbox,
+  double strength = 1,
+}) {
+  final casters = model.casters;
+  final sun = sunPosition(51.77, 19.46, time);
+  final shade = 0.9 * strength.clamp(0.0, 1.0);
+  return GeoLayer(
+    features: [
+      for (final f in model.parkFeatures)
+        GeoFeature(
+          geometry: f.geometry,
+          properties: const {'shade': 0.45, 'source': 'park'},
+        ),
+      if (casters != null && sun.elevation > 0 && shade >= 0.05)
+        ...casters.shadows(sun, bounds: bbox, shade: shade),
+    ],
+  );
 }

@@ -3,10 +3,15 @@ import 'dart:math' as math;
 import 'package:latlong2/latlong.dart';
 
 import '../../models/models.dart';
+import 'shadows.dart';
 import 'sun.dart';
 
-/// Where the walker is in the sun, from bundled OpenStreetMap layers and the
-/// sun position (the model of `docs/data-sources.md`, run on the phone):
+/// Where the walker is in the sun, from bundled OpenStreetMap data and the
+/// sun position (the model of `docs/data-sources.md`, run on the phone).
+///
+/// Where [casters] has buildings and trees (Śródmieście), each edge is
+/// sampled and every sample is tested against the real shadows at that
+/// moment ([ShadowCasters.inShadow]), plus the canopy of parks. Elsewhere:
 ///
 /// - tree crowns: the `trees` polygons of `layer_shade_1430.geojson` (their
 ///   `shade` value) and parks/woods of `layer_green.geojson` (0.8); crowns
@@ -19,7 +24,9 @@ class ShadeModel {
   ShadeModel({
     required List<GeoFeature> canopy,
     required List<GeoFeature> parks,
-  }) : _canopy = _PolygonIndex([
+    this.casters,
+  }) : parkFeatures = parks,
+       _canopy = _PolygonIndex([
          for (final f in canopy)
            for (final p in f.geometry.polygons)
              if (p.outer.length >= 3)
@@ -40,7 +47,9 @@ class ShadeModel {
   factory ShadeModel.fromLayers({
     required GeoLayer shade,
     required GeoLayer green,
+    ShadowCasters? casters,
   }) => ShadeModel(
+    casters: casters,
     canopy: [
       for (final f in shade.features)
         if (f.properties['source'] != 'buildings') f,
@@ -84,6 +93,12 @@ class ShadeModel {
 
   final _PolygonIndex _canopy;
   final _PolygonIndex _parks;
+
+  /// Buildings and trees for real shadows; null = the street-canyon model.
+  final ShadowCasters? casters;
+
+  /// Parks and woods, for the map's shade layer.
+  final List<GeoFeature> parkFeatures;
 
   /// Rough centre of every park and wood (via points for shaded detours).
   final List<LatLng> parkCentres;
@@ -132,12 +147,25 @@ class ShadeModel {
         (a.longitude + b.longitude) / 2,
       );
       final inGrid = tenementCore.contains(mid.latitude, mid.longitude);
+      final real = casters != null && casters!.covers(mid);
       edges.add(
         _Edge(
           length: length,
           mid: mid,
           bearing: bearingDegrees(a, b),
           canopy: canopy / samples,
+          parkShare: parkSamples / samples,
+          samples: real
+              ? [
+                  for (var k = 0; k < samples; k++)
+                    LatLng(
+                      a.latitude +
+                          (b.latitude - a.latitude) * (k + 0.5) / samples,
+                      a.longitude +
+                          (b.longitude - a.longitude) * (k + 0.5) / samples,
+                    ),
+                ]
+              : const [],
           // Mostly inside a park: no street canyon.
           canyon: parkSamples * 2 > samples
               ? null
@@ -147,7 +175,7 @@ class ShadeModel {
         ),
       );
     }
-    return RouteShade._(edges);
+    return RouteShade._(edges, casters);
   }
 }
 
@@ -176,9 +204,10 @@ double bearingDegrees(LatLng a, LatLng b) {
 
 /// A route analysed by [ShadeModel.analyse].
 class RouteShade {
-  RouteShade._(this._edges);
+  RouteShade._(this._edges, this._casters);
 
   final List<_Edge> _edges;
+  final ShadowCasters? _casters;
 
   int get edgeCount => _edges.length;
 
@@ -209,6 +238,23 @@ class RouteShade {
           final sun = sunPosition(e.mid.latitude, e.mid.longitude, instant);
           if (sun.elevation <= 2) return 0.0;
           final weather = strength?.call(instant) ?? 1.0;
+          final casters = _casters;
+          if (casters != null && e.samples.isNotEmpty) {
+            final lit = e.samples
+                .where((p) => !casters.inShadow(p, sun))
+                .length;
+            final parkCrowns =
+                e.parkShare *
+                math.min(
+                  0.95,
+                  ShadeModel.parkCanopy *
+                      (2 - math.sin(sun.elevation * math.pi / 180)),
+                );
+            return (lit / e.samples.length * (1 - parkCrowns) * weather).clamp(
+              0.0,
+              1.0,
+            );
+          }
           final canyon = e.canyon;
           final building = canyon == null
               ? 0.0
@@ -261,6 +307,8 @@ class _Edge {
     required this.bearing,
     required this.canopy,
     required this.canyon,
+    this.parkShare = 0,
+    this.samples = const [],
   });
 
   final double length;
@@ -268,6 +316,12 @@ class _Edge {
   final double bearing;
   final double canopy;
   final _Canyon? canyon;
+
+  /// Share of the edge inside a park.
+  final double parkShare;
+
+  /// Points tested against the real shadows; empty outside the data.
+  final List<LatLng> samples;
 }
 
 class _Indexed {

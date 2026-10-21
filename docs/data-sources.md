@@ -69,7 +69,7 @@ Demo day: **15 July 2026** (a heatwave day, times in CEST, +02:00). Area of the 
 | `layer_green.geojson` | OpenStreetMap: `leisure=park`, named `leisure=garden`, `natural=wood`, named `landuse=grass/forest`; polygons ≥ 800 m², simplified to 2 m | polygons, names, `osm` ids | — |
 | `layer_shade_1430.geojson` | derived from OpenStreetMap trees (`natural=tree`, `natural=tree_row`), parks and streets | positions of trees, parks and streets | the `shade` values and the building-shadow strips |
 | `layer_noise.geojson` | OpenStreetMap roads (`highway=trunk/primary/secondary/tertiary`) | road geometry | `db` values |
-| `streets_core.geojson` | OpenStreetMap named streets in the tenement grid (`19.435–19.480 × 51.755–51.785`), merged per name and class, simplified to 3 m; built by `tools/demo-data/build_streets.py` from `osm_streets.json` (downloaded 2026-10-19 from the overpass.private.coffee mirror, data as of 2026-05-31) | centrelines | `w`, the street width by road class (18–40 m) |
+| `shadow_casters.json` | OpenStreetMap buildings (`building=*`, 16 093 footprints ≥ 15 m², simplified to 0.7 m) and trees (`natural=tree`, plus a tree every 7 m along `natural=tree_row`; 20 312) in the Śródmieście bbox; built by `tools/demo-data/build_casters.py` from `osm_buildings.json` and `osm_trees.json` (downloaded 2026-10-21 from the overpass.private.coffee mirror, data as of 2026-05-31) | footprints, tree positions; `height` (350 buildings) and `building:levels` (≈ 7 300, × 3.2 m) where mapped | heights of the other buildings by type (tenement core 14 m, elsewhere 10 m, houses 7 m, garages and sheds 3 m, churches 25 m); tree height 9 m and crown radius 3 m unless mapped |
 | `air.json` | GIOŚ station list, [api.gios.gov.pl](https://api.gios.gov.pl/pjp-api/v1/rest/station/findAll) | the 4 Łódź stations: names, coordinates | `indexLevel`, `updatedAt` |
 | `places_water.json` | OpenStreetMap `amenity=drinking_water` inside the Łódź city boundary | all points | — |
 | `places_bench.json` | OpenStreetMap `amenity=bench` in the Śródmieście bbox, the 500 closest to ul. Piotrkowska (51.7700, 19.4560) | all points | — |
@@ -134,7 +134,7 @@ python3 -I fetch_osm.py      # 3 Overpass queries (OVERPASS_URL=… for a mirror
 python3 -I fetch_routes.py   # 6 router requests
 python3 -I fetch_gios.py
 python3 -I build.py [raw_dir] [path/to/places_cool.json]
-python3 -I build_streets.py [raw_dir]   # streets_core.geojson for the live shade layer
+python3 -I build_casters.py [raw_dir]   # shadow_casters.json (needs osm_buildings.json, osm_trees.json: see the script)
 flutter test test/assets/demo_assets_test.dart
 ```
 
