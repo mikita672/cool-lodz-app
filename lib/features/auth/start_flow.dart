@@ -110,6 +110,8 @@ const startFlowRoutes = {
 String? startFlowRedirect(StartFlowState state, String path) {
   // The privacy policy is readable at any step (linked from S03 and S16).
   if (path == Routes.privacy) return null;
+  // «Alarm upałowy» opens over everything, even at a cold start.
+  if (path == Routes.heatCheck) return null;
   final required = state.requiredRoute;
   if (required == null) {
     return startFlowRoutes.contains(path) ? Routes.map : null;

@@ -13,6 +13,7 @@ import '../auth/data/auth_repository.dart';
 import '../auth/data/system_permissions.dart';
 import '../auth/data/user_profile_repository.dart';
 import '../game/game_service.dart';
+import '../heat_guard/data/heat_guard_settings.dart';
 import '../leaderboard/data/ranking_repository.dart';
 import '../profile/data/comfort_profile_provider.dart';
 import '../profile/profile_select_screen.dart';
@@ -235,6 +236,18 @@ class ProfileTabScreen extends ConsumerWidget {
             subtitle: Text(profileName),
             trailing: const Icon(Icons.chevron_right_rounded),
             onTap: () => context.push(Routes.profileSelect),
+          ),
+          ListTile(
+            key: const Key('settings-heat-guard'),
+            leading: const Icon(Icons.health_and_safety_rounded),
+            title: Text(l10n.heatGuardTitle),
+            subtitle: Text(
+              ref.watch(heatGuardSettingsProvider).enabled
+                  ? l10n.heatGuardSettingsSubtitleOn
+                  : l10n.heatGuardSettingsSubtitleOff,
+            ),
+            trailing: const Icon(Icons.chevron_right_rounded),
+            onTap: () => context.push(Routes.heatGuard),
           ),
           SwitchListTile(
             key: const Key('settings-senior'),

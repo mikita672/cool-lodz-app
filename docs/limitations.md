@@ -30,6 +30,14 @@ A list for the competition documentation (MD hands it to Mikita Kutsenka). The d
 - The alert push is sent manually from the Firebase console (a test message); there is no automatic sending based on IMGW data — that needs a server side.
 - Heat mode for the demo is turned on with the `config/game.heatOverride` field.
 
+**Alarm upałowy**
+- Android only, in the APK from GitHub releases: Google Play allows SMS sending and background location only after a review.
+- It must keep running in the background: swiping the app away from recent apps or aggressive battery savers (Xiaomi, Huawei, some Samsungs) can stop it. The settings screen lists what to allow; the service restarts after the system kills it, but not after a reboot (open the app once).
+- «Still» comes from GPS only (stays within 40 m after walking ≥ 100 m). It can ask while you wait at a stop or sit on a bench (answer «OK», or set a longer time) and it cannot notice a fall while walking.
+- The SMS needs a SIM, signal and credit; it goes once per alarm. The location is the last GPS fix (accuracy in the message).
+- Android 14+ shows the full-screen alarm only after the user allows it in the system settings; otherwise it is a loud notification.
+- Not a medical device and not an emergency service: it does not call 112.
+
 **Platform and UI**
 - Android 7.0+ only (minSdk 24), Polish only, light theme only, portrait orientation only.
 - Turn-by-turn navigation is not done in the app: «Prowadź» opens Google Maps (walking, with waypoints of the selected line).
@@ -38,6 +46,7 @@ A list for the competition documentation (MD hands it to Mikita Kutsenka). The d
 
 ## Kolejne kroki
 
+- Alarm upałowy: fall detection (accelerometer), Android activity recognition instead of GPS only, restart after a reboot, a push to the trusted person's Cool Łódź app, smartwatches.
 - In-app turn-by-turn navigation.
 - Post-walk route rating.
 - Natural-language AI assistant.

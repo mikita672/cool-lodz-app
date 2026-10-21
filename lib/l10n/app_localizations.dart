@@ -823,7 +823,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacyLocationBody.
   ///
   /// In pl, this message translates to:
-  /// **'Z lokalizacji korzystamy tylko wtedy, gdy używasz aplikacji: do pokazania Cię na mapie, planowania trasy i potwierdzenia wizyty w questie. Nie zapisujemy trasy spaceru. Przy wizycie w questie zapisujemy tylko miejsce i czas skanu kodu QR.'**
+  /// **'Z lokalizacji korzystamy tylko wtedy, gdy używasz aplikacji: do pokazania Cię na mapie, planowania trasy i potwierdzenia wizyty w questie. Nie zapisujemy trasy spaceru. Przy wizycie w questie zapisujemy tylko miejsce i czas skanu kodu QR.\n\nWyjątek: alarm upałowy, jeśli go włączysz w Profilu. Wtedy aplikacja sprawdza lokalizację także w tle (domyślnie tylko w upał). Ta lokalizacja i numery osób do powiadomienia zostają na telefonie: lokalizację wysyłamy wyłącznie SMS-em z Twojego numeru do wskazanych przez Ciebie osób, gdy nie odpowiesz na alarm.'**
   String get privacyLocationBody;
 
   /// No description provided for @privacyStorageTitle.
@@ -2967,6 +2967,396 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Wyjdź: {when}'**
   String routeAdvicePick(String when);
+
+  /// No description provided for @heatGuardTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Alarm upałowy'**
+  String get heatGuardTitle;
+
+  /// No description provided for @heatGuardSettingsSubtitleOn.
+  ///
+  /// In pl, this message translates to:
+  /// **'Włączony'**
+  String get heatGuardSettingsSubtitleOn;
+
+  /// No description provided for @heatGuardSettingsSubtitleOff.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pyta, czy wszystko OK, gdy w upał długo stoisz w miejscu'**
+  String get heatGuardSettingsSubtitleOff;
+
+  /// No description provided for @heatGuardIntro.
+  ///
+  /// In pl, this message translates to:
+  /// **'Gdy jest upał, aplikacja sprawdza, czy po spacerze nie stoisz zbyt długo w jednym miejscu. Wtedy zapyta: «Wszystko w porządku?». Bez odpowiedzi po 30 s włączy alarm na pół głośności, a po kolejnych 30 s na pełną głośność z latarką i wyśle SMS z Twoją lokalizacją do wybranych osób.'**
+  String get heatGuardIntro;
+
+  /// No description provided for @heatGuardEnable.
+  ///
+  /// In pl, this message translates to:
+  /// **'Włącz alarm upałowy'**
+  String get heatGuardEnable;
+
+  /// No description provided for @heatGuardStatusWatching.
+  ///
+  /// In pl, this message translates to:
+  /// **'Czuwam: jest upał ({temp}°C)'**
+  String heatGuardStatusWatching(String temp);
+
+  /// No description provided for @heatGuardStatusWaiting.
+  ///
+  /// In pl, this message translates to:
+  /// **'Czekam na upał (teraz {temp}°C)'**
+  String heatGuardStatusWaiting(String temp);
+
+  /// No description provided for @heatGuardStatusAlways.
+  ///
+  /// In pl, this message translates to:
+  /// **'Czuwam cały czas'**
+  String get heatGuardStatusAlways;
+
+  /// No description provided for @heatGuardStatusOff.
+  ///
+  /// In pl, this message translates to:
+  /// **'Alarm jest wyłączony'**
+  String get heatGuardStatusOff;
+
+  /// No description provided for @heatGuardHeatOnly.
+  ///
+  /// In pl, this message translates to:
+  /// **'Tylko w upał'**
+  String get heatGuardHeatOnly;
+
+  /// No description provided for @heatGuardHeatOnlyHint.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ostrzeżenie IMGW albo od 28°C. Wyłącz, aby czuwał zawsze.'**
+  String get heatGuardHeatOnlyHint;
+
+  /// No description provided for @heatGuardWait.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pytaj po {minutes} min bez ruchu'**
+  String heatGuardWait(int minutes);
+
+  /// No description provided for @heatGuardContacts.
+  ///
+  /// In pl, this message translates to:
+  /// **'Osoby do powiadomienia (SMS)'**
+  String get heatGuardContacts;
+
+  /// No description provided for @heatGuardContactsHint.
+  ///
+  /// In pl, this message translates to:
+  /// **'SMS idzie z Twojego numeru, jak zwykła wiadomość. Do 3 osób.'**
+  String get heatGuardContactsHint;
+
+  /// No description provided for @heatGuardContactsEmpty.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nikt nie dostanie SMS. Dodaj bliską osobę.'**
+  String get heatGuardContactsEmpty;
+
+  /// No description provided for @heatGuardAddContact.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dodaj osobę'**
+  String get heatGuardAddContact;
+
+  /// No description provided for @heatGuardContactName.
+  ///
+  /// In pl, this message translates to:
+  /// **'Imię'**
+  String get heatGuardContactName;
+
+  /// No description provided for @heatGuardContactPhone.
+  ///
+  /// In pl, this message translates to:
+  /// **'Numer telefonu'**
+  String get heatGuardContactPhone;
+
+  /// No description provided for @heatGuardContactPhoneError.
+  ///
+  /// In pl, this message translates to:
+  /// **'Podaj numer, np. 601 234 567'**
+  String get heatGuardContactPhoneError;
+
+  /// No description provided for @heatGuardContactRemove.
+  ///
+  /// In pl, this message translates to:
+  /// **'Usuń {name}'**
+  String heatGuardContactRemove(String name);
+
+  /// No description provided for @heatGuardSave.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zapisz'**
+  String get heatGuardSave;
+
+  /// No description provided for @heatGuardCancel.
+  ///
+  /// In pl, this message translates to:
+  /// **'Anuluj'**
+  String get heatGuardCancel;
+
+  /// No description provided for @heatGuardHome.
+  ///
+  /// In pl, this message translates to:
+  /// **'Mój dom'**
+  String get heatGuardHome;
+
+  /// No description provided for @heatGuardHomeSet.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ustawiony: w domu alarm nie pyta'**
+  String get heatGuardHomeSet;
+
+  /// No description provided for @heatGuardHomeNone.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie ustawiono'**
+  String get heatGuardHomeNone;
+
+  /// No description provided for @heatGuardHomeHere.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ustaw tutaj'**
+  String get heatGuardHomeHere;
+
+  /// No description provided for @heatGuardHomeClear.
+  ///
+  /// In pl, this message translates to:
+  /// **'Usuń dom'**
+  String get heatGuardHomeClear;
+
+  /// No description provided for @heatGuardHomeError.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie udało się ustalić lokalizacji'**
+  String get heatGuardHomeError;
+
+  /// No description provided for @heatGuardTest.
+  ///
+  /// In pl, this message translates to:
+  /// **'Przetestuj alarm'**
+  String get heatGuardTest;
+
+  /// No description provided for @heatGuardTestHint.
+  ///
+  /// In pl, this message translates to:
+  /// **'Test trwa kilkanaście sekund, bez SMS. Głośno!'**
+  String get heatGuardTestHint;
+
+  /// No description provided for @heatGuardPermissions.
+  ///
+  /// In pl, this message translates to:
+  /// **'Uprawnienia'**
+  String get heatGuardPermissions;
+
+  /// No description provided for @heatGuardPermLocation.
+  ///
+  /// In pl, this message translates to:
+  /// **'Lokalizacja «Zezwalaj zawsze»'**
+  String get heatGuardPermLocation;
+
+  /// No description provided for @heatGuardPermNotifications.
+  ///
+  /// In pl, this message translates to:
+  /// **'Powiadomienia'**
+  String get heatGuardPermNotifications;
+
+  /// No description provided for @heatGuardPermSms.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wysyłanie SMS'**
+  String get heatGuardPermSms;
+
+  /// No description provided for @heatGuardPermNoSms.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ten telefon nie wysyła SMS'**
+  String get heatGuardPermNoSms;
+
+  /// No description provided for @heatGuardPermFullScreen.
+  ///
+  /// In pl, this message translates to:
+  /// **'Alarm na zablokowanym ekranie'**
+  String get heatGuardPermFullScreen;
+
+  /// No description provided for @heatGuardPermBattery.
+  ///
+  /// In pl, this message translates to:
+  /// **'Bez oszczędzania baterii'**
+  String get heatGuardPermBattery;
+
+  /// No description provided for @heatGuardFix.
+  ///
+  /// In pl, this message translates to:
+  /// **'Napraw'**
+  String get heatGuardFix;
+
+  /// No description provided for @heatGuardNeedPermissions.
+  ///
+  /// In pl, this message translates to:
+  /// **'Alarm potrzebuje lokalizacji «Zezwalaj zawsze» i powiadomień.'**
+  String get heatGuardNeedPermissions;
+
+  /// No description provided for @heatGuardDisclaimer.
+  ///
+  /// In pl, this message translates to:
+  /// **'To nie jest wyrób medyczny ani usługa ratunkowa. Aplikacja nie dzwoni na 112 sama. Nie usuwaj jej z ostatnich aplikacji, gdy czuwa.'**
+  String get heatGuardDisclaimer;
+
+  /// No description provided for @heatCheckQuestion.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wszystko w porządku?'**
+  String get heatCheckQuestion;
+
+  /// No description provided for @heatCheckBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Jest upał, a od kilku minut stoisz w jednym miejscu. Jeśli nie odpowiesz, za chwilę włączy się alarm.'**
+  String get heatCheckBody;
+
+  /// No description provided for @heatCheckOk.
+  ///
+  /// In pl, this message translates to:
+  /// **'Tak, wszystko OK'**
+  String get heatCheckOk;
+
+  /// No description provided for @heatCheckHelp.
+  ///
+  /// In pl, this message translates to:
+  /// **'Potrzebuję pomocy'**
+  String get heatCheckHelp;
+
+  /// No description provided for @heatCheckAlarmTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ta osoba może potrzebować pomocy'**
+  String get heatCheckAlarmTitle;
+
+  /// No description provided for @heatCheckAlarmLead.
+  ///
+  /// In pl, this message translates to:
+  /// **'Możliwy udar cieplny. Pomóż:'**
+  String get heatCheckAlarmLead;
+
+  /// No description provided for @heatCheckAid1.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zadzwoń pod 112.'**
+  String get heatCheckAid1;
+
+  /// No description provided for @heatCheckAid2.
+  ///
+  /// In pl, this message translates to:
+  /// **'Przenieś osobę w cień lub chłodne miejsce.'**
+  String get heatCheckAid2;
+
+  /// No description provided for @heatCheckAid3.
+  ///
+  /// In pl, this message translates to:
+  /// **'Poluzuj ubranie, chłodź skórę wodą (kark, pachy, pachwiny), wachluj.'**
+  String get heatCheckAid3;
+
+  /// No description provided for @heatCheckAid4.
+  ///
+  /// In pl, this message translates to:
+  /// **'Jeśli jest przytomna, podawaj wodę małymi łykami.'**
+  String get heatCheckAid4;
+
+  /// No description provided for @heatCheckAid5.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie zostawiaj jej samej do przyjazdu pomocy.'**
+  String get heatCheckAid5;
+
+  /// No description provided for @heatCheckCall112.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zadzwoń 112'**
+  String get heatCheckCall112;
+
+  /// No description provided for @heatCheckStop.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wyłącz alarm: wszystko OK'**
+  String get heatCheckStop;
+
+  /// No description provided for @heatCheckSmsSent.
+  ///
+  /// In pl, this message translates to:
+  /// **'SMS wysłany do: {names}'**
+  String heatCheckSmsSent(String names);
+
+  /// No description provided for @heatCheckTest.
+  ///
+  /// In pl, this message translates to:
+  /// **'To jest test alarmu.'**
+  String get heatCheckTest;
+
+  /// No description provided for @heatNativeMonitorTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Alarm upałowy'**
+  String get heatNativeMonitorTitle;
+
+  /// No description provided for @heatNativeWatching.
+  ///
+  /// In pl, this message translates to:
+  /// **'Czuwam: upał, {temp}°C'**
+  String heatNativeWatching(String temp);
+
+  /// No description provided for @heatNativeWaiting.
+  ///
+  /// In pl, this message translates to:
+  /// **'Czekam na upał (teraz {temp}°C)'**
+  String heatNativeWaiting(String temp);
+
+  /// No description provided for @heatNativeCheckBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Stoisz w jednym miejscu od kilku minut. Odpowiedz, inaczej włączy się alarm.'**
+  String get heatNativeCheckBody;
+
+  /// No description provided for @heatNativeAlarmTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Alarm: brak odpowiedzi'**
+  String get heatNativeAlarmTitle;
+
+  /// No description provided for @heatNativeAlarmBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dotknij, jeśli wszystko w porządku.'**
+  String get heatNativeAlarmBody;
+
+  /// No description provided for @heatNativeSmsSent.
+  ///
+  /// In pl, this message translates to:
+  /// **'SMS wysłany do: {names}'**
+  String heatNativeSmsSent(String names);
+
+  /// No description provided for @heatNativeSms.
+  ///
+  /// In pl, this message translates to:
+  /// **'Cool Łódź, alarm upałowy: nie odpowiadam od {time}, mogę potrzebować pomocy. {place} Zadzwoń do mnie, a jeśli nie odbieram, dzwoń pod 112.'**
+  String heatNativeSms(String place, String time);
+
+  /// No description provided for @heatNativeSmsPlace.
+  ///
+  /// In pl, this message translates to:
+  /// **'Moja lokalizacja: {link} (±{accuracy} m).'**
+  String heatNativeSmsPlace(String link, String accuracy);
+
+  /// No description provided for @heatNativeSmsNoPlace.
+  ///
+  /// In pl, this message translates to:
+  /// **'Lokalizacja nieznana.'**
+  String get heatNativeSmsNoPlace;
 
   /// No description provided for @placeThu.
   ///

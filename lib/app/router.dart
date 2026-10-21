@@ -10,6 +10,8 @@ import '../features/auth/login_screen.dart';
 import '../features/auth/start_screen.dart';
 import '../features/cool_places/cool_places_screen.dart';
 import '../features/cool_places/place_screen.dart';
+import '../features/heat_guard/heat_check_screen.dart';
+import '../features/heat_guard/heat_guard_screen.dart';
 import '../features/map/map_screen.dart';
 import '../features/onboarding/onboarding_screen.dart';
 import '../features/profile/profile_select_screen.dart';
@@ -129,6 +131,11 @@ final routerProvider = Provider<GoRouter>((ref) {
                     parentNavigatorKey: rootNavigatorKey,
                     builder: (_, _) => const ConsentsSettingsScreen(),
                   ),
+                  GoRoute(
+                    path: 'heat-guard',
+                    parentNavigatorKey: rootNavigatorKey,
+                    builder: (_, _) => const HeatGuardScreen(),
+                  ),
                 ],
               ),
             ],
@@ -143,6 +150,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(path: 'result', builder: (_, _) => const RouteResultScreen()),
         ],
+      ),
+      GoRoute(
+        path: Routes.heatCheck,
+        builder: (_, state) => HeatCheckScreen(test: state.extra == true),
       ),
       GoRoute(
         path: Routes.placePattern,

@@ -459,7 +459,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get privacyLocationBody =>
-      'Z lokalizacji korzystamy tylko wtedy, gdy używasz aplikacji: do pokazania Cię na mapie, planowania trasy i potwierdzenia wizyty w questie. Nie zapisujemy trasy spaceru. Przy wizycie w questie zapisujemy tylko miejsce i czas skanu kodu QR.';
+      'Z lokalizacji korzystamy tylko wtedy, gdy używasz aplikacji: do pokazania Cię na mapie, planowania trasy i potwierdzenia wizyty w questie. Nie zapisujemy trasy spaceru. Przy wizycie w questie zapisujemy tylko miejsce i czas skanu kodu QR.\n\nWyjątek: alarm upałowy, jeśli go włączysz w Profilu. Wtedy aplikacja sprawdza lokalizację także w tle (domyślnie tylko w upał). Ta lokalizacja i numery osób do powiadomienia zostają na telefonie: lokalizację wysyłamy wyłącznie SMS-em z Twojego numeru do wskazanych przez Ciebie osób, gdy nie odpowiesz na alarm.';
 
   @override
   String get privacyStorageTitle => 'Gdzie przechowujemy dane';
@@ -1709,6 +1709,233 @@ class AppLocalizationsPl extends AppLocalizations {
   String routeAdvicePick(String when) {
     return 'Wyjdź: $when';
   }
+
+  @override
+  String get heatGuardTitle => 'Alarm upałowy';
+
+  @override
+  String get heatGuardSettingsSubtitleOn => 'Włączony';
+
+  @override
+  String get heatGuardSettingsSubtitleOff =>
+      'Pyta, czy wszystko OK, gdy w upał długo stoisz w miejscu';
+
+  @override
+  String get heatGuardIntro =>
+      'Gdy jest upał, aplikacja sprawdza, czy po spacerze nie stoisz zbyt długo w jednym miejscu. Wtedy zapyta: «Wszystko w porządku?». Bez odpowiedzi po 30 s włączy alarm na pół głośności, a po kolejnych 30 s na pełną głośność z latarką i wyśle SMS z Twoją lokalizacją do wybranych osób.';
+
+  @override
+  String get heatGuardEnable => 'Włącz alarm upałowy';
+
+  @override
+  String heatGuardStatusWatching(String temp) {
+    return 'Czuwam: jest upał ($temp°C)';
+  }
+
+  @override
+  String heatGuardStatusWaiting(String temp) {
+    return 'Czekam na upał (teraz $temp°C)';
+  }
+
+  @override
+  String get heatGuardStatusAlways => 'Czuwam cały czas';
+
+  @override
+  String get heatGuardStatusOff => 'Alarm jest wyłączony';
+
+  @override
+  String get heatGuardHeatOnly => 'Tylko w upał';
+
+  @override
+  String get heatGuardHeatOnlyHint =>
+      'Ostrzeżenie IMGW albo od 28°C. Wyłącz, aby czuwał zawsze.';
+
+  @override
+  String heatGuardWait(int minutes) {
+    return 'Pytaj po $minutes min bez ruchu';
+  }
+
+  @override
+  String get heatGuardContacts => 'Osoby do powiadomienia (SMS)';
+
+  @override
+  String get heatGuardContactsHint =>
+      'SMS idzie z Twojego numeru, jak zwykła wiadomość. Do 3 osób.';
+
+  @override
+  String get heatGuardContactsEmpty =>
+      'Nikt nie dostanie SMS. Dodaj bliską osobę.';
+
+  @override
+  String get heatGuardAddContact => 'Dodaj osobę';
+
+  @override
+  String get heatGuardContactName => 'Imię';
+
+  @override
+  String get heatGuardContactPhone => 'Numer telefonu';
+
+  @override
+  String get heatGuardContactPhoneError => 'Podaj numer, np. 601 234 567';
+
+  @override
+  String heatGuardContactRemove(String name) {
+    return 'Usuń $name';
+  }
+
+  @override
+  String get heatGuardSave => 'Zapisz';
+
+  @override
+  String get heatGuardCancel => 'Anuluj';
+
+  @override
+  String get heatGuardHome => 'Mój dom';
+
+  @override
+  String get heatGuardHomeSet => 'Ustawiony: w domu alarm nie pyta';
+
+  @override
+  String get heatGuardHomeNone => 'Nie ustawiono';
+
+  @override
+  String get heatGuardHomeHere => 'Ustaw tutaj';
+
+  @override
+  String get heatGuardHomeClear => 'Usuń dom';
+
+  @override
+  String get heatGuardHomeError => 'Nie udało się ustalić lokalizacji';
+
+  @override
+  String get heatGuardTest => 'Przetestuj alarm';
+
+  @override
+  String get heatGuardTestHint =>
+      'Test trwa kilkanaście sekund, bez SMS. Głośno!';
+
+  @override
+  String get heatGuardPermissions => 'Uprawnienia';
+
+  @override
+  String get heatGuardPermLocation => 'Lokalizacja «Zezwalaj zawsze»';
+
+  @override
+  String get heatGuardPermNotifications => 'Powiadomienia';
+
+  @override
+  String get heatGuardPermSms => 'Wysyłanie SMS';
+
+  @override
+  String get heatGuardPermNoSms => 'Ten telefon nie wysyła SMS';
+
+  @override
+  String get heatGuardPermFullScreen => 'Alarm na zablokowanym ekranie';
+
+  @override
+  String get heatGuardPermBattery => 'Bez oszczędzania baterii';
+
+  @override
+  String get heatGuardFix => 'Napraw';
+
+  @override
+  String get heatGuardNeedPermissions =>
+      'Alarm potrzebuje lokalizacji «Zezwalaj zawsze» i powiadomień.';
+
+  @override
+  String get heatGuardDisclaimer =>
+      'To nie jest wyrób medyczny ani usługa ratunkowa. Aplikacja nie dzwoni na 112 sama. Nie usuwaj jej z ostatnich aplikacji, gdy czuwa.';
+
+  @override
+  String get heatCheckQuestion => 'Wszystko w porządku?';
+
+  @override
+  String get heatCheckBody =>
+      'Jest upał, a od kilku minut stoisz w jednym miejscu. Jeśli nie odpowiesz, za chwilę włączy się alarm.';
+
+  @override
+  String get heatCheckOk => 'Tak, wszystko OK';
+
+  @override
+  String get heatCheckHelp => 'Potrzebuję pomocy';
+
+  @override
+  String get heatCheckAlarmTitle => 'Ta osoba może potrzebować pomocy';
+
+  @override
+  String get heatCheckAlarmLead => 'Możliwy udar cieplny. Pomóż:';
+
+  @override
+  String get heatCheckAid1 => 'Zadzwoń pod 112.';
+
+  @override
+  String get heatCheckAid2 => 'Przenieś osobę w cień lub chłodne miejsce.';
+
+  @override
+  String get heatCheckAid3 =>
+      'Poluzuj ubranie, chłodź skórę wodą (kark, pachy, pachwiny), wachluj.';
+
+  @override
+  String get heatCheckAid4 =>
+      'Jeśli jest przytomna, podawaj wodę małymi łykami.';
+
+  @override
+  String get heatCheckAid5 => 'Nie zostawiaj jej samej do przyjazdu pomocy.';
+
+  @override
+  String get heatCheckCall112 => 'Zadzwoń 112';
+
+  @override
+  String get heatCheckStop => 'Wyłącz alarm: wszystko OK';
+
+  @override
+  String heatCheckSmsSent(String names) {
+    return 'SMS wysłany do: $names';
+  }
+
+  @override
+  String get heatCheckTest => 'To jest test alarmu.';
+
+  @override
+  String get heatNativeMonitorTitle => 'Alarm upałowy';
+
+  @override
+  String heatNativeWatching(String temp) {
+    return 'Czuwam: upał, $temp°C';
+  }
+
+  @override
+  String heatNativeWaiting(String temp) {
+    return 'Czekam na upał (teraz $temp°C)';
+  }
+
+  @override
+  String get heatNativeCheckBody =>
+      'Stoisz w jednym miejscu od kilku minut. Odpowiedz, inaczej włączy się alarm.';
+
+  @override
+  String get heatNativeAlarmTitle => 'Alarm: brak odpowiedzi';
+
+  @override
+  String get heatNativeAlarmBody => 'Dotknij, jeśli wszystko w porządku.';
+
+  @override
+  String heatNativeSmsSent(String names) {
+    return 'SMS wysłany do: $names';
+  }
+
+  @override
+  String heatNativeSms(String place, String time) {
+    return 'Cool Łódź, alarm upałowy: nie odpowiadam od $time, mogę potrzebować pomocy. $place Zadzwoń do mnie, a jeśli nie odbieram, dzwoń pod 112.';
+  }
+
+  @override
+  String heatNativeSmsPlace(String link, String accuracy) {
+    return 'Moja lokalizacja: $link (±$accuracy m).';
+  }
+
+  @override
+  String get heatNativeSmsNoPlace => 'Lokalizacja nieznana.';
 
   @override
   String get placeThu => 'czw.';
