@@ -117,6 +117,21 @@ class MainActivity : FlutterActivity() {
             }
         }
         if (pendingCheck) ch.invokeMethod("check", null)
+
+        // «Udostępnij trasę»: the system share sheet.
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, SHARE_CHANNEL)
+            .setMethodCallHandler { call, result ->
+                if (call.method != "text") {
+                    result.notImplemented()
+                    return@setMethodCallHandler
+                }
+                val send = Intent(Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_TEXT, call.argument<String>("text"))
+                }
+                startActivity(Intent.createChooser(send, call.argument<String>("title")))
+                result.success(null)
+            }
     }
 
     private fun granted(permission: String) =
@@ -193,6 +208,7 @@ class MainActivity : FlutterActivity() {
 
     companion object {
         const val CHANNEL = "cool_lodz/heat_guard"
+        const val SHARE_CHANNEL = "cool_lodz/share"
         const val EXTRA_HEAT_CHECK = "heat_check"
         private const val PERMISSION_REQUEST = 4100
     }

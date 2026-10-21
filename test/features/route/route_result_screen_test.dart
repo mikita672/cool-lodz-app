@@ -15,6 +15,7 @@ import 'package:cool_lodz/features/route/data/google_maps.dart';
 import 'package:cool_lodz/features/route/data/route_plan.dart';
 import 'package:cool_lodz/features/route/route_result_screen.dart';
 import 'package:cool_lodz/l10n/app_localizations.dart';
+import 'package:cool_lodz/shared/share.dart';
 import 'package:cool_lodz/shared/widgets/route_variant_card.dart' as ds;
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -262,6 +263,45 @@ void main() {
       ],
     );
     expect(find.byKey(const Key('route-paws')), findsNothing);
+  });
+
+  testWidgets('«Udostępnij trasę» sends from, to, times, shade and a link', (
+    tester,
+  ) async {
+    final shared = <String>[];
+    await pump(
+      tester,
+      extra: [
+        shareTextProvider.overrideWithValue((text, {title}) async {
+          shared.add(text);
+          return true;
+        }),
+      ],
+    );
+    await tester.tap(find.byKey(const Key('route-share')));
+    await tester.pumpAndSettle();
+    expect(shared, hasLength(1));
+    final text = shared.single;
+    expect(text, startsWith('Idę pieszo: Manufaktura → '));
+    expect(text, contains('Wyjście: teraz, na miejscu ok. '));
+    expect(text, contains('% w cieniu)'));
+    expect(text, contains('https://www.google.com/maps/dir/?api=1'));
+    expect(text, contains('travelmode=walking'));
+  });
+
+  testWidgets('without a share sheet the text is copied', (tester) async {
+    await pump(
+      tester,
+      extra: [
+        shareTextProvider.overrideWithValue((text, {title}) async => false),
+      ],
+    );
+    await tester.tap(find.byKey(const Key('route-share')));
+    await tester.pump();
+    expect(
+      find.text('Skopiowano opis trasy. Wklej go w wiadomości.'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('tapping a card selects it', (tester) async {

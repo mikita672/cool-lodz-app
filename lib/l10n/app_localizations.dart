@@ -3598,6 +3598,44 @@ abstract class AppLocalizations {
   /// **'Asfalt ok. {temp}°C: sprawdź dłonią, czy nie parzy łap psa.'**
   String routePawCaution(int temp);
 
+  /// No description provided for @routeShare.
+  ///
+  /// In pl, this message translates to:
+  /// **'Udostępnij trasę'**
+  String get routeShare;
+
+  /// No description provided for @routeShareNow.
+  ///
+  /// In pl, this message translates to:
+  /// **'teraz'**
+  String get routeShareNow;
+
+  /// No description provided for @routeShareDestination.
+  ///
+  /// In pl, this message translates to:
+  /// **'cel'**
+  String get routeShareDestination;
+
+  /// No description provided for @routeShareText.
+  ///
+  /// In pl, this message translates to:
+  /// **'Idę pieszo: {from} → {to}.\nWyjście: {when}, na miejscu ok. {eta} ({minutes} min, {shade}% w cieniu).\nTrasa: {link}\nCool Łódź'**
+  String routeShareText(
+    String from,
+    String to,
+    String when,
+    String eta,
+    int minutes,
+    int shade,
+    String link,
+  );
+
+  /// No description provided for @routeShareCopied.
+  ///
+  /// In pl, this message translates to:
+  /// **'Skopiowano opis trasy. Wklej go w wiadomości.'**
+  String get routeShareCopied;
+
   /// No description provided for @placeThu.
   ///
   /// In pl, this message translates to:

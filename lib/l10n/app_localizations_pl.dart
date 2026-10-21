@@ -2089,6 +2089,32 @@ class AppLocalizationsPl extends AppLocalizations {
   }
 
   @override
+  String get routeShare => 'Udostępnij trasę';
+
+  @override
+  String get routeShareNow => 'teraz';
+
+  @override
+  String get routeShareDestination => 'cel';
+
+  @override
+  String routeShareText(
+    String from,
+    String to,
+    String when,
+    String eta,
+    int minutes,
+    int shade,
+    String link,
+  ) {
+    return 'Idę pieszo: $from → $to.\nWyjście: $when, na miejscu ok. $eta ($minutes min, $shade% w cieniu).\nTrasa: $link\nCool Łódź';
+  }
+
+  @override
+  String get routeShareCopied =>
+      'Skopiowano opis trasy. Wklej go w wiadomości.';
+
+  @override
   String get placeThu => 'czw.';
 
   @override

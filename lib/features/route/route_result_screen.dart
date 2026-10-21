@@ -21,6 +21,7 @@ import '../../core/storage/offline_cache.dart';
 import '../../core/warsaw_time.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/map/base_map.dart';
+import '../../shared/share.dart';
 import '../../shared/widgets/app_button.dart';
 import '../../shared/widgets/app_icons.dart';
 import '../../shared/widgets/app_toast.dart';
@@ -39,6 +40,7 @@ import '../profile/data/comfort_profile_provider.dart';
 import 'data/google_maps.dart';
 import 'data/route_history_repository.dart';
 import 'data/route_plan.dart';
+import 'data/route_share.dart';
 import 'route_plan_screen.dart';
 
 /// S07 Wynik trasy: three variants on the map, cards to compare them,
@@ -121,6 +123,25 @@ class _RouteResultScreenState extends ConsumerState<RouteResultScreen> {
           defaultVariant(ref.read(comfortProfileProvider).id),
         ) ??
         orderedVariants(response).first;
+  }
+
+  /// «Udostępnij trasę»: from, to, departure, arrival, shade and a Google
+  /// Maps link, through the share sheet.
+  Future<void> _share(RouteRequest request, RouteVariant variant) async {
+    final l10n = AppLocalizations.of(context);
+    final departure = _departure(request);
+    final shared = await ref.read(shareTextProvider)(
+      routeShareText(
+        request: request,
+        variant: variant,
+        departure: departure,
+        shadeShare: 1 - _sunShareAt(variant, departure),
+        now: ref.read(clockProvider)(),
+        l10n: l10n,
+      ),
+      title: l10n.routeShare,
+    );
+    if (!shared && mounted) showAppToast(context, l10n.routeShareCopied);
   }
 
   Future<void> _go(RouteRequest request, RouteVariant variant) async {
@@ -279,6 +300,15 @@ class _RouteResultScreenState extends ConsumerState<RouteResultScreen> {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
+        actions: [
+          if (body is _Result && request != null && response != null)
+            IconButton(
+              key: const Key('route-share'),
+              tooltip: l10n.routeShare,
+              icon: const Icon(Icons.share_rounded),
+              onPressed: () => _share(request, _selected(response)),
+            ),
+        ],
       ),
       body: body,
     );
