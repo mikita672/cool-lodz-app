@@ -68,6 +68,7 @@ void main() {
       Routes.profile,
       Routes.profileSelect,
       Routes.privacy,
+      Routes.heatCheck,
     ];
 
     for (final (state, required) in cases) {
@@ -75,8 +76,8 @@ void main() {
         expect(state.requiredRoute, required);
         for (final path in paths) {
           final String? expected;
-          if (path == Routes.privacy) {
-            expected = null; // always readable
+          if (path == Routes.privacy || path == Routes.heatCheck) {
+            expected = null; // always reachable
           } else if (required == null) {
             expected = startFlowRoutes.contains(path) ? Routes.map : null;
           } else {

@@ -3,9 +3,22 @@
     <!-- Android 13+: FCM notifications. Asked at runtime after S03 (APP-07). -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <!-- Location while the app is in use (map, route, quest). Asked at
-         runtime after S03 (APP-07); no background location. -->
+         runtime after S03 (APP-07). -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <!-- «Alarm upałowy» (opt-in in Profil): location in the background while
+         it is hot, a foreground service, the full-screen check, the siren and
+         an SMS to the trusted contacts from the user's own SIM. -->
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION"/>
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
+    <uses-permission android:name="android.permission.SEND_SMS"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+    <uses-feature android:name="android.hardware.telephony" android:required="false"/>
+    <uses-feature android:name="android.hardware.camera.flash" android:required="false"/>
     <application
         android:label="Cool Łódź"
         android:name="${applicationName}"
@@ -33,6 +46,10 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <service
+            android:name=".heat.HeatGuardService"
+            android:exported="false"
+            android:foregroundServiceType="location"/>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

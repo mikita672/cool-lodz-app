@@ -212,6 +212,7 @@ S07 «Wynik trasy» is highlighted — the app exists for its sake and the demo 
 - Items: Mój profil komfortu, Powiadomienia, Zgody i prywatność, Polityka prywatności, O aplikacji i źródła danych, Wyloguj, Usuń konto.
 - «Usuń konto»: confirmation by entering the password; deletes the user and all their documents.
 - «O aplikacji»: version (5 taps → demo mode switch), data sources and OSM attribution.
+- «Alarm upałowy» (opt-in): while it is hot (IMGW heat warning, or ≥ 28 °C / feels like ≥ 30 °C from Open-Meteo; «Tylko w upał» can be switched off), the phone watches its location. After walking somewhere (≥ 100 m in the 10 min before) and staying within 40 m for the set time (3–15 min, default 7, Senior 5), it asks «Wszystko w porządku?» on a full-screen alarm over the lock screen. No answer: after 30 s the siren plays at half volume (alarm stream, works in silent mode), after another 30 s at full volume with the flashlight blinking, and an SMS with the location goes from the user's own SIM to up to 3 trusted contacts. The alarm screen then tells passers-by what to do in heatstroke and has a big «Zadzwoń 112» button. No checks at home or at cool places; «OK» silences the same stop for 30 min; «Potrzebuję pomocy» goes straight to the full alarm. The app never calls 112 by itself. «Przetestuj alarm» runs the whole check in 5-second steps without the SMS.
 
 ## Design system
 
