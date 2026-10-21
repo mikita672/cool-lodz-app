@@ -57,7 +57,7 @@ void main() {
   Future<ProviderContainer> pump(
     WidgetTester tester, {
     String initial = '/profile',
-    Size size = const Size(400, 1200),
+    Size size = const Size(400, 1600),
     double textScale = 1,
   }) async {
     tester.view.physicalSize = size;

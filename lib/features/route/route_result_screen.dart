@@ -635,6 +635,7 @@ class _Result extends ConsumerWidget {
                     child: Row(
                       children: [
                         Expanded(
+                          flex: 2,
                           child: AppButton(
                             key: const Key('route-save'),
                             label: l10n.routeSave,
@@ -647,7 +648,7 @@ class _Result extends ConsumerWidget {
                         ),
                         const SizedBox(width: AppSizes.s12),
                         Expanded(
-                          flex: 2,
+                          flex: 3,
                           child: AppButton(
                             key: const Key('route-go'),
                             label: l10n.routeGo,

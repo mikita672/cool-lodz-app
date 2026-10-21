@@ -30,6 +30,9 @@ A list for the competition documentation (MD hands it to Mikita Kutsenka). The d
 - The alert push is sent manually from the Firebase console (a test message); there is no automatic sending based on IMGW data — that needs a server side.
 - Heat mode for the demo is turned on with the `config/game.heatOverride` field.
 
+**Shop**
+- Rewards and codes are a demo: no agreement with MPK Łódź or the venues yet, codes are not checked anywhere. Spending is validated only by the Firestore rules (the client could add points the same way it earns them, see above).
+
 **Heat risk, pavement, symptoms**
 - The heat risk uses the feels-like temperature on UTCI-like steps, not a full UTCI calculation; the asphalt temperature is an estimate from air temperature and sun (no surface sensors).
 - The symptom check is fixed advice from NHS/GIS guidance, not a diagnosis.

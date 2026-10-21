@@ -77,7 +77,14 @@ class HeatRiskChip extends ConsumerWidget {
                   color: heatRiskColor(risk.level),
                 ),
                 const SizedBox(width: AppSizes.s4),
-                Flexible(child: Text(text, style: AppTextStyles.label)),
+                Flexible(
+                  child: Text(
+                    text,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.label,
+                  ),
+                ),
                 if (paws) ...[
                   const SizedBox(width: AppSizes.s4),
                   const Icon(

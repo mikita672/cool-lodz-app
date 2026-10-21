@@ -127,7 +127,8 @@ class GameService {
     return _award(uid, withScan, [if (points > 0) entry]);
   }
 
-  /// The quest password was solved: 200 points once.
+  /// The quest password was solved: 500 points once, as entries of at most
+  /// 200 (the Firestore rules cap every write at +200).
   Future<GameAward> passwordSolved(String questId) =>
       _serial(() => _passwordSolved(questId));
 
@@ -135,11 +136,18 @@ class GameService {
     final uid = _uid;
     if (uid == null) return GameAward.none;
     final history = await _repo.history(uid);
-    final points = GameRules.passwordPoints(questId: questId, history: history);
-    return _award(uid, history, [
-      if (points > 0)
-        PointsEntry(type: PointsType.password, points: points, refId: questId),
-    ]);
+    var left = GameRules.passwordPoints(questId: questId, history: history);
+    final entries = <PointsEntry>[];
+    while (left > 0) {
+      final part = left > GameConfig.maxPointsPerWrite
+          ? GameConfig.maxPointsPerWrite
+          : left;
+      entries.add(
+        PointsEntry(type: PointsType.password, points: part, refId: questId),
+      );
+      left -= part;
+    }
+    return _award(uid, history, entries);
   }
 
   /// Reports approved in the console since the last check: 20 points each

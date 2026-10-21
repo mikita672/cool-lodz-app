@@ -86,6 +86,7 @@ class FirestoreAccountRepository implements AccountRepository {
     for (final sub in [
       FirestoreCollections.pointsLog,
       FirestoreCollections.routes,
+      FirestoreCollections.redemptions,
     ]) {
       final q = await _user(uid).collection(sub).get();
       refs.addAll(q.docs.map((d) => d.reference));

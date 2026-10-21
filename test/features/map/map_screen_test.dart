@@ -384,7 +384,7 @@ void main() {
       extra: [clockProvider.overrideWithValue(() => noon)],
     );
     // 37 °C feels like at the peak; the demo alert is level 2.
-    expect(find.text('Ryzyko upałowe: wysokie · 37°C'), findsOneWidget);
+    expect(find.text('Upał: wysokie · 37°C'), findsOneWidget);
     expect(find.byIcon(Icons.pets_rounded), findsOneWidget);
     await tester.tap(find.byKey(const Key('heat-risk-chip')));
     await tester.pumpAndSettle();

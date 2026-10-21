@@ -545,6 +545,46 @@ describe('pointsLog and routes', () => {
   });
 });
 
+describe('shop (redemptions)', () => {
+  const redemption = (cost = 300) => ({
+    rewardId: 'mpk20', cost, code: 'MPK-ABCD-1234', createdAt: serverTimestamp(),
+  });
+
+  test('buying: spent grows by the cost in the same batch', async () => {
+    await seed({ 'users/alice': user({ points: 1000 }) });
+    const alice = db('alice');
+    const batch = writeBatch(alice);
+    batch.update(doc(alice, 'users/alice'), { spent: 300 });
+    batch.set(doc(alice, 'users/alice/redemptions/r1'), redemption(300));
+    await assertSucceeds(batch.commit());
+    await assertSucceeds(getDoc(doc(alice, 'users/alice/redemptions/r1')));
+    await assertFails(updateDoc(doc(alice, 'users/alice/redemptions/r1'), { cost: 1 }));
+    await assertFails(getDoc(doc(db('bob'), 'users/alice/redemptions/r1')));
+  });
+
+  test('a redemption without paying, or paying less, is rejected', async () => {
+    await seed({ 'users/alice': user({ points: 1000 }) });
+    const alice = db('alice');
+    await assertFails(setDoc(doc(alice, 'users/alice/redemptions/r1'), redemption(300)));
+    const batch = writeBatch(alice);
+    batch.update(doc(alice, 'users/alice'), { spent: 100 });
+    batch.set(doc(alice, 'users/alice/redemptions/r2'), redemption(300));
+    await assertFails(batch.commit());
+  });
+
+  test('spent never goes down and never above points', async () => {
+    await seed({ 'users/alice': user({ points: 500, spent: 300 }) });
+    const ref = doc(db('alice'), 'users/alice');
+    await assertFails(updateDoc(ref, { spent: 200 }));
+    await assertFails(updateDoc(ref, { spent: 600 }));
+    await assertSucceeds(updateDoc(ref, { spent: 500 }));
+  });
+
+  test('a new user starts with nothing spent', async () => {
+    await assertFails(setDoc(doc(db('alice'), 'users/alice'), user({ spent: 100 })));
+  });
+});
+
 describe('visits (QR scans)', () => {
   const id = (uid = 'alice', day = todayPl()) => `visits/${uid}_${PLACE}_${day}`;
 

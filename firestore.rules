@@ -59,7 +59,8 @@ service cloud.firestore {
 
     function validUser(d) {
       return d.keys().hasOnly(['nickname', 'district', 'profile', 'consents',
-          'points', 'weekId', 'weekPoints', 'badges', 'fcmToken', 'createdAt'])
+          'points', 'weekId', 'weekPoints', 'badges', 'spent', 'fcmToken',
+          'createdAt'])
         && d.nickname is string
         && d.nickname.size() >= 2 && d.nickname.size() <= 24
         && (d.get('district', null) == null || d.district in districtIds())
@@ -70,6 +71,7 @@ service cloud.firestore {
             && d.consents.get('ranking', false) is bool))
         && d.get('points', 0) is int && d.get('points', 0) >= 0
         && d.get('weekPoints', 0) is int && d.get('weekPoints', 0) >= 0
+        && d.get('spent', 0) is int && d.get('spent', 0) >= 0
         && (!('weekId' in d) || isWeekId(d.weekId))
         && d.get('badges', []) is list && d.get('badges', []).size() <= 50
         && (d.get('fcmToken', null) == null || d.fcmToken is string)
@@ -79,6 +81,8 @@ service cloud.firestore {
     // points: never down, at most +200 per write.
     // weekPoints: same, except that a new weekId resets it (0..200 allowed).
     // badges: only grow.
+    // spent (shop): only grows and never above points, so the points total
+    // and the ranking stay; what can be spent is points - spent.
     function validUserChange(before, after) {
       let dPoints = after.get('points', 0) - before.get('points', 0);
       let dWeek = after.get('weekPoints', 0) - before.get('weekPoints', 0);
@@ -88,6 +92,8 @@ service cloud.firestore {
             ? (dWeek >= 0 && dWeek <= 200)
             : after.get('weekPoints', 0) <= 200)
         && after.get('badges', []).hasAll(before.get('badges', []))
+        && after.get('spent', 0) >= before.get('spent', 0)
+        && after.get('spent', 0) <= after.get('points', 0)
         && after.get('createdAt', null) == before.get('createdAt', null);
     }
 
@@ -99,6 +105,7 @@ service cloud.firestore {
         && validUser(incoming())
         && incoming().get('points', 0) <= 200
         && incoming().get('weekPoints', 0) <= 200
+        && incoming().get('spent', 0) == 0
         && rankingGoneWithoutConsent(uid);
 
       allow update: if isOwner(uid)
@@ -122,6 +129,24 @@ service cloud.firestore {
           && (incoming().refId == null
               || (incoming().refId is string && incoming().refId.size() <= 200))
           && incoming().createdAt == request.time;
+      }
+
+      // Rewards bought in the shop. Created in the same batch as the user
+      // update that adds exactly their cost to `spent`. No updates.
+      match /redemptions/{redemptionId} {
+        allow read, delete: if isOwner(uid);
+        allow create: if isOwner(uid)
+          && incoming().keys().hasOnly(['rewardId', 'cost', 'code', 'createdAt'])
+          && incoming().keys().hasAll(['rewardId', 'cost', 'code', 'createdAt'])
+          && incoming().rewardId is string
+          && incoming().rewardId.size() >= 1 && incoming().rewardId.size() <= 40
+          && incoming().cost is int
+          && incoming().cost >= 1 && incoming().cost <= 10000
+          && incoming().code is string && incoming().code.size() <= 40
+          && incoming().createdAt == request.time
+          && getAfter(/databases/$(database)/documents/users/$(uid)).data.get('spent', 0)
+              - get(/databases/$(database)/documents/users/$(uid)).data.get('spent', 0)
+              == incoming().cost;
       }
 
       // Routes started with "Prowadź" (Q-08), used for badges, the weekly

@@ -329,6 +329,12 @@ Ambasador (referral code) and Wspólny spacer are kolejne kroki.
 
 **Known limitation:** without Cloud Functions the client awards points, and the Firestore rules only limit the size of the increment. This is acceptable for the competition; server-side validation is in kolejne kroki.
 
+### Shop (added 22.10)
+
+- «Sklep z nagrodami» (Quest → Odznaki → «Wymień punkty w sklepie»): points buy MPK tickets (20 min 300, 60 min 500, 24 h 1000), museum entries (Palmiarnia 400, Centralne Muzeum Włókiennictwa 600, Muzeum Sztuki 800) and culture discounts (EC1 Planetarium 700, Filharmonia 1000, Teatr Jaracza 1200). Spending adds to `users/{uid}.spent` (only grows, never above `points`), so the total and the ranking keep the points; the code goes to `users/{uid}/redemptions` in the same batch. Codes are demo codes until there are agreements with the partners.
+- The quest password gives 500 points (written as 200 + 200 + 100).
+- Onboarding has a slide per feature (shade map, routes, cool places, heat risk, heat alarm, quest, shop) and opens again from Profil («Jak działa aplikacja»).
+
 ### Weekly challenge and impact (added 22.10)
 
 - «Wyzwanie tygodnia» on S10: one goal per ISO week in rotation — 3 shaded routes, 2 quest places, 5 km, 2 walks before 10:00 or from 19:00, 2 routes past a water point — counted from `users/{uid}/routes` and the scan entries. Completing it pays +50 once (`pointsLog` type `challenge`, `refId` = the week). `config/game.challenge` (a kind name) picks one for a demo; demo mode needs 1.

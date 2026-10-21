@@ -493,7 +493,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingShadeBody.
   ///
   /// In pl, this message translates to:
-  /// **'Trasy przez cień, zieleń i ciche ulice. Jak najmniej czasu na słońcu w upalny dzień.'**
+  /// **'Mapa pokazuje prawdziwe cienie budynków i drzew, które przesuwają się z porą dnia. Wybierz godzinę jak w budziku i zobacz pogodę.'**
   String get onboardingShadeBody;
 
   /// No description provided for @onboardingCoolTitle.
@@ -511,13 +511,13 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingQuestTitle.
   ///
   /// In pl, this message translates to:
-  /// **'Zbieraj litery'**
+  /// **'Zbieraj litery i punkty'**
   String get onboardingQuestTitle;
 
   /// No description provided for @onboardingQuestBody.
   ///
   /// In pl, this message translates to:
-  /// **'Odwiedzaj miejsca chłodu rano i wieczorem, skanuj kody QR, zdobywaj odznaki i punkty dla swojej dzielnicy.'**
+  /// **'Skanuj kody QR w miejscach chłodu, odgadnij hasło (500 pkt), wykonuj wyzwania tygodnia i zdobywaj odznaki dla swojej dzielnicy.'**
   String get onboardingQuestBody;
 
   /// TalkBack label of the S01 page dots
@@ -3367,13 +3367,13 @@ abstract class AppLocalizations {
   /// No description provided for @heatRiskChip.
   ///
   /// In pl, this message translates to:
-  /// **'Ryzyko upałowe: {level}'**
+  /// **'Upał: {level}'**
   String heatRiskChip(String level);
 
   /// No description provided for @heatRiskChipTemp.
   ///
   /// In pl, this message translates to:
-  /// **'Ryzyko upałowe: {level} · {temp}°C'**
+  /// **'Upał: {level} · {temp}°C'**
   String heatRiskChipTemp(String level, int temp);
 
   /// No description provided for @heatRiskLow.
@@ -3941,6 +3941,210 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Wyzwanie tygodnia'**
   String get badgesLogChallenge;
+
+  /// No description provided for @shopTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Sklep z nagrodami'**
+  String get shopTitle;
+
+  /// No description provided for @shopOpen.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wymień punkty w sklepie'**
+  String get shopOpen;
+
+  /// No description provided for @shopBalance.
+  ///
+  /// In pl, this message translates to:
+  /// **'Do wydania'**
+  String get shopBalance;
+
+  /// No description provided for @shopAvailable.
+  ///
+  /// In pl, this message translates to:
+  /// **'Do wydania: {points} pkt'**
+  String shopAvailable(int points);
+
+  /// No description provided for @shopEarnHint.
+  ///
+  /// In pl, this message translates to:
+  /// **'Punkty zdobywasz za trasy w cieniu, kody QR, hasło questu (500 pkt) i wyzwania tygodnia. Wydane punkty zostają w rankingu.'**
+  String get shopEarnHint;
+
+  /// No description provided for @shopTransport.
+  ///
+  /// In pl, this message translates to:
+  /// **'Komunikacja MPK'**
+  String get shopTransport;
+
+  /// No description provided for @shopMuseums.
+  ///
+  /// In pl, this message translates to:
+  /// **'Muzea'**
+  String get shopMuseums;
+
+  /// No description provided for @shopCulture.
+  ///
+  /// In pl, this message translates to:
+  /// **'Kultura'**
+  String get shopCulture;
+
+  /// No description provided for @shopCost.
+  ///
+  /// In pl, this message translates to:
+  /// **'{cost} pkt'**
+  String shopCost(int cost);
+
+  /// No description provided for @shopBuy.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wymień'**
+  String get shopBuy;
+
+  /// No description provided for @shopNotEnough.
+  ///
+  /// In pl, this message translates to:
+  /// **'Brakuje {missing} pkt'**
+  String shopNotEnough(int missing);
+
+  /// No description provided for @shopConfirmTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wymienić punkty?'**
+  String get shopConfirmTitle;
+
+  /// No description provided for @shopConfirmBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'{partner}: {title} za {cost} pkt.'**
+  String shopConfirmBody(String partner, String title, int cost);
+
+  /// No description provided for @shopCancel.
+  ///
+  /// In pl, this message translates to:
+  /// **'Anuluj'**
+  String get shopCancel;
+
+  /// No description provided for @shopCodeTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Twój kod'**
+  String get shopCodeTitle;
+
+  /// No description provided for @shopCodeBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pokaż ten kod w kasie lub przy zakupie biletu. Znajdziesz go też w «Moje nagrody».'**
+  String get shopCodeBody;
+
+  /// No description provided for @shopCopy.
+  ///
+  /// In pl, this message translates to:
+  /// **'Kopiuj kod'**
+  String get shopCopy;
+
+  /// No description provided for @shopCopied.
+  ///
+  /// In pl, this message translates to:
+  /// **'Skopiowano kod'**
+  String get shopCopied;
+
+  /// No description provided for @shopClose.
+  ///
+  /// In pl, this message translates to:
+  /// **'Gotowe'**
+  String get shopClose;
+
+  /// No description provided for @shopMine.
+  ///
+  /// In pl, this message translates to:
+  /// **'Moje nagrody'**
+  String get shopMine;
+
+  /// No description provided for @shopMineEmpty.
+  ///
+  /// In pl, this message translates to:
+  /// **'Jeszcze nic nie wymieniono.'**
+  String get shopMineEmpty;
+
+  /// No description provided for @shopError.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie udało się wymienić punktów. Spróbuj ponownie.'**
+  String get shopError;
+
+  /// No description provided for @shopDemoNote.
+  ///
+  /// In pl, this message translates to:
+  /// **'Kody są demonstracyjne: prawdziwe nagrody po umowie z MPK Łódź i partnerami.'**
+  String get shopDemoNote;
+
+  /// No description provided for @shopSignIn.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zaloguj się, aby wymieniać punkty.'**
+  String get shopSignIn;
+
+  /// No description provided for @onboardingRouteTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Trasy w cieniu'**
+  String get onboardingRouteTitle;
+
+  /// No description provided for @onboardingRouteBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zaplanuj trasę z A do B: najkrótsza, zacieniona i kompromis. «Kiedy najlepiej iść?» podpowie porę, a trasę udostępnisz bliskim.'**
+  String get onboardingRouteBody;
+
+  /// No description provided for @onboardingRiskTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ryzyko upałowe'**
+  String get onboardingRiskTitle;
+
+  /// No description provided for @onboardingRiskBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Karta na mapie mówi, jak bardzo grzeje dziś, kiedy są najgorętsze godziny i jaki jest UV. Ostrzeże o gorącym asfalcie dla psa, a test objawów powie, co robić, gdy źle się czujesz.'**
+  String get onboardingRiskBody;
+
+  /// No description provided for @onboardingGuardTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Alarm upałowy'**
+  String get onboardingGuardTitle;
+
+  /// No description provided for @onboardingGuardBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Gdy w upał długo stoisz w miejscu, aplikacja zapyta, czy wszystko OK. Bez odpowiedzi włączy alarm i wyśle SMS z lokalizacją do bliskich. Włączysz go w Profilu.'**
+  String get onboardingGuardBody;
+
+  /// No description provided for @onboardingShopTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wymieniaj punkty'**
+  String get onboardingShopTitle;
+
+  /// No description provided for @onboardingShopBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Za punkty dostaniesz bilety MPK, wstęp do muzeów i zniżki do teatru. Sklep znajdziesz w zakładce Quest → Odznaki.'**
+  String get onboardingShopBody;
+
+  /// No description provided for @settingsGuide.
+  ///
+  /// In pl, this message translates to:
+  /// **'Jak działa aplikacja'**
+  String get settingsGuide;
+
+  /// No description provided for @settingsGuideBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Krótki przewodnik po funkcjach'**
+  String get settingsGuideBody;
 
   /// No description provided for @placeThu.
   ///

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../app/routes.dart';
 import '../../app/theme.dart';
 import '../../core/api/api_providers.dart';
 import '../../core/game/game_config.dart';
@@ -67,6 +69,17 @@ class BadgesView extends ConsumerWidget {
                   l10n.dsPoints(state.points),
                   key: const Key('badges-total'),
                   style: theme.textTheme.displaySmall,
+                ),
+                Text(
+                  l10n.shopAvailable(state.available),
+                  style: theme.textTheme.bodyMedium,
+                ),
+                const SizedBox(height: AppSizes.s8),
+                FilledButton.icon(
+                  key: const Key('badges-shop'),
+                  onPressed: () => context.push(Routes.shop),
+                  icon: const Icon(Icons.storefront_rounded),
+                  label: Text(l10n.shopOpen),
                 ),
               ],
             ),

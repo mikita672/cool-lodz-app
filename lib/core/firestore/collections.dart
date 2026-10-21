@@ -6,6 +6,7 @@ abstract final class FirestoreCollections {
   static const users = 'users';
   static const pointsLog = 'pointsLog'; // users/{uid}/pointsLog
   static const routes = 'routes'; // users/{uid}/routes
+  static const redemptions = 'redemptions'; // users/{uid}/redemptions (shop)
   static const visits = 'visits';
   static const questPlaces = 'questPlaces';
   static const questCodes = 'questCodes'; // read only by the rules
@@ -36,6 +37,7 @@ abstract final class UserFields {
   static const weekId = 'weekId'; // see weekId()
   static const weekPoints = 'weekPoints'; // reset when weekId changes
   static const badges = 'badges'; // only grows
+  static const spent = 'spent'; // shop: only grows, ≤ points
   static const fcmToken = 'fcmToken';
   static const createdAt = 'createdAt';
 }
@@ -165,4 +167,12 @@ String visitId(String uid, String placeId, DateTime date) {
   final m = date.month.toString().padLeft(2, '0');
   final d = date.day.toString().padLeft(2, '0');
   return '${uid}_${placeId}_$y$m$d';
+}
+
+/// Fields of `users/{uid}/redemptions/{id}` (a reward bought in the shop).
+abstract final class RedemptionFields {
+  static const rewardId = 'rewardId';
+  static const cost = 'cost';
+  static const code = 'code';
+  static const createdAt = 'createdAt';
 }

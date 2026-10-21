@@ -58,6 +58,8 @@ void main() {
     await pump(tester);
     await tester.pumpAndSettle();
     expect(find.text('12\u00a0480 pkt'), findsOneWidget);
+    expect(find.text('Do wydania: 12\u00a0480 pkt'), findsOneWidget);
+    expect(find.byKey(const Key('badges-shop')), findsOneWidget);
     expect(find.byType(BadgeTile), findsNWidgets(7));
     BadgeTile tile(GameBadge b) =>
         tester.widget<BadgeTile>(find.byKey(Key('badge-${b.id}')));
