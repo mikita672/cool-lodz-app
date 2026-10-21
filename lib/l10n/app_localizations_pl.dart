@@ -271,7 +271,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get onboardingShadeBody =>
-      'Trasy przez cień, zieleń i ciche ulice. Jak najmniej czasu na słońcu w upalny dzień.';
+      'Mapa pokazuje prawdziwe cienie budynków i drzew, które przesuwają się z porą dnia. Wybierz godzinę jak w budziku i zobacz pogodę.';
 
   @override
   String get onboardingCoolTitle => 'Znajdź miejsce chłodu';
@@ -281,11 +281,11 @@ class AppLocalizationsPl extends AppLocalizations {
       'Biblioteki, centra kultury i klimatyzowane miejsca w pobliżu, a do tego poidełka z wodą.';
 
   @override
-  String get onboardingQuestTitle => 'Zbieraj litery';
+  String get onboardingQuestTitle => 'Zbieraj litery i punkty';
 
   @override
   String get onboardingQuestBody =>
-      'Odwiedzaj miejsca chłodu rano i wieczorem, skanuj kody QR, zdobywaj odznaki i punkty dla swojej dzielnicy.';
+      'Skanuj kody QR w miejscach chłodu, odgadnij hasło (500 pkt), wykonuj wyzwania tygodnia i zdobywaj odznaki dla swojej dzielnicy.';
 
   @override
   String onboardingPageIndicator(int current, int total) {
@@ -2349,6 +2349,132 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get badgesLogChallenge => 'Wyzwanie tygodnia';
+
+  @override
+  String get shopTitle => 'Sklep z nagrodami';
+
+  @override
+  String get shopOpen => 'Wymień punkty w sklepie';
+
+  @override
+  String get shopBalance => 'Do wydania';
+
+  @override
+  String shopAvailable(int points) {
+    final intl.NumberFormat pointsNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String pointsString = pointsNumberFormat.format(points);
+
+    return 'Do wydania: $pointsString pkt';
+  }
+
+  @override
+  String get shopEarnHint =>
+      'Punkty zdobywasz za trasy w cieniu, kody QR, hasło questu (500 pkt) i wyzwania tygodnia. Wydane punkty zostają w rankingu.';
+
+  @override
+  String get shopTransport => 'Komunikacja MPK';
+
+  @override
+  String get shopMuseums => 'Muzea';
+
+  @override
+  String get shopCulture => 'Kultura';
+
+  @override
+  String shopCost(int cost) {
+    final intl.NumberFormat costNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String costString = costNumberFormat.format(cost);
+
+    return '$costString pkt';
+  }
+
+  @override
+  String get shopBuy => 'Wymień';
+
+  @override
+  String shopNotEnough(int missing) {
+    return 'Brakuje $missing pkt';
+  }
+
+  @override
+  String get shopConfirmTitle => 'Wymienić punkty?';
+
+  @override
+  String shopConfirmBody(String partner, String title, int cost) {
+    return '$partner: $title za $cost pkt.';
+  }
+
+  @override
+  String get shopCancel => 'Anuluj';
+
+  @override
+  String get shopCodeTitle => 'Twój kod';
+
+  @override
+  String get shopCodeBody =>
+      'Pokaż ten kod w kasie lub przy zakupie biletu. Znajdziesz go też w «Moje nagrody».';
+
+  @override
+  String get shopCopy => 'Kopiuj kod';
+
+  @override
+  String get shopCopied => 'Skopiowano kod';
+
+  @override
+  String get shopClose => 'Gotowe';
+
+  @override
+  String get shopMine => 'Moje nagrody';
+
+  @override
+  String get shopMineEmpty => 'Jeszcze nic nie wymieniono.';
+
+  @override
+  String get shopError => 'Nie udało się wymienić punktów. Spróbuj ponownie.';
+
+  @override
+  String get shopDemoNote =>
+      'Kody są demonstracyjne: prawdziwe nagrody po umowie z MPK Łódź i partnerami.';
+
+  @override
+  String get shopSignIn => 'Zaloguj się, aby wymieniać punkty.';
+
+  @override
+  String get onboardingRouteTitle => 'Trasy w cieniu';
+
+  @override
+  String get onboardingRouteBody =>
+      'Zaplanuj trasę z A do B: najkrótsza, zacieniona i kompromis. «Kiedy najlepiej iść?» podpowie porę, a trasę udostępnisz bliskim.';
+
+  @override
+  String get onboardingRiskTitle => 'Ryzyko upałowe';
+
+  @override
+  String get onboardingRiskBody =>
+      'Karta na mapie mówi, jak bardzo grzeje dziś, kiedy są najgorętsze godziny i jaki jest UV. Ostrzeże o gorącym asfalcie dla psa, a test objawów powie, co robić, gdy źle się czujesz.';
+
+  @override
+  String get onboardingGuardTitle => 'Alarm upałowy';
+
+  @override
+  String get onboardingGuardBody =>
+      'Gdy w upał długo stoisz w miejscu, aplikacja zapyta, czy wszystko OK. Bez odpowiedzi włączy alarm i wyśle SMS z lokalizacją do bliskich. Włączysz go w Profilu.';
+
+  @override
+  String get onboardingShopTitle => 'Wymieniaj punkty';
+
+  @override
+  String get onboardingShopBody =>
+      'Za punkty dostaniesz bilety MPK, wstęp do muzeów i zniżki do teatru. Sklep znajdziesz w zakładce Quest → Odznaki.';
+
+  @override
+  String get settingsGuide => 'Jak działa aplikacja';
+
+  @override
+  String get settingsGuideBody => 'Krótki przewodnik po funkcjach';
 
   @override
   String get placeThu => 'czw.';

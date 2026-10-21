@@ -24,6 +24,7 @@ import '../features/settings/about_screen.dart';
 import '../features/settings/consents_settings_screen.dart';
 import '../features/settings/privacy_screen.dart';
 import '../features/settings/profile_tab_screen.dart';
+import '../features/shop/shop_screen.dart';
 import '../features/symptoms/symptom_check_screen.dart';
 import '../shared/debug/components_showcase.dart';
 import 'app_shell.dart';
@@ -151,6 +152,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(path: 'result', builder: (_, _) => const RouteResultScreen()),
         ],
+      ),
+      GoRoute(path: Routes.shop, builder: (_, _) => const ShopScreen()),
+      GoRoute(
+        path: Routes.guide,
+        builder: (_, _) => const OnboardingScreen(replay: true),
       ),
       GoRoute(
         path: Routes.symptoms,

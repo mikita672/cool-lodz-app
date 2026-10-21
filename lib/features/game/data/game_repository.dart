@@ -18,6 +18,7 @@ class PlayerState {
     this.weekId,
     this.weekPoints = 0,
     this.badges = const {},
+    this.spent = 0,
   });
 
   factory PlayerState.fromDoc(Map<String, dynamic>? d) {
@@ -31,6 +32,7 @@ class PlayerState {
       points: (d[UserFields.points] as num?)?.toInt() ?? 0,
       weekId: d[UserFields.weekId] as String?,
       weekPoints: (d[UserFields.weekPoints] as num?)?.toInt() ?? 0,
+      spent: (d[UserFields.spent] as num?)?.toInt() ?? 0,
       badges: {
         for (final id in (d[UserFields.badges] as List?) ?? const [])
           ?GameBadge.fromId('$id'),
@@ -47,6 +49,12 @@ class PlayerState {
   final String? weekId;
   final int weekPoints;
   final Set<GameBadge> badges;
+
+  /// Points spent in the shop (the total and the ranking keep them).
+  final int spent;
+
+  /// What the shop can still take.
+  int get available => (points - spent).clamp(0, points);
 
   /// Points of [currentWeek] (0 when the stored week is an older one).
   int weekPointsIn(String currentWeek) =>

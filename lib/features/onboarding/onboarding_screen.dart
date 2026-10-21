@@ -5,17 +5,21 @@ import '../../app/theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../auth/start_flow.dart';
 
-/// S01 Onboarding: three slides, shown once after install. Finishing or
-/// skipping stores the flag; the router then moves on to S02.
+/// S01 Onboarding: a slide per feature, shown once after install.
+/// Finishing or skipping stores the flag; the router then moves on to S02.
+/// From Profil («Jak działa aplikacja») it is a guide: finishing goes back.
 class OnboardingScreen extends ConsumerStatefulWidget {
-  const OnboardingScreen({super.key});
+  const OnboardingScreen({super.key, this.replay = false});
+
+  /// Opened again from Profil: nothing is stored, the end pops the screen.
+  final bool replay;
 
   @override
   ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
 class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
-  static const _pageCount = 3;
+  static const _pageCount = 7;
   static const _pageDuration = Duration(milliseconds: 300);
 
   final _controller = PageController();
@@ -32,6 +36,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   Future<void> _finish() async {
     if (_finishing) return;
+    if (widget.replay) {
+      await Navigator.of(context).maybePop();
+      return;
+    }
     setState(() => _finishing = true);
     await ref.read(startFlowProvider.notifier).completeOnboarding();
   }
@@ -54,16 +62,53 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         body: l10n.onboardingShadeBody,
       ),
       _Slide(
+        art: const _IconArt(
+          icon: Icons.alt_route_rounded,
+          badge: Icons.schedule_rounded,
+          badgeColor: AppColors.primary,
+        ),
+        title: l10n.onboardingRouteTitle,
+        body: l10n.onboardingRouteBody,
+      ),
+      _Slide(
         art: const _CoolPlaceArt(),
         title: l10n.onboardingCoolTitle,
         body: l10n.onboardingCoolBody,
+      ),
+      _Slide(
+        art: const _IconArt(
+          icon: Icons.device_thermostat_rounded,
+          badge: Icons.pets_rounded,
+          badgeColor: AppColors.heat2,
+        ),
+        title: l10n.onboardingRiskTitle,
+        body: l10n.onboardingRiskBody,
+      ),
+      _Slide(
+        art: const _IconArt(
+          icon: Icons.health_and_safety_rounded,
+          badge: Icons.sms_rounded,
+          badgeColor: AppColors.heat3,
+        ),
+        title: l10n.onboardingGuardTitle,
+        body: l10n.onboardingGuardBody,
       ),
       _Slide(
         art: const _LettersArt(),
         title: l10n.onboardingQuestTitle,
         body: l10n.onboardingQuestBody,
       ),
+      _Slide(
+        art: const _IconArt(
+          icon: Icons.storefront_rounded,
+          badge: Icons.tram_rounded,
+          badgeColor: AppColors.green,
+        ),
+        title: l10n.onboardingShopTitle,
+        body: l10n.onboardingShopBody,
+      ),
     ];
+    assert(slides.length == _pageCount);
 
     return Scaffold(
       body: SafeArea(
@@ -240,6 +285,29 @@ class _RoundBadge extends StatelessWidget {
     height: 52,
     decoration: BoxDecoration(color: color, shape: BoxShape.circle),
     child: Icon(icon, color: AppColors.onPrimary, size: 28),
+  );
+}
+
+/// A big icon with a coloured badge (the newer slides).
+class _IconArt extends StatelessWidget {
+  const _IconArt({
+    required this.icon,
+    required this.badge,
+    required this.badgeColor,
+  });
+
+  final IconData icon;
+  final IconData badge;
+  final Color badgeColor;
+
+  @override
+  Widget build(BuildContext context) => _ArtCircle(
+    badge: Positioned(
+      top: 0,
+      right: 0,
+      child: _RoundBadge(color: badgeColor, icon: badge),
+    ),
+    child: Icon(icon, size: 96, color: AppColors.primary),
   );
 }
 
