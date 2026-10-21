@@ -913,7 +913,7 @@ class AppLocalizationsPl extends AppLocalizations {
       'Tryb upału: w najgorętszych godzinach odpocznij w miejscu chłodu';
 
   @override
-  String get mapLegendQuiet => 'Ciemniej = ciszej';
+  String get mapLegendQuiet => 'Cicho';
 
   @override
   String get mapLegendShade => 'Cień budynków i drzew';
@@ -2475,6 +2475,71 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get settingsGuideBody => 'Krótki przewodnik po funkcjach';
+
+  @override
+  String get mapLayerBenches => 'Ławki';
+
+  @override
+  String get mapLayerToilets => 'Toalety';
+
+  @override
+  String get mapLayerNight => 'Nocą';
+
+  @override
+  String get mapLayerWinter => 'Zima';
+
+  @override
+  String get mapLegendQuietVery => 'Bardzo cicho (parki)';
+
+  @override
+  String get mapLegendLoud => 'Głośno: ruch uliczny';
+
+  @override
+  String get mapLegendTrees => 'Drzewa';
+
+  @override
+  String get mapLegendNightBusy => 'Najwięcej ludzi wieczorem';
+
+  @override
+  String get mapLegendNightLively => 'Ożywione: lokale i kluby';
+
+  @override
+  String get mapLegendNightLit => 'Oświetlone ulice';
+
+  @override
+  String get mapLegendNightVenue => 'Bar, pub, klub';
+
+  @override
+  String get mapLegendWinter1 => 'Odśnieżane najpierw';
+
+  @override
+  String get mapLegendWinter2 => 'Odśnieżane potem';
+
+  @override
+  String get mapLegendWinter3 => 'Odśnieżane na końcu';
+
+  @override
+  String get mapLegendToilet => 'Toaleta publiczna';
+
+  @override
+  String get mapWinterNote =>
+      'Szacunek wg kategorii ulic: najpierw główne ulice i trasy autobusów i tramwajów (OSM).';
+
+  @override
+  String get mapNightNote =>
+      'Gdzie wieczorem jest najwięcej ludzi: lokale, kluby i oświetlone ulice (OSM).';
+
+  @override
+  String get mapToiletFree => 'Toaleta publiczna, bezpłatna';
+
+  @override
+  String get mapToiletPaid => 'Toaleta publiczna, płatna';
+
+  @override
+  String get mapToiletUnknown => 'Toaleta publiczna';
+
+  @override
+  String get mapBenchesZoomIn => 'Przybliż mapę, aby zobaczyć ławki';
 
   @override
   String get placeThu => 'czw.';

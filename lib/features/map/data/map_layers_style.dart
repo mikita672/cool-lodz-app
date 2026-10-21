@@ -14,6 +14,10 @@ String layerName(MapLayer layer, AppLocalizations l10n) => switch (layer) {
   MapLayer.air => l10n.mapLayerAir,
   MapLayer.water => l10n.mapLayerWater,
   MapLayer.cool => l10n.mapLayerCool,
+  MapLayer.benches => l10n.mapLayerBenches,
+  MapLayer.toilets => l10n.mapLayerToilets,
+  MapLayer.night => l10n.mapLayerNight,
+  MapLayer.winter => l10n.mapLayerWinter,
 };
 
 IconData layerIcon(MapLayer layer) => switch (layer) {
@@ -23,6 +27,10 @@ IconData layerIcon(MapLayer layer) => switch (layer) {
   MapLayer.air => Icons.air_rounded,
   MapLayer.water => Icons.water_drop_rounded,
   MapLayer.cool => Icons.ac_unit_rounded,
+  MapLayer.benches => Icons.chair_alt_rounded,
+  MapLayer.toilets => Icons.wc_rounded,
+  MapLayer.night => Icons.nightlife_rounded,
+  MapLayer.winter => Icons.snowing,
 };
 
 /// Polygons of [layer] styled for [kind]: shade `primary` (35 % at full
@@ -49,10 +57,45 @@ List<Polygon> polygonsFor(GeoLayer? layer, MapLayer kind) {
   ];
 }
 
-/// Quiet areas in purple: 1 = quiet (away from loud roads), 2 = very quiet
-/// (also inside a park).
-Color quietColor(int level) =>
-    AppColors.quiet.withValues(alpha: level >= 2 ? 0.42 : 0.22);
+/// «Cisza» like a traffic light: 0 = loud (the noise bands of busy roads)
+/// in red, 1 = quiet in green, 2 = very quiet (parks, far from roads) in
+/// darker green.
+const quietGreen = Color(0xFF1E9E5A);
+const loudRed = Color(0xFFD7263D);
+
+Color quietColor(int level) => switch (level) {
+  <= 0 => loudRed.withValues(alpha: 0.30),
+  1 => quietGreen.withValues(alpha: 0.25),
+  _ => quietGreen.withValues(alpha: 0.50),
+};
+
+/// «Nocą»: 1 lit, 2 lively, 3 busiest.
+Color nightColor(int level) => switch (level) {
+  >= 3 => const Color(0xFFC2185B),
+  2 => const Color(0xFFF57C00),
+  _ => const Color(0xFFF2C230),
+};
+
+double nightWidth(int level) => switch (level) {
+  >= 3 => 8,
+  2 => 6,
+  _ => 3,
+};
+
+/// «Zima»: snow clearing order 1 (first) … 3 (last).
+Color winterColor(int order) => switch (order) {
+  1 => const Color(0xFF1565C0),
+  2 => const Color(0xFF64B5F6),
+  _ => const Color(0xFF9AA9B0),
+};
+
+double winterWidth(int order) => switch (order) {
+  1 => 6,
+  2 => 4,
+  _ => 2.5,
+};
+
+const treeColor = Color(0xFF2E7D32);
 
 /// Official GIOŚ air quality index colours (powietrze.gios.gov.pl).
 const airIndexColors = [

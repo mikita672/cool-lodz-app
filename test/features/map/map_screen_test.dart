@@ -1,3 +1,4 @@
+import 'package:cool_lodz/app/senior_mode.dart';
 import 'package:cool_lodz/app/theme.dart';
 import 'package:cool_lodz/core/api/api_providers.dart';
 import 'package:cool_lodz/core/api/demo_api_client.dart';
@@ -165,7 +166,13 @@ void main() {
 
     await tap(MapLayer.quiet);
     expect(container.read(mapLayersProvider), contains(MapLayer.quiet));
-    expect(find.text('Ciemniej = ciszej'), findsOneWidget);
+    // Like a traffic light: green where it is quiet, red along loud roads.
+    expect(find.text('Głośno: ruch uliczny'), findsOneWidget);
+    expect(find.text('Cicho'), findsOneWidget);
+    expect(
+      polygons(tester).map((p) => p.color),
+      containsAll([quietColor(0), quietColor(1), quietColor(2)]),
+    );
 
     // A third fill switches off the oldest one (green) with a message.
     await tap(MapLayer.air);
@@ -181,13 +188,70 @@ void main() {
     expect(pins(tester, MapPinType.cool), 0);
   });
 
-  testWidgets('benches appear from zoom 17', (tester) async {
+  testWidgets('«Ławki» is its own layer, shown from zoom 16', (tester) async {
+    final container = await pump(tester);
+    final controller = MapController.of(
+      tester.element(find.byType(MarkerLayer).first),
+    );
+    controller.move(lodzCenter, 16.5);
+    await tester.pumpAndSettle();
+    expect(pins(tester, MapPinType.bench), 0); // off by default
+    final chip = find.byKey(const Key('map-layer-benches'));
+    await tester.ensureVisible(chip);
+    await tester.pumpAndSettle();
+    await tester.tap(chip);
+    await tester.pumpAndSettle();
+    expect(container.read(mapLayersProvider), contains(MapLayer.benches));
+    expect(pins(tester, MapPinType.bench), greaterThan(0));
+    // Further out: a hint instead of the pins.
+    controller.move(lodzCenter, 14);
+    await tester.pumpAndSettle();
+    expect(find.text('Przybliż mapę, aby zobaczyć ławki'), findsOneWidget);
+  });
+
+  testWidgets('trees under the shadows from zoom 16', (tester) async {
     await pump(tester);
+    expect(tester.widgetList<CircleLayer>(find.byType(CircleLayer)), isEmpty);
     MapController.of(
       tester.element(find.byType(MarkerLayer).first),
-    ).move(lodzCenter, 17.5);
+    ).move(lodzCenter, 16.5);
+    await tester.pump(const Duration(milliseconds: 400));
     await tester.pumpAndSettle();
-    expect(pins(tester, MapPinType.bench), greaterThan(0));
+    final trees = [
+      for (final l in tester.widgetList<CircleLayer>(find.byType(CircleLayer)))
+        ...l.circles,
+    ];
+    expect(trees, isNotEmpty);
+    expect(trees.first.useRadiusInMeter, isTrue);
+    expect(find.text('Drzewa'), findsOneWidget);
+  });
+
+  testWidgets('«Nocą» and «Zima» draw street lines, one at a time', (
+    tester,
+  ) async {
+    final container = await pump(tester, size: const Size(400, 1000));
+    Future<void> tap(MapLayer l) async {
+      final chip = find.byKey(Key('map-layer-${l.name}'));
+      await tester.ensureVisible(chip);
+      await tester.pumpAndSettle();
+      await tester.tap(chip);
+      await tester.pumpAndSettle();
+    }
+
+    await tap(MapLayer.night);
+    expect(find.byType(PolylineLayer), findsOneWidget);
+    expect(find.text('Najwięcej ludzi wieczorem'), findsOneWidget);
+    final night = tester.widget<PolylineLayer>(find.byType(PolylineLayer));
+    expect(night.polylines.map((p) => p.color), contains(nightColor(3)));
+
+    await tap(MapLayer.winter);
+    expect(container.read(mapLayersProvider), isNot(contains(MapLayer.night)));
+    expect(find.text('Odśnieżane najpierw'), findsOneWidget);
+    final winter = tester.widget<PolylineLayer>(find.byType(PolylineLayer));
+    expect(winter.polylines.map((p) => p.color), contains(winterColor(1)));
+
+    await tap(MapLayer.toilets);
+    expect(find.byIcon(Icons.wc_rounded), findsWidgets);
   });
 
   testWidgets('heat banner level 2 opens S14', (tester) async {
@@ -410,7 +474,9 @@ void main() {
 
   group('MapLayers', () {
     test('at most 2 fills; points do not count', () {
-      final container = ProviderContainer.test();
+      final container = ProviderContainer.test(
+        overrides: [seniorModeProvider.overrideWithValue(false)],
+      );
       final layers = container.read(mapLayersProvider.notifier);
       expect(container.read(mapLayersProvider), MapLayers.initial);
       expect(layers.toggle(MapLayer.water), isNull);
@@ -427,6 +493,24 @@ void main() {
         container.read(mapLayersProvider),
         isNot(contains(MapLayer.quiet)),
       );
+    });
+
+    test('seniors start with benches; street modes replace each other', () {
+      final container = ProviderContainer.test(
+        overrides: [seniorModeProvider.overrideWithValue(true)],
+      );
+      final layers = container.read(mapLayersProvider.notifier);
+      expect(container.read(mapLayersProvider), MapLayers.initialSenior);
+      expect(layers.toggle(MapLayer.night), isNull);
+      expect(layers.toggle(MapLayer.winter), MapLayer.night);
+      expect(container.read(mapLayersProvider), [
+        MapLayer.shade,
+        MapLayer.cool,
+        MapLayer.benches,
+        MapLayer.winter,
+      ]);
+      // Lines are not fills: two fills still fit next to them.
+      expect(layers.toggle(MapLayer.green), isNull);
     });
 
     test('shade time: demo 14:30, otherwise now in 5-minute steps', () {

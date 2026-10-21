@@ -329,6 +329,16 @@ Ambasador (referral code) and Wspólny spacer are kolejne kroki.
 
 **Known limitation:** without Cloud Functions the client awards points, and the Firestore rules only limit the size of the increment. This is acceptable for the competition; server-side validation is in kolejne kroki.
 
+### Map modes (added 22.10)
+
+- «Ławki»: its own point layer (on from the start for seniors), pins from zoom 16; below that a hint zooms in.
+- «Cisza» reads like a traffic light: red bands along loud roads, green where it is quiet, darker green very quiet (parks, far from roads), with a three-line legend.
+- Trees: with «Cień» on, from zoom 16 the tree crowns that cast the shadows are drawn in green.
+- «Nocą» (for tourists): where people are in the evening — streets by night venues within 40 m (bars and clubs count double): busiest, lively, lit; bars, pubs and clubs as dots.
+- «Zima»: the snow clearing order estimated from the street category (first main streets and bus/tram routes, then district streets and pedestrian precincts, residential last). Łódź does not publish the plan as open data.
+- «Toalety»: public toilets (free or paid) from OSM.
+- One street mode at a time; they do not count towards the 2 fills.
+
 ### Shop (added 22.10)
 
 - «Sklep z nagrodami» (Quest → Odznaki → «Wymień punkty w sklepie»): points buy MPK tickets (20 min 300, 60 min 500, 24 h 1000), museum entries (Palmiarnia 400, Centralne Muzeum Włókiennictwa 600, Muzeum Sztuki 800) and culture discounts (EC1 Planetarium 700, Filharmonia 1000, Teatr Jaracza 1200). Spending adds to `users/{uid}.spent` (only grows, never above `points`), so the total and the ranking keep the points; the code goes to `users/{uid}/redemptions` in the same batch. Codes are demo codes until there are agreements with the partners.
