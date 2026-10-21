@@ -250,6 +250,14 @@ class ProfileTabScreen extends ConsumerWidget {
             trailing: const Icon(Icons.chevron_right_rounded),
             onTap: () => context.push(Routes.heatGuard),
           ),
+          ListTile(
+            key: const Key('settings-symptoms'),
+            leading: const Icon(Icons.medical_information_rounded),
+            title: Text(l10n.settingsSymptoms),
+            subtitle: Text(l10n.settingsSymptomsBody),
+            trailing: const Icon(Icons.chevron_right_rounded),
+            onTap: () => context.push(Routes.symptoms),
+          ),
           SwitchListTile(
             key: const Key('settings-senior'),
             secondary: const Icon(Icons.text_increase_rounded),

@@ -2162,6 +2162,96 @@ class AppLocalizationsPl extends AppLocalizations {
       'Z tras rozpoczętych przyciskiem «Prowadź». «Mniej słońca»: w porównaniu z najkrótszą trasą o tej samej porze. CO₂: średnie auto, 0,17 kg/km.';
 
   @override
+  String get symptomsTitle => 'Objawy przegrzania';
+
+  @override
+  String get symptomsIntro =>
+      'Odpowiedz za siebie albo za osobę, której pomagasz. Pięć pytań, to nie jest diagnoza.';
+
+  @override
+  String get symptomsQ1 =>
+      'Czy jest splątanie, dziwne zachowanie albo trudność z mówieniem?';
+
+  @override
+  String get symptomsQ2 =>
+      'Czy było omdlenie, utrata przytomności albo drgawki?';
+
+  @override
+  String get symptomsQ3 =>
+      'Czy skóra jest gorąca i sucha (brak potu), mimo upału?';
+
+  @override
+  String get symptomsQ4 =>
+      'Czy boli głowa, kręci się w głowie albo są nudności lub wymioty?';
+
+  @override
+  String get symptomsQ5 =>
+      'Czy są skurcze mięśni, duże osłabienie albo bardzo silne pragnienie?';
+
+  @override
+  String get symptomsYes => 'Tak';
+
+  @override
+  String get symptomsNo => 'Nie';
+
+  @override
+  String get symptomsAnswerAll =>
+      'Odpowiedz na wszystkie pytania, aby zobaczyć, co robić.';
+
+  @override
+  String get symptomsUrgentTitle =>
+      'Możliwy udar cieplny. Zadzwoń pod 112 teraz.';
+
+  @override
+  String get symptomsUrgentLead => 'Do przyjazdu pomocy:';
+
+  @override
+  String get symptomsExhaustionTitle =>
+      'Możliwe wyczerpanie cieplne. Idź do chłodu teraz.';
+
+  @override
+  String get symptomsExhaustion1 => 'Usiądź lub połóż się w chłodnym miejscu.';
+
+  @override
+  String get symptomsExhaustion2 => 'Pij wodę małymi łykami.';
+
+  @override
+  String get symptomsExhaustion3 =>
+      'Chłodź skórę: mokry ręcznik albo woda na kark i ręce.';
+
+  @override
+  String get symptomsExhaustion4 =>
+      'Jeśli po 30 minutach nie ma poprawy albo jest gorzej, dzwoń pod 112.';
+
+  @override
+  String get symptomsOkTitle => 'Brak typowych objawów przegrzania.';
+
+  @override
+  String get symptomsOkBody =>
+      'Pij wodę, odpoczywaj w cieniu i obserwuj samopoczucie. Gdy coś się zmieni, sprawdź jeszcze raz.';
+
+  @override
+  String get symptomsNearest => 'Najbliższe otwarte miejsce chłodu';
+
+  @override
+  String get symptomsNoPlace =>
+      'Nie znam Twojej lokalizacji. Zobacz listę miejsc chłodu.';
+
+  @override
+  String get symptomsShowPlaces => 'Miejsca chłodu';
+
+  @override
+  String get symptomsDisclaimer =>
+      'To nie jest porada medyczna ani diagnoza. W razie wątpliwości dzwoń pod 112. Na podstawie zaleceń NHS i GIS dotyczących udaru cieplnego.';
+
+  @override
+  String get settingsSymptoms => 'Objawy przegrzania';
+
+  @override
+  String get settingsSymptomsBody =>
+      '5 pytań: co robić, gdy źle się czujesz w upale';
+
+  @override
   String get placeThu => 'czw.';
 
   @override

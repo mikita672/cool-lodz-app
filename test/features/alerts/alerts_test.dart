@@ -8,6 +8,7 @@ import 'package:cool_lodz/features/auth/data/auth_repository.dart';
 import 'package:cool_lodz/features/auth/data/user_profile_repository.dart';
 import 'package:cool_lodz/features/cool_places/cool_places_screen.dart';
 import 'package:cool_lodz/features/game/data/game_config_repository.dart';
+import 'package:cool_lodz/features/symptoms/symptom_check_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -133,10 +134,31 @@ void main() {
 
     testWidgets('«Pokaż miejsca chłodu» opens the Chłód tab', (tester) async {
       await pumpApp(tester, location: '/map/alert');
-      await tester.ensureVisible(find.byKey(const Key('alert-show-cool')));
+      // Above the bottom bar, not under it.
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('alert-show-cool')),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.drag(find.byType(Scrollable).first, const Offset(0, -200));
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('alert-show-cool')));
       await tester.pumpAndSettle();
       expect(find.byType(CoolPlacesScreen), findsOneWidget);
+    });
+
+    testWidgets('«Sprawdź objawy» opens the symptom check', (tester) async {
+      await pumpApp(tester, location: '/map/alert');
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('alert-symptoms')),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.drag(find.byType(Scrollable).first, const Offset(0, -200));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('alert-symptoms')));
+      await tester.pumpAndSettle();
+      expect(find.byType(SymptomCheckScreen), findsOneWidget);
     });
 
     testWidgets('heatOverride 2 shows the banner on the map (demo)', (

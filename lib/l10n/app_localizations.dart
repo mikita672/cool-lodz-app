@@ -3714,6 +3714,156 @@ abstract class AppLocalizations {
   /// **'Z tras rozpoczętych przyciskiem «Prowadź». «Mniej słońca»: w porównaniu z najkrótszą trasą o tej samej porze. CO₂: średnie auto, 0,17 kg/km.'**
   String get impactNote;
 
+  /// No description provided for @symptomsTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Objawy przegrzania'**
+  String get symptomsTitle;
+
+  /// No description provided for @symptomsIntro.
+  ///
+  /// In pl, this message translates to:
+  /// **'Odpowiedz za siebie albo za osobę, której pomagasz. Pięć pytań, to nie jest diagnoza.'**
+  String get symptomsIntro;
+
+  /// No description provided for @symptomsQ1.
+  ///
+  /// In pl, this message translates to:
+  /// **'Czy jest splątanie, dziwne zachowanie albo trudność z mówieniem?'**
+  String get symptomsQ1;
+
+  /// No description provided for @symptomsQ2.
+  ///
+  /// In pl, this message translates to:
+  /// **'Czy było omdlenie, utrata przytomności albo drgawki?'**
+  String get symptomsQ2;
+
+  /// No description provided for @symptomsQ3.
+  ///
+  /// In pl, this message translates to:
+  /// **'Czy skóra jest gorąca i sucha (brak potu), mimo upału?'**
+  String get symptomsQ3;
+
+  /// No description provided for @symptomsQ4.
+  ///
+  /// In pl, this message translates to:
+  /// **'Czy boli głowa, kręci się w głowie albo są nudności lub wymioty?'**
+  String get symptomsQ4;
+
+  /// No description provided for @symptomsQ5.
+  ///
+  /// In pl, this message translates to:
+  /// **'Czy są skurcze mięśni, duże osłabienie albo bardzo silne pragnienie?'**
+  String get symptomsQ5;
+
+  /// No description provided for @symptomsYes.
+  ///
+  /// In pl, this message translates to:
+  /// **'Tak'**
+  String get symptomsYes;
+
+  /// No description provided for @symptomsNo.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie'**
+  String get symptomsNo;
+
+  /// No description provided for @symptomsAnswerAll.
+  ///
+  /// In pl, this message translates to:
+  /// **'Odpowiedz na wszystkie pytania, aby zobaczyć, co robić.'**
+  String get symptomsAnswerAll;
+
+  /// No description provided for @symptomsUrgentTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Możliwy udar cieplny. Zadzwoń pod 112 teraz.'**
+  String get symptomsUrgentTitle;
+
+  /// No description provided for @symptomsUrgentLead.
+  ///
+  /// In pl, this message translates to:
+  /// **'Do przyjazdu pomocy:'**
+  String get symptomsUrgentLead;
+
+  /// No description provided for @symptomsExhaustionTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Możliwe wyczerpanie cieplne. Idź do chłodu teraz.'**
+  String get symptomsExhaustionTitle;
+
+  /// No description provided for @symptomsExhaustion1.
+  ///
+  /// In pl, this message translates to:
+  /// **'Usiądź lub połóż się w chłodnym miejscu.'**
+  String get symptomsExhaustion1;
+
+  /// No description provided for @symptomsExhaustion2.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pij wodę małymi łykami.'**
+  String get symptomsExhaustion2;
+
+  /// No description provided for @symptomsExhaustion3.
+  ///
+  /// In pl, this message translates to:
+  /// **'Chłodź skórę: mokry ręcznik albo woda na kark i ręce.'**
+  String get symptomsExhaustion3;
+
+  /// No description provided for @symptomsExhaustion4.
+  ///
+  /// In pl, this message translates to:
+  /// **'Jeśli po 30 minutach nie ma poprawy albo jest gorzej, dzwoń pod 112.'**
+  String get symptomsExhaustion4;
+
+  /// No description provided for @symptomsOkTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Brak typowych objawów przegrzania.'**
+  String get symptomsOkTitle;
+
+  /// No description provided for @symptomsOkBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pij wodę, odpoczywaj w cieniu i obserwuj samopoczucie. Gdy coś się zmieni, sprawdź jeszcze raz.'**
+  String get symptomsOkBody;
+
+  /// No description provided for @symptomsNearest.
+  ///
+  /// In pl, this message translates to:
+  /// **'Najbliższe otwarte miejsce chłodu'**
+  String get symptomsNearest;
+
+  /// No description provided for @symptomsNoPlace.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie znam Twojej lokalizacji. Zobacz listę miejsc chłodu.'**
+  String get symptomsNoPlace;
+
+  /// No description provided for @symptomsShowPlaces.
+  ///
+  /// In pl, this message translates to:
+  /// **'Miejsca chłodu'**
+  String get symptomsShowPlaces;
+
+  /// No description provided for @symptomsDisclaimer.
+  ///
+  /// In pl, this message translates to:
+  /// **'To nie jest porada medyczna ani diagnoza. W razie wątpliwości dzwoń pod 112. Na podstawie zaleceń NHS i GIS dotyczących udaru cieplnego.'**
+  String get symptomsDisclaimer;
+
+  /// No description provided for @settingsSymptoms.
+  ///
+  /// In pl, this message translates to:
+  /// **'Objawy przegrzania'**
+  String get settingsSymptoms;
+
+  /// No description provided for @settingsSymptomsBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'5 pytań: co robić, gdy źle się czujesz w upale'**
+  String get settingsSymptomsBody;
+
   /// No description provided for @placeThu.
   ///
   /// In pl, this message translates to:
