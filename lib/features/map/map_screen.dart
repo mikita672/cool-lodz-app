@@ -438,6 +438,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                   ],
                   if (showRisk || layers.contains(MapLayer.shade)) ...[
                     const SizedBox(height: AppSizes.s8),
+                    // Short pills side by side; a second row only when
+                    // they do not fit.
                     Wrap(
                       spacing: AppSizes.s8,
                       runSpacing: AppSizes.s8,
@@ -602,20 +604,12 @@ String shadeTimeLabel(DateTime time, DateTime now, AppLocalizations l10n) {
   return '${DateFormat('EEE d.MM', 'pl').format(time)} $hm';
 }
 
+/// «8°C» next to the sky icon (compact: the icon says sun, clouds or
+/// rain); «po zachodzie słońca» at night without a forecast.
 String? _weatherText(ShadeWeather w, AppLocalizations l10n) {
-  if (w.night) return l10n.mapWeatherNight;
   final t = w.temperature;
-  if (t == null) return null;
-  final temp = t.round();
-  if (w.hour case final hour?) {
-    final kind = WeatherKind.of(hour);
-    if (kind.index >= WeatherKind.fog.index) {
-      return l10n.mapWeatherOther(temp, weatherLabel(kind, l10n).toLowerCase());
-    }
-  }
-  if (w.strength >= 0.6) return l10n.mapWeatherSunny(temp);
-  if (w.strength >= 0.25) return l10n.mapWeatherPartly(temp);
-  return l10n.mapWeatherCloudy(temp);
+  if (t != null) return '${t.round()}°C';
+  return w.night ? l10n.mapWeatherNight : null;
 }
 
 class _ShadeTimePill extends StatelessWidget {
@@ -671,6 +665,8 @@ class _ShadeTimePill extends StatelessWidget {
                       l10n.mapShadeAt(time),
                       if (weather case final w?) _weatherText(w, l10n),
                     ].whereType<String>().join(' · '),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: AppTextStyles.label,
                   ),
                 ),

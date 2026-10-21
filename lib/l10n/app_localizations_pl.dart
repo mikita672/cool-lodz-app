@@ -1942,12 +1942,12 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String heatRiskChip(String level) {
-    return 'Ryzyko upałowe: $level';
+    return 'Upał: $level';
   }
 
   @override
   String heatRiskChipTemp(String level, int temp) {
-    return 'Ryzyko upałowe: $level · $temp°C';
+    return 'Upał: $level · $temp°C';
   }
 
   @override

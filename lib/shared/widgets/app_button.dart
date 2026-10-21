@@ -49,7 +49,11 @@ class AppButton extends StatelessWidget {
             ),
           )
         : (icon == null ? null : Icon(icon, size: 20));
-    final text = Text(label, textAlign: TextAlign.center);
+    // One line always: a long label shrinks instead of wrapping.
+    final text = FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Text(label, maxLines: 1, textAlign: TextAlign.center),
+    );
 
     final Widget button = switch (variant) {
       AppButtonVariant.primary => FilledButton.icon(

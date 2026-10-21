@@ -3367,13 +3367,13 @@ abstract class AppLocalizations {
   /// No description provided for @heatRiskChip.
   ///
   /// In pl, this message translates to:
-  /// **'Ryzyko upałowe: {level}'**
+  /// **'Upał: {level}'**
   String heatRiskChip(String level);
 
   /// No description provided for @heatRiskChipTemp.
   ///
   /// In pl, this message translates to:
-  /// **'Ryzyko upałowe: {level} · {temp}°C'**
+  /// **'Upał: {level} · {temp}°C'**
   String heatRiskChipTemp(String level, int temp);
 
   /// No description provided for @heatRiskLow.
