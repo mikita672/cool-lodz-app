@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 
+import '../../../app/senior_mode.dart';
 import '../../../core/api/api_providers.dart';
 import '../../../core/api/live/sun.dart';
 import '../../../core/api/live/weather.dart';
@@ -9,31 +10,47 @@ import '../../../core/location/location_service.dart';
 import '../../../core/models/models.dart';
 import 'quiet_layer.dart';
 
-/// The six S05 filters. The first four are fills, the last two are points.
+/// The S05 filters: fills (areas), points and street lines.
 enum MapLayer {
   shade,
   green,
   quiet,
   air,
   water,
-  cool;
+  cool,
+  benches,
+  toilets,
+  night,
+  winter;
 
   /// Fill layers cover areas; at most [MapLayers.maxFills] at once.
   bool get isFill => index <= MapLayer.air.index;
+
+  /// Street line modes («Nocą», «Zima»): one at a time.
+  bool get isLine => this == night || this == winter;
 }
 
 /// Active S05 filters. Turning on a third fill switches off the one that
-/// was on the longest, so at most 2 fills plus any points are shown.
+/// was on the longest, so at most 2 fills plus any points are shown; a
+/// street mode replaces the other one.
 class MapLayers extends Notifier<List<MapLayer>> {
   static const maxFills = 2;
 
   /// Demo scenario step 2: shade and cool places on the map.
   static const initial = [MapLayer.shade, MapLayer.cool];
 
-  @override
-  List<MapLayer> build() => initial;
+  /// Seniors also see benches from the start.
+  static const initialSenior = [
+    MapLayer.shade,
+    MapLayer.cool,
+    MapLayer.benches,
+  ];
 
-  /// Returns the fill that was switched off to make room, if any.
+  @override
+  List<MapLayer> build() =>
+      ref.read(seniorModeProvider) ? initialSenior : initial;
+
+  /// Returns the layer that was switched off to make room, if any.
   MapLayer? toggle(MapLayer layer) {
     if (state.contains(layer)) {
       state = [...state]..remove(layer);
@@ -46,6 +63,11 @@ class MapLayers extends Notifier<List<MapLayer>> {
       if (fills.length > maxFills) {
         dropped = fills.first;
         next = [...next]..remove(dropped);
+      }
+    } else if (layer.isLine) {
+      for (final other in next.where((l) => l.isLine && l != layer).toList()) {
+        dropped = other;
+        next.remove(other);
       }
     }
     state = next;
@@ -177,7 +199,14 @@ final quietLayerProvider = FutureProvider<GeoLayer>((ref) async {
   } catch (_) {
     // Without parks every quiet cell is just «quiet».
   }
-  return quietAreas(noise, green: green);
+  // The loud bands too (red), so the map reads like a traffic light.
+  return GeoLayer(
+    features: [
+      for (final f in noise.features)
+        GeoFeature(geometry: f.geometry, properties: const {'quiet': 0}),
+      ...quietAreas(noise, green: green).features,
+    ],
+  );
 }, retry: noRetry);
 
 /// GIOŚ stations for the Powietrze layer.

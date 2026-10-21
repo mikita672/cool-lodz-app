@@ -1615,7 +1615,7 @@ abstract class AppLocalizations {
   /// No description provided for @mapLegendQuiet.
   ///
   /// In pl, this message translates to:
-  /// **'Ciemniej = ciszej'**
+  /// **'Cicho'**
   String get mapLegendQuiet;
 
   /// No description provided for @mapLegendShade.
@@ -4145,6 +4145,132 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Krótki przewodnik po funkcjach'**
   String get settingsGuideBody;
+
+  /// No description provided for @mapLayerBenches.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ławki'**
+  String get mapLayerBenches;
+
+  /// No description provided for @mapLayerToilets.
+  ///
+  /// In pl, this message translates to:
+  /// **'Toalety'**
+  String get mapLayerToilets;
+
+  /// No description provided for @mapLayerNight.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nocą'**
+  String get mapLayerNight;
+
+  /// No description provided for @mapLayerWinter.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zima'**
+  String get mapLayerWinter;
+
+  /// No description provided for @mapLegendQuietVery.
+  ///
+  /// In pl, this message translates to:
+  /// **'Bardzo cicho (parki)'**
+  String get mapLegendQuietVery;
+
+  /// No description provided for @mapLegendLoud.
+  ///
+  /// In pl, this message translates to:
+  /// **'Głośno: ruch uliczny'**
+  String get mapLegendLoud;
+
+  /// No description provided for @mapLegendTrees.
+  ///
+  /// In pl, this message translates to:
+  /// **'Drzewa'**
+  String get mapLegendTrees;
+
+  /// No description provided for @mapLegendNightBusy.
+  ///
+  /// In pl, this message translates to:
+  /// **'Najwięcej ludzi wieczorem'**
+  String get mapLegendNightBusy;
+
+  /// No description provided for @mapLegendNightLively.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ożywione: lokale i kluby'**
+  String get mapLegendNightLively;
+
+  /// No description provided for @mapLegendNightLit.
+  ///
+  /// In pl, this message translates to:
+  /// **'Oświetlone ulice'**
+  String get mapLegendNightLit;
+
+  /// No description provided for @mapLegendNightVenue.
+  ///
+  /// In pl, this message translates to:
+  /// **'Bar, pub, klub'**
+  String get mapLegendNightVenue;
+
+  /// No description provided for @mapLegendWinter1.
+  ///
+  /// In pl, this message translates to:
+  /// **'Odśnieżane najpierw'**
+  String get mapLegendWinter1;
+
+  /// No description provided for @mapLegendWinter2.
+  ///
+  /// In pl, this message translates to:
+  /// **'Odśnieżane potem'**
+  String get mapLegendWinter2;
+
+  /// No description provided for @mapLegendWinter3.
+  ///
+  /// In pl, this message translates to:
+  /// **'Odśnieżane na końcu'**
+  String get mapLegendWinter3;
+
+  /// No description provided for @mapLegendToilet.
+  ///
+  /// In pl, this message translates to:
+  /// **'Toaleta publiczna'**
+  String get mapLegendToilet;
+
+  /// No description provided for @mapWinterNote.
+  ///
+  /// In pl, this message translates to:
+  /// **'Szacunek wg kategorii ulic: najpierw główne ulice i trasy autobusów i tramwajów (OSM).'**
+  String get mapWinterNote;
+
+  /// No description provided for @mapNightNote.
+  ///
+  /// In pl, this message translates to:
+  /// **'Gdzie wieczorem jest najwięcej ludzi: lokale, kluby i oświetlone ulice (OSM).'**
+  String get mapNightNote;
+
+  /// No description provided for @mapToiletFree.
+  ///
+  /// In pl, this message translates to:
+  /// **'Toaleta publiczna, bezpłatna'**
+  String get mapToiletFree;
+
+  /// No description provided for @mapToiletPaid.
+  ///
+  /// In pl, this message translates to:
+  /// **'Toaleta publiczna, płatna'**
+  String get mapToiletPaid;
+
+  /// No description provided for @mapToiletUnknown.
+  ///
+  /// In pl, this message translates to:
+  /// **'Toaleta publiczna'**
+  String get mapToiletUnknown;
+
+  /// No description provided for @mapBenchesZoomIn.
+  ///
+  /// In pl, this message translates to:
+  /// **'Przybliż mapę, aby zobaczyć ławki'**
+  String get mapBenchesZoomIn;
 
   /// No description provided for @placeThu.
   ///

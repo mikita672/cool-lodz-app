@@ -139,3 +139,17 @@ flutter test test/assets/demo_assets_test.dart
 ```
 
 Without `places_cool.json` the build uses the cool stop ids hard-coded in `build.py`.
+
+## Map modes (`assets/demo/street_modes.json`)
+
+Built by `python3 -I tools/demo-data/build_modes.py` from OpenStreetMap (Overpass, mirror `https://maps.mail.ru/osm/tools/overpass/api/interpreter` when overpass-api.de is busy; © OpenStreetMap contributors, ODbL), all in the Śródmieście bbox `51.745,19.425,51.79,19.495`:
+
+| Raw file | Query |
+| :-- | :-- |
+| `osm_streets.json` | named `highway` ways (see `fetch_osm.py`); `lit`, class and `embedded_rails` are used |
+| `osm_bus_ways.json` | `relation["route"~"^(bus\|tram)$"](bbox); way(r)(bbox); out ids;` |
+| `osm_night.json` | `amenity` bar, pub, nightclub, biergarten, restaurant, fast_food, cafe, theatre, cinema (`out center tags`) |
+| `osm_toilets.json` | `nwr["amenity"="toilets"](51.73,19.40,51.81,19.52)`; private/customers-only skipped |
+
+Night level: weighted venues within 40 m of a street (bars, pubs, clubs ×2): ≥ 8 busiest (pedestrian streets ≥ 3), ≥ 3 lively, else lit when `lit=yes`. Winter order: 1 trunk/primary/secondary, bus/tram routes, tram rails; 2 tertiary and pedestrian; 3 the rest — an estimate, not the city's plan. Trees on the map come from `shadow_casters.json`.
+

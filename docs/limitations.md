@@ -30,6 +30,9 @@ A list for the competition documentation (MD hands it to Mikita Kutsenka). The d
 - The alert push is sent manually from the Firebase console (a test message); there is no automatic sending based on IMGW data — that needs a server side.
 - Heat mode for the demo is turned on with the `config/game.heatOverride` field.
 
+**Map modes**
+- «Zima» is an estimate from street categories, not ZDiT's real clearing plan (not published as open data); «Nocą» counts venues from OSM, not real foot traffic. Both, the toilets and the trees cover Śródmieście only.
+
 **Shop**
 - Rewards and codes are a demo: no agreement with MPK Łódź or the venues yet, codes are not checked anywhere. Spending is validated only by the Firestore rules (the client could add points the same way it earns them, see above).
 

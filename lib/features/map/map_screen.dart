@@ -36,14 +36,15 @@ import '../heat_risk/data/heat_risk_providers.dart';
 import '../heat_risk/heat_risk_sheet.dart';
 import 'data/map_layers_style.dart';
 import 'data/map_providers.dart';
+import 'data/street_modes.dart';
 
 /// S05 Mapa (main screen): search, six filters, layers, points, the heat
 /// banner and the user's position.
 class MapScreen extends ConsumerStatefulWidget {
   const MapScreen({super.key});
 
-  /// Benches only from this zoom (spec: "benches only at zoom ≥ 17").
-  static const benchMinZoom = 17.0;
+  /// Benches («Ławki») and trees only from this zoom: a street or two.
+  static const benchMinZoom = 16.0;
   static const startZoom = 14.0;
 
   /// Building and tree shadows are drawn from this zoom on.
@@ -113,8 +114,14 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   /// The last shadows shown, kept while the next area loads.
   GeoLayer? _lastShade;
 
+  /// The visible area (trees are drawn only here).
+  LatLngBounds? _view;
+
   void _updateShadeArea(MapCamera camera) {
     final b = camera.visibleBounds;
+    if (camera.zoom >= MapScreen.benchMinZoom && mounted) {
+      setState(() => _view = b);
+    }
     final next = camera.zoom >= MapScreen.shadowMinZoom
         ? shadeArea(south: b.south, west: b.west, north: b.north, east: b.east)
         : null;
@@ -141,6 +148,34 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     final next = ref.watch(shadeAreaProvider(area)).value;
     if (next != null) _lastShade = next;
     return _lastShade;
+  }
+
+  /// Street lines of [mode], built once per mode (2 000 streets).
+  MapLayer? _linesMode;
+  List<Polyline> _linesCache = const [];
+
+  List<Polyline> _lines(MapLayer mode, StreetModes modes) {
+    if (_linesMode == mode && _linesCache.isNotEmpty) return _linesCache;
+    final night = mode == MapLayer.night;
+    final streets = [
+      for (final s in modes.streets)
+        if (!night || s.night > 0) s,
+    ];
+    // Lower classes first, so the important lines are drawn on top.
+    streets.sort(
+      (a, b) =>
+          night ? a.night.compareTo(b.night) : b.winter.compareTo(a.winter),
+    );
+    _linesMode = mode;
+    _linesCache = [
+      for (final s in streets)
+        Polyline(
+          points: s.points,
+          color: night ? nightColor(s.night) : winterColor(s.winter),
+          strokeWidth: night ? nightWidth(s.night) : winterWidth(s.winter),
+        ),
+    ];
+    return _linesCache;
   }
 
   Widget? _fills(List<MapLayer> layers, Map<MapLayer, GeoLayer?> data) {
@@ -290,6 +325,21 @@ class _MapScreenState extends ConsumerState<MapScreen> {
         ? ref.watch(airStationsProvider).value ?? const <AirStation>[]
         : const <AirStation>[];
 
+    final lineMode = layers.where((l) => l.isLine).firstOrNull;
+    final needModes = lineMode != null || layers.contains(MapLayer.toilets);
+    final modes = needModes ? ref.watch(streetModesProvider).value : null;
+    final view = _view;
+    final trees =
+        layers.contains(MapLayer.shade) &&
+            _zoom >= MapScreen.benchMinZoom &&
+            view != null
+        ? [
+            for (final t
+                in ref.watch(treesProvider).value ?? const <TreeCrown>[])
+              if (view.contains(t.point)) t,
+          ]
+        : const <TreeCrown>[];
+
     Marker pin(Place place, MapPinType type, {double size = 32}) => Marker(
       key: ValueKey('pin-${place.id}'),
       point: place.latLng,
@@ -305,8 +355,17 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     );
 
     final markers = <Marker>[
-      if (_zoom >= MapScreen.benchMinZoom)
+      if (layers.contains(MapLayer.benches) && _zoom >= MapScreen.benchMinZoom)
         for (final p in places(PlaceType.bench)) pin(p, MapPinType.bench),
+      if (layers.contains(MapLayer.toilets))
+        for (final (i, t) in (modes?.toilets ?? const <PublicToilet>[]).indexed)
+          Marker(
+            key: ValueKey('wc-$i'),
+            point: t.point,
+            width: 40,
+            height: 40,
+            child: _ToiletPin(toilet: t),
+          ),
       if (layers.contains(MapLayer.water))
         for (final p in places(PlaceType.water)) pin(p, MapPinType.water),
       // Drawn last: on top. Bigger in heat mode.
@@ -353,6 +412,36 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               ),
               children: [
                 ?fills,
+                if (trees.isNotEmpty)
+                  CircleLayer(
+                    circles: [
+                      for (final t in trees)
+                        CircleMarker(
+                          point: t.point,
+                          radius: t.radius,
+                          useRadiusInMeter: true,
+                          color: treeColor.withValues(alpha: 0.55),
+                          borderColor: treeColor,
+                          borderStrokeWidth: 1,
+                        ),
+                    ],
+                  ),
+                if (lineMode != null && modes != null)
+                  PolylineLayer(polylines: _lines(lineMode, modes)),
+                if (lineMode == MapLayer.night && modes != null)
+                  CircleLayer(
+                    circles: [
+                      for (final v in modes.venues)
+                        if (v.kind == VenueKind.nightlife)
+                          CircleMarker(
+                            point: v.point,
+                            radius: 4,
+                            color: nightColor(3),
+                            borderColor: Colors.white,
+                            borderStrokeWidth: 1,
+                          ),
+                    ],
+                  ),
                 if (air.isNotEmpty) ...[
                   CircleLayer(circles: [for (final s in air) airCircle(s)]),
                   MarkerLayer(
@@ -476,6 +565,22 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                         },
                       ),
                     ],
+                  ],
+                  if (layers.contains(MapLayer.benches) &&
+                      _zoom < MapScreen.benchMinZoom) ...[
+                    const SizedBox(height: AppSizes.s8),
+                    _Pill(
+                      icon: Icons.chair_alt_rounded,
+                      text: l10n.mapBenchesZoomIn,
+                      onTap: () {
+                        if (_ready) {
+                          _map.move(
+                            _map.camera.center,
+                            MapScreen.benchMinZoom + 0.5,
+                          );
+                        }
+                      },
+                    ),
                   ],
                   if (location?.problem != null) ...[
                     const SizedBox(height: AppSizes.s8),
@@ -799,11 +904,34 @@ class _Legend extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final rows = [
-      if (layers.contains(MapLayer.shade))
+      if (layers.contains(MapLayer.shade)) ...[
         (AppColors.shadeLayer, l10n.mapLegendShade),
-      if (layers.contains(MapLayer.quiet)) (quietColor(2), l10n.mapLegendQuiet),
+        (treeColor, l10n.mapLegendTrees),
+      ],
+      if (layers.contains(MapLayer.quiet)) ...[
+        (quietColor(2), l10n.mapLegendQuietVery),
+        (quietColor(1), l10n.mapLegendQuiet),
+        (quietColor(0), l10n.mapLegendLoud),
+      ],
       if (layers.contains(MapLayer.air)) (airColor(1), l10n.mapLegendAir),
+      if (layers.contains(MapLayer.night)) ...[
+        (nightColor(3), l10n.mapLegendNightBusy),
+        (nightColor(2), l10n.mapLegendNightLively),
+        (nightColor(1), l10n.mapLegendNightLit),
+      ],
+      if (layers.contains(MapLayer.winter)) ...[
+        (winterColor(1), l10n.mapLegendWinter1),
+        (winterColor(2), l10n.mapLegendWinter2),
+        (winterColor(3), l10n.mapLegendWinter3),
+      ],
+      if (layers.contains(MapLayer.toilets))
+        (AppColors.primary, l10n.mapLegendToilet),
     ];
+    final note = layers.contains(MapLayer.night)
+        ? l10n.mapNightNote
+        : layers.contains(MapLayer.winter)
+        ? l10n.mapWinterNote
+        : null;
     if (rows.isEmpty) return const SizedBox.shrink();
     return Container(
       padding: const EdgeInsets.all(AppSizes.s8),
@@ -823,6 +951,16 @@ class _Legend extends StatelessWidget {
                 Text(text, style: AppTextStyles.label),
               ],
             ),
+          if (note != null)
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 220),
+              child: Text(
+                note,
+                style: AppTextStyles.label.copyWith(
+                  color: AppColors.onSurfaceVariant,
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -841,4 +979,41 @@ class _UserDot extends StatelessWidget {
       boxShadow: const [BoxShadow(blurRadius: 4, color: Color(0x40000000))],
     ),
   );
+}
+
+/// A public toilet («Toalety»); a tap says whether it is free.
+class _ToiletPin extends StatelessWidget {
+  const _ToiletPin({required this.toilet});
+
+  final PublicToilet toilet;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final label = switch (toilet.fee) {
+      0 => l10n.mapToiletFree,
+      1 => l10n.mapToiletPaid,
+      _ => l10n.mapToiletUnknown,
+    };
+    return Semantics(
+      button: true,
+      label: label,
+      excludeSemantics: true,
+      child: GestureDetector(
+        onTap: () => showAppToast(context, label),
+        child: Center(
+          child: Container(
+            width: 30,
+            height: 30,
+            decoration: BoxDecoration(
+              color: AppColors.primary,
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white, width: 2),
+            ),
+            child: const Icon(Icons.wc_rounded, size: 18, color: Colors.white),
+          ),
+        ),
+      ),
+    );
+  }
 }
