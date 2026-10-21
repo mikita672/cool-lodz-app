@@ -112,6 +112,38 @@ final layerProvider = FutureProvider.family<GeoLayer, LayerKind>((ref, kind) {
   return api.getLayer(kind, datetime: datetime);
 }, retry: noRetry);
 
+/// Shadows of buildings and trees at the chosen slot inside a map area
+/// (on-phone API; the bbox keeps the polygon count small).
+final shadeAreaProvider = FutureProvider.family<GeoLayer, GeoBounds>((
+  ref,
+  bbox,
+) {
+  final api = ref.watch(apiClientProvider);
+  final datetime = shadeDateTime(ref.watch(shadeTimeProvider), DateTime.now());
+  return api.getLayer(LayerKind.shade, bbox: bbox, datetime: datetime);
+}, retry: noRetry);
+
+/// The visible map area grown by half a screen on each side and snapped to
+/// a 0.004° grid, so small pans reuse the same shadows.
+GeoBounds shadeArea({
+  required double south,
+  required double west,
+  required double north,
+  required double east,
+}) {
+  const step = 0.004;
+  final dLat = (north - south) / 2;
+  final dLon = (east - west) / 2;
+  double down(double v) => (v / step).floorToDouble() * step;
+  double up(double v) => (v / step).ceilToDouble() * step;
+  return GeoBounds(
+    minLat: down(south - dLat),
+    minLon: down(west - dLon),
+    maxLat: up(north + dLat),
+    maxLon: up(east + dLon),
+  );
+}
+
 /// Weather for the shade pill at the chosen slot (on-phone API only).
 class ShadeWeather {
   const ShadeWeather({

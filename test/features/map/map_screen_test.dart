@@ -266,6 +266,19 @@ void main() {
     expect(centre(), isNot(before));
   });
 
+  testWidgets('live shadows: a zoom-in hint, then shadows of the area', (
+    tester,
+  ) async {
+    await prefs.setBool(DemoMode.prefsKey, false); // the on-phone API
+    await pump(tester);
+    expect(find.text('Przybliż mapę, aby zobaczyć cienie'), findsOneWidget);
+    await tester.tap(find.text('Przybliż mapę, aby zobaczyć cienie'));
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.pumpAndSettle();
+    expect(find.text('Przybliż mapę, aby zobaczyć cienie'), findsNothing);
+    expect(find.byType(PolygonLayer), findsOneWidget);
+  });
+
   testWidgets('a turned map shows the compass; a tap turns it north', (
     tester,
   ) async {

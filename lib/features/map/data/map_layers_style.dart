@@ -36,15 +36,6 @@ List<Polygon> polygonsFor(GeoLayer? layer, MapLayer kind) {
           points: p.outer,
           holePointsList: p.holes.isEmpty ? null : p.holes,
           color: switch (kind) {
-            MapLayer.shade when f.properties['source'] == 'sun' =>
-              AppColors.sun.withValues(
-                alpha:
-                    0.4 *
-                    ((f.properties['sun'] as num?)?.toDouble() ?? 1).clamp(
-                      0.1,
-                      1,
-                    ),
-              ),
             MapLayer.shade => AppColors.primary.withValues(
               alpha: 0.35 * (f.shade ?? 1).clamp(0.2, 1),
             ),

@@ -39,6 +39,9 @@ class MapScreen extends ConsumerStatefulWidget {
   /// Benches only from this zoom (spec: "benches only at zoom ≥ 17").
   static const benchMinZoom = 17.0;
   static const startZoom = 14.0;
+
+  /// Building and tree shadows are drawn from this zoom on.
+  static const shadowMinZoom = 15.0;
   static const userZoom = 15.0;
 
   @override
@@ -87,19 +90,47 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   void dispose() {
     _lifecycle.dispose();
     _mapEvents.cancel();
+    _shadeAreaTimer?.cancel();
     _rotation.dispose();
     _map.dispose();
     super.dispose();
   }
 
+  /// The map area the shadows are drawn for; null when zoomed out.
+  GeoBounds? _shadeArea;
+  Timer? _shadeAreaTimer;
+
+  /// The last shadows shown, kept while the next area loads.
+  GeoLayer? _lastShade;
+
+  void _updateShadeArea(MapCamera camera) {
+    final b = camera.visibleBounds;
+    final next = camera.zoom >= MapScreen.shadowMinZoom
+        ? shadeArea(south: b.south, west: b.west, north: b.north, east: b.east)
+        : null;
+    if (next != _shadeArea && mounted) setState(() => _shadeArea = next);
+  }
+
   void _onMapReady() {
     _ready = true;
+    _updateShadeArea(_map.camera);
     final pending = _pendingCenter;
     if (pending != null) {
       _pendingCenter = null;
       _centeredOnUser = true;
       _map.move(pending, MapScreen.userZoom);
     }
+  }
+
+  /// The shade layer to draw: the bundled 14:30 file (demo, fallback), or
+  /// the shadows of the visible area at the chosen time.
+  GeoLayer? _shade(GeoLayer? Function(LayerKind) layer) {
+    if (ref.watch(staticShadeLayerProvider)) return layer(LayerKind.shade);
+    final area = _shadeArea;
+    if (area == null) return null;
+    final next = ref.watch(shadeAreaProvider(area)).value;
+    if (next != null) _lastShade = next;
+    return _lastShade;
   }
 
   Widget? _fills(List<MapLayer> layers, Map<MapLayer, GeoLayer?> data) {
@@ -227,9 +258,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       MapLayer.quiet: layers.contains(MapLayer.quiet)
           ? ref.watch(quietLayerProvider).value
           : null,
-      MapLayer.shade: layers.contains(MapLayer.shade)
-          ? layer(LayerKind.shade)
-          : null,
+      MapLayer.shade: layers.contains(MapLayer.shade) ? _shade(layer) : null,
     });
     final air = layers.contains(MapLayer.air)
         ? ref.watch(airStationsProvider).value ?? const <AirStation>[]
@@ -283,6 +312,12 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                 ),
                 onMapReady: _onMapReady,
                 onPositionChanged: (camera, _) {
+                  // Shadows for the new area once the map stops moving.
+                  _shadeAreaTimer?.cancel();
+                  _shadeAreaTimer = Timer(
+                    const Duration(milliseconds: 300),
+                    () => _updateShadeArea(camera),
+                  );
                   final crossed =
                       (camera.zoom >= MapScreen.benchMinZoom) !=
                       (_zoom >= MapScreen.benchMinZoom);
@@ -385,6 +420,22 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                         onChange: _pickShadeTime,
                       ),
                     ),
+                    if (!ref.watch(staticShadeLayerProvider) &&
+                        _shadeArea == null) ...[
+                      const SizedBox(height: AppSizes.s8),
+                      _Pill(
+                        icon: Icons.zoom_in_rounded,
+                        text: l10n.mapShadowZoomIn,
+                        onTap: () {
+                          if (_ready) {
+                            _map.move(
+                              _map.camera.center,
+                              MapScreen.shadowMinZoom + 0.5,
+                            );
+                          }
+                        },
+                      ),
+                    ],
                   ],
                   if (location?.problem != null) ...[
                     const SizedBox(height: AppSizes.s8),
@@ -689,10 +740,8 @@ class _Legend extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final rows = [
-      if (layers.contains(MapLayer.shade)) ...[
+      if (layers.contains(MapLayer.shade))
         (AppColors.shadeLayer, l10n.mapLegendShade),
-        (AppColors.sun.withValues(alpha: 0.4), l10n.mapLegendSun),
-      ],
       if (layers.contains(MapLayer.quiet)) (quietColor(2), l10n.mapLegendQuiet),
       if (layers.contains(MapLayer.air)) (airColor(1), l10n.mapLegendAir),
     ];
