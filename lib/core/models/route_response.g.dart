@@ -6,18 +6,35 @@ part of 'route_response.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+RouteWeather _$RouteWeatherFromJson(Map<String, dynamic> json) => RouteWeather(
+  sunStrength: (json['sunStrength'] as num).toDouble(),
+  temperature: (json['temperature'] as num?)?.toDouble(),
+  cloudCover: (json['cloudCover'] as num?)?.toDouble(),
+);
+
+Map<String, dynamic> _$RouteWeatherToJson(RouteWeather instance) =>
+    <String, dynamic>{
+      'sunStrength': instance.sunStrength,
+      'temperature': ?instance.temperature,
+      'cloudCover': ?instance.cloudCover,
+    };
+
 RouteResponse _$RouteResponseFromJson(Map<String, dynamic> json) =>
     RouteResponse(
       coverage: $enumDecode(_$RouteCoverageEnumMap, json['coverage']),
       variants: (json['variants'] as List<dynamic>)
           .map((e) => RouteVariant.fromJson(e as Map<String, dynamic>))
           .toList(),
+      weather: json['weather'] == null
+          ? null
+          : RouteWeather.fromJson(json['weather'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$RouteResponseToJson(RouteResponse instance) =>
     <String, dynamic>{
       'coverage': _$RouteCoverageEnumMap[instance.coverage]!,
       'variants': instance.variants.map((e) => e.toJson()).toList(),
+      'weather': ?instance.weather?.toJson(),
     };
 
 const _$RouteCoverageEnumMap = {

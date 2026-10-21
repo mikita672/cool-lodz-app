@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../../../core/api/api_providers.dart';
+import '../../../core/api/live/sun.dart';
+import '../../../core/api/live/weather.dart';
 import '../../../core/location/location_service.dart';
 import '../../../core/models/models.dart';
 import 'quiet_layer.dart';
@@ -108,6 +110,38 @@ final layerProvider = FutureProvider.family<GeoLayer, LayerKind>((ref, kind) {
       ? shadeDateTime(ref.watch(shadeTimeProvider), DateTime.now())
       : DateTime.now();
   return api.getLayer(kind, datetime: datetime);
+}, retry: noRetry);
+
+/// Weather for the shade pill at the chosen slot (on-phone API only).
+class ShadeWeather {
+  const ShadeWeather({
+    required this.strength,
+    this.temperature,
+    this.night = false,
+  });
+
+  /// Direct sunlight 0..1 (`sunStrength`).
+  final double strength;
+  final double? temperature;
+
+  /// The sun is below the horizon.
+  final bool night;
+}
+
+final shadeWeatherProvider = FutureProvider<ShadeWeather?>((ref) async {
+  if (ref.watch(staticShadeLayerProvider) ||
+      ref.watch(apiBaseUrlProvider).isNotEmpty) {
+    return null;
+  }
+  final time = shadeDateTime(ref.watch(shadeTimeProvider), DateTime.now());
+  final forecast = await ref.watch(weatherClientProvider).forecastOrNull();
+  final night = sunPosition(51.77, 19.46, time).elevation <= 0;
+  if (forecast == null && !night) return null;
+  return ShadeWeather(
+    strength: sunStrength(forecast, time),
+    temperature: forecast?.at(time)?.temperature,
+    night: night,
+  );
 }, retry: noRetry);
 
 /// «Cisza»: where it is quiet (away from the noise bands, parks quietest).

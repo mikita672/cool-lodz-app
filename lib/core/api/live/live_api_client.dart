@@ -7,6 +7,7 @@ import 'live_route_engine.dart';
 import 'osrm_client.dart';
 import 'shade_layer.dart';
 import 'shade_model.dart';
+import 'weather.dart';
 
 /// Module D on the phone, while it has no server: routes from
 /// [LiveRouteEngine] (OSRM + shade model), heat warnings from IMGW-PIB, air
@@ -19,31 +20,40 @@ class LiveApiClient implements ApiClient {
     required this.imgw,
     required this.gios,
     required OsrmClient osrm,
+    this.weather,
     DateTime Function()? clock,
   }) : _clock = clock ?? DateTime.now {
     routes = LiveRouteEngine(
       osrm: osrm,
       shadeModel: _shadeModel,
       places: () => bundled.getPlaces(types: {PlaceType.cool, PlaceType.water}),
+      weather: weather?.forecastOrNull,
     );
   }
 
-  factory LiveApiClient.create(DemoApiClient bundled) => LiveApiClient(
+  factory LiveApiClient.create(
+    DemoApiClient bundled, {
+    OpenMeteoClient? weather,
+  }) => LiveApiClient(
     bundled: bundled,
     imgw: ImgwAlertsClient.create(),
     gios: GiosAirClient.create(),
     osrm: OsrmClient.create(),
+    weather: weather ?? OpenMeteoClient.create(),
   );
 
   final DemoApiClient bundled;
   final ImgwAlertsClient imgw;
   final GiosAirClient gios;
+
+  /// Clouds for the sun strength; null = always a clear sky.
+  final OpenMeteoClient? weather;
   late final LiveRouteEngine routes;
   final DateTime Function() _clock;
 
   Future<ShadeModel>? _model;
   Future<ShadeLayerBuilder>? _shadeLayer;
-  final _shadeLayers = <int, GeoLayer>{};
+  final _shadeLayers = <String, GeoLayer>{};
 
   /// Built once from the bundled layers; a failed load is retried next time.
   Future<ShadeModel> _shadeModel() => _model ??= () async {
@@ -80,8 +90,8 @@ class LiveApiClient implements ApiClient {
       if (bbox == null || bbox.contains(s.lat, s.lon)) s,
   ];
 
-  /// Shade for [datetime] (trees + building shadows at that time); green and
-  /// noise are the bundled files.
+  /// Shade for [datetime] (trees, building shadows and sunny street parts at
+  /// that time and weather); green and noise are the bundled files.
   @override
   Future<GeoLayer> getLayer(
     LayerKind kind, {
@@ -92,12 +102,23 @@ class LiveApiClient implements ApiClient {
       return bundled.getLayer(kind, bbox: bbox, datetime: datetime);
     }
     final builder = await _shadeBuilder();
-    // One layer per minute is plenty; keep the last few.
-    final key = datetime.toUtc().millisecondsSinceEpoch ~/ 60000;
+    WeatherForecast? forecast;
+    try {
+      forecast = await weather?.forecastOrNull().timeout(
+        LiveRouteEngine.weatherTimeout,
+      );
+    } catch (_) {
+      // Slow: a clear sky.
+    }
+    final strength = sunStrength(forecast, datetime);
+    // One layer per minute and sun strength is plenty; keep the last few.
+    final key =
+        '${datetime.toUtc().millisecondsSinceEpoch ~/ 60000}:'
+        '${(strength * 100).round()}';
     final cached = _shadeLayers[key];
     if (cached != null) return cached;
     if (_shadeLayers.length >= 8) _shadeLayers.remove(_shadeLayers.keys.first);
-    return _shadeLayers[key] = builder.at(datetime);
+    return _shadeLayers[key] = builder.at(datetime, strength: strength);
   }
 
   Future<ShadeLayerBuilder> _shadeBuilder() => _shadeLayer ??= () async {

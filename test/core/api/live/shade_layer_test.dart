@@ -45,7 +45,9 @@ void main() {
   test('trees stay, the fixed 14:30 strips are replaced', () {
     final layer = builder.at(DateTime.parse('2026-07-15T14:30:00+02:00'));
     expect(
-      layer.features.where((f) => f.properties['source'] != 'buildings'),
+      layer.features.where(
+        (f) => !{'buildings', 'sun'}.contains(f.properties['source']),
+      ),
       hasLength(trees),
     );
     // About as many strips as the 14:30 file had (260).
@@ -86,10 +88,16 @@ void main() {
       ],
       model: ShadeModel(canopy: const [], parks: const []),
     );
-    // Solar noon in Łódź ≈ 12:43 CEST; the E–W street is shaded.
+    // Solar noon in Łódź ≈ 12:43 CEST; the E–W street is half shaded,
+    // the N–S one fully in the sun.
     final layer = single.at(DateTime.parse('2026-07-15T12:43:00+02:00'));
-    expect(layer.features, hasLength(1));
-    final lats = layer.features.single.geometry.polygons.single.outer.map(
+    final shadow = layer.features.where(
+      (f) => f.properties['source'] == 'buildings',
+    );
+    final sunny = layer.features.where((f) => f.properties['source'] == 'sun');
+    expect(shadow, hasLength(1));
+    expect(sunny, hasLength(2));
+    final lats = shadow.single.geometry.polygons.single.outer.map(
       (p) => p.latitude,
     );
     // From the south kerb (9 m south) to about the centre line: the shadow
@@ -99,6 +107,23 @@ void main() {
       closeTo(51.765 - 9 / 111195, 1e-6),
     );
     expect(lats.every((l) => l <= 51.765 + 1 / 111195), isTrue);
+  });
+
+  test('after sunset the layer is empty; clouds fade the sunny parts', () {
+    expect(
+      builder.at(DateTime.parse('2026-10-21T19:00:00+02:00')).features,
+      isEmpty,
+    );
+    final noon = DateTime.parse('2026-10-21T13:00:00+02:00');
+    List<GeoFeature> sun(double strength) => builder
+        .at(noon, strength: strength)
+        .features
+        .where((f) => f.properties['source'] == 'sun')
+        .toList();
+    expect(sun(1), isNotEmpty);
+    expect(sun(1).first.properties['sun'], 1.0);
+    expect(sun(0.4).first.properties['sun'], 0.4);
+    expect(sun(0.01), isEmpty); // overcast: no sunny streets drawn
   });
 
   test('broken street features are skipped', () {

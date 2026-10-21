@@ -1264,6 +1264,18 @@ abstract class AppLocalizations {
   /// **'Prowadź'**
   String get routeGo;
 
+  /// No description provided for @routeNoSun.
+  ///
+  /// In pl, this message translates to:
+  /// **'O tej porze nie ma słońca, więc trasy różnią się tylko długością.'**
+  String get routeNoSun;
+
+  /// No description provided for @routeCloudy.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pochmurno: słońca będzie niewiele, więc trasy mało się różnią.'**
+  String get routeCloudy;
+
   /// No description provided for @routeSave.
   ///
   /// In pl, this message translates to:
@@ -1582,6 +1594,12 @@ abstract class AppLocalizations {
   /// **'Pokaż moją lokalizację'**
   String get mapMyLocation;
 
+  /// No description provided for @mapCompass.
+  ///
+  /// In pl, this message translates to:
+  /// **'Obróć mapę na północ'**
+  String get mapCompass;
+
   /// No description provided for @mapAlertSubtitle.
   ///
   /// In pl, this message translates to:
@@ -1599,6 +1617,42 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Ciemniej = ciszej'**
   String get mapLegendQuiet;
+
+  /// No description provided for @mapLegendShade.
+  ///
+  /// In pl, this message translates to:
+  /// **'Cień'**
+  String get mapLegendShade;
+
+  /// No description provided for @mapLegendSun.
+  ///
+  /// In pl, this message translates to:
+  /// **'Słońce (blednie, gdy pochmurno)'**
+  String get mapLegendSun;
+
+  /// No description provided for @mapWeatherNight.
+  ///
+  /// In pl, this message translates to:
+  /// **'po zachodzie słońca'**
+  String get mapWeatherNight;
+
+  /// No description provided for @mapWeatherSunny.
+  ///
+  /// In pl, this message translates to:
+  /// **'{temp}°C, słonecznie'**
+  String mapWeatherSunny(int temp);
+
+  /// No description provided for @mapWeatherPartly.
+  ///
+  /// In pl, this message translates to:
+  /// **'{temp}°C, częściowo słonecznie'**
+  String mapWeatherPartly(int temp);
+
+  /// No description provided for @mapWeatherCloudy.
+  ///
+  /// In pl, this message translates to:
+  /// **'{temp}°C, pochmurno'**
+  String mapWeatherCloudy(int temp);
 
   /// No description provided for @mapLegendAir.
   ///
@@ -2529,6 +2583,12 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Jakość powietrza: GIOŚ'**
   String get aboutSourceAir;
+
+  /// No description provided for @aboutSourceWeather.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pogoda: Open-Meteo.com (CC BY 4.0)'**
+  String get aboutSourceWeather;
 
   /// No description provided for @aboutSourceShade.
   ///

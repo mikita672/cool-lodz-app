@@ -485,6 +485,16 @@ class _Result extends ConsumerWidget {
                         key: const Key('route-approximate'),
                         text: l10n.routeApproximate,
                       ),
+                    if (response.weather case final w? when w.littleSun) ...[
+                      if (response.isApproximate)
+                        const SizedBox(height: AppSizes.s8),
+                      _Notice(
+                        key: const Key('route-little-sun'),
+                        text: w.sunStrength <= 0.01
+                            ? l10n.routeNoSun
+                            : l10n.routeCloudy,
+                      ),
+                    ],
                   ],
                 ),
               ),

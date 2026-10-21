@@ -7,16 +7,20 @@ import '../../warsaw_time.dart';
 import '../api_client.dart';
 import 'osrm_client.dart';
 import 'shade_model.dart';
+import 'weather.dart';
 
 /// `POST /v1/routes` computed on the phone: OSRM foot routes (with
 /// alternatives and via-point detours) scored by [ShadeModel] into the
 /// variants shortest / shaded / compromise (only the distinct ones) plus
-/// further distinct walks as alternatives.
+/// further distinct walks as alternatives. Sun shares follow the time, the
+/// day and, with a [weather] forecast, the clouds; heat makes shade weigh
+/// more in the compromise.
 class LiveRouteEngine {
   LiveRouteEngine({
     required this.osrm,
     required this.shadeModel,
     required this.places,
+    this.weather,
   });
 
   final OsrmClient osrm;
@@ -26,6 +30,16 @@ class LiveRouteEngine {
 
   /// Cool places and drinking water for `stops`.
   final Future<List<Place>> Function() places;
+
+  /// Hourly forecast; null or failing = clear sky.
+  final Future<WeatherForecast?> Function()? weather;
+
+  /// Routes do not wait longer than this for the forecast.
+  static const weatherTimeout = Duration(seconds: 3);
+
+  /// The shaded variant must save at least this much sun share; otherwise
+  /// (night, overcast, no shady detour) it is the shortest walk.
+  static const minShadeGain = 0.03;
 
   /// Longer straight lines are not a walk (Łódź is ~20 km across).
   static const maxStraightDistance = 25000.0;
@@ -60,6 +74,7 @@ class LiveRouteEngine {
     }
 
     final direct = osrm.route([from, to], alternatives: 2);
+    final forecastFuture = _forecast();
     final ShadeModel model;
     try {
       model = await shadeModel();
@@ -82,6 +97,10 @@ class LiveRouteEngine {
       for (final list in await Future.wait(detours)) ...list.take(1),
     ];
 
+    final forecast = await forecastFuture;
+    double strength(DateTime t) => sunStrength(forecast, t);
+    final departureWeather = forecast?.at(request.datetime);
+
     final shortestDistance = routes.map((r) => r.distanceM).reduce(math.min);
     final candidates = <_Candidate>[];
     for (final r in routes) {
@@ -94,7 +113,7 @@ class LiveRouteEngine {
       final duration = Duration(seconds: (r.durationS * scale).round());
       final c = _Candidate(points, shade, distance, duration);
       if (candidates.any((o) => o.sameAs(c))) continue;
-      c.sun = shade.sunShare(request.datetime, duration);
+      c.sun = shade.sunShare(request.datetime, duration, strength: strength);
       candidates.add(c);
     }
     if (candidates.isEmpty) {
@@ -104,18 +123,20 @@ class LiveRouteEngine {
     final shortest = candidates.reduce(
       (a, b) => b.duration < a.duration ? b : a,
     );
-    final shaded = candidates
+    var shaded = candidates
         .where(
           (c) =>
               c.duration.inSeconds <=
               shortest.duration.inSeconds * maxShadedFactor,
         )
         .reduce((a, b) => b.sun < a.sun - 0.005 ? b : a);
+    if (shortest.sun - shaded.sun < minShadeGain) shaded = shortest;
     final compromise = _compromise(
       candidates,
       shortest,
       shaded,
       request.profile.weights,
+      heat: heatWeight(departureWeather?.temperature),
     );
 
     final stopPlaces = await places();
@@ -128,7 +149,7 @@ class LiveRouteEngine {
         ? RouteCoverage.full
         : RouteCoverage.approximate;
     // Each distinct walk once: the named variants that differ, then the
-    // other candidates (least sun first) as alternatives, at most
+    // other shadier candidates (least sun first) as alternatives, at most
     // [maxVariants]. A single possible walk gives a single variant.
     // When two names share a walk, the profile's default name (S07 opens
     // on it: shaded for Senior, compromise otherwise) keeps it.
@@ -143,9 +164,13 @@ class LiveRouteEngine {
       if (!picked.any((p) => identical(p.$2, c))) picked.add((type, c));
     }
     picked.sort((a, b) => a.$1.index.compareTo(b.$1.index));
+    // Alternatives only when they spare some sun: at night or under thick
+    // clouds a longer walk has nothing to offer.
     final rest = [
       for (final c in candidates)
-        if (!picked.any((p) => identical(p.$2, c))) c,
+        if (!picked.any((p) => identical(p.$2, c)) &&
+            c.sun <= shortest.sun - minShadeGain)
+          c,
     ]..sort((a, b) => a.sun.compareTo(b.sun));
     for (final c in rest.take(maxVariants - picked.length)) {
       picked.add((RouteVariantType.alternative, c));
@@ -154,10 +179,37 @@ class LiveRouteEngine {
       coverage: coverage,
       variants: [
         for (final (type, c) in picked)
-          _variant(type, c, shortest, request.datetime, stopPlaces),
+          _variant(type, c, shortest, request.datetime, stopPlaces, strength),
       ],
+      weather: forecast == null
+          ? null
+          : RouteWeather(
+              sunStrength: _round2(strength(request.datetime)),
+              temperature: departureWeather?.temperature,
+              cloudCover: departureWeather?.cloudCover,
+            ),
     );
   }
+
+  Future<WeatherForecast?> _forecast() async {
+    final source = weather;
+    if (source == null) return null;
+    try {
+      return await source().timeout(weatherTimeout);
+    } catch (_) {
+      return null; // offline or slow: clear sky
+    }
+  }
+
+  /// How much more shade counts in the compromise at [temperature] °C:
+  /// more in heat, less when it is cool (the sun is then welcome).
+  static double heatWeight(double? temperature) => switch (temperature) {
+    null => 1,
+    >= 30 => 1.5,
+    >= 25 => 1.25,
+    < 15 => 0.6,
+    _ => 1,
+  };
 
   /// The candidate with the best balance of sun and extra time for the
   /// profile; a third route when there is one that is worth it.
@@ -165,9 +217,10 @@ class LiveRouteEngine {
     List<_Candidate> all,
     _Candidate shortest,
     _Candidate shaded,
-    ProfileWeights weights,
-  ) {
-    final shadeW = weights.shade.clamp(0, 100) / 100;
+    ProfileWeights weights, {
+    double heat = 1,
+  }) {
+    final shadeW = math.min(1.0, weights.shade.clamp(0, 100) / 100 * heat);
     final timeW = weights.time.clamp(0, 100) / 100;
     final sum = shadeW + timeW;
     final ws = sum == 0 ? 0.5 : shadeW / sum;
@@ -196,8 +249,13 @@ class LiveRouteEngine {
     _Candidate shortest,
     DateTime departure,
     List<Place> places,
+    double Function(DateTime) strength,
   ) {
-    final perEdge = c.shade.sunShares(departure, c.duration);
+    final perEdge = c.shade.sunShares(
+      departure,
+      c.duration,
+      strength: strength,
+    );
     return RouteVariant(
       variant: type,
       geometry: [
@@ -215,7 +273,7 @@ class LiveRouteEngine {
       stops: findStops(c.points, places),
       sunShareByHour: {
         for (final (key, start) in daySlots(departure))
-          key: _round2(c.shade.sunShare(start, c.duration)),
+          key: _round2(c.shade.sunShare(start, c.duration, strength: strength)),
       },
     );
   }

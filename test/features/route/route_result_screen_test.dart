@@ -78,6 +78,23 @@ class _VariantsApi extends RecordingApiClient {
   }
 }
 
+/// The demo answer with the weather the on-phone API adds.
+class _WeatherApi extends RecordingApiClient {
+  _WeatherApi(this.strength);
+
+  final double strength;
+
+  @override
+  Future<RouteResponse> getRoutes(RouteRequest request) async {
+    final full = await super.getRoutes(request);
+    return RouteResponse(
+      coverage: full.coverage,
+      variants: full.variants,
+      weather: RouteWeather(sunStrength: strength, temperature: 14),
+    );
+  }
+}
+
 /// When «Prowadź» is tapped in these tests.
 final _now = DateTime(2026, 7, 15, 14, 30);
 
@@ -375,6 +392,22 @@ void main() {
       expect(find.byKey(const Key('route-best-time')), findsNothing);
       expect(find.text('Kompromis'), findsOneWidget);
     });
+  });
+
+  testWidgets('little sun → a notice why the routes are alike', (tester) async {
+    api = _WeatherApi(0.1);
+    await pump(tester);
+    expect(find.byKey(const Key('route-little-sun')), findsOneWidget);
+    expect(find.textContaining('Pochmurno'), findsOneWidget);
+  });
+
+  testWidgets('no sun at all and a sunny sky', (tester) async {
+    api = _WeatherApi(0);
+    await pump(tester);
+    expect(find.textContaining('nie ma słońca'), findsOneWidget);
+    api = _WeatherApi(0.9);
+    await pump(tester);
+    expect(find.byKey(const Key('route-little-sun')), findsNothing);
   });
 
   testWidgets('one possible walk → one card, selected', (tester) async {

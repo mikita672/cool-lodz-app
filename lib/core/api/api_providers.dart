@@ -7,6 +7,7 @@ import 'api_client.dart';
 import 'demo_api_client.dart';
 import 'fallback_api_client.dart';
 import 'live/live_api_client.dart';
+import 'live/weather.dart';
 import 'remote_api_client.dart';
 
 /// `retry:` for data providers: no automatic retries. Screens show the error
@@ -86,12 +87,14 @@ final isDemoModeEffectiveProvider = Provider<bool>(
   (ref) => ref.watch(demoModeProvider),
 );
 
-/// True when the map's shade layer is the bundled 14:30 file: in demo mode
-/// and after a fallback. Module D and the on-phone API draw it for any time.
+/// True when the map's shade layer is the bundled 14:30 file: in demo mode,
+/// and after a fallback from module D. The on-phone API draws it for any
+/// time even offline (another source failing does not matter).
 final staticShadeLayerProvider = Provider<bool>(
   (ref) =>
       ref.watch(isDemoModeEffectiveProvider) ||
-      ref.watch(dataSourceProvider) == DataSource.fallback,
+      (ref.watch(apiBaseUrlProvider).isNotEmpty &&
+          ref.watch(dataSourceProvider) == DataSource.fallback),
 );
 
 final dataSourceProvider = Provider<DataSource>((ref) {
@@ -118,8 +121,17 @@ final bundledApiClientProvider = Provider<DemoApiClient>(
   (ref) => DemoApiClient(loadAsset: ref.watch(assetLoaderProvider)),
 );
 
+/// Hourly Open-Meteo forecast for Łódź, shared by the routes, the shade
+/// layer and the map's shade pill.
+final weatherClientProvider = Provider<OpenMeteoClient>(
+  (ref) => OpenMeteoClient.create(),
+);
+
 final liveApiClientProvider = Provider<ApiClient>(
-  (ref) => LiveApiClient.create(ref.watch(bundledApiClientProvider)),
+  (ref) => LiveApiClient.create(
+    ref.watch(bundledApiClientProvider),
+    weather: ref.watch(weatherClientProvider),
+  ),
 );
 
 /// The client features use: Demo when the hidden demo toggle is on; Remote
