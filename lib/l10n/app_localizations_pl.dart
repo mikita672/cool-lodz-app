@@ -1586,6 +1586,131 @@ class AppLocalizationsPl extends AppLocalizations {
   String get placeWed => 'śr.';
 
   @override
+  String get timeToday => 'Dziś';
+
+  @override
+  String get timeTomorrow => 'Jutro';
+
+  @override
+  String get timeSet => 'Ustaw';
+
+  @override
+  String get weatherClear => 'Słonecznie';
+
+  @override
+  String get weatherClearNight => 'Bezchmurnie';
+
+  @override
+  String get weatherPartly => 'Częściowe zachmurzenie';
+
+  @override
+  String get weatherCloudy => 'Pochmurno';
+
+  @override
+  String get weatherFog => 'Mgła';
+
+  @override
+  String get weatherDrizzle => 'Mżawka';
+
+  @override
+  String get weatherRain => 'Deszcz';
+
+  @override
+  String get weatherSnow => 'Śnieg';
+
+  @override
+  String get weatherStorm => 'Burza';
+
+  @override
+  String weatherWindy(int speed) {
+    return 'Wietrznie, $speed km/h';
+  }
+
+  @override
+  String weatherWind(int speed) {
+    return 'Wiatr $speed km/h';
+  }
+
+  @override
+  String get weatherHot => 'Upał';
+
+  @override
+  String weatherWet(int percent) {
+    return 'Opady $percent%';
+  }
+
+  @override
+  String get weatherNoForecast => 'Brak prognozy pogody na tę godzinę.';
+
+  @override
+  String mapShadeTomorrow(String time) {
+    return 'jutro $time';
+  }
+
+  @override
+  String mapWeatherOther(int temp, String sky) {
+    return '$temp°C, $sky';
+  }
+
+  @override
+  String get routeDepartTitle => 'Godzina wyjścia';
+
+  @override
+  String get routeAdviceButton => 'Kiedy najlepiej iść?';
+
+  @override
+  String get routeAdviceTitle => 'Najlepsza pora na wyjście';
+
+  @override
+  String get routeAdviceIntro =>
+      'Biorę pod uwagę cień na trasie, pogodę i godziny otwarcia miejsc chłodu.';
+
+  @override
+  String get routeAdviceBest => 'Polecam';
+
+  @override
+  String routeAdviceShade(int percent) {
+    return '$percent% trasy w cieniu';
+  }
+
+  @override
+  String routeAdviceArrive(String time) {
+    return 'na miejscu o $time';
+  }
+
+  @override
+  String routeAdviceDestOpen(String place, String time) {
+    return '$place: otwarte do $time';
+  }
+
+  @override
+  String routeAdviceDestClosed(String place) {
+    return '$place: zamknięte o tej porze';
+  }
+
+  @override
+  String routeAdviceCoolOpen(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count otwartych miejsc chłodu po drodze',
+      many: '$count otwartych miejsc chłodu po drodze',
+      few: '$count otwarte miejsca chłodu po drodze',
+      one: '1 otwarte miejsce chłodu po drodze',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get routeAdviceEmpty =>
+      'Nie udało się dobrać pory dla tej trasy. Spróbuj później.';
+
+  @override
+  String routeAdvicePick(String when) {
+    return 'Wyjdź: $when';
+  }
+
+  @override
   String get placeThu => 'czw.';
 
   @override

@@ -5,12 +5,16 @@ import 'package:intl/intl.dart';
 
 import '../../app/routes.dart';
 import '../../app/theme.dart';
+import '../../core/api/api_providers.dart';
+import '../../core/api/live/weather.dart';
 import '../../core/api/reference_routes.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/app_button.dart';
+import '../../shared/widgets/time_wheel_sheet.dart';
 import '../profile/data/comfort_profile_provider.dart';
 import '../profile/profile_select_screen.dart';
 import 'data/route_plan.dart';
+import 'departure_advice_sheet.dart';
 import 'endpoint_search_screen.dart';
 
 /// S06 Planowanie trasy: from, to, departure time, comfort profile chip,
@@ -46,38 +50,38 @@ class RoutePlanScreen extends ConsumerWidget {
   }
 
   Future<void> _pickTime(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context);
     final now = clock();
-    final current = ref.read(routePlanProvider).departAt ?? now;
-    final today = DateUtils.dateOnly(now);
-    final date = await showDatePicker(
-      context: context,
-      initialDate: DateUtils.dateOnly(current).isBefore(today)
-          ? today
-          : DateUtils.dateOnly(current),
-      firstDate: today,
-      lastDate: today.add(const Duration(days: maxDaysAhead)),
+    WeatherForecast? forecast;
+    try {
+      forecast = await ref
+          .read(forecastProvider.future)
+          .timeout(const Duration(seconds: 2));
+    } catch (_) {
+      // The picker works without weather.
+    }
+    if (!context.mounted) return;
+    final picked = await showTimeWheelSheet(
+      context,
+      title: l10n.routeDepartTitle,
+      initial: ref.read(routePlanProvider).departAt ?? now,
+      now: now,
+      days: maxDaysAhead + 1,
+      forecast: forecast,
     );
-    if (date == null || !context.mounted) return;
-    final time = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.fromDateTime(current),
-      builder: (context, child) => MediaQuery(
-        data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-        child: child!,
-      ),
-    );
-    if (time == null) return;
-    var departAt = DateTime(
-      date.year,
-      date.month,
-      date.day,
-      time.hour,
-      time.minute,
-    );
+    if (picked == null) return;
     // A time earlier today means "now".
-    if (departAt.isBefore(now)) departAt = now;
-    ref.read(routePlanProvider.notifier).setDeparture(departAt);
+    ref
+        .read(routePlanProvider.notifier)
+        .setDeparture(picked.isBefore(now) ? now : picked);
   }
+
+  Future<void> _advise(BuildContext context) => showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    showDragHandle: true,
+    builder: (context) => DepartureAdviceSheet(clock: clock),
+  );
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -176,6 +180,18 @@ class RoutePlanScreen extends ConsumerWidget {
                         onSelected: (_) => _pickTime(context, ref),
                       ),
                     ],
+                  ),
+                  const SizedBox(height: AppSizes.s8),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: TextButton.icon(
+                      key: const Key('route-advice'),
+                      onPressed: plan.isComplete
+                          ? () => _advise(context)
+                          : null,
+                      icon: const Icon(Icons.tips_and_updates_rounded),
+                      label: Text(l10n.routeAdviceButton),
+                    ),
                   ),
                   const SizedBox(height: AppSizes.s24),
                   Align(

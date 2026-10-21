@@ -62,52 +62,41 @@ final mapLayersProvider = NotifierProvider<MapLayers, List<MapLayer>>(
   MapLayers.new,
 );
 
-/// "HH:mm" of the shade layer («Cień o 14:30»): 30-minute slots 8:00–20:00.
-/// The demo has one shade file, for 14:30, so demo mode offers only that.
-class ShadeTime extends Notifier<String> {
-  static const demoSlot = '14:30';
+/// When the shade layer is drawn for («Cień o 14:30»), local time. Any
+/// day and minute with the on-phone API; the bundled layer (demo mode,
+/// fallback) is for 14:30 only.
+class ShadeTime extends Notifier<DateTime> {
+  static const demoHour = 14;
+  static const demoMinute = 30;
 
-  static List<String> slots({required bool demo}) => demo
-      ? const [demoSlot]
-      : [
-          for (var m = 8 * 60; m <= 20 * 60; m += 30)
-            '${m ~/ 60}:${(m % 60).toString().padLeft(2, '0')}',
-        ];
+  /// Today at 14:30 (the bundled layer's time).
+  static DateTime demoTime(DateTime now) =>
+      DateTime(now.year, now.month, now.day, demoHour, demoMinute);
 
-  /// The slot at or just before [now], kept inside 8:00–20:00.
-  static String slotFor(DateTime now) {
-    final minute = (now.hour * 60 + now.minute).clamp(8 * 60, 20 * 60);
-    final slot = minute - minute % 30;
-    return '${slot ~/ 60}:${(slot % 60).toString().padLeft(2, '0')}';
-  }
-
-  @override
-  String build() =>
-      // The bundled shade layer (demo mode, fallback) is for 14:30 only.
-      ref.watch(staticShadeLayerProvider) ? demoSlot : slotFor(DateTime.now());
-
-  void set(String slot) => state = slot;
-}
-
-final shadeTimeProvider = NotifierProvider<ShadeTime, String>(ShadeTime.new);
-
-/// Today at the shade slot, as the `datetime` of `/v1/layers/shade`.
-DateTime shadeDateTime(String slot, DateTime now) {
-  final parts = slot.split(':');
-  return DateTime(
+  /// [now] rounded down to the wheel's 5-minute step.
+  static DateTime roundDown(DateTime now) => DateTime(
     now.year,
     now.month,
     now.day,
-    int.parse(parts[0]),
-    int.parse(parts[1]),
+    now.hour,
+    now.minute - now.minute % 5,
   );
+
+  @override
+  DateTime build() => ref.watch(staticShadeLayerProvider)
+      ? demoTime(DateTime.now())
+      : roundDown(DateTime.now());
+
+  void set(DateTime time) => state = time;
 }
+
+final shadeTimeProvider = NotifierProvider<ShadeTime, DateTime>(ShadeTime.new);
 
 /// A map layer from module D (static demo GeoJSON until DEP-04, #33).
 final layerProvider = FutureProvider.family<GeoLayer, LayerKind>((ref, kind) {
   final api = ref.watch(apiClientProvider);
   final datetime = kind == LayerKind.shade
-      ? shadeDateTime(ref.watch(shadeTimeProvider), DateTime.now())
+      ? ref.watch(shadeTimeProvider)
       : DateTime.now();
   return api.getLayer(kind, datetime: datetime);
 }, retry: noRetry);
@@ -119,7 +108,7 @@ final shadeAreaProvider = FutureProvider.family<GeoLayer, GeoBounds>((
   bbox,
 ) {
   final api = ref.watch(apiClientProvider);
-  final datetime = shadeDateTime(ref.watch(shadeTimeProvider), DateTime.now());
+  final datetime = ref.watch(shadeTimeProvider);
   return api.getLayer(LayerKind.shade, bbox: bbox, datetime: datetime);
 }, retry: noRetry);
 
@@ -150,6 +139,7 @@ class ShadeWeather {
     required this.strength,
     this.temperature,
     this.night = false,
+    this.hour,
   });
 
   /// Direct sunlight 0..1 (`sunStrength`).
@@ -158,21 +148,23 @@ class ShadeWeather {
 
   /// The sun is below the horizon.
   final bool night;
+
+  /// The forecast hour (sky icon, wind); null without a forecast.
+  final WeatherHour? hour;
 }
 
 final shadeWeatherProvider = FutureProvider<ShadeWeather?>((ref) async {
-  if (ref.watch(staticShadeLayerProvider) ||
-      ref.watch(apiBaseUrlProvider).isNotEmpty) {
-    return null;
-  }
-  final time = shadeDateTime(ref.watch(shadeTimeProvider), DateTime.now());
-  final forecast = await ref.watch(weatherClientProvider).forecastOrNull();
+  if (ref.watch(staticShadeLayerProvider)) return null;
+  final time = ref.watch(shadeTimeProvider);
+  final forecast = await ref.watch(forecastProvider.future);
   final night = sunPosition(51.77, 19.46, time).elevation <= 0;
   if (forecast == null && !night) return null;
+  final hour = forecast?.at(time);
   return ShadeWeather(
     strength: sunStrength(forecast, time),
-    temperature: forecast?.at(time)?.temperature,
+    temperature: hour?.temperature,
     night: night,
+    hour: hour,
   );
 }, retry: noRetry);
 

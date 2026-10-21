@@ -130,7 +130,7 @@ S07 «Wynik trasy» is highlighted — the app exists for its sake and the demo 
 - Map of Łódź, centred on the user, or on Śródmieście if location is off.
 - At the top, the field «Dokąd idziesz?» → opens S06.
 - A row of filter chips: Cień, Zieleń, Cisza, Powietrze, Woda, Miejsca chłodu. An active chip shows its layer; at most 2 fill layers (cień, zieleń, cisza, powietrze) at once, plus any point layers.
-- Shade layer: semi-transparent blue fill; above the map a time label «Cień o 14:30» and a button to change the time.
+- Shade layer: semi-transparent blue fill; above the map a time label «Cień o 14:30» with the weather icon and a button to change the time. The time is picked like an alarm clock: day chips (today + 7 days), hour and minute wheels (5-minute steps), the weather of the chosen time (sky icon, temperature, wind, heat, rain chance) and an hourly strip with icons.
 - Points: miejsca chłodu (snowflake), water (drop), benches (only at zoom ≥ 17).
 - If a heat alert is active — a banner at the top «Ostrzeżenie przed upałem, stopień 2» (colour by level); tapping it opens S14.
 - Tapping a point → bottom sheet S08.
@@ -150,6 +150,7 @@ S07 «Wynik trasy» is highlighted — the app exists for its sake and the demo 
 - Bottom sheet with three cards: **Najkrótsza**, **Zacieniona**, **Kompromis**. On a card: time (min), length (km), shade share (%, large, with a bar), «+4 min względem najkrótszej», icons for stops on the way (miejsca chłodu, water).
 - Kompromis is selected by default; for the Senior profile — Zacieniona.
 - (S) Slider «Najlepsza pora wyjścia»: hours 8:00–20:00, with a mini chart of the selected variant's shade share below it.
+- «Kiedy najlepiej iść?» on S06: up to three departures (an hour apart) ranked by shade on the walk, the weather (heat over 26 °C, rain, storm, wind, darkness count against) and opening hours (the destination when it is a cool place, open cool places on the way). A tap sets the departure. The departure time uses the same alarm-style picker as the shade.
 - Button «Prowadź» opens the route in Google Maps (navigation is out of scope); button «Zapisz».
 - States: loading (card skeleton), route not found, outside the shade calculation area («Dla tego obszaru cień jest przybliżony»).
 

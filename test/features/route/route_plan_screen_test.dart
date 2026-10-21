@@ -6,6 +6,7 @@ import 'package:cool_lodz/core/storage/preferences.dart';
 import 'package:cool_lodz/features/profile/data/comfort_profile.dart';
 import 'package:cool_lodz/features/profile/data/comfort_profile_provider.dart';
 import 'package:cool_lodz/features/route/data/address_search.dart';
+import 'package:cool_lodz/features/route/data/departure_advice.dart';
 import 'package:cool_lodz/features/route/data/route_plan.dart';
 import 'package:cool_lodz/features/route/endpoint_search_screen.dart';
 import 'package:cool_lodz/features/route/route_plan_screen.dart';
@@ -83,6 +84,8 @@ void main() {
         apiClientProvider.overrideWithValue(api),
         locationServiceProvider.overrideWithValue(location),
         addressSearchProvider.overrideWithValue(addresses),
+        forecastProvider.overrideWith((ref) => null),
+        adviceClockProvider.overrideWithValue(() => _now),
       ],
     );
     await tester.pumpWidget(
@@ -285,6 +288,58 @@ void main() {
     await tester.tap(quick);
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('the alarm-style wheel sets the departure time', (tester) async {
+    await initializeDateFormatting('pl');
+    final container = await pump(tester);
+    await tester.tap(find.byKey(const Key('route-depart-pick')));
+    await tester.pumpAndSettle();
+    expect(find.text('Godzina wyjścia'), findsOneWidget);
+    // Three hours later on the wheel, then tomorrow.
+    await tester.drag(
+      find.byKey(const Key('time-wheel-hour')),
+      const Offset(0, -48 * 3),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('time-wheel-day-1')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('time-wheel-done')));
+    await tester.pumpAndSettle();
+    expect(
+      container.read(routePlanProvider).departAt,
+      DateTime(2026, 7, 16, 15, 10),
+    );
+    expect(find.text('Jutro, 15:10'), findsOneWidget);
+  });
+
+  testWidgets('«Kiedy najlepiej iść?» suggests times; a tap sets one', (
+    tester,
+  ) async {
+    await initializeDateFormatting('pl');
+    final container = await pump(tester);
+    final advice = find.byKey(const Key('route-advice'));
+    expect(tester.widget<TextButton>(advice).onPressed, isNull);
+    await tester.tap(
+      find.byKey(const Key('route-quick-manufaktura_piotrkowska')),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(advice);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('route-advice-sheet')), findsOneWidget);
+    expect(find.text('Polecam'), findsOneWidget);
+    expect(find.textContaining('trasy w cieniu'), findsWidgets);
+    final cards = find.descendant(
+      of: find.byKey(const Key('route-advice-sheet')),
+      matching: find.byType(InkWell),
+    );
+    expect(cards, findsWidgets);
+    await tester.tap(cards.first);
+    await tester.pumpAndSettle();
+    final departAt = container.read(routePlanProvider).departAt;
+    expect(departAt, isNotNull);
+    expect(departAt!.isBefore(_now), isFalse);
+    expect(find.byKey(const Key('route-advice-sheet')), findsNothing);
   });
 
   test('formatDeparture', () async {

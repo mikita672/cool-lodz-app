@@ -127,6 +127,13 @@ final weatherClientProvider = Provider<OpenMeteoClient>(
   (ref) => OpenMeteoClient.create(),
 );
 
+/// The Open-Meteo forecast for the time pickers' weather; null in demo
+/// mode (offline and repeatable) or when it cannot be had.
+final forecastProvider = FutureProvider<WeatherForecast?>((ref) {
+  if (ref.watch(isDemoModeEffectiveProvider)) return null;
+  return ref.watch(weatherClientProvider).forecastOrNull();
+}, retry: noRetry);
+
 final liveApiClientProvider = Provider<ApiClient>(
   (ref) => LiveApiClient.create(
     ref.watch(bundledApiClientProvider),

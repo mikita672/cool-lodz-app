@@ -2782,6 +2782,192 @@ abstract class AppLocalizations {
   /// **'śr.'**
   String get placeWed;
 
+  /// No description provided for @timeToday.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dziś'**
+  String get timeToday;
+
+  /// No description provided for @timeTomorrow.
+  ///
+  /// In pl, this message translates to:
+  /// **'Jutro'**
+  String get timeTomorrow;
+
+  /// No description provided for @timeSet.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ustaw'**
+  String get timeSet;
+
+  /// No description provided for @weatherClear.
+  ///
+  /// In pl, this message translates to:
+  /// **'Słonecznie'**
+  String get weatherClear;
+
+  /// No description provided for @weatherClearNight.
+  ///
+  /// In pl, this message translates to:
+  /// **'Bezchmurnie'**
+  String get weatherClearNight;
+
+  /// No description provided for @weatherPartly.
+  ///
+  /// In pl, this message translates to:
+  /// **'Częściowe zachmurzenie'**
+  String get weatherPartly;
+
+  /// No description provided for @weatherCloudy.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pochmurno'**
+  String get weatherCloudy;
+
+  /// No description provided for @weatherFog.
+  ///
+  /// In pl, this message translates to:
+  /// **'Mgła'**
+  String get weatherFog;
+
+  /// No description provided for @weatherDrizzle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Mżawka'**
+  String get weatherDrizzle;
+
+  /// No description provided for @weatherRain.
+  ///
+  /// In pl, this message translates to:
+  /// **'Deszcz'**
+  String get weatherRain;
+
+  /// No description provided for @weatherSnow.
+  ///
+  /// In pl, this message translates to:
+  /// **'Śnieg'**
+  String get weatherSnow;
+
+  /// No description provided for @weatherStorm.
+  ///
+  /// In pl, this message translates to:
+  /// **'Burza'**
+  String get weatherStorm;
+
+  /// No description provided for @weatherWindy.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wietrznie, {speed} km/h'**
+  String weatherWindy(int speed);
+
+  /// No description provided for @weatherWind.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wiatr {speed} km/h'**
+  String weatherWind(int speed);
+
+  /// No description provided for @weatherHot.
+  ///
+  /// In pl, this message translates to:
+  /// **'Upał'**
+  String get weatherHot;
+
+  /// No description provided for @weatherWet.
+  ///
+  /// In pl, this message translates to:
+  /// **'Opady {percent}%'**
+  String weatherWet(int percent);
+
+  /// No description provided for @weatherNoForecast.
+  ///
+  /// In pl, this message translates to:
+  /// **'Brak prognozy pogody na tę godzinę.'**
+  String get weatherNoForecast;
+
+  /// No description provided for @mapShadeTomorrow.
+  ///
+  /// In pl, this message translates to:
+  /// **'jutro {time}'**
+  String mapShadeTomorrow(String time);
+
+  /// No description provided for @mapWeatherOther.
+  ///
+  /// In pl, this message translates to:
+  /// **'{temp}°C, {sky}'**
+  String mapWeatherOther(int temp, String sky);
+
+  /// No description provided for @routeDepartTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Godzina wyjścia'**
+  String get routeDepartTitle;
+
+  /// No description provided for @routeAdviceButton.
+  ///
+  /// In pl, this message translates to:
+  /// **'Kiedy najlepiej iść?'**
+  String get routeAdviceButton;
+
+  /// No description provided for @routeAdviceTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Najlepsza pora na wyjście'**
+  String get routeAdviceTitle;
+
+  /// No description provided for @routeAdviceIntro.
+  ///
+  /// In pl, this message translates to:
+  /// **'Biorę pod uwagę cień na trasie, pogodę i godziny otwarcia miejsc chłodu.'**
+  String get routeAdviceIntro;
+
+  /// No description provided for @routeAdviceBest.
+  ///
+  /// In pl, this message translates to:
+  /// **'Polecam'**
+  String get routeAdviceBest;
+
+  /// No description provided for @routeAdviceShade.
+  ///
+  /// In pl, this message translates to:
+  /// **'{percent}% trasy w cieniu'**
+  String routeAdviceShade(int percent);
+
+  /// No description provided for @routeAdviceArrive.
+  ///
+  /// In pl, this message translates to:
+  /// **'na miejscu o {time}'**
+  String routeAdviceArrive(String time);
+
+  /// No description provided for @routeAdviceDestOpen.
+  ///
+  /// In pl, this message translates to:
+  /// **'{place}: otwarte do {time}'**
+  String routeAdviceDestOpen(String place, String time);
+
+  /// No description provided for @routeAdviceDestClosed.
+  ///
+  /// In pl, this message translates to:
+  /// **'{place}: zamknięte o tej porze'**
+  String routeAdviceDestClosed(String place);
+
+  /// No description provided for @routeAdviceCoolOpen.
+  ///
+  /// In pl, this message translates to:
+  /// **'{count, plural, =1{1 otwarte miejsce chłodu po drodze} few{{count} otwarte miejsca chłodu po drodze} many{{count} otwartych miejsc chłodu po drodze} other{{count} otwartych miejsc chłodu po drodze}}'**
+  String routeAdviceCoolOpen(int count);
+
+  /// No description provided for @routeAdviceEmpty.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie udało się dobrać pory dla tej trasy. Spróbuj później.'**
+  String get routeAdviceEmpty;
+
+  /// No description provided for @routeAdvicePick.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wyjdź: {when}'**
+  String routeAdvicePick(String when);
+
   /// No description provided for @placeThu.
   ///
   /// In pl, this message translates to:
