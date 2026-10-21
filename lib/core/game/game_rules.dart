@@ -77,13 +77,18 @@ class PointsEntry {
   String toString() => 'PointsEntry(${type.id}, $points, $refId)';
 }
 
-/// A route started with «Prowadź», as the badges need it.
+/// A route started with «Prowadź», as the badges, the weekly challenge and
+/// «Twój wpływ» need it.
 @immutable
 class RouteRecord {
   const RouteRecord({
     required this.departAt,
     required this.shadeShare,
     this.endPlaceType,
+    this.distanceM = 0,
+    this.durationS,
+    this.shortestSunShare,
+    this.waterStops = 0,
   });
 
   /// Local time.
@@ -92,8 +97,26 @@ class RouteRecord {
 
   /// `park` for Łowca parków.
   final String? endPlaceType;
+  final int distanceM;
+
+  /// Null for routes saved before it was stored.
+  final int? durationS;
+
+  /// The shortest variant's sun share at the same departure.
+  final double? shortestSunShare;
+
+  /// Drinking water points along the way.
+  final int waterStops;
 
   bool get isShaded => shadeShare >= GameConfig.shadedRouteMinShade;
+
+  double get sunShare => 1 - shadeShare;
+
+  /// Walking time; estimated at 1.3 m/s when not stored.
+  Duration get duration =>
+      Duration(seconds: durationS ?? (distanceM / walkingSpeed).round());
+
+  static const walkingSpeed = 1.3; // m/s
 }
 
 /// Everything the rules look at, loaded from Firestore.

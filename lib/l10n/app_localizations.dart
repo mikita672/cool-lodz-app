@@ -3636,6 +3636,84 @@ abstract class AppLocalizations {
   /// **'Skopiowano opis trasy. Wklej go w wiadomości.'**
   String get routeShareCopied;
 
+  /// No description provided for @impactTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Twój wpływ'**
+  String get impactTitle;
+
+  /// No description provided for @impactEmpty.
+  ///
+  /// In pl, this message translates to:
+  /// **'Rozpocznij spacer przyciskiem «Prowadź», a tu zobaczysz, ile słońca omijasz i ile CO₂ oszczędzasz.'**
+  String get impactEmpty;
+
+  /// No description provided for @impactWalks.
+  ///
+  /// In pl, this message translates to:
+  /// **'Spacery'**
+  String get impactWalks;
+
+  /// No description provided for @impactDistance.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dystans'**
+  String get impactDistance;
+
+  /// No description provided for @impactShade.
+  ///
+  /// In pl, this message translates to:
+  /// **'W cieniu'**
+  String get impactShade;
+
+  /// No description provided for @impactSunAvoided.
+  ///
+  /// In pl, this message translates to:
+  /// **'Mniej słońca'**
+  String get impactSunAvoided;
+
+  /// No description provided for @impactWater.
+  ///
+  /// In pl, this message translates to:
+  /// **'Woda po drodze'**
+  String get impactWater;
+
+  /// No description provided for @impactCool.
+  ///
+  /// In pl, this message translates to:
+  /// **'Miejsca chłodu'**
+  String get impactCool;
+
+  /// No description provided for @impactCo2.
+  ///
+  /// In pl, this message translates to:
+  /// **'CO₂ mniej niż autem'**
+  String get impactCo2;
+
+  /// No description provided for @impactMinutes.
+  ///
+  /// In pl, this message translates to:
+  /// **'{minutes} min'**
+  String impactMinutes(int minutes);
+
+  /// No description provided for @impactKm.
+  ///
+  /// In pl, this message translates to:
+  /// **'{km} km'**
+  String impactKm(String km);
+
+  /// No description provided for @impactKg.
+  ///
+  /// In pl, this message translates to:
+  /// **'{kg} kg'**
+  String impactKg(String kg);
+
+  /// No description provided for @impactNote.
+  ///
+  /// In pl, this message translates to:
+  /// **'Z tras rozpoczętych przyciskiem «Prowadź». «Mniej słońca»: w porównaniu z najkrótszą trasą o tej samej porze. CO₂: średnie auto, 0,17 kg/km.'**
+  String get impactNote;
+
   /// No description provided for @placeThu.
   ///
   /// In pl, this message translates to:

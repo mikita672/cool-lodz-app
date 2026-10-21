@@ -68,6 +68,10 @@ class GameService {
       departAt: route.departAt,
       shadeShare: route.shadeShare,
       endPlaceType: route.endPlaceType,
+      distanceM: route.distanceM,
+      durationS: route.durationS,
+      shortestSunShare: route.shortestSunShare,
+      waterStops: route.waterStops ?? 0,
     );
     final withRoute = GameHistory(
       routes: [...history.routes, record],

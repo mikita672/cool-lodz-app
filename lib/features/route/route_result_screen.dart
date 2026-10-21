@@ -202,6 +202,8 @@ class _RouteResultScreenState extends ConsumerState<RouteResultScreen> {
             to.point.lon == request.to.lon
         ? to.place
         : null;
+    // «Twój wpływ»: the sun the shortest walk would have had.
+    final shortest = ref.read(routeResultProvider).value?.shortest;
     try {
       return await ref
           .read(gameServiceProvider)
@@ -214,6 +216,13 @@ class _RouteResultScreenState extends ConsumerState<RouteResultScreen> {
               sunShare: _sunShareAt(variant, startedAt),
               distanceM: variant.distanceM,
               endPlaceType: place?.category?.name,
+              durationS: variant.durationS,
+              shortestSunShare: shortest == null
+                  ? null
+                  : _sunShareAt(shortest, startedAt),
+              waterStops: variant.stops
+                  .where((s) => s.type == StopType.water)
+                  .length,
             ),
           );
     } catch (e) {

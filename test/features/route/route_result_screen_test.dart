@@ -346,7 +346,14 @@ void main() {
       'distance_m',
       'endPlaceType',
       'createdAt',
+      'duration_s',
+      'shortestSunShare',
+      'waterStops',
     });
+    // «Twój wpływ»: the walk's time, the shortest one's sun, water on the way.
+    expect(route.durationS, greaterThan(0));
+    expect(route.shortestSunShare, greaterThan(route.sunShare));
+    expect(route.waterStops, isNotNull);
   });
 
   testWidgets('«Zapisz» keeps the route for offline use', (tester) async {

@@ -531,6 +531,18 @@ describe('pointsLog and routes', () => {
     await assertFails(setDoc(doc(db('bob'), 'users/alice/routes/r2'), route));
     await assertSucceeds(deleteDoc(ref));
   });
+
+  test('routes: the impact fields are optional and checked', async () => {
+    const col = 'users/alice/routes';
+    const alice = db('alice');
+    const base = { variant: 'shaded', sunShare: 0.28, distance_m: 2140, createdAt: serverTimestamp() };
+    await assertSucceeds(setDoc(doc(alice, `${col}/a`),
+      { ...base, duration_s: 1500, shortestSunShare: 0.61, waterStops: 2 }));
+    await assertFails(setDoc(doc(alice, `${col}/b`), { ...base, shortestSunShare: 1.5 }));
+    await assertFails(setDoc(doc(alice, `${col}/c`), { ...base, duration_s: -1 }));
+    await assertFails(setDoc(doc(alice, `${col}/d`), { ...base, waterStops: 'two' }));
+    await assertFails(setDoc(doc(alice, `${col}/e`), { ...base, extra: 1 }));
+  });
 });
 
 describe('visits (QR scans)', () => {

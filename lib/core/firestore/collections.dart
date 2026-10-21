@@ -75,6 +75,11 @@ abstract final class RouteFields {
   static const distanceM = 'distance_m';
   static const endPlaceType = 'endPlaceType';
   static const createdAt = 'createdAt';
+
+  // «Twój wpływ» (optional, routes saved before 22.10.2026 lack them).
+  static const durationS = 'duration_s';
+  static const shortestSunShare = 'shortestSunShare';
+  static const waterStops = 'waterStops';
 }
 
 /// Fields of `visits/{visitId}` (see visitId()). `createdAt` must be the

@@ -2115,6 +2115,53 @@ class AppLocalizationsPl extends AppLocalizations {
       'Skopiowano opis trasy. Wklej go w wiadomości.';
 
   @override
+  String get impactTitle => 'Twój wpływ';
+
+  @override
+  String get impactEmpty =>
+      'Rozpocznij spacer przyciskiem «Prowadź», a tu zobaczysz, ile słońca omijasz i ile CO₂ oszczędzasz.';
+
+  @override
+  String get impactWalks => 'Spacery';
+
+  @override
+  String get impactDistance => 'Dystans';
+
+  @override
+  String get impactShade => 'W cieniu';
+
+  @override
+  String get impactSunAvoided => 'Mniej słońca';
+
+  @override
+  String get impactWater => 'Woda po drodze';
+
+  @override
+  String get impactCool => 'Miejsca chłodu';
+
+  @override
+  String get impactCo2 => 'CO₂ mniej niż autem';
+
+  @override
+  String impactMinutes(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String impactKm(String km) {
+    return '$km km';
+  }
+
+  @override
+  String impactKg(String kg) {
+    return '$kg kg';
+  }
+
+  @override
+  String get impactNote =>
+      'Z tras rozpoczętych przyciskiem «Prowadź». «Mniej słońca»: w porównaniu z najkrótszą trasą o tej samej porze. CO₂: średnie auto, 0,17 kg/km.';
+
+  @override
   String get placeThu => 'czw.';
 
   @override

@@ -1,8 +1,10 @@
 import 'package:cool_lodz/core/game/game_rules.dart';
+import 'package:cool_lodz/core/models/models.dart';
 import 'package:cool_lodz/features/achievements/badge_info.dart';
 import 'package:cool_lodz/features/achievements/badges_view.dart';
 import 'package:cool_lodz/features/game/data/game_repository.dart';
 import 'package:cool_lodz/features/game/game_service.dart';
+import 'package:cool_lodz/features/route/data/route_history_repository.dart';
 import 'package:cool_lodz/shared/widgets/badge_tile.dart';
 import 'package:cool_lodz/shared/widgets/badge_unlocked_dialog.dart';
 import 'package:flutter/material.dart';
@@ -75,6 +77,43 @@ void main() {
     expect(find.text('Kod QR w miejscu chłodu'), findsOneWidget);
     expect(find.text('+50 pkt'), findsOneWidget);
     expect(find.text('15.07, 14:32'), findsNWidgets(2));
+  });
+
+  testWidgets('«Twój wpływ»: walks, shade, sun avoided, water, CO₂', (
+    tester,
+  ) async {
+    repo.routes.add((
+      'u1',
+      StartedRoute(
+        from: const RoutePoint(lat: 51.78, lon: 19.45),
+        to: const RoutePoint(lat: 51.76, lon: 19.46),
+        departAt: DateTime(2026, 7, 15, 14, 30),
+        variant: RouteVariantType.shaded,
+        sunShare: 0.25,
+        distanceM: 2000,
+        durationS: 1800,
+        shortestSunShare: 0.65,
+        waterStops: 2,
+      ),
+    ));
+    await pump(tester);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('impact-card')), findsOneWidget);
+    expect(find.text('Twój wpływ'), findsOneWidget);
+    expect(find.text('2,0 km'), findsOneWidget);
+    expect(find.text('23 min'), findsOneWidget); // 30 min × 75 % shade
+    expect(find.text('12 min'), findsOneWidget); // 30 min × (65 − 25) %
+    expect(find.text('0,3 kg'), findsOneWidget); // 2 km × 0.17
+    expect(find.text('Mniej słońca'), findsOneWidget);
+  });
+
+  testWidgets('«Twój wpływ» before any walk: a hint', (tester) async {
+    await pump(tester);
+    await tester.pumpAndSettle();
+    expect(
+      find.textContaining('Rozpocznij spacer przyciskiem'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('no points yet: a hint', (tester) async {
