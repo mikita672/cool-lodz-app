@@ -104,7 +104,9 @@ void main() {
         expect(alerts, isEmpty); // no made-up warning offline
         expect(c.read(usingFallbackProvider), isTrue);
         expect(c.read(dataSourceProvider), DataSource.fallback);
-        expect(c.read(staticShadeLayerProvider), isTrue);
+        // Module D's layers fell back to the 14:30 file; the on-phone API
+        // still draws the shade for any time.
+        expect(c.read(staticShadeLayerProvider), baseUrl.isNotEmpty);
       },
     );
   }

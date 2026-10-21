@@ -5,6 +5,7 @@ import 'package:cool_lodz/core/api/demo_api_client.dart';
 import 'package:cool_lodz/core/api/live/live_route_engine.dart';
 import 'package:cool_lodz/core/api/live/osrm_client.dart';
 import 'package:cool_lodz/core/api/live/shade_model.dart';
+import 'package:cool_lodz/core/api/live/weather.dart';
 import 'package:cool_lodz/core/models/models.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -53,13 +54,16 @@ void main() {
     );
   });
 
-  LiveRouteEngine engine(FakeAdapter adapter, {ShadeModel? model}) =>
-      LiveRouteEngine(
-        osrm: OsrmClient(fakeDio(adapter)),
-        shadeModel: () async => model ?? realModel,
-        places: () =>
-            bundled.getPlaces(types: {PlaceType.cool, PlaceType.water}),
-      );
+  LiveRouteEngine engine(
+    FakeAdapter adapter, {
+    ShadeModel? model,
+    WeatherForecast? weather,
+  }) => LiveRouteEngine(
+    osrm: OsrmClient(fakeDio(adapter)),
+    shadeModel: () async => model ?? realModel,
+    places: () => bundled.getPlaces(types: {PlaceType.cool, PlaceType.water}),
+    weather: weather == null ? null : () async => weather,
+  );
 
   group('with the real OSRM answers (Manufaktura → Piotrkowska)', () {
     const from = LatLng(51.7794, 19.4466);
@@ -252,6 +256,75 @@ void main() {
       );
     });
 
+    /// The same sky all day on 15 July 2026 (UTC hours).
+    WeatherForecast sky({required double direct, double temp = 22}) =>
+        WeatherForecast([
+          for (var h = 0; h < 24; h++)
+            WeatherHour(
+              time: DateTime.utc(2026, 7, 15, h),
+              directRadiation: direct,
+              temperature: temp,
+              cloudCover: direct > 300 ? 10 : 100,
+            ),
+        ]);
+
+    FakeAdapter detour() => FakeAdapter(
+      (o) => pointCount(o) == 2
+          ? jsonBody(lineJson(const [a, b], distance: 1000))
+          : jsonBody(lineJson(const [a, n1, n2, b], distance: 1200)),
+    );
+
+    test('overcast: little sun everywhere, no shaded detour', () async {
+      final response = await engine(
+        detour(),
+        model: model,
+        weather: sky(direct: 0, temp: 14),
+      ).route(request(a, b, at: '2026-07-15T12:00:00+02:00'));
+      expect(response.weather!.sunStrength, 0);
+      expect(response.weather!.littleSun, isTrue);
+      expect(response.weather!.temperature, 14);
+      expect(response.shortest!.sunShare, 0);
+      // No sun to avoid: the longer walk is not worth offering.
+      expect(response.variants.single.variant, RouteVariantType.shortest);
+    });
+
+    test('clear sky: the forecast keeps the full sun', () async {
+      final clear = await engine(
+        detour(),
+        model: model,
+        weather: sky(direct: 850),
+      ).route(request(a, b, at: '2026-07-15T12:00:00+02:00'));
+      final geometryOnly = await engine(
+        detour(),
+        model: model,
+      ).route(request(a, b, at: '2026-07-15T12:00:00+02:00'));
+      expect(clear.weather!.littleSun, isFalse);
+      expect(geometryOnly.weather, isNull);
+      expect(
+        clear.shortest!.sunShare,
+        closeTo(geometryOnly.shortest!.sunShare, 0.05),
+      );
+      expect(clear.variant(RouteVariantType.shaded), isNotNull);
+    });
+
+    test('at night only the walks themselves differ', () async {
+      final response = await engine(
+        detour(),
+        model: model,
+      ).route(request(a, b, at: '2026-07-15T23:30:00+02:00'));
+      expect(response.shortest!.sunShare, 0);
+      expect(response.variants, hasLength(1));
+      // The hourly chart still shows the day.
+      expect(response.shortest!.sunShareByHour['13:00'], greaterThan(0));
+    });
+
+    test('heat makes shade weigh more, cool weather less', () {
+      expect(LiveRouteEngine.heatWeight(32), greaterThan(1));
+      expect(LiveRouteEngine.heatWeight(10), lessThan(1));
+      expect(LiveRouteEngine.heatWeight(null), 1);
+      expect(LiveRouteEngine.heatWeight(20), 1);
+    });
+
     test('a single possible walk → a single variant', () async {
       final adapter = FakeAdapter(
         (o) => jsonBody(lineJson(const [a, b], distance: 1000)),
@@ -294,9 +367,26 @@ void main() {
           ], distance: 1000 + 60.0 * n),
         );
       });
+      // Trees along every street except the direct one.
+      GeoFeature trees(double south, double north) => GeoFeature(
+        geometry: GeoPolygons([
+          GeoPolygon([
+            LatLng(south, 19.4490),
+            LatLng(south, 19.4655),
+            LatLng(north, 19.4655),
+            LatLng(north, 19.4490),
+            LatLng(south, 19.4490),
+          ]),
+        ]),
+        properties: const {'shade': 0.9},
+      );
+      final leafy = ShadeModel(
+        canopy: [trees(51.7678, 51.7695), trees(51.7705, 51.7722)],
+        parks: const [],
+      );
       final response = await engine(
         adapter,
-        model: model,
+        model: leafy,
       ).route(request(a, b, at: '2026-07-15T12:00:00+02:00'));
       final types = response.variants.map((v) => v.variant).toList();
       expect(types.length, greaterThan(3));

@@ -256,6 +256,33 @@ void main() {
     expect(find.text('S07'), findsOneWidget);
   });
 
+  testWidgets('dragging the map moves it', (tester) async {
+    await pump(tester);
+    LatLng centre() =>
+        MapCamera.of(tester.element(find.byType(MarkerLayer).first)).center;
+    final before = centre();
+    await tester.dragFrom(const Offset(200, 600), const Offset(-150, -150));
+    await tester.pumpAndSettle();
+    expect(centre(), isNot(before));
+  });
+
+  testWidgets('a turned map shows the compass; a tap turns it north', (
+    tester,
+  ) async {
+    await pump(tester);
+    expect(find.byKey(const Key('map-compass')), findsNothing);
+    final controller = MapController.of(
+      tester.element(find.byType(MarkerLayer).first),
+    );
+    controller.rotate(40);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('map-compass')), findsOneWidget);
+    await tester.tap(find.byKey(const Key('map-compass')));
+    await tester.pumpAndSettle();
+    expect(controller.camera.rotation, 0);
+    expect(find.byKey(const Key('map-compass')), findsNothing);
+  });
+
   testWidgets('shade time picker offers only 14:30 with bundled layers', (
     tester,
   ) async {

@@ -188,7 +188,14 @@ class RouteShade {
 
   /// Sun share of every edge for a walk that starts at [start] and takes
   /// [duration]: each edge is evaluated when the walker gets there.
-  List<double> sunShares(DateTime start, Duration duration) {
+  ///
+  /// [strength] (0..1 for an instant, see `sunStrength`) scales the result
+  /// by the weather: under clouds there is little sun to avoid.
+  List<double> sunShares(
+    DateTime start,
+    Duration duration, {
+    double Function(DateTime instant)? strength,
+  }) {
     final total = length;
     var walked = 0.0;
     return [
@@ -198,12 +205,10 @@ class RouteShade {
               ? 0.0
               : (walked + e.length / 2) / total * duration.inSeconds;
           walked += e.length;
-          final sun = sunPosition(
-            e.mid.latitude,
-            e.mid.longitude,
-            start.add(Duration(seconds: at.round())),
-          );
+          final instant = start.add(Duration(seconds: at.round()));
+          final sun = sunPosition(e.mid.latitude, e.mid.longitude, instant);
           if (sun.elevation <= 2) return 0.0;
+          final weather = strength?.call(instant) ?? 1.0;
           final canyon = e.canyon;
           final building = canyon == null
               ? 0.0
@@ -218,7 +223,7 @@ class RouteShade {
             0.95,
             e.canopy * (2 - math.sin(sun.elevation * math.pi / 180)),
           );
-          return ((1 - building) * (1 - crowns)).clamp(0.0, 1.0);
+          return ((1 - building) * (1 - crowns) * weather).clamp(0.0, 1.0);
         }(),
     ];
   }
@@ -235,8 +240,11 @@ class RouteShade {
   }
 
   /// Mean sun share of the whole walk.
-  double sunShare(DateTime start, Duration duration) =>
-      mean(sunShares(start, duration));
+  double sunShare(
+    DateTime start,
+    Duration duration, {
+    double Function(DateTime instant)? strength,
+  }) => mean(sunShares(start, duration, strength: strength));
 }
 
 class _Canyon {

@@ -44,10 +44,11 @@ List<StreetLine> parseStreets(Object? json) {
 }
 
 /// The map's shade layer for any time (`/v1/layers/shade` on the phone):
-/// the time-independent tree polygons plus building-shadow strips on the
-/// sun side of every street, as wide as the shadow that 16 m tenements cast
-/// across it at that moment (the same rule as the 14:30 file and the route
-/// model, see docs/data-sources.md).
+/// the time-independent tree polygons plus, on every street, the strip in
+/// building shadow (as wide as the shadow that 16 m tenements cast across it
+/// at that moment, the same rule as the route model, see
+/// docs/data-sources.md) and the rest of the street in the sun
+/// (`{"source": "sun", "sun": strength}`), fading under clouds.
 class ShadeLayerBuilder {
   ShadeLayerBuilder({
     required GeoLayer bundledShade,
@@ -75,23 +76,44 @@ class ShadeLayerBuilder {
 
   static const _centre = LatLng(51.77, 19.46);
 
-  GeoLayer at(DateTime time) {
+  /// The layer at [time]. [strength] (0..1, see `sunStrength`) is how
+  /// strong direct sunlight is then: the sunny parts of the streets fade
+  /// under clouds. After sunset there is no shade to show: empty layer.
+  GeoLayer at(DateTime time, {double strength = 1}) {
     final sun = sunPosition(_centre.latitude, _centre.longitude, time);
+    if (sun.elevation <= 0) return const GeoLayer(features: []);
+    final sunny = (strength.clamp(0.0, 1.0) * 100).round() / 100;
     return GeoLayer(
       features: [
         ...trees,
-        for (final street in streets) ..._strips(street, sun),
+        for (final street in streets) ..._strips(street, sun, sunny),
       ],
     );
   }
 
-  Iterable<GeoFeature> _strips(StreetLine street, SunPosition sun) sync* {
-    // Runs of consecutive pieces with the shadow on the same side.
+  /// Run kinds: the shadow on the left (1) or right (-1) of travel, no
+  /// shadow at all (0), or a park (no street canyon, nothing drawn).
+  static const _park = 2;
+
+  Iterable<GeoFeature> _strips(
+    StreetLine street,
+    SunPosition sun,
+    double strength,
+  ) sync* {
     final runs = <({List<LatLng> points, List<double> widths, int side})>[];
+    void add(List<LatLng> piece, double w, int side) {
+      final last = runs.isEmpty ? null : runs.last;
+      if (last != null && last.side == side) {
+        last.points.addAll(piece.skip(1));
+        last.widths.add(w);
+      } else {
+        runs.add((points: [...piece], widths: [w], side: side));
+      }
+    }
+
     for (final piece in _pieces(street.points)) {
-      final mid = piece[piece.length ~/ 2];
-      if (model.inPark(mid)) {
-        runs.add((points: [], widths: [], side: 0)); // breaks a run
+      if (model.inPark(piece[piece.length ~/ 2])) {
+        add(piece, 0, _park);
         continue;
       }
       final bearing = bearingDegrees(piece.first, piece.last);
@@ -102,33 +124,55 @@ class ShadeLayerBuilder {
                 math.sin((sun.azimuth - bearing) * math.pi / 180).abs();
       final w = math.min(street.width, across);
       if (w < minStripWidth) {
-        runs.add((points: [], widths: [], side: 0));
+        add(piece, 0, 0);
         continue;
       }
       // The left normal of travel points to bearing − 90°.
       final side = math.cos((sun.azimuth - (bearing - 90)) * math.pi / 180) > 0
           ? 1
           : -1;
-      final last = runs.isEmpty ? null : runs.last;
-      if (last != null && last.side == side) {
-        last.points.addAll(piece.skip(1));
-        last.widths.add(w);
-      } else {
-        runs.add((points: [...piece], widths: [w], side: side));
+      add(piece, w, side);
+    }
+
+    final half = street.width / 2;
+    for (final run in runs) {
+      if (run.side == _park || run.points.length < 2) continue;
+      final w = run.widths.reduce((a, b) => a + b) / run.widths.length;
+      if (run.side != 0) {
+        yield _band(run.points, run.side * half, run.side * (half - w), {
+          'shade': buildingShade,
+          'source': 'buildings',
+        });
+      }
+      // The rest of the street is in the sun.
+      if (strength >= minStrength && street.width - w >= minStripWidth) {
+        final side = run.side == 0 ? 1 : run.side;
+        yield _band(run.points, side * (half - w), -side * half, {
+          'sun': strength,
+          'source': 'sun',
+        });
       }
     }
-    for (final run in runs) {
-      if (run.side == 0 || run.points.length < 2) continue;
-      final w = run.widths.reduce((a, b) => a + b) / run.widths.length;
-      final outer = _offset(run.points, run.side * street.width / 2);
-      final inner = _offset(run.points, run.side * (street.width / 2 - w));
-      yield GeoFeature(
-        geometry: GeoPolygons([
-          GeoPolygon([...outer, ...inner.reversed, outer.first]),
-        ]),
-        properties: const {'shade': buildingShade, 'source': 'buildings'},
-      );
-    }
+  }
+
+  /// Below this the sunny parts are not drawn (overcast).
+  static const minStrength = 0.05;
+
+  /// The polygon between the offsets [a] and [b] (metres) of [line].
+  static GeoFeature _band(
+    List<LatLng> line,
+    double a,
+    double b,
+    Map<String, dynamic> properties,
+  ) {
+    final first = _offset(line, a);
+    final second = _offset(line, b);
+    return GeoFeature(
+      geometry: GeoPolygons([
+        GeoPolygon([...first, ...second.reversed, first.first]),
+      ]),
+      properties: properties,
+    );
   }
 
   /// Consecutive pieces of about [pieceLength] metres (shared end points).

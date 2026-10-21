@@ -269,7 +269,12 @@ void main() {
     });
 
     testWidgets('5 taps on the version reveal the demo switch', (tester) async {
-      final c = await pump(tester, initial: '/profile/about');
+      // Tall enough that the switch is not under the navigation bar.
+      final c = await pump(
+        tester,
+        initial: '/profile/about',
+        size: const Size(400, 1600),
+      );
       for (var i = 0; i < 5; i++) {
         await tester.tap(find.byKey(const Key('about-version')));
         await tester.pump();

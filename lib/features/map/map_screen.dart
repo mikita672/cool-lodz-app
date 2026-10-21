@@ -1,3 +1,8 @@
+import 'dart:async';
+import 'dart:math' as math;
+import 'dart:ui' as ui;
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -43,6 +48,10 @@ class MapScreen extends ConsumerStatefulWidget {
 class _MapScreenState extends ConsumerState<MapScreen> {
   final _map = MapController();
   double _zoom = MapScreen.startZoom;
+
+  /// Map bearing in degrees (0 = north up), for the compass button.
+  final _rotation = ValueNotifier<double>(0);
+  late final StreamSubscription<MapEvent> _mapEvents;
   bool _ready = false;
   bool _centeredOnUser = false;
   LatLng? _pendingCenter;
@@ -59,6 +68,10 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     super.initState();
     // Back from the system settings (location turned on), or after a walk:
     // read the position again.
+    // Every camera change (gesture or code) updates the compass.
+    _mapEvents = _map.mapEventStream.listen(
+      (event) => _rotation.value = event.camera.rotation,
+    );
     _lifecycle = AppLifecycleListener(
       onResume: () => ref.invalidate(userLocationProvider),
     );
@@ -73,6 +86,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   @override
   void dispose() {
     _lifecycle.dispose();
+    _mapEvents.cancel();
+    _rotation.dispose();
     _map.dispose();
     super.dispose();
   }
@@ -261,8 +276,10 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                     : MapScreen.userZoom,
                 minZoom: MapTiles.minZoom,
                 maxZoom: MapTiles.maxZoom,
+                // Two-finger rotation like Google Maps; the compass button
+                // turns the map back to north.
                 interactionOptions: const InteractionOptions(
-                  flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+                  flags: InteractiveFlag.all,
                 ),
                 onMapReady: _onMapReady,
                 onPositionChanged: (camera, _) {
@@ -364,6 +381,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                       alignment: Alignment.centerLeft,
                       child: _ShadeTimePill(
                         time: ref.watch(shadeTimeProvider),
+                        weather: ref.watch(shadeWeatherProvider).value,
                         onChange: _pickShadeTime,
                       ),
                     ),
@@ -384,14 +402,26 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           Positioned(
             right: AppSizes.s12,
             bottom: AppSizes.s32,
-            child: FloatingActionButton.small(
-              key: const Key('map-my-location'),
-              heroTag: 'map-my-location',
-              tooltip: l10n.mapMyLocation,
-              backgroundColor: AppColors.surface,
-              foregroundColor: AppColors.primary,
-              onPressed: _myLocation,
-              child: const Icon(Icons.my_location_rounded),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _CompassButton(
+                  rotation: _rotation,
+                  tooltip: l10n.mapCompass,
+                  onPressed: () {
+                    if (_ready) _map.rotate(0);
+                  },
+                ),
+                FloatingActionButton.small(
+                  key: const Key('map-my-location'),
+                  heroTag: 'map-my-location',
+                  tooltip: l10n.mapMyLocation,
+                  backgroundColor: AppColors.surface,
+                  foregroundColor: AppColors.primary,
+                  onPressed: _myLocation,
+                  child: const Icon(Icons.my_location_rounded),
+                ),
+              ],
             ),
           ),
         ],
@@ -400,10 +430,97 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   }
 }
 
+/// Google Maps-style compass: shown while the map is turned away from north,
+/// the needle points north; a tap turns the map back.
+class _CompassButton extends StatelessWidget {
+  const _CompassButton({
+    required this.rotation,
+    required this.tooltip,
+    required this.onPressed,
+  });
+
+  final ValueListenable<double> rotation;
+  final String tooltip;
+  final VoidCallback onPressed;
+
+  /// Below this the map counts as north up and the button hides.
+  static const minDegrees = 0.5;
+
+  @override
+  Widget build(BuildContext context) => ValueListenableBuilder<double>(
+    valueListenable: rotation,
+    builder: (context, degrees, _) {
+      final turned = (degrees % 360 + 360) % 360;
+      final visible = turned > minDegrees && turned < 360 - minDegrees;
+      if (!visible) return const SizedBox.shrink();
+      return Padding(
+        padding: const EdgeInsets.only(bottom: AppSizes.s8),
+        child: FloatingActionButton.small(
+          key: const Key('map-compass'),
+          heroTag: 'map-compass',
+          tooltip: tooltip,
+          backgroundColor: AppColors.surface,
+          onPressed: onPressed,
+          child: Transform.rotate(
+            // The map is rotated by `degrees`; north on screen is there.
+            angle: degrees * math.pi / 180,
+            child: const CustomPaint(
+              size: Size(18, 26),
+              painter: _NeedlePainter(),
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
+/// Two-coloured compass needle: red half points north.
+class _NeedlePainter extends CustomPainter {
+  const _NeedlePainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final north = ui.Path()
+      ..moveTo(w / 2, 0)
+      ..lineTo(w, h / 2)
+      ..lineTo(0, h / 2)
+      ..close();
+    final south = ui.Path()
+      ..moveTo(0, h / 2)
+      ..lineTo(w, h / 2)
+      ..lineTo(w / 2, h)
+      ..close();
+    canvas
+      ..drawPath(north, Paint()..color = AppColors.heat3)
+      ..drawPath(south, Paint()..color = AppColors.muted);
+  }
+
+  @override
+  bool shouldRepaint(_NeedlePainter oldDelegate) => false;
+}
+
+String? _weatherText(ShadeWeather w, AppLocalizations l10n) {
+  if (w.night) return l10n.mapWeatherNight;
+  final t = w.temperature;
+  if (t == null) return null;
+  final temp = t.round();
+  if (w.strength >= 0.6) return l10n.mapWeatherSunny(temp);
+  if (w.strength >= 0.25) return l10n.mapWeatherPartly(temp);
+  return l10n.mapWeatherCloudy(temp);
+}
+
 class _ShadeTimePill extends StatelessWidget {
-  const _ShadeTimePill({required this.time, required this.onChange});
+  const _ShadeTimePill({
+    required this.time,
+    required this.onChange,
+    this.weather,
+  });
 
   final String time;
+  final ShadeWeather? weather;
   final VoidCallback onChange;
 
   @override
@@ -434,7 +551,15 @@ class _ShadeTimePill extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: AppSizes.s8),
-                Text(l10n.mapShadeAt(time), style: AppTextStyles.label),
+                Flexible(
+                  child: Text(
+                    [
+                      l10n.mapShadeAt(time),
+                      if (weather case final w?) _weatherText(w, l10n),
+                    ].whereType<String>().join(' · '),
+                    style: AppTextStyles.label,
+                  ),
+                ),
                 const SizedBox(width: AppSizes.s4),
                 Icon(
                   Icons.schedule_rounded,
@@ -564,6 +689,10 @@ class _Legend extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final rows = [
+      if (layers.contains(MapLayer.shade)) ...[
+        (AppColors.shadeLayer, l10n.mapLegendShade),
+        (AppColors.sun.withValues(alpha: 0.4), l10n.mapLegendSun),
+      ],
       if (layers.contains(MapLayer.quiet)) (quietColor(2), l10n.mapLegendQuiet),
       if (layers.contains(MapLayer.air)) (airColor(1), l10n.mapLegendAir),
     ];

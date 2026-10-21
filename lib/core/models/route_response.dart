@@ -18,16 +18,52 @@ enum RouteVariantType { shortest, shaded, compromise, alternative }
 
 enum StopType { cool, water }
 
-/// Response of `POST /v1/routes`: always three variants.
+/// The weather the sun shares were computed for (optional in the contract).
+@JsonSerializable()
+class RouteWeather {
+  const RouteWeather({
+    required this.sunStrength,
+    this.temperature,
+    this.cloudCover,
+  });
+
+  factory RouteWeather.fromJson(Map<String, dynamic> json) =>
+      _$RouteWeatherFromJson(json);
+
+  /// How strong direct sunlight is at the departure, 0 (night, overcast)
+  /// to 1 (clear sky).
+  final double sunStrength;
+
+  /// °C.
+  final double? temperature;
+
+  /// 0..100 %.
+  final double? cloudCover;
+
+  /// Little sun: the shaded walks barely differ from the others.
+  bool get littleSun => sunStrength < 0.3;
+
+  Map<String, dynamic> toJson() => _$RouteWeatherToJson(this);
+}
+
+/// Response of `POST /v1/routes`: 1–5 variants (see api-contract.md).
 @JsonSerializable()
 class RouteResponse {
-  const RouteResponse({required this.coverage, required this.variants});
+  const RouteResponse({
+    required this.coverage,
+    required this.variants,
+    this.weather,
+  });
 
   factory RouteResponse.fromJson(Map<String, dynamic> json) =>
       _$RouteResponseFromJson(json);
 
   final RouteCoverage coverage;
   final List<RouteVariant> variants;
+
+  /// Weather at the departure, when the routes took it into account
+  /// (on-phone API); null otherwise.
+  final RouteWeather? weather;
 
   bool get isApproximate => coverage == RouteCoverage.approximate;
 

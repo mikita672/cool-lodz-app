@@ -707,6 +707,14 @@ class AppLocalizationsPl extends AppLocalizations {
   String get routeGo => 'Prowadź';
 
   @override
+  String get routeNoSun =>
+      'O tej porze nie ma słońca, więc trasy różnią się tylko długością.';
+
+  @override
+  String get routeCloudy =>
+      'Pochmurno: słońca będzie niewiele, więc trasy mało się różnią.';
+
+  @override
   String get routeSave => 'Zapisz';
 
   @override
@@ -893,6 +901,9 @@ class AppLocalizationsPl extends AppLocalizations {
   String get mapMyLocation => 'Pokaż moją lokalizację';
 
   @override
+  String get mapCompass => 'Obróć mapę na północ';
+
+  @override
   String mapAlertSubtitle(String source, String time) {
     return '$source · do $time';
   }
@@ -903,6 +914,30 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get mapLegendQuiet => 'Ciemniej = ciszej';
+
+  @override
+  String get mapLegendShade => 'Cień';
+
+  @override
+  String get mapLegendSun => 'Słońce (blednie, gdy pochmurno)';
+
+  @override
+  String get mapWeatherNight => 'po zachodzie słońca';
+
+  @override
+  String mapWeatherSunny(int temp) {
+    return '$temp°C, słonecznie';
+  }
+
+  @override
+  String mapWeatherPartly(int temp) {
+    return '$temp°C, częściowo słonecznie';
+  }
+
+  @override
+  String mapWeatherCloudy(int temp) {
+    return '$temp°C, pochmurno';
+  }
 
   @override
   String get mapLegendAir => 'Indeks jakości powietrza GIOŚ';
@@ -1436,6 +1471,9 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get aboutSourceAir => 'Jakość powietrza: GIOŚ';
+
+  @override
+  String get aboutSourceWeather => 'Pogoda: Open-Meteo.com (CC BY 4.0)';
 
   @override
   String get aboutSourceShade =>
