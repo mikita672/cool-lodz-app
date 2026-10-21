@@ -1,6 +1,7 @@
 import 'package:cool_lodz/app/theme.dart';
 import 'package:cool_lodz/core/api/api_providers.dart';
 import 'package:cool_lodz/core/api/demo_api_client.dart';
+import 'package:cool_lodz/core/api/live/weather.dart';
 import 'package:cool_lodz/core/location/location_service.dart';
 import 'package:cool_lodz/core/models/models.dart';
 import 'package:cool_lodz/features/cool_places/place_sheet.dart';
@@ -37,6 +38,7 @@ void main() {
     DemoAlertScenario alerts = DemoAlertScenario.level2,
     Size size = const Size(400, 800),
     double textScale = 1,
+    WeatherForecast? forecast,
   }) async {
     tester.view.physicalSize = size;
     tester.view.devicePixelRatio = 1;
@@ -79,6 +81,7 @@ void main() {
             ),
           ),
         ),
+        forecastProvider.overrideWith((ref) => forecast),
       ],
     );
     await tester.pumpWidget(
@@ -306,6 +309,62 @@ void main() {
     expect(find.byType(ChoiceChip), findsOneWidget);
   });
 
+  testWidgets('live: a wheel picker with the weather sets any time', (
+    tester,
+  ) async {
+    await prefs.setBool(DemoMode.prefsKey, false);
+    final now = DateTime.now();
+    final day = DateTime(now.year, now.month, now.day);
+    final forecast = WeatherForecast([
+      for (var h = 0; h <= 48; h++)
+        WeatherHour(
+          time: day.add(Duration(hours: h)).toUtc(),
+          temperature: 20.0 + h % 24 / 2,
+          weatherCode: h % 24 == 16 ? 61 : 0,
+          windSpeed: h % 24 == 16 ? 40 : 10,
+          precipitationProbability: h % 24 == 16 ? 80 : 0,
+        ),
+    ]);
+    final container = await pump(tester, forecast: forecast);
+    await tester.tap(find.byKey(const Key('map-shade-time')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('time-wheel-hour')), findsOneWidget);
+    expect(find.byKey(const Key('time-wheel-minute')), findsOneWidget);
+    expect(find.byKey(const Key('time-wheel-strip')), findsOneWidget);
+
+    // Tomorrow, then 15:00 from the hourly strip (rain, wind).
+    await tester.tap(find.byKey(const Key('time-wheel-day-1')));
+    await tester.pumpAndSettle();
+    // The strip opens near the current hour: back to midnight first.
+    await tester.drag(
+      find.byKey(const Key('time-wheel-strip')),
+      const Offset(3000, 0),
+    );
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.byKey(const Key('time-wheel-strip-15')),
+      200,
+      scrollable: find.descendant(
+        of: find.byKey(const Key('time-wheel-strip')),
+        matching: find.byType(Scrollable),
+      ),
+    );
+    await tester.ensureVisible(find.byKey(const Key('time-wheel-strip-15')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('time-wheel-strip-15')));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Deszcz'), findsWidgets);
+    expect(find.text('Wietrznie, 40 km/h'), findsOneWidget);
+    expect(find.byIcon(Icons.air_rounded), findsWidgets);
+    await tester.tap(find.byKey(const Key('time-wheel-done')));
+    await tester.pumpAndSettle();
+    expect(
+      container.read(shadeTimeProvider),
+      DateTime(day.year, day.month, day.day + 1, 15),
+    );
+    expect(find.textContaining('jutro 15:00'), findsOneWidget);
+  });
+
   testWidgets('Senior ×1.25 at 360 dp has no overflow', (tester) async {
     await pump(tester, size: const Size(360, 640), textScale: 1.25);
     expect(tester.takeException(), isNull);
@@ -332,15 +391,29 @@ void main() {
       );
     });
 
-    test('shade slots: 8:00–20:00 every 30 min, demo only 14:30', () {
-      expect(ShadeTime.slots(demo: true), ['14:30']);
-      final all = ShadeTime.slots(demo: false);
-      expect(all.first, '8:00');
-      expect(all.last, '20:00');
-      expect(all, hasLength(25));
-      expect(ShadeTime.slotFor(DateTime(2026, 7, 15, 14, 47)), '14:30');
-      expect(ShadeTime.slotFor(DateTime(2026, 7, 15, 6)), '8:00');
-      expect(ShadeTime.slotFor(DateTime(2026, 7, 15, 22)), '20:00');
+    test('shade time: demo 14:30, otherwise now in 5-minute steps', () {
+      expect(
+        ShadeTime.demoTime(DateTime(2026, 7, 15, 9, 7)),
+        DateTime(2026, 7, 15, 14, 30),
+      );
+      expect(
+        ShadeTime.roundDown(DateTime(2026, 7, 15, 22, 47, 30)),
+        DateTime(2026, 7, 15, 22, 45),
+      );
+    });
+
+    test('shade time label: today, tomorrow, later', () async {
+      final l10n = await AppLocalizations.delegate.load(const Locale('pl'));
+      final now = DateTime(2026, 10, 21, 10);
+      expect(shadeTimeLabel(DateTime(2026, 10, 21, 9, 5), now, l10n), '9:05');
+      expect(
+        shadeTimeLabel(DateTime(2026, 10, 22, 18), now, l10n),
+        'jutro 18:00',
+      );
+      expect(
+        shadeTimeLabel(DateTime(2026, 10, 24, 7, 30), now, l10n),
+        'sob. 24.10 7:30',
+      );
     });
 
     test('GIOŚ colours and quiet shades', () {

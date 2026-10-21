@@ -7,12 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../../app/routes.dart';
 import '../../app/senior_mode.dart';
 import '../../app/theme.dart';
 import '../../core/api/api_providers.dart';
+import '../../core/api/live/weather.dart';
 import '../../core/game/game_config.dart';
 import '../../core/location/location_service.dart';
 import '../../core/models/models.dart';
@@ -24,6 +26,8 @@ import '../../shared/widgets/layer_filter_chip.dart';
 import '../../shared/widgets/map_pin.dart';
 import '../../shared/widgets/offline_banner.dart';
 import '../../shared/widgets/search_field.dart';
+import '../../shared/widgets/time_wheel_sheet.dart';
+import '../../shared/widgets/weather_icon.dart';
 import '../cool_places/data/places_providers.dart';
 import '../cool_places/place_format.dart';
 import '../cool_places/place_sheet.dart';
@@ -181,47 +185,62 @@ class _MapScreenState extends ConsumerState<MapScreen> {
 
   Future<void> _pickShadeTime() async {
     final l10n = AppLocalizations.of(context);
-    final demo = ref.read(staticShadeLayerProvider);
-    final current = ref.read(shadeTimeProvider);
-    final slot = await showModalBottomSheet<String>(
-      context: context,
-      builder: (context) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(
-            AppSizes.screenPadding,
-            0,
-            AppSizes.screenPadding,
-            AppSizes.screenPadding,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(l10n.mapShadeTimeTitle, style: AppTextStyles.titleM),
-              if (demo) ...[
+    if (ref.read(staticShadeLayerProvider)) {
+      await _showDemoShadeTime(l10n);
+      return;
+    }
+    final forecast = await _forecast();
+    if (!mounted) return;
+    final picked = await showTimeWheelSheet(
+      context,
+      title: l10n.mapShadeTimeTitle,
+      initial: ref.read(shadeTimeProvider),
+      now: DateTime.now(),
+      forecast: forecast,
+    );
+    if (picked != null) ref.read(shadeTimeProvider.notifier).set(picked);
+  }
+
+  Future<WeatherForecast?> _forecast() async {
+    try {
+      return await ref
+          .read(forecastProvider.future)
+          .timeout(const Duration(seconds: 2));
+    } catch (_) {
+      return null; // the picker works without weather
+    }
+  }
+
+  /// The bundled layer is for 14:30 only: say so instead of a picker.
+  Future<void> _showDemoShadeTime(AppLocalizations l10n) =>
+      showModalBottomSheet<void>(
+        context: context,
+        builder: (context) => SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSizes.screenPadding,
+              0,
+              AppSizes.screenPadding,
+              AppSizes.screenPadding,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l10n.mapShadeTimeTitle, style: AppTextStyles.titleM),
                 const SizedBox(height: AppSizes.s8),
                 Text(l10n.mapShadeDemoNote, style: AppTextStyles.bodyS),
+                const SizedBox(height: AppSizes.s16),
+                ChoiceChip(
+                  label: const Text('14:30'),
+                  selected: true,
+                  onSelected: (_) => Navigator.of(context).pop(),
+                ),
               ],
-              const SizedBox(height: AppSizes.s16),
-              Wrap(
-                spacing: AppSizes.s8,
-                runSpacing: AppSizes.s8,
-                children: [
-                  for (final s in ShadeTime.slots(demo: demo))
-                    ChoiceChip(
-                      label: Text(s),
-                      selected: s == current,
-                      onSelected: (_) => Navigator.of(context).pop(s),
-                    ),
-                ],
-              ),
-            ],
+            ),
           ),
         ),
-      ),
-    );
-    if (slot != null) ref.read(shadeTimeProvider.notifier).set(slot);
-  }
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -415,7 +434,12 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: _ShadeTimePill(
-                        time: ref.watch(shadeTimeProvider),
+                        time: shadeTimeLabel(
+                          ref.watch(shadeTimeProvider),
+                          DateTime.now(),
+                          l10n,
+                        ),
+                        at: ref.watch(shadeTimeProvider),
                         weather: ref.watch(shadeWeatherProvider).value,
                         onChange: _pickShadeTime,
                       ),
@@ -553,11 +577,28 @@ class _NeedlePainter extends CustomPainter {
   bool shouldRepaint(_NeedlePainter oldDelegate) => false;
 }
 
+/// «14:30», «jutro 9:00» or «pt 24.10 18:00».
+String shadeTimeLabel(DateTime time, DateTime now, AppLocalizations l10n) {
+  final hm = DateFormat('H:mm', 'pl').format(time);
+  final days = DateUtils.dateOnly(
+    time,
+  ).difference(DateUtils.dateOnly(now)).inDays;
+  if (days == 0) return hm;
+  if (days == 1) return l10n.mapShadeTomorrow(hm);
+  return '${DateFormat('EEE d.MM', 'pl').format(time)} $hm';
+}
+
 String? _weatherText(ShadeWeather w, AppLocalizations l10n) {
   if (w.night) return l10n.mapWeatherNight;
   final t = w.temperature;
   if (t == null) return null;
   final temp = t.round();
+  if (w.hour case final hour?) {
+    final kind = WeatherKind.of(hour);
+    if (kind.index >= WeatherKind.fog.index) {
+      return l10n.mapWeatherOther(temp, weatherLabel(kind, l10n).toLowerCase());
+    }
+  }
   if (w.strength >= 0.6) return l10n.mapWeatherSunny(temp);
   if (w.strength >= 0.25) return l10n.mapWeatherPartly(temp);
   return l10n.mapWeatherCloudy(temp);
@@ -568,9 +609,13 @@ class _ShadeTimePill extends StatelessWidget {
     required this.time,
     required this.onChange,
     this.weather,
+    this.at,
   });
 
   final String time;
+
+  /// The instant [time] names (for the moon at night).
+  final DateTime? at;
   final ShadeWeather? weather;
   final VoidCallback onChange;
 
@@ -601,6 +646,10 @@ class _ShadeTimePill extends StatelessWidget {
                     borderRadius: BorderRadius.circular(3),
                   ),
                 ),
+                if (weather?.hour case final hour?) ...[
+                  const SizedBox(width: AppSizes.s8),
+                  WeatherIcon(hour: hour, instant: at!, size: 20),
+                ],
                 const SizedBox(width: AppSizes.s8),
                 Flexible(
                   child: Text(

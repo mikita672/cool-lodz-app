@@ -18,6 +18,10 @@ void main() {
       expect(noon.temperature, isNotNull);
       expect(noon.cloudCover, inInclusiveRange(0, 100));
       expect(noon.directRadiation, greaterThanOrEqualTo(0));
+      expect(noon.weatherCode, isNotNull);
+      expect(noon.windSpeed, greaterThanOrEqualTo(0));
+      expect(noon.windGusts, greaterThanOrEqualTo(noon.windSpeed!));
+      expect(noon.precipitationProbability, inInclusiveRange(0, 100));
       expect(f.at(DateTime.utc(2030)), isNull);
     });
 

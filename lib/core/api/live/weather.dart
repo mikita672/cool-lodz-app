@@ -13,6 +13,10 @@ class WeatherHour {
     this.temperature,
     this.cloudCover,
     this.directRadiation,
+    this.weatherCode,
+    this.windSpeed,
+    this.windGusts,
+    this.precipitationProbability,
   });
 
   /// UTC time stamp; radiation is the mean of the hour before it.
@@ -27,6 +31,16 @@ class WeatherHour {
   /// Direct solar radiation on a horizontal surface, W/m² (mean of the
   /// preceding hour).
   final double? directRadiation;
+
+  /// WMO weather code (0 clear … 95 thunderstorm).
+  final int? weatherCode;
+
+  /// Wind at 10 m and its gusts, km/h.
+  final double? windSpeed;
+  final double? windGusts;
+
+  /// Chance of rain or snow in this hour, 0..100 %.
+  final double? precipitationProbability;
 }
 
 /// Hourly forecast for one place; [at] picks the hour of an instant.
@@ -91,8 +105,9 @@ class OpenMeteoClient {
   static const lon = 19.46;
   static const url =
       'https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon'
-      '&hourly=temperature_2m,cloud_cover,direct_radiation'
-      '&timezone=GMT&forecast_days=3';
+      '&hourly=temperature_2m,cloud_cover,direct_radiation,weather_code,'
+      'wind_speed_10m,wind_gusts_10m,precipitation_probability'
+      '&timezone=GMT&forecast_days=7';
 
   /// A forecast is reused for this long.
   static const maxAge = Duration(minutes: 30);
@@ -141,7 +156,8 @@ class OpenMeteoClient {
 }
 
 /// `{"hourly": {"time": ["2026-10-21T00:00", …], "temperature_2m": […],
-/// "cloud_cover": […], "direct_radiation": […]}}` (times in GMT).
+/// "cloud_cover": […], "direct_radiation": […], "weather_code": […], …}}`
+/// (times in GMT).
 WeatherForecast parseOpenMeteo(Object? json) {
   final hourly = json is Map ? json['hourly'] : null;
   final times = hourly is Map ? hourly['time'] : null;
@@ -165,6 +181,10 @@ WeatherForecast parseOpenMeteo(Object? json) {
         temperature: value('temperature_2m', i),
         cloudCover: value('cloud_cover', i),
         directRadiation: value('direct_radiation', i),
+        weatherCode: value('weather_code', i)?.round(),
+        windSpeed: value('wind_speed_10m', i),
+        windGusts: value('wind_gusts_10m', i),
+        precipitationProbability: value('precipitation_probability', i),
       ),
     );
   }
