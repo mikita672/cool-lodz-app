@@ -123,10 +123,10 @@ void main() {
       );
     });
 
-    test('password: 200 once', () {
+    test('password: 500 once', () {
       expect(
         GameRules.passwordPoints(questId: 'q', history: const GameHistory()),
-        200,
+        500,
       );
       final solved = GameHistory(
         log: [_log(PointsType.password, ref: 'q', pts: 200)],

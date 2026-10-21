@@ -109,7 +109,7 @@ void main() {
     expect(again.points, 0);
   });
 
-  test('password: 200 + badge in separate writes of ≤ 200', () async {
+  test('password: 500 in writes of ≤ 200', () async {
     repo.state = const PlayerState(
       nickname: 'Ala',
       badges: {GameBadge.firstStep},
@@ -117,8 +117,8 @@ void main() {
     final c = await make();
     final game = c.read(gameServiceProvider);
     final solved = await game.passwordSolved('chlodne-haslo-2026');
-    expect(solved.points, 200);
-    expect(repo.writes, [200]);
+    expect(solved.points, 500);
+    expect(repo.writes, [200, 200, 100]);
     expect((await game.passwordSolved('chlodne-haslo-2026')).points, 0);
   });
 
@@ -224,9 +224,9 @@ void main() {
   test('a badge is saved in the same write as its 30 points', () async {
     final c = await make(demo: true);
     await c.read(gameServiceProvider).passwordSolved('q');
-    // Password (200) and, in demo, no scan badge; then a scan: 50 + 30.
+    // Password (500 as 200 + 200 + 100) and, in demo, no scan badge; then a scan: 50 + 30.
     await c.read(gameServiceProvider).placeScanned('cool-002');
-    expect(repo.writes, [200, 80]);
+    expect(repo.writes, [200, 200, 100, 80]);
     expect(repo.state.badges, {GameBadge.coolGuard});
   });
 }

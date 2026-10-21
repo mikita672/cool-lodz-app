@@ -168,7 +168,7 @@ void main() {
       expect(find.text('S07'), findsOneWidget);
     });
 
-    testWidgets('all letters: wrong password, then CHŁODNO gives 200', (
+    testWidgets('all letters: wrong password, then CHŁODNO gives 500', (
       tester,
     ) async {
       quest.visits.addAll(_allVisits());
@@ -190,7 +190,7 @@ void main() {
       );
       await tester.tap(find.byKey(const Key('quest-password-check')));
       await tester.pumpAndSettle();
-      expect(game.state.points, 200);
+      expect(game.state.points, 500);
       expect(find.byKey(const Key('quest-reward')), findsOneWidget);
       expect(find.textContaining('CHLODNO-'), findsOneWidget);
     });

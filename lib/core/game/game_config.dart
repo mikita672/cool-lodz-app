@@ -4,7 +4,7 @@ abstract final class GameConfig {
   // Points.
   static const pointsQrScan = 50; // once a day per place
   static const pointsShadedRoute = 10; // route with shade share ≥ 60 %
-  static const pointsPasswordSolved = 200; // once
+  static const pointsPasswordSolved = 500; // once, written in parts ≤ 200
   static const pointsBadge = 30; // once per badge
   static const pointsReportApproved = 20; // after manual approval (S)
 
