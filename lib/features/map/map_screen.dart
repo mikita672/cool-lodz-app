@@ -32,6 +32,8 @@ import '../cool_places/data/places_providers.dart';
 import '../cool_places/place_format.dart';
 import '../cool_places/place_sheet.dart';
 import '../game/data/game_config_repository.dart';
+import '../heat_risk/data/heat_risk_providers.dart';
+import '../heat_risk/heat_risk_sheet.dart';
 import 'data/map_layers_style.dart';
 import 'data/map_providers.dart';
 
@@ -80,7 +82,11 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       (event) => _rotation.value = event.camera.rotation,
     );
     _lifecycle = AppLifecycleListener(
-      onResume: () => ref.invalidate(userLocationProvider),
+      onResume: () {
+        ref.invalidate(userLocationProvider);
+        // Later in the day: the rest of today's heat risk.
+        ref.invalidate(heatRiskProvider);
+      },
     );
     // Heat mode: cool places first (spec S14), also when it is on at start.
     ref.listenManual(heatLevelProvider, (_, level) {
@@ -252,6 +258,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     final offline = ref.watch(dataSourceProvider) == DataSource.fallback;
     final location = ref.watch(userLocationProvider).value;
     final userPosition = location?.position;
+    final showRisk = ref.watch(heatRiskProvider).value != null;
 
     // Center on the user once the first position arrives (after the map
     // is ready, or as soon as it is).
@@ -429,21 +436,28 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                     const SizedBox(height: AppSizes.s8),
                     const OfflineBanner(),
                   ],
-                  if (layers.contains(MapLayer.shade)) ...[
+                  if (showRisk || layers.contains(MapLayer.shade)) ...[
                     const SizedBox(height: AppSizes.s8),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: _ShadeTimePill(
-                        time: shadeTimeLabel(
-                          ref.watch(shadeTimeProvider),
-                          DateTime.now(),
-                          l10n,
-                        ),
-                        at: ref.watch(shadeTimeProvider),
-                        weather: ref.watch(shadeWeatherProvider).value,
-                        onChange: _pickShadeTime,
-                      ),
+                    Wrap(
+                      spacing: AppSizes.s8,
+                      runSpacing: AppSizes.s8,
+                      children: [
+                        if (showRisk) const HeatRiskChip(),
+                        if (layers.contains(MapLayer.shade))
+                          _ShadeTimePill(
+                            time: shadeTimeLabel(
+                              ref.watch(shadeTimeProvider),
+                              DateTime.now(),
+                              l10n,
+                            ),
+                            at: ref.watch(shadeTimeProvider),
+                            weather: ref.watch(shadeWeatherProvider).value,
+                            onChange: _pickShadeTime,
+                          ),
+                      ],
                     ),
+                  ],
+                  if (layers.contains(MapLayer.shade)) ...[
                     if (!ref.watch(staticShadeLayerProvider) &&
                         _shadeArea == null) ...[
                       const SizedBox(height: AppSizes.s8),

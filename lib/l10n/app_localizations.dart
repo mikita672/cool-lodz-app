@@ -3358,6 +3358,246 @@ abstract class AppLocalizations {
   /// **'Lokalizacja nieznana.'**
   String get heatNativeSmsNoPlace;
 
+  /// No description provided for @heatRiskTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ryzyko upałowe dziś'**
+  String get heatRiskTitle;
+
+  /// No description provided for @heatRiskChip.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ryzyko upałowe: {level}'**
+  String heatRiskChip(String level);
+
+  /// No description provided for @heatRiskChipTemp.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ryzyko upałowe: {level} · {temp}°C'**
+  String heatRiskChipTemp(String level, int temp);
+
+  /// No description provided for @heatRiskLow.
+  ///
+  /// In pl, this message translates to:
+  /// **'niskie'**
+  String get heatRiskLow;
+
+  /// No description provided for @heatRiskModerate.
+  ///
+  /// In pl, this message translates to:
+  /// **'umiarkowane'**
+  String get heatRiskModerate;
+
+  /// No description provided for @heatRiskHigh.
+  ///
+  /// In pl, this message translates to:
+  /// **'wysokie'**
+  String get heatRiskHigh;
+
+  /// No description provided for @heatRiskExtreme.
+  ///
+  /// In pl, this message translates to:
+  /// **'bardzo wysokie'**
+  String get heatRiskExtreme;
+
+  /// No description provided for @heatRiskFeelsNow.
+  ///
+  /// In pl, this message translates to:
+  /// **'Odczuwalna teraz: {temp}°C'**
+  String heatRiskFeelsNow(int temp);
+
+  /// No description provided for @heatRiskPeak.
+  ///
+  /// In pl, this message translates to:
+  /// **'Najwyżej {temp}°C około {time}'**
+  String heatRiskPeak(int temp, String time);
+
+  /// No description provided for @heatRiskHours.
+  ///
+  /// In pl, this message translates to:
+  /// **'Najgorętsze godziny: {from}–{to}'**
+  String heatRiskHours(String from, String to);
+
+  /// No description provided for @heatRiskUv.
+  ///
+  /// In pl, this message translates to:
+  /// **'UV do {uv}: {category}'**
+  String heatRiskUv(int uv, String category);
+
+  /// No description provided for @heatRiskUvLow.
+  ///
+  /// In pl, this message translates to:
+  /// **'niski'**
+  String get heatRiskUvLow;
+
+  /// No description provided for @heatRiskUvModerate.
+  ///
+  /// In pl, this message translates to:
+  /// **'umiarkowany'**
+  String get heatRiskUvModerate;
+
+  /// No description provided for @heatRiskUvHigh.
+  ///
+  /// In pl, this message translates to:
+  /// **'wysoki'**
+  String get heatRiskUvHigh;
+
+  /// No description provided for @heatRiskUvVeryHigh.
+  ///
+  /// In pl, this message translates to:
+  /// **'bardzo wysoki'**
+  String get heatRiskUvVeryHigh;
+
+  /// No description provided for @heatRiskUvExtreme.
+  ///
+  /// In pl, this message translates to:
+  /// **'ekstremalny'**
+  String get heatRiskUvExtreme;
+
+  /// No description provided for @heatRiskUvAdvice.
+  ///
+  /// In pl, this message translates to:
+  /// **'Krem z filtrem, nakrycie głowy i okulary przeciwsłoneczne.'**
+  String get heatRiskUvAdvice;
+
+  /// No description provided for @heatRiskUvAdviceHigh.
+  ///
+  /// In pl, this message translates to:
+  /// **'Unikaj słońca w południe, krem z filtrem SPF 50.'**
+  String get heatRiskUvAdviceHigh;
+
+  /// No description provided for @heatRiskAsphalt.
+  ///
+  /// In pl, this message translates to:
+  /// **'Asfalt w słońcu: do ok. {temp}°C'**
+  String heatRiskAsphalt(int temp);
+
+  /// No description provided for @heatRiskAdviceTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Co robić'**
+  String get heatRiskAdviceTitle;
+
+  /// No description provided for @heatRiskAdviceLow.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dobry czas na spacer. Miej przy sobie wodę.'**
+  String get heatRiskAdviceLow;
+
+  /// No description provided for @heatRiskAdviceWater.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pij wodę regularnie, nawet bez pragnienia.'**
+  String get heatRiskAdviceWater;
+
+  /// No description provided for @heatRiskAdviceShade.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wybieraj trasy w cieniu i rób przerwy w miejscach chłodu.'**
+  String get heatRiskAdviceShade;
+
+  /// No description provided for @heatRiskAdviceAvoid.
+  ///
+  /// In pl, this message translates to:
+  /// **'W najgorętszych godzinach unikaj wysiłku i słońca.'**
+  String get heatRiskAdviceAvoid;
+
+  /// No description provided for @heatRiskAdviceClothes.
+  ///
+  /// In pl, this message translates to:
+  /// **'Lekkie, jasne ubranie i nakrycie głowy.'**
+  String get heatRiskAdviceClothes;
+
+  /// No description provided for @heatRiskAdviceOnlyIfNeeded.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wychodź tylko, jeśli musisz: rano albo wieczorem.'**
+  String get heatRiskAdviceOnlyIfNeeded;
+
+  /// No description provided for @heatRiskAdviceCheckOthers.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zadzwoń do bliskich seniorów: czy mają chłodno i wodę?'**
+  String get heatRiskAdviceCheckOthers;
+
+  /// No description provided for @heatRiskAdviceSenior.
+  ///
+  /// In pl, this message translates to:
+  /// **'Seniorzy: zostań w chłodnym miejscu w najgorętszych godzinach, poproś kogoś o telefon w ciągu dnia i włącz alarm upałowy w Profilu.'**
+  String get heatRiskAdviceSenior;
+
+  /// No description provided for @heatRiskAdviceTourist.
+  ///
+  /// In pl, this message translates to:
+  /// **'W południe zwiedzaj muzea i miejsca z klimatyzacją, a spaceruj rano i wieczorem.'**
+  String get heatRiskAdviceTourist;
+
+  /// No description provided for @heatRiskPawCaution.
+  ///
+  /// In pl, this message translates to:
+  /// **'Łapy psa: przyłóż dłoń do asfaltu na 7 sekund. Jeśli parzy, idź po trawie i w cieniu.'**
+  String get heatRiskPawCaution;
+
+  /// No description provided for @heatRiskPawDanger.
+  ///
+  /// In pl, this message translates to:
+  /// **'Za gorąco dla łap psa (asfalt ok. {temp}°C). Wychodź rano lub wieczorem, chodź po trawie i zabierz wodę dla psa.'**
+  String heatRiskPawDanger(int temp);
+
+  /// No description provided for @heatRiskPawOk.
+  ///
+  /// In pl, this message translates to:
+  /// **'Łapy psa: asfalt nie powinien parzyć.'**
+  String get heatRiskPawOk;
+
+  /// No description provided for @heatRiskSymptoms.
+  ///
+  /// In pl, this message translates to:
+  /// **'Źle się czujesz? Sprawdź objawy'**
+  String get heatRiskSymptoms;
+
+  /// No description provided for @heatRiskSource.
+  ///
+  /// In pl, this message translates to:
+  /// **'Prognoza: Open-Meteo. Progi wg skali UTCI, dla seniorów o 2°C niższe. Temperatura asfaltu to szacunek.'**
+  String get heatRiskSource;
+
+  /// No description provided for @heatRiskDemo.
+  ///
+  /// In pl, this message translates to:
+  /// **'Tryb demo: przykładowy upalny dzień.'**
+  String get heatRiskDemo;
+
+  /// No description provided for @heatRiskAlertOnly.
+  ///
+  /// In pl, this message translates to:
+  /// **'Według ostrzeżenia IMGW (brak prognozy).'**
+  String get heatRiskAlertOnly;
+
+  /// No description provided for @settingsDog.
+  ///
+  /// In pl, this message translates to:
+  /// **'Chodzę z psem'**
+  String get settingsDog;
+
+  /// No description provided for @settingsDogBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ostrzeżenia o gorącym asfalcie dla łap'**
+  String get settingsDogBody;
+
+  /// No description provided for @routePawWarning.
+  ///
+  /// In pl, this message translates to:
+  /// **'Asfalt ok. {temp}°C: za gorąco dla łap psa. Wybierz trasę w cieniu i idź po trawie.'**
+  String routePawWarning(int temp);
+
+  /// No description provided for @routePawCaution.
+  ///
+  /// In pl, this message translates to:
+  /// **'Asfalt ok. {temp}°C: sprawdź dłonią, czy nie parzy łap psa.'**
+  String routePawCaution(int temp);
+
   /// No description provided for @placeThu.
   ///
   /// In pl, this message translates to:

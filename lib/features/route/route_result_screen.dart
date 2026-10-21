@@ -14,6 +14,7 @@ import '../../core/api/api_providers.dart';
 import '../../core/clock.dart';
 import '../../core/game/game_config.dart';
 import '../../core/game/game_rules.dart';
+import '../../core/heat/heat_risk.dart';
 import '../../core/location/location_service.dart';
 import '../../core/models/models.dart';
 import '../../core/storage/offline_cache.dart';
@@ -33,6 +34,7 @@ import '../cool_places/data/places_providers.dart';
 import '../cool_places/place_sheet.dart';
 import '../game/data/game_config_repository.dart';
 import '../game/game_service.dart';
+import '../heat_risk/data/heat_risk_providers.dart';
 import '../profile/data/comfort_profile_provider.dart';
 import 'data/google_maps.dart';
 import 'data/route_history_repository.dart';
@@ -373,6 +375,10 @@ class _Result extends ConsumerWidget {
     int number(RouteVariant v) => alternatives.indexOf(v) + 1;
     final shortest = response.shortest;
     final now = DateTime.now();
+    // «Chodzę z psem»: how hot the asphalt is at the departure.
+    final asphalt = ref.watch(walksWithDogProvider)
+        ? ref.watch(asphaltAtProvider(departure ?? request.datetime)).value
+        : null;
 
     final all = [for (final v in response.variants) ...v.geometry];
     final stops = [
@@ -493,6 +499,18 @@ class _Result extends ConsumerWidget {
                         text: w.sunStrength <= 0.01
                             ? l10n.routeNoSun
                             : l10n.routeCloudy,
+                      ),
+                    ],
+                    if (asphalt != null && asphalt >= asphaltCaution) ...[
+                      if (response.isApproximate ||
+                          (response.weather?.littleSun ?? false))
+                        const SizedBox(height: AppSizes.s8),
+                      _Notice(
+                        key: const Key('route-paws'),
+                        icon: Icons.pets_rounded,
+                        text: asphalt >= asphaltDanger
+                            ? l10n.routePawWarning(asphalt.round())
+                            : l10n.routePawCaution(asphalt.round()),
                       ),
                     ],
                   ],
@@ -868,9 +886,14 @@ class _Problem extends ConsumerWidget {
 }
 
 class _Notice extends StatelessWidget {
-  const _Notice({super.key, required this.text});
+  const _Notice({
+    super.key,
+    required this.text,
+    this.icon = Icons.info_outline_rounded,
+  });
 
   final String text;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) => Semantics(
@@ -887,7 +910,7 @@ class _Notice extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(Icons.info_outline_rounded, size: 18),
+          Icon(icon, size: 18),
           const SizedBox(width: AppSizes.s8),
           Expanded(child: Text(text, style: AppTextStyles.label)),
         ],

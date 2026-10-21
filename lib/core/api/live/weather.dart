@@ -17,6 +17,8 @@ class WeatherHour {
     this.windSpeed,
     this.windGusts,
     this.precipitationProbability,
+    this.apparentTemperature,
+    this.uvIndex,
   });
 
   /// UTC time stamp; radiation is the mean of the hour before it.
@@ -41,6 +43,13 @@ class WeatherHour {
 
   /// Chance of rain or snow in this hour, 0..100 %.
   final double? precipitationProbability;
+
+  /// Feels-like temperature (°C): air temperature with humidity, wind and
+  /// sun.
+  final double? apparentTemperature;
+
+  /// UV index (WHO: 3 moderate, 6 high, 8 very high, 11 extreme).
+  final double? uvIndex;
 }
 
 /// Hourly forecast for one place; [at] picks the hour of an instant.
@@ -106,7 +115,8 @@ class OpenMeteoClient {
   static const url =
       'https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon'
       '&hourly=temperature_2m,cloud_cover,direct_radiation,weather_code,'
-      'wind_speed_10m,wind_gusts_10m,precipitation_probability'
+      'wind_speed_10m,wind_gusts_10m,precipitation_probability,'
+      'apparent_temperature,uv_index'
       '&timezone=GMT&forecast_days=7';
 
   /// A forecast is reused for this long.
@@ -185,6 +195,8 @@ WeatherForecast parseOpenMeteo(Object? json) {
         windSpeed: value('wind_speed_10m', i),
         windGusts: value('wind_gusts_10m', i),
         precipitationProbability: value('precipitation_probability', i),
+        apparentTemperature: value('apparent_temperature', i),
+        uvIndex: value('uv_index', i),
       ),
     );
   }

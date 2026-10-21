@@ -1,10 +1,13 @@
 import 'package:cool_lodz/app/theme.dart';
 import 'package:cool_lodz/core/api/api_providers.dart';
 import 'package:cool_lodz/core/api/demo_api_client.dart';
+import 'package:cool_lodz/core/api/demo_weather.dart';
 import 'package:cool_lodz/core/api/live/weather.dart';
+import 'package:cool_lodz/core/clock.dart';
 import 'package:cool_lodz/core/location/location_service.dart';
 import 'package:cool_lodz/core/models/models.dart';
 import 'package:cool_lodz/features/cool_places/place_sheet.dart';
+import 'package:cool_lodz/features/heat_risk/data/heat_risk_providers.dart';
 import 'package:cool_lodz/features/map/data/map_layers_style.dart';
 import 'package:cool_lodz/features/map/data/map_providers.dart';
 import 'package:cool_lodz/features/map/map_screen.dart';
@@ -15,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
@@ -39,6 +43,7 @@ void main() {
     Size size = const Size(400, 800),
     double textScale = 1,
     WeatherForecast? forecast,
+    List<Override> extra = const [],
   }) async {
     tester.view.physicalSize = size;
     tester.view.devicePixelRatio = 1;
@@ -82,6 +87,7 @@ void main() {
           ),
         ),
         forecastProvider.overrideWith((ref) => forecast),
+        ...extra,
       ],
     );
     await tester.pumpWidget(
@@ -363,6 +369,38 @@ void main() {
       DateTime(day.year, day.month, day.day + 1, 15),
     );
     expect(find.textContaining('jutro 15:00'), findsOneWidget);
+  });
+
+  testWidgets('heat risk: the chip opens the details, with paws for dogs', (
+    tester,
+  ) async {
+    await prefs.setBool(WalksWithDog.prefsKey, true);
+    // A summer noon: the sun is high, the asphalt hot.
+    final noon = DateTime(2026, 7, 15, 12);
+    await pump(
+      tester,
+      size: const Size(400, 1000),
+      forecast: DemoWeather.forecast(noon),
+      extra: [clockProvider.overrideWithValue(() => noon)],
+    );
+    // 37 °C feels like at the peak; the demo alert is level 2.
+    expect(find.text('Ryzyko upałowe: wysokie · 37°C'), findsOneWidget);
+    expect(find.byIcon(Icons.pets_rounded), findsOneWidget);
+    await tester.tap(find.byKey(const Key('heat-risk-chip')));
+    await tester.pumpAndSettle();
+    expect(find.text('WYSOKIE'), findsOneWidget);
+    expect(find.text('Odczuwalna teraz: 35°C'), findsOneWidget);
+    expect(find.text('UV do 8: bardzo wysoki'), findsOneWidget);
+    expect(find.byKey(const Key('heat-risk-paws')), findsOneWidget);
+    expect(find.textContaining('Za gorąco dla łap psa'), findsOneWidget);
+    expect(find.text('Źle się czujesz? Sprawdź objawy'), findsOneWidget);
+  });
+
+  testWidgets('heat risk without a forecast follows the warning', (
+    tester,
+  ) async {
+    await pump(tester, alerts: DemoAlertScenario.none);
+    expect(find.byKey(const Key('heat-risk-chip')), findsNothing);
   });
 
   testWidgets('Senior ×1.25 at 360 dp has no overflow', (tester) async {

@@ -1938,6 +1938,157 @@ class AppLocalizationsPl extends AppLocalizations {
   String get heatNativeSmsNoPlace => 'Lokalizacja nieznana.';
 
   @override
+  String get heatRiskTitle => 'Ryzyko upałowe dziś';
+
+  @override
+  String heatRiskChip(String level) {
+    return 'Ryzyko upałowe: $level';
+  }
+
+  @override
+  String heatRiskChipTemp(String level, int temp) {
+    return 'Ryzyko upałowe: $level · $temp°C';
+  }
+
+  @override
+  String get heatRiskLow => 'niskie';
+
+  @override
+  String get heatRiskModerate => 'umiarkowane';
+
+  @override
+  String get heatRiskHigh => 'wysokie';
+
+  @override
+  String get heatRiskExtreme => 'bardzo wysokie';
+
+  @override
+  String heatRiskFeelsNow(int temp) {
+    return 'Odczuwalna teraz: $temp°C';
+  }
+
+  @override
+  String heatRiskPeak(int temp, String time) {
+    return 'Najwyżej $temp°C około $time';
+  }
+
+  @override
+  String heatRiskHours(String from, String to) {
+    return 'Najgorętsze godziny: $from–$to';
+  }
+
+  @override
+  String heatRiskUv(int uv, String category) {
+    return 'UV do $uv: $category';
+  }
+
+  @override
+  String get heatRiskUvLow => 'niski';
+
+  @override
+  String get heatRiskUvModerate => 'umiarkowany';
+
+  @override
+  String get heatRiskUvHigh => 'wysoki';
+
+  @override
+  String get heatRiskUvVeryHigh => 'bardzo wysoki';
+
+  @override
+  String get heatRiskUvExtreme => 'ekstremalny';
+
+  @override
+  String get heatRiskUvAdvice =>
+      'Krem z filtrem, nakrycie głowy i okulary przeciwsłoneczne.';
+
+  @override
+  String get heatRiskUvAdviceHigh =>
+      'Unikaj słońca w południe, krem z filtrem SPF 50.';
+
+  @override
+  String heatRiskAsphalt(int temp) {
+    return 'Asfalt w słońcu: do ok. $temp°C';
+  }
+
+  @override
+  String get heatRiskAdviceTitle => 'Co robić';
+
+  @override
+  String get heatRiskAdviceLow => 'Dobry czas na spacer. Miej przy sobie wodę.';
+
+  @override
+  String get heatRiskAdviceWater =>
+      'Pij wodę regularnie, nawet bez pragnienia.';
+
+  @override
+  String get heatRiskAdviceShade =>
+      'Wybieraj trasy w cieniu i rób przerwy w miejscach chłodu.';
+
+  @override
+  String get heatRiskAdviceAvoid =>
+      'W najgorętszych godzinach unikaj wysiłku i słońca.';
+
+  @override
+  String get heatRiskAdviceClothes => 'Lekkie, jasne ubranie i nakrycie głowy.';
+
+  @override
+  String get heatRiskAdviceOnlyIfNeeded =>
+      'Wychodź tylko, jeśli musisz: rano albo wieczorem.';
+
+  @override
+  String get heatRiskAdviceCheckOthers =>
+      'Zadzwoń do bliskich seniorów: czy mają chłodno i wodę?';
+
+  @override
+  String get heatRiskAdviceSenior =>
+      'Seniorzy: zostań w chłodnym miejscu w najgorętszych godzinach, poproś kogoś o telefon w ciągu dnia i włącz alarm upałowy w Profilu.';
+
+  @override
+  String get heatRiskAdviceTourist =>
+      'W południe zwiedzaj muzea i miejsca z klimatyzacją, a spaceruj rano i wieczorem.';
+
+  @override
+  String get heatRiskPawCaution =>
+      'Łapy psa: przyłóż dłoń do asfaltu na 7 sekund. Jeśli parzy, idź po trawie i w cieniu.';
+
+  @override
+  String heatRiskPawDanger(int temp) {
+    return 'Za gorąco dla łap psa (asfalt ok. $temp°C). Wychodź rano lub wieczorem, chodź po trawie i zabierz wodę dla psa.';
+  }
+
+  @override
+  String get heatRiskPawOk => 'Łapy psa: asfalt nie powinien parzyć.';
+
+  @override
+  String get heatRiskSymptoms => 'Źle się czujesz? Sprawdź objawy';
+
+  @override
+  String get heatRiskSource =>
+      'Prognoza: Open-Meteo. Progi wg skali UTCI, dla seniorów o 2°C niższe. Temperatura asfaltu to szacunek.';
+
+  @override
+  String get heatRiskDemo => 'Tryb demo: przykładowy upalny dzień.';
+
+  @override
+  String get heatRiskAlertOnly => 'Według ostrzeżenia IMGW (brak prognozy).';
+
+  @override
+  String get settingsDog => 'Chodzę z psem';
+
+  @override
+  String get settingsDogBody => 'Ostrzeżenia o gorącym asfalcie dla łap';
+
+  @override
+  String routePawWarning(int temp) {
+    return 'Asfalt ok. $temp°C: za gorąco dla łap psa. Wybierz trasę w cieniu i idź po trawie.';
+  }
+
+  @override
+  String routePawCaution(int temp) {
+    return 'Asfalt ok. $temp°C: sprawdź dłonią, czy nie parzy łap psa.';
+  }
+
+  @override
   String get placeThu => 'czw.';
 
   @override

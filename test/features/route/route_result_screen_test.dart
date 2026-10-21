@@ -1,11 +1,14 @@
 import 'package:cool_lodz/app/senior_mode.dart';
 import 'package:cool_lodz/app/theme.dart';
 import 'package:cool_lodz/core/api/api_client.dart';
+import 'package:cool_lodz/core/api/api_providers.dart';
+import 'package:cool_lodz/core/api/demo_weather.dart';
 import 'package:cool_lodz/core/api/reference_routes.dart';
 import 'package:cool_lodz/core/clock.dart';
 import 'package:cool_lodz/core/location/location_service.dart';
 import 'package:cool_lodz/core/models/models.dart';
 import 'package:cool_lodz/core/storage/offline_cache.dart';
+import 'package:cool_lodz/features/heat_risk/data/heat_risk_providers.dart';
 import 'package:cool_lodz/features/profile/data/comfort_profile.dart';
 import 'package:cool_lodz/features/profile/data/comfort_profile_provider.dart';
 import 'package:cool_lodz/features/route/data/google_maps.dart';
@@ -16,6 +19,7 @@ import 'package:cool_lodz/shared/widgets/route_variant_card.dart' as ds;
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
@@ -119,6 +123,7 @@ void main() {
     RoutePlan? plan,
     bool senior = false,
     Size size = const Size(400, 900),
+    List<Override> extra = const [],
   }) async {
     tester.view.physicalSize = size;
     tester.view.devicePixelRatio = 1;
@@ -132,6 +137,7 @@ void main() {
           location: location,
           game: history,
         ),
+        ...extra,
       ],
     );
     await container
@@ -234,6 +240,28 @@ void main() {
     await tester.pumpAndSettle();
     expect(isSelected(tester, RouteVariantType.compromise), isTrue);
     expect(api.routeRequests.last.profile.id, ProfileId.tourist);
+  });
+
+  testWidgets('a dog walker is warned about hot asphalt', (tester) async {
+    await prefs.setBool(WalksWithDog.prefsKey, true);
+    await pump(
+      tester,
+      extra: [
+        forecastProvider.overrideWith((ref) => DemoWeather.forecast(_now)),
+      ],
+    );
+    expect(find.byKey(const Key('route-paws')), findsOneWidget);
+    expect(find.textContaining('za gorąco dla łap psa'), findsOneWidget);
+  });
+
+  testWidgets('no paw warning without a dog', (tester) async {
+    await pump(
+      tester,
+      extra: [
+        forecastProvider.overrideWith((ref) => DemoWeather.forecast(_now)),
+      ],
+    );
+    expect(find.byKey(const Key('route-paws')), findsNothing);
   });
 
   testWidgets('tapping a card selects it', (tester) async {
