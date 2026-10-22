@@ -22,6 +22,8 @@ abstract final class Routes {
   static const heatCheck = '/heat-check'; // «Wszystko w porządku?»
   static const symptoms = '/symptoms'; // heatstroke symptom check
   static const shop = '/shop'; // «Sklep z nagrodami»
+  static const coolWalk = '/cool-walk'; // «Chłodny spacer»
+  static const dayPlan = '/day-plan'; // «Dzień w upale»
   static const guide = '/guide'; // the onboarding again, from Profil
   static const privacy = '/privacy'; // Polityka prywatności (S03, S16)
   static const debugComponents = '/debug/components'; // APP-06 showcase

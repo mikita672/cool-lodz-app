@@ -251,6 +251,22 @@ class ProfileTabScreen extends ConsumerWidget {
             onTap: () => context.push(Routes.heatGuard),
           ),
           ListTile(
+            key: const Key('settings-cool-walk'),
+            leading: const Icon(Icons.loop_rounded),
+            title: Text(l10n.settingsCoolWalk),
+            subtitle: Text(l10n.settingsCoolWalkBody),
+            trailing: const Icon(Icons.chevron_right_rounded),
+            onTap: () => context.push(Routes.coolWalk),
+          ),
+          ListTile(
+            key: const Key('settings-day-plan'),
+            leading: const Icon(Icons.event_note_rounded),
+            title: Text(l10n.settingsDayPlan),
+            subtitle: Text(l10n.settingsDayPlanBody),
+            trailing: const Icon(Icons.chevron_right_rounded),
+            onTap: () => context.push(Routes.dayPlan),
+          ),
+          ListTile(
             key: const Key('settings-guide'),
             leading: const Icon(Icons.school_rounded),
             title: Text(l10n.settingsGuide),

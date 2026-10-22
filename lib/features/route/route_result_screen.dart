@@ -41,6 +41,7 @@ import 'data/google_maps.dart';
 import 'data/route_history_repository.dart';
 import 'data/route_plan.dart';
 import 'data/route_share.dart';
+import 'data/route_surface.dart';
 import 'route_plan_screen.dart';
 
 /// S07 Wynik trasy: three variants on the map, cards to compare them,
@@ -419,6 +420,7 @@ class _Result extends ConsumerWidget {
         ? ref.watch(asphaltAtProvider(departure ?? request.datetime)).value
         : null;
 
+    final surface = ref.watch(routeSurfaceProvider(variant)).value;
     final all = [for (final v in response.variants) ...v.geometry];
     final stops = [
       for (final s in variant.stops)
@@ -550,6 +552,20 @@ class _Result extends ConsumerWidget {
                         text: asphalt >= asphaltDanger
                             ? l10n.routePawWarning(asphalt.round())
                             : l10n.routePawCaution(asphalt.round()),
+                      ),
+                    ],
+                    if (surface != null && surface.notable) ...[
+                      const SizedBox(height: AppSizes.s8),
+                      _Notice(
+                        key: const Key('route-surface'),
+                        icon: Icons.accessible_rounded,
+                        text: [
+                          if (surface.cobblesM >= RouteSurface.minCobblesM)
+                            l10n.routeCobbles(
+                              (surface.cobblesM / 10).round() * 10,
+                            ),
+                          if (surface.steps > 0) l10n.routeSteps(surface.steps),
+                        ].join(' '),
                       ),
                     ],
                   ],

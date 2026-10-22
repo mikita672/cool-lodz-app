@@ -6,6 +6,8 @@ import '../../app/theme.dart';
 import '../../core/api/api_providers.dart';
 import '../../core/api/demo_api_client.dart';
 import '../../l10n/app_localizations.dart';
+import '../../shared/widgets/app_toast.dart';
+import '../game/game_service.dart';
 
 /// S16 «O aplikacji i źródła danych»: version (5 taps reveal the demo
 /// switch), data sources with the OSM attribution, the medical note and
@@ -22,6 +24,33 @@ class AboutScreen extends ConsumerStatefulWidget {
 
 class _AboutScreenState extends ConsumerState<AboutScreen> {
   int _taps = 0;
+
+  bool _filling = false;
+
+  /// Fills the signed-in account with demo walks and points.
+  Future<void> _fill() async {
+    if (_filling) return;
+    final l10n = AppLocalizations.of(context);
+    setState(() => _filling = true);
+    try {
+      final award = await ref.read(gameServiceProvider).seedDemo();
+      if (!mounted) return;
+      showAppToast(
+        context,
+        award == null
+            ? l10n.aboutDemoFilledAlready
+            : l10n.aboutDemoFilled(award.points),
+        kind: ToastKind.success,
+      );
+    } catch (e) {
+      debugPrint('Demo fill: $e');
+      if (mounted) {
+        showAppToast(context, l10n.settingsSaveError, kind: ToastKind.error);
+      }
+    } finally {
+      if (mounted) setState(() => _filling = false);
+    }
+  }
 
   void _tapVersion() {
     if (_taps >= AboutScreen.demoTaps) return;
@@ -138,6 +167,14 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
               subtitle: Text(l10n.aboutDemoModeBody),
               value: demo,
               onChanged: (v) => ref.read(demoModeProvider.notifier).set(v),
+            ),
+            ListTile(
+              key: const Key('about-demo-fill'),
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.auto_awesome_rounded),
+              title: Text(l10n.aboutDemoFill),
+              subtitle: Text(l10n.aboutDemoFillBody),
+              onTap: _fill,
             ),
             const SizedBox(height: AppSizes.s8),
             Text(l10n.aboutDemoAlert, style: theme.textTheme.titleSmall),

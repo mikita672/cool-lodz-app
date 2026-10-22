@@ -1,3 +1,5 @@
+import 'package:latlong2/latlong.dart';
+
 import '../../models/models.dart';
 import '../api_client.dart';
 import '../demo_api_client.dart';
@@ -75,6 +77,13 @@ class LiveApiClient implements ApiClient {
       rethrow;
     }
   }();
+
+  /// «Chłodny spacer»: loops of about [minutes] from [from].
+  Future<RouteResponse> loop(
+    LatLng from, {
+    required int minutes,
+    required DateTime departure,
+  }) => routes.loop(from, minutes: minutes, departure: departure);
 
   @override
   Future<RouteResponse> getRoutes(RouteRequest request) =>

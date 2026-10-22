@@ -191,6 +191,113 @@ class LiveRouteEngine {
     );
   }
 
+  /// «Chłodny spacer»: walking speed for the length of a loop (4.5 km/h).
+  static const loopSpeed = 1.25;
+  static const maxLoops = 3;
+
+  /// Loops of about [minutes] from [from] and back, through parks where
+  /// they lie on the way, least sun at [departure] first (the first is
+  /// `shaded`, the rest `alternative`).
+  Future<RouteResponse> loop(
+    LatLng from, {
+    required int minutes,
+    required DateTime departure,
+  }) async {
+    final target = minutes * 60 * loopSpeed;
+    final forecastFuture = _forecast();
+    final model = await shadeModel();
+    final results = await Future.wait([
+      for (final vias in loopVias(from, target, parks: model.parkCentres))
+        osrm
+            .route([from, ...vias, from])
+            .then<List<OsrmRoute>>(
+              (r) => r.take(1).toList(),
+              onError: (Object _) => const <OsrmRoute>[],
+            ),
+    ]);
+    final forecast = await forecastFuture;
+    double strength(DateTime t) => sunStrength(forecast, t);
+    final candidates = <_Candidate>[];
+    for (final r in results.expand((l) => l)) {
+      if (r.points.length < 2) continue;
+      final shade = model.analyse(r.points);
+      final distance = shade.length;
+      if (distance < target * 0.6 || distance > target * 1.6) continue;
+      final scale = r.distanceM > 0 ? distance / r.distanceM : 1.0;
+      final c = _Candidate(
+        r.points,
+        shade,
+        distance,
+        Duration(seconds: (r.durationS * scale).round()),
+      );
+      if (candidates.any((o) => o.sameAs(c))) continue;
+      c.sun = shade.sunShare(departure, c.duration, strength: strength);
+      candidates.add(c);
+    }
+    if (candidates.isEmpty) {
+      throw const ApiException(ApiErrorKind.notFound, 'route_not_found');
+    }
+    double score(_Candidate c) => c.sun + 0.6 * (c.distance / target - 1).abs();
+    candidates.sort((a, b) => score(a).compareTo(score(b)));
+    final best = candidates.first;
+    final stopPlaces = await places();
+    return RouteResponse(
+      coverage:
+          candidates.every(
+            (c) => c.points.every(
+              (p) => ShadeModel.dataBounds.contains(p.latitude, p.longitude),
+            ),
+          )
+          ? RouteCoverage.full
+          : RouteCoverage.approximate,
+      variants: [
+        for (final (i, c) in candidates.take(maxLoops).indexed)
+          _variant(
+            i == 0 ? RouteVariantType.shaded : RouteVariantType.alternative,
+            c,
+            best,
+            departure,
+            stopPlaces,
+            strength,
+          ),
+      ],
+    );
+  }
+
+  /// Via points for loops of about [length] metres: two corners of a
+  /// triangle in six directions; a corner moves to a park centre within
+  /// a third of the side.
+  static List<List<LatLng>> loopVias(
+    LatLng from,
+    double length, {
+    List<LatLng> parks = const [],
+  }) {
+    // Streets add ~10 % to the straight sides.
+    final side = length / 3.3;
+    final k = math.cos(from.latitude * math.pi / 180);
+    LatLng at(double bearingDeg) {
+      final b = bearingDeg * math.pi / 180;
+      final p = LatLng(
+        from.latitude + side * math.cos(b) / 111195,
+        from.longitude + side * math.sin(b) / (111195 * k),
+      );
+      LatLng? park;
+      var best = side / 3;
+      for (final c in parks) {
+        final d = distanceMeters(p, c);
+        if (d < best) {
+          best = d;
+          park = c;
+        }
+      }
+      return park ?? p;
+    }
+
+    return [
+      for (var b = 0.0; b < 360; b += 60) [at(b), at(b + 60)],
+    ];
+  }
+
   Future<WeatherForecast?> _forecast() async {
     final source = weather;
     if (source == null) return null;

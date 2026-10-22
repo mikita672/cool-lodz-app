@@ -350,6 +350,23 @@ Ambasador (referral code) and Wspólny spacer are kolejne kroki.
 - «Wyzwanie tygodnia» on S10: one goal per ISO week in rotation — 3 shaded routes, 2 quest places, 5 km, 2 walks before 10:00 or from 19:00, 2 routes past a water point — counted from `users/{uid}/routes` and the scan entries. Completing it pays +50 once (`pointsLog` type `challenge`, `refId` = the week). `config/game.challenge` (a kind name) picks one for a demo; demo mode needs 1.
 - «Twój wpływ» on S12: walks, distance, minutes in shade, sun avoided compared with the shortest walk at the same time, water points on the way, quest places and CO₂ a car would have emitted (0.17 kg/km). Routes store `duration_s`, `shortestSunShare` and `waterStops` for it.
 
+### Heat safety, data and community (added 22.10, second batch)
+
+- **«Czuję się dobrze»** (Alarm upałowy screen, off by default): on a hot day (feels-like ≥ 30 °C from the 7:00 forecast, or an IMGW heat warning) the phone asks at the chosen hour (7–12); with no tap by the deadline (1–4 h later) the trusted contacts get an SMS from the user's SIM. The app also asks in a dialog when opened.
+- **IMGW warnings without a server** (on by default): the phone checks `warningsmeteo` every 3 hours (AlarmManager, inexact) and notifies a new heat warning for Łódź (TERYT 1061); a tap opens S14.
+- **Morning message at 7:00** (on by default, hot days only): the highest feels-like temperature, «wyjdź przed X lub po Y» (first and last hour ≥ 26 °C) and the cool place nearest to home (when home is set).
+- **Pollen and air** in the heat risk sheet: the European AQI (today's worst) and the highest birch, alder, grass and ragweed pollen (Open-Meteo air quality, CAMS), with advice for allergy sufferers when the pollen is high or the AQI ≥ 60.
+- **«Przeczytaj na głos»**: the phone's Polish voice reads S14, the heat risk sheet, the symptom check result and the day plan.
+- **«Nawierzchnia»** map mode: sett, cobbles («kocie łby»), paving stones and unpaved ways, steps from zoom 16 (green with a ramp); S07 warns when a route has ≥ 30 m of sett/cobbles or steps without a ramp.
+- **«Chłodny spacer»** (Profil, heat risk sheet, day plan): loops of 15/30/45/60 minutes from the user's position through parks, least sun now first; «Prowadź» opens Google Maps.
+- **«Wyspy ciepła»** fill layer: a 200 m grid, hot where roofs are dense and trees few, cool islands in parks (an estimate from OSM).
+- **Fountains and splash pads** on the «Woda» layer.
+- **«Dzień w upale»**: morning walk, indoors through the hot hours (museums, galleries, libraries, malls open the whole time), water in the afternoon, the «Nocą» map in the evening.
+- **«Społeczność»** layer: «Posadź tu drzewo» and «Kranówka tu» points at the map centre, one vote per user («Popieram» / «Potwierdzam»), GeoJSON export through the share sheet (no user ids). Firestore `crowdPoints/{id}` + `votes/{uid}`.
+- **Home-screen widget** «Cool Łódź: upał dziś»: today's level and the hours to stay in, refreshed by the app and the 7:00 job.
+- **Demo account**: «Wypełnij konto demo» in the hidden demo settings adds 12 shaded walks, the 500-point password, 4 approved reports and the badges they earn (once per account).
+- **Fall detection** (Alarm upałowy, on by default): while hot, free fall + impact + 10 s lying still asks «Wszystko w porządku?» at once.
+
 ## Data
 
 The app gets geodata (routes, places, layers, alerts) from the module D API, and the account, game and leaderboard from Firestore. The app does not use the `/v1/quests` and `/v1/leaderboard` endpoints from the brief: the game lives in Firestore.

@@ -81,31 +81,30 @@ const crowdNoteMax = 120;
 
 /// The points as GeoJSON for the city (Zarząd Zieleni Miejskiej, Wody
 /// Miejskie): «where people want trees» / «where the tap water is».
-String crowdGeoJson(Iterable<CrowdPoint> points) => const JsonEncoder.withIndent(
-  ' ',
-).convert({
-  'type': 'FeatureCollection',
-  'features': [
-    for (final p in points)
-      {
-        'type': 'Feature',
-        'geometry': {
-          'type': 'Point',
-          'coordinates': [
-            double.parse(p.point.longitude.toStringAsFixed(6)),
-            double.parse(p.point.latitude.toStringAsFixed(6)),
-          ],
-        },
-        'properties': {
-          'kind': p.kind.name,
-          'votes': p.votes,
-          if (p.note.isNotEmpty) 'note': p.note,
-          if (p.createdAt case final at?)
-            'created': at.toUtc().toIso8601String(),
-        },
-      },
-  ],
-});
+String crowdGeoJson(Iterable<CrowdPoint> points) =>
+    const JsonEncoder.withIndent(' ').convert({
+      'type': 'FeatureCollection',
+      'features': [
+        for (final p in points)
+          {
+            'type': 'Feature',
+            'geometry': {
+              'type': 'Point',
+              'coordinates': [
+                double.parse(p.point.longitude.toStringAsFixed(6)),
+                double.parse(p.point.latitude.toStringAsFixed(6)),
+              ],
+            },
+            'properties': {
+              'kind': p.kind.name,
+              'votes': p.votes,
+              if (p.note.isNotEmpty) 'note': p.note,
+              if (p.createdAt case final at?)
+                'created': at.toUtc().toIso8601String(),
+            },
+          },
+      ],
+    });
 
 /// The user already voted for this point.
 class AlreadyVoted implements Exception {

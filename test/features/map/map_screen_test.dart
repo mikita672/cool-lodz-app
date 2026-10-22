@@ -7,12 +7,15 @@ import 'package:cool_lodz/core/api/live/weather.dart';
 import 'package:cool_lodz/core/clock.dart';
 import 'package:cool_lodz/core/location/location_service.dart';
 import 'package:cool_lodz/core/models/models.dart';
+import 'package:cool_lodz/features/community/community_sheet.dart';
+import 'package:cool_lodz/features/community/data/crowd_points.dart';
 import 'package:cool_lodz/features/cool_places/place_sheet.dart';
 import 'package:cool_lodz/features/heat_risk/data/heat_risk_providers.dart';
 import 'package:cool_lodz/features/map/data/map_layers_style.dart';
 import 'package:cool_lodz/features/map/data/map_providers.dart';
 import 'package:cool_lodz/features/map/map_screen.dart';
 import 'package:cool_lodz/l10n/app_localizations.dart';
+import 'package:cool_lodz/shared/share.dart';
 import 'package:cool_lodz/shared/widgets/heat_banner.dart';
 import 'package:cool_lodz/shared/widgets/map_pin.dart';
 import 'package:flutter/material.dart';
@@ -458,6 +461,18 @@ void main() {
     expect(find.byKey(const Key('heat-risk-paws')), findsOneWidget);
     expect(find.textContaining('Za gorąco dla łap psa'), findsOneWidget);
     expect(find.text('Źle się czujesz? Sprawdź objawy'), findsOneWidget);
+    // Demo air: grass in bloom, ozone.
+    expect(
+      find.text('Pyłki: trawy – wysokie, ambrozja – niskie'),
+      findsOneWidget,
+    );
+    expect(
+      find.text('Powietrze dziś: umiarkowane (europejski indeks 58)'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('Alergikom i astmatykom'), findsOneWidget);
+    expect(find.byKey(const Key('read-aloud')), findsOneWidget);
+    expect(find.byKey(const Key('heat-risk-day-plan')), findsOneWidget);
   });
 
   testWidgets('heat risk without a forecast follows the warning', (
@@ -549,4 +564,125 @@ void main() {
     expect(polygonsFor(null, MapLayer.shade), isEmpty);
     expect(PlaceType.values, hasLength(3));
   });
+
+  testWidgets('«Wyspy ciepła», «Nawierzchnia» with steps, fountains', (
+    tester,
+  ) async {
+    final container = await pump(tester, size: const Size(400, 1000));
+    Future<void> tap(MapLayer l) async {
+      final chip = find.byKey(Key('map-layer-${l.name}'));
+      await tester.ensureVisible(chip);
+      await tester.pumpAndSettle();
+      await tester.tap(chip);
+      await tester.pumpAndSettle();
+    }
+
+    await tap(MapLayer.heat);
+    expect(
+      polygons(tester).map((p) => p.color),
+      containsAll([heatIslandColor(3), heatIslandColor(0)]),
+    );
+    expect(find.text('Najgoręcej: dachy i bruk'), findsOneWidget);
+
+    await tap(MapLayer.surface);
+    final lines = tester.widget<PolylineLayer>(find.byType(PolylineLayer));
+    expect(lines.polylines.map((p) => p.color), contains(surfaceColor(3)));
+    expect(find.text('Kocie łby'), findsOneWidget);
+    expect(find.text('Przybliż, aby zobaczyć schody'), findsOneWidget);
+    MapController.of(
+      tester.element(find.byType(MarkerLayer).first),
+    ).move(const LatLng(51.7595, 19.4575), 17);
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.pumpAndSettle();
+    expect(find.byIcon(Icons.stairs_rounded), findsWidgets);
+
+    await tap(MapLayer.water);
+    expect(container.read(mapLayersProvider), contains(MapLayer.water));
+    final fountains = [
+      for (final l in tester.widgetList<MarkerLayer>(find.byType(MarkerLayer)))
+        for (final m in l.markers)
+          if (m.key case ValueKey<String>(
+            :final value,
+          ) when value.startsWith('fountain-'))
+            m,
+    ];
+    expect(fountains, isNotEmpty);
+  });
+
+  testWidgets('«Społeczność»: add at the map centre, vote, export', (
+    tester,
+  ) async {
+    final crowd = _FakeCrowd([
+      const CrowdPoint(
+        id: 'p1',
+        kind: CrowdKind.tap,
+        point: lodzCenter,
+        uid: 'other',
+        votes: 2,
+      ),
+    ]);
+    final shared = <String>[];
+    await pump(
+      tester,
+      size: const Size(400, 1000),
+      extra: [
+        crowdRepositoryProvider.overrideWithValue(crowd),
+        shareTextProvider.overrideWithValue((text, {title}) async {
+          shared.add(text);
+          return true;
+        }),
+      ],
+    );
+    final chip = find.byKey(const Key('map-layer-community'));
+    await tester.ensureVisible(chip);
+    await tester.pumpAndSettle();
+    await tester.tap(chip);
+    await tester.pumpAndSettle();
+    expect(find.byType(CrowdPin), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('map-crowd-add')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('crowd-kind-tree')));
+    await tester.enterText(find.byKey(const Key('crowd-note')), 'Bez cienia');
+    await tester.tap(find.byKey(const Key('crowd-save')));
+    await tester.pumpAndSettle();
+    expect(crowd.added, [(CrowdKind.tree, 'Bez cienia')]);
+
+    // Cool place pins lie on top here: open it as a tap would.
+    tester.widget<CrowdPin>(find.byType(CrowdPin).first).onTap();
+    await tester.pumpAndSettle();
+    expect(find.text('Potwierdziły 2 osoby.'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('crowd-vote')));
+    await tester.pumpAndSettle();
+    expect(crowd.votes, ['p1']);
+
+    await tester.tap(find.byKey(const Key('map-crowd-export')));
+    await tester.pumpAndSettle();
+    expect(shared.single, contains('FeatureCollection'));
+  });
+}
+
+class _FakeCrowd implements CrowdRepository {
+  _FakeCrowd(this.points);
+
+  final List<CrowdPoint> points;
+  final added = <(CrowdKind, String)>[];
+  final votes = <String>[];
+
+  @override
+  Stream<List<CrowdPoint>> watch({int limit = 500}) => Stream.value(points);
+
+  @override
+  Future<void> add(
+    String uid,
+    CrowdKind kind,
+    LatLng point, {
+    String note = '',
+  }) async => added.add((kind, note));
+
+  @override
+  Future<void> vote(String uid, CrowdPoint point) async => votes.add(point.id);
+
+  @override
+  Future<void> remove(CrowdPoint point) async {}
 }

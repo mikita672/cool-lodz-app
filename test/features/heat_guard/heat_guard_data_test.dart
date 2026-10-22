@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cool_lodz/core/heat/heat_risk.dart';
 import 'package:cool_lodz/core/models/models.dart';
 import 'package:cool_lodz/core/storage/preferences.dart';
 import 'package:cool_lodz/features/heat_guard/data/heat_guard_platform.dart';
@@ -10,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' show Locale;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../../helpers/test_app.dart';
@@ -144,5 +146,88 @@ void main() {
     expect((await none.status()).running, isFalse);
     expect(await none.pendingCheck(), isFalse);
     await none.start();
+  });
+
+  test('daily jobs: settings round trip and the native config', () {
+    const settings = HeatGuardSettings(
+      contacts: [TrustedContact(name: 'Ola', phone: '+48601234567')],
+      home: LatLng(51.77, 19.45),
+      checkin: true,
+      checkinHour: 8,
+      deadlineHour: 10,
+      fallDetection: false,
+      morning: false,
+    );
+    expect(HeatGuardSettings.fromJson(settings.toJson()), settings);
+    // Older saved settings: the daily jobs on, the check-in off.
+    final old = HeatGuardSettings.fromJson(const {'enabled': true});
+    expect(old.imgwAuto && old.morning && old.fallDetection, isTrue);
+    expect(old.checkin, isFalse);
+
+    final l10n = lookupAppLocalizations(const Locale('pl'));
+    final json =
+        jsonDecode(
+              heatDailyConfigJson(
+                settings,
+                texts: heatDailyTexts(l10n),
+                name: 'Ania',
+                coolPlace: 'Biblioteka',
+              ),
+            )
+            as Map<String, dynamic>;
+    expect(json['checkin'], isTrue);
+    expect(json['checkinHour'], 8);
+    expect(json['deadlineHour'], 10);
+    expect(json['morning'], isFalse);
+    expect(json['coolPlace'], 'Biblioteka');
+    expect(json['contacts'], [
+      {'name': 'Ola', 'phone': '+48601234567'},
+    ]);
+    final texts = json['texts'] as Map<String, dynamic>;
+    expect(texts['checkinSms'], contains('{name}'));
+    expect(texts['checkinSms'], contains('{deadline}'));
+    expect(texts['morningBody'], contains('{before}'));
+    expect(
+      jsonDecode(
+        heatGuardConfigJson(settings, texts: const {}),
+      )['fallDetection'],
+      isFalse,
+    );
+  });
+
+  test('the nearest cool place to home', () {
+    Place p(String id, double lat) =>
+        Place(id: id, type: PlaceType.cool, name: id, lat: lat, lon: 19.45);
+    expect(
+      nearestCoolPlace([
+        p('far', 51.80),
+        p('near', 51.771),
+      ], const LatLng(51.77, 19.45))?.id,
+      'near',
+    );
+    expect(nearestCoolPlace(const [], const LatLng(51.77, 19.45)), isNull);
+  });
+
+  test('widget lines: level, peak and the hours to stay in', () async {
+    await initializeDateFormatting('pl');
+    final l10n = lookupAppLocalizations(const Locale('pl'));
+    final (level, title, line) = heatWidgetLines(
+      HeatRisk(
+        level: HeatRiskLevel.high,
+        peakFeelsLike: 34.4,
+        riskFrom: DateTime(2026, 7, 15, 12),
+        riskTo: DateTime(2026, 7, 15, 18),
+      ),
+      l10n,
+    );
+    expect(level, 2);
+    expect(title, contains('34'));
+    expect(line, contains('12:00'));
+    expect(line, contains('18:00'));
+    expect(heatWidgetLines(null, l10n).$1, 0);
+    expect(
+      heatWidgetLines(const HeatRisk(level: HeatRiskLevel.low), l10n).$3,
+      l10n.widgetNoHeat,
+    );
   });
 }

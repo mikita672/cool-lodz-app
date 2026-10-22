@@ -4619,6 +4619,474 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'Alergikom i astmatykom: weź leki ze sobą, po spacerze umyj twarz i przepłucz oczy, wysiłek odłóż na wieczór.'**
   String get heatRiskAdviceAllergy;
+
+  /// No description provided for @mapLayerHeat.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wyspy ciepła'**
+  String get mapLayerHeat;
+
+  /// No description provided for @mapLayerCommunity.
+  ///
+  /// In pl, this message translates to:
+  /// **'Społeczność'**
+  String get mapLayerCommunity;
+
+  /// No description provided for @mapLayerSurface.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nawierzchnia'**
+  String get mapLayerSurface;
+
+  /// No description provided for @mapLegendHeatHot.
+  ///
+  /// In pl, this message translates to:
+  /// **'Najgoręcej: dachy i bruk'**
+  String get mapLegendHeatHot;
+
+  /// No description provided for @mapLegendHeatWarm.
+  ///
+  /// In pl, this message translates to:
+  /// **'Cieplej niż średnio'**
+  String get mapLegendHeatWarm;
+
+  /// No description provided for @mapLegendHeatCool.
+  ///
+  /// In pl, this message translates to:
+  /// **'Chłodniej: parki i drzewa'**
+  String get mapLegendHeatCool;
+
+  /// No description provided for @mapHeatNote.
+  ///
+  /// In pl, this message translates to:
+  /// **'Szacunek z budynków, drzew i parków (OSM), nie pomiar z satelity.'**
+  String get mapHeatNote;
+
+  /// No description provided for @mapLegendCobbles.
+  ///
+  /// In pl, this message translates to:
+  /// **'Kocie łby'**
+  String get mapLegendCobbles;
+
+  /// No description provided for @mapLegendSett.
+  ///
+  /// In pl, this message translates to:
+  /// **'Kostka granitowa'**
+  String get mapLegendSett;
+
+  /// No description provided for @mapLegendPaving.
+  ///
+  /// In pl, this message translates to:
+  /// **'Płyty, kostka betonowa'**
+  String get mapLegendPaving;
+
+  /// No description provided for @mapLegendUnpaved.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nieutwardzona'**
+  String get mapLegendUnpaved;
+
+  /// No description provided for @mapLegendSteps.
+  ///
+  /// In pl, this message translates to:
+  /// **'Schody'**
+  String get mapLegendSteps;
+
+  /// No description provided for @mapSurfaceNote.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dla wózków, wózków inwalidzkich i seniorów. Gładki asfalt nie jest zaznaczony.'**
+  String get mapSurfaceNote;
+
+  /// No description provided for @mapStepsZoomIn.
+  ///
+  /// In pl, this message translates to:
+  /// **'Przybliż, aby zobaczyć schody'**
+  String get mapStepsZoomIn;
+
+  /// No description provided for @mapStepsRamp.
+  ///
+  /// In pl, this message translates to:
+  /// **'Schody z podjazdem'**
+  String get mapStepsRamp;
+
+  /// No description provided for @mapStepsNoRamp.
+  ///
+  /// In pl, this message translates to:
+  /// **'Schody bez znanego podjazdu'**
+  String get mapStepsNoRamp;
+
+  /// No description provided for @mapFountain.
+  ///
+  /// In pl, this message translates to:
+  /// **'Fontanna: schłodź dłonie i kark (wody nie pij)'**
+  String get mapFountain;
+
+  /// No description provided for @mapSplashPad.
+  ///
+  /// In pl, this message translates to:
+  /// **'Kurtyna wodna / plac wodny: dzieci mogą się schłodzić'**
+  String get mapSplashPad;
+
+  /// No description provided for @mapLegendCrowdTree.
+  ///
+  /// In pl, this message translates to:
+  /// **'Posadź tu drzewo'**
+  String get mapLegendCrowdTree;
+
+  /// No description provided for @mapLegendCrowdTap.
+  ///
+  /// In pl, this message translates to:
+  /// **'Kranówka za darmo'**
+  String get mapLegendCrowdTap;
+
+  /// No description provided for @crowdTree.
+  ///
+  /// In pl, this message translates to:
+  /// **'Posadź tu drzewo'**
+  String get crowdTree;
+
+  /// No description provided for @crowdTap.
+  ///
+  /// In pl, this message translates to:
+  /// **'Kranówka tu'**
+  String get crowdTap;
+
+  /// No description provided for @crowdTreeHint.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ulica bez cienia: zaproponuj drzewo'**
+  String get crowdTreeHint;
+
+  /// No description provided for @crowdTapHint.
+  ///
+  /// In pl, this message translates to:
+  /// **'Tu nalejesz wody z kranu za darmo'**
+  String get crowdTapHint;
+
+  /// No description provided for @crowdAddHere.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dodaj tutaj'**
+  String get crowdAddHere;
+
+  /// No description provided for @crowdAddTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dodaj punkt w środku mapy'**
+  String get crowdAddTitle;
+
+  /// No description provided for @crowdAddHint.
+  ///
+  /// In pl, this message translates to:
+  /// **'Przesuń mapę tak, aby środek wskazywał miejsce.'**
+  String get crowdAddHint;
+
+  /// No description provided for @crowdNote.
+  ///
+  /// In pl, this message translates to:
+  /// **'Opis (opcjonalnie)'**
+  String get crowdNote;
+
+  /// No description provided for @crowdSave.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dodaj'**
+  String get crowdSave;
+
+  /// No description provided for @crowdAdded.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dodano. Dziękujemy!'**
+  String get crowdAdded;
+
+  /// No description provided for @crowdError.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie udało się zapisać. Spróbuj ponownie.'**
+  String get crowdError;
+
+  /// No description provided for @crowdSignIn.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zaloguj się, aby dodawać punkty.'**
+  String get crowdSignIn;
+
+  /// No description provided for @crowdOutside.
+  ///
+  /// In pl, this message translates to:
+  /// **'Punkty można dodawać tylko w Łodzi.'**
+  String get crowdOutside;
+
+  /// No description provided for @crowdVotes.
+  ///
+  /// In pl, this message translates to:
+  /// **'{count, plural, =0{brak głosów} =1{1 głos} few{{count} głosy} many{{count} głosów} other{{count} głosu}}'**
+  String crowdVotes(int count);
+
+  /// No description provided for @crowdTreeVotes.
+  ///
+  /// In pl, this message translates to:
+  /// **'{count, plural, =0{Nikt jeszcze nie poparł.} =1{Popiera 1 osoba.} few{Popierają {count} osoby.} many{Popiera {count} osób.} other{Popiera {count} osoby.}}'**
+  String crowdTreeVotes(int count);
+
+  /// No description provided for @crowdTapVotes.
+  ///
+  /// In pl, this message translates to:
+  /// **'{count, plural, =0{Nikt jeszcze nie potwierdził.} =1{Potwierdziła 1 osoba.} few{Potwierdziły {count} osoby.} many{Potwierdziło {count} osób.} other{Potwierdziło {count} osoby.}}'**
+  String crowdTapVotes(int count);
+
+  /// No description provided for @crowdSupport.
+  ///
+  /// In pl, this message translates to:
+  /// **'Popieram'**
+  String get crowdSupport;
+
+  /// No description provided for @crowdConfirm.
+  ///
+  /// In pl, this message translates to:
+  /// **'Potwierdzam: jest woda'**
+  String get crowdConfirm;
+
+  /// No description provided for @crowdVoted.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dziękujemy za głos!'**
+  String get crowdVoted;
+
+  /// No description provided for @crowdAlreadyVoted.
+  ///
+  /// In pl, this message translates to:
+  /// **'Twój głos już jest policzony.'**
+  String get crowdAlreadyVoted;
+
+  /// No description provided for @crowdRemove.
+  ///
+  /// In pl, this message translates to:
+  /// **'Usuń mój punkt'**
+  String get crowdRemove;
+
+  /// No description provided for @crowdExport.
+  ///
+  /// In pl, this message translates to:
+  /// **'Eksportuj (GeoJSON)'**
+  String get crowdExport;
+
+  /// No description provided for @crowdExportTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Cool Łódź: punkty społeczności (GeoJSON)'**
+  String get crowdExportTitle;
+
+  /// No description provided for @crowdExportEmpty.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie ma jeszcze punktów do eksportu.'**
+  String get crowdExportEmpty;
+
+  /// No description provided for @crowdCopied.
+  ///
+  /// In pl, this message translates to:
+  /// **'Skopiowano GeoJSON do schowka.'**
+  String get crowdCopied;
+
+  /// No description provided for @routeCobbles.
+  ///
+  /// In pl, this message translates to:
+  /// **'Na trasie ok. {metres} m kocich łbów lub kostki granitowej: trudno z wózkiem i balkonikiem.'**
+  String routeCobbles(int metres);
+
+  /// No description provided for @routeSteps.
+  ///
+  /// In pl, this message translates to:
+  /// **'{count, plural, =1{1 schody bez znanego podjazdu.} few{{count} schody bez znanego podjazdu.} many{{count} schodów bez znanego podjazdu.} other{{count} schodów bez znanego podjazdu.}}'**
+  String routeSteps(int count);
+
+  /// No description provided for @coolWalkTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Chłodny spacer'**
+  String get coolWalkTitle;
+
+  /// No description provided for @coolWalkIntro.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pętla z miejsca, w którym jesteś, i z powrotem: przez parki i cień, z jak najmniejszą ilością słońca teraz.'**
+  String get coolWalkIntro;
+
+  /// No description provided for @coolWalkMinutes.
+  ///
+  /// In pl, this message translates to:
+  /// **'{minutes} min'**
+  String coolWalkMinutes(int minutes);
+
+  /// No description provided for @coolWalkFind.
+  ///
+  /// In pl, this message translates to:
+  /// **'Znajdź spacer'**
+  String get coolWalkFind;
+
+  /// No description provided for @coolWalkError.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie udało się wyznaczyć spaceru. Sprawdź internet i spróbuj ponownie.'**
+  String get coolWalkError;
+
+  /// No description provided for @coolWalkFromCentre.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie znamy Twojej lokalizacji: pętla zaczyna się w centrum Łodzi.'**
+  String get coolWalkFromCentre;
+
+  /// No description provided for @coolWalkBest.
+  ///
+  /// In pl, this message translates to:
+  /// **'Najchłodniejsza pętla'**
+  String get coolWalkBest;
+
+  /// No description provided for @coolWalkOther.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pętla {number}'**
+  String coolWalkOther(int number);
+
+  /// No description provided for @coolWalkStats.
+  ///
+  /// In pl, this message translates to:
+  /// **'{minutes} min · {km} km · {shade}% w cieniu'**
+  String coolWalkStats(int minutes, String km, int shade);
+
+  /// No description provided for @dayPlanTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dzień w upale'**
+  String get dayPlanTitle;
+
+  /// No description provided for @dayPlanIntro.
+  ///
+  /// In pl, this message translates to:
+  /// **'Plan dnia w Łodzi: spacer, kiedy jest chłodno, w środku, kiedy grzeje, i wieczór na mieście.'**
+  String get dayPlanIntro;
+
+  /// No description provided for @dayPlanIntroHot.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dziś ryzyko upałowe: {level}, odczuwalna do {max}°C. Plan omija najgorętsze godziny.'**
+  String dayPlanIntroHot(String level, int max);
+
+  /// No description provided for @dayPlanMorning.
+  ///
+  /// In pl, this message translates to:
+  /// **'Rano: spacer w cieniu'**
+  String get dayPlanMorning;
+
+  /// No description provided for @dayPlanMorningBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Najprzyjemniejsza pora na zwiedzanie na zewnątrz. Weź wodę i nakrycie głowy.'**
+  String get dayPlanMorningBody;
+
+  /// No description provided for @dayPlanMidday.
+  ///
+  /// In pl, this message translates to:
+  /// **'W najgorętszych godzinach: do środka'**
+  String get dayPlanMidday;
+
+  /// No description provided for @dayPlanMiddayBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Muzea, galerie i biblioteki z chłodem, otwarte przez ten czas:'**
+  String get dayPlanMiddayBody;
+
+  /// No description provided for @dayPlanAfternoon.
+  ///
+  /// In pl, this message translates to:
+  /// **'Po południu: woda'**
+  String get dayPlanAfternoon;
+
+  /// No description provided for @dayPlanAfternoonBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Fontanny, kurtyny wodne i punkty z wodą pitną. Schłodź dłonie, kark i nadgarstki.'**
+  String get dayPlanAfternoonBody;
+
+  /// No description provided for @dayPlanEvening.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wieczorem: miasto nocą'**
+  String get dayPlanEvening;
+
+  /// No description provided for @dayPlanEveningBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Kiedy upał słabnie: Piotrkowska, Off Piotrkowska i Manufaktura. Mapa pokaże, gdzie jest najwięcej ludzi.'**
+  String get dayPlanEveningBody;
+
+  /// No description provided for @dayPlanShowWater.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pokaż wodę na mapie'**
+  String get dayPlanShowWater;
+
+  /// No description provided for @dayPlanShowNight.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pokaż mapę «Nocą»'**
+  String get dayPlanShowNight;
+
+  /// No description provided for @heatRiskDayPlan.
+  ///
+  /// In pl, this message translates to:
+  /// **'Plan dnia w upale'**
+  String get heatRiskDayPlan;
+
+  /// No description provided for @settingsCoolWalk.
+  ///
+  /// In pl, this message translates to:
+  /// **'Chłodny spacer'**
+  String get settingsCoolWalk;
+
+  /// No description provided for @settingsCoolWalkBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pętla na 15–60 minut przez cień i parki'**
+  String get settingsCoolWalkBody;
+
+  /// No description provided for @settingsDayPlan.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dzień w upale'**
+  String get settingsDayPlan;
+
+  /// No description provided for @settingsDayPlanBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Plan dnia wokół najgorętszych godzin'**
+  String get settingsDayPlanBody;
+
+  /// No description provided for @aboutDemoFill.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wypełnij konto demo'**
+  String get aboutDemoFill;
+
+  /// No description provided for @aboutDemoFillBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'12 spacerów w cieniu z ostatnich dni, punkty, odznaki i postęp wyzwania – do prezentacji.'**
+  String get aboutDemoFillBody;
+
+  /// No description provided for @aboutDemoFilled.
+  ///
+  /// In pl, this message translates to:
+  /// **'Gotowe: +{points} pkt, spacery i odznaki na koncie.'**
+  String aboutDemoFilled(int points);
+
+  /// No description provided for @aboutDemoFilledAlready.
+  ///
+  /// In pl, this message translates to:
+  /// **'To konto jest już wypełnione.'**
+  String get aboutDemoFilledAlready;
 }
 
 class _AppLocalizationsDelegate

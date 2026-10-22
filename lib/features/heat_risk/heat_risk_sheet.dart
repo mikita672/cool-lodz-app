@@ -331,6 +331,42 @@ class HeatRiskSheet extends ConsumerWidget {
               ].join('. '),
             ),
             const SizedBox(height: AppSizes.s8),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    key: const Key('heat-risk-day-plan'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      context.push(Routes.dayPlan);
+                    },
+                    icon: const Icon(Icons.event_note_rounded),
+                    label: Text(
+                      l10n.heatRiskDayPlan,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: AppSizes.s8),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    key: const Key('heat-risk-cool-walk'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      context.push(Routes.coolWalk);
+                    },
+                    icon: const Icon(Icons.loop_rounded),
+                    label: Text(
+                      l10n.coolWalkTitle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSizes.s8),
             OutlinedButton.icon(
               key: const Key('heat-risk-symptoms'),
               onPressed: () {

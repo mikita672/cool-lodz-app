@@ -531,4 +531,24 @@ void main() {
       expect(stops[1].type, StopType.water);
     });
   });
+
+  test('loop vias: six triangles of about a third of the length', () {
+    const from = LatLng(51.77, 19.45);
+    final loops = LiveRouteEngine.loopVias(from, 3300);
+    expect(loops, hasLength(6));
+    for (final vias in loops) {
+      expect(vias, hasLength(2));
+      for (final v in vias) {
+        expect(distanceMeters(from, v), closeTo(1000, 30));
+      }
+    }
+  });
+
+  test('loop vias move to a park on the way', () {
+    const from = LatLng(51.77, 19.45);
+    // 1 km north, 100 m off.
+    const park = LatLng(51.779, 19.4515);
+    final loops = LiveRouteEngine.loopVias(from, 3300, parks: [park]);
+    expect(loops.first.first, park);
+  });
 }

@@ -50,6 +50,17 @@ A list for the competition documentation (MD hands it to Mikita Kutsenka). The d
 - Android 14+ shows the full-screen alarm only after the user allows it in the system settings; otherwise it is a loud notification.
 - Not a medical device and not an emergency service: it does not call 112.
 
+**Daily heat jobs, data and community (22.10)**
+- The IMGW check, the 7:00 message and the check-in use inexact alarms: Android may run them up to ~15 minutes late, later in deep battery saving. They stop after the app is force-stopped and come back after a reboot or opening the app.
+- The check-in SMS goes once a day and only on hot days; without a SIM or credit the user sees a notification instead.
+- Fall detection needs the phone on the body; dropping the phone and leaving it can trigger the question (answer «OK»). It runs only while the alarm watches (hot days).
+- Pollen and AQI are a model forecast (CAMS, ~10 km grid), not measurements.
+- Surfaces, steps and fountains come from OSM in Śródmieście; unmapped cobbles or steps are not warned about. Heat islands are an estimate from roofs, trees and parks, not satellite land-surface temperature.
+- «Chłodny spacer» needs the internet (OSRM); outside Śródmieście the shade is an estimate.
+- Community points: anyone signed in can add them (no moderation yet); votes stay counted after the voter deletes the account (only their own points are removed).
+- The widget refreshes when the app runs or at 7:00, not live.
+- «Wypełnij konto demo» writes real points to the account (for presentations only).
+
 **Platform and UI**
 - Android 7.0+ only (minSdk 24), Polish only, light theme only, portrait orientation only.
 - Turn-by-turn navigation is not done in the app: «Prowadź» opens Google Maps (walking, with waypoints of the selected line).
