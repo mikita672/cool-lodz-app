@@ -9,18 +9,18 @@ void main() {
   final route = [const LatLng(lat, 19.45), const LatLng(lat, 19.4558)];
 
   test('cobbles along the route and steps beside it count', () {
-    final modes = StreetModes(
+    const modes = StreetModes(
       surfaces: [
         // 100 m of cobbles on the route, 100 m of paving further on.
-        const SurfaceLine([LatLng(lat, 19.451), LatLng(lat, 19.45245)], 3),
-        const SurfaceLine([LatLng(lat, 19.453), LatLng(lat, 19.45445)], 1),
+        SurfaceLine([LatLng(lat, 19.451), LatLng(lat, 19.45245)], 3),
+        SurfaceLine([LatLng(lat, 19.453), LatLng(lat, 19.45445)], 1),
         // Cobbles 200 m north: not on the way.
-        const SurfaceLine([
+        SurfaceLine([
           LatLng(lat + 0.0018, 19.451),
           LatLng(lat + 0.0018, 19.453),
         ], 3),
       ],
-      steps: const [
+      steps: [
         Steps(LatLng(lat + 0.00005, 19.452), ramp: false),
         Steps(LatLng(lat - 0.00005, 19.454), ramp: true),
         Steps(LatLng(lat + 0.001, 19.452), ramp: false),
