@@ -28,6 +28,8 @@ import '../../shared/widgets/offline_banner.dart';
 import '../../shared/widgets/search_field.dart';
 import '../../shared/widgets/time_wheel_sheet.dart';
 import '../../shared/widgets/weather_icon.dart';
+import '../community/community_sheet.dart';
+import '../community/data/crowd_points.dart';
 import '../cool_places/data/places_providers.dart';
 import '../cool_places/place_format.dart';
 import '../cool_places/place_sheet.dart';
@@ -156,6 +158,20 @@ class _MapScreenState extends ConsumerState<MapScreen> {
 
   List<Polyline> _lines(MapLayer mode, StreetModes modes) {
     if (_linesMode == mode && _linesCache.isNotEmpty) return _linesCache;
+    if (mode == MapLayer.surface) {
+      final lines = [...modes.surfaces]
+        ..sort((a, b) => a.surface.compareTo(b.surface));
+      _linesMode = mode;
+      _linesCache = [
+        for (final l in lines)
+          Polyline(
+            points: l.points,
+            color: surfaceColor(l.surface),
+            strokeWidth: surfaceWidth(l.surface),
+          ),
+      ];
+      return _linesCache;
+    }
     final night = mode == MapLayer.night;
     final streets = [
       for (final s in modes.streets)
@@ -178,8 +194,14 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     return _linesCache;
   }
 
-  Widget? _fills(List<MapLayer> layers, Map<MapLayer, GeoLayer?> data) {
+  Widget? _fills(
+    List<MapLayer> layers,
+    Map<MapLayer, GeoLayer?> data, {
+    StreetModes? modes,
+  }) {
+    final heat = layers.contains(MapLayer.heat) ? modes : null;
     final key = [
+      if (heat != null) ...[MapLayer.heat, heat],
       for (final l in [MapLayer.green, MapLayer.quiet, MapLayer.shade])
         if (layers.contains(l)) ...[l, data[l]],
     ];
@@ -191,6 +213,17 @@ class _MapScreenState extends ConsumerState<MapScreen> {
         ].every((x) => x);
     if (same) return _fillsLayer;
     final polygons = <Polygon>[
+      if (heat != null)
+        for (final c in heat.heat)
+          Polygon(
+            points: [
+              c.southWest,
+              LatLng(c.southWest.latitude, c.northEast.longitude),
+              c.northEast,
+              LatLng(c.northEast.latitude, c.southWest.longitude),
+            ],
+            color: heatIslandColor(c.level),
+          ),
       for (final l in [MapLayer.green, MapLayer.quiet, MapLayer.shade])
         if (layers.contains(l)) ...polygonsFor(data[l], l),
     ];
@@ -312,7 +345,17 @@ class _MapScreenState extends ConsumerState<MapScreen> {
         ref.watch(placesOfTypeProvider(type)).value ?? const [];
     GeoLayer? layer(LayerKind kind) => ref.watch(layerProvider(kind)).value;
 
-    final fills = _fills(layers, {
+    final lineMode = layers.where((l) => l.isLine).firstOrNull;
+    final needModes =
+        lineMode != null ||
+        layers.contains(MapLayer.toilets) ||
+        layers.contains(MapLayer.heat) ||
+        layers.contains(MapLayer.water);
+    final modes = needModes ? ref.watch(streetModesProvider).value : null;
+    final crowd = layers.contains(MapLayer.community)
+        ? ref.watch(crowdPointsProvider).value ?? const <CrowdPoint>[]
+        : const <CrowdPoint>[];
+    final fills = _fills(layers, modes: modes, {
       MapLayer.green: layers.contains(MapLayer.green)
           ? layer(LayerKind.green)
           : null,
@@ -325,10 +368,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
         ? ref.watch(airStationsProvider).value ?? const <AirStation>[]
         : const <AirStation>[];
 
-    final lineMode = layers.where((l) => l.isLine).firstOrNull;
-    final needModes = lineMode != null || layers.contains(MapLayer.toilets);
-    final modes = needModes ? ref.watch(streetModesProvider).value : null;
     final view = _view;
+    final detail = _zoom >= MapScreen.benchMinZoom && view != null;
     final trees =
         layers.contains(MapLayer.shade) &&
             _zoom >= MapScreen.benchMinZoom &&
@@ -366,8 +407,38 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             height: 40,
             child: _ToiletPin(toilet: t),
           ),
-      if (layers.contains(MapLayer.water))
+      if (layers.contains(MapLayer.water)) ...[
+        for (final (i, f) in (modes?.fountains ?? const <Fountain>[]).indexed)
+          Marker(
+            key: ValueKey('fountain-$i'),
+            point: f.point,
+            width: 40,
+            height: 40,
+            child: _FountainPin(fountain: f),
+          ),
         for (final p in places(PlaceType.water)) pin(p, MapPinType.water),
+      ],
+      if (lineMode == MapLayer.surface && detail)
+        for (final (i, st) in (modes?.steps ?? const <Steps>[]).indexed)
+          if (view.contains(st.point))
+            Marker(
+              key: ValueKey('steps-$i'),
+              point: st.point,
+              width: 28,
+              height: 28,
+              child: _StepsPin(steps: st),
+            ),
+      for (final c in crowd)
+        Marker(
+          key: ValueKey('crowd-${c.id}'),
+          point: c.point,
+          width: 40,
+          height: 40,
+          child: CrowdPin(
+            point: c,
+            onTap: () => showCrowdPointSheet(context, c),
+          ),
+        ),
       // Drawn last: on top. Bigger in heat mode.
       if (layers.contains(MapLayer.cool))
         for (final p in places(PlaceType.cool))
@@ -582,6 +653,21 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                       },
                     ),
                   ],
+                  if (lineMode == MapLayer.surface && !detail) ...[
+                    const SizedBox(height: AppSizes.s8),
+                    _Pill(
+                      icon: Icons.stairs_rounded,
+                      text: l10n.mapStepsZoomIn,
+                      onTap: () {
+                        if (_ready) {
+                          _map.move(
+                            _map.camera.center,
+                            MapScreen.benchMinZoom + 0.5,
+                          );
+                        }
+                      },
+                    ),
+                  ],
                   if (location?.problem != null) ...[
                     const SizedBox(height: AppSizes.s8),
                     _NoLocationCard(onEnable: _myLocation),
@@ -601,6 +687,30 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                if (layers.contains(MapLayer.community)) ...[
+                  FloatingActionButton.extended(
+                    key: const Key('map-crowd-add'),
+                    heroTag: 'map-crowd-add',
+                    onPressed: () => addCrowdPoint(
+                      context,
+                      ref,
+                      _ready ? _map.camera.center : lodzCenter,
+                    ),
+                    icon: const Icon(Icons.add_location_alt_rounded),
+                    label: Text(l10n.crowdAddHere),
+                  ),
+                  const SizedBox(height: AppSizes.s8),
+                  FloatingActionButton.small(
+                    key: const Key('map-crowd-export'),
+                    heroTag: 'map-crowd-export',
+                    tooltip: l10n.crowdExport,
+                    backgroundColor: AppColors.surface,
+                    foregroundColor: AppColors.primary,
+                    onPressed: () => exportCrowdPoints(context, ref, crowd),
+                    child: const Icon(Icons.ios_share_rounded),
+                  ),
+                  const SizedBox(height: AppSizes.s8),
+                ],
                 _CompassButton(
                   rotation: _rotation,
                   tooltip: l10n.mapCompass,
@@ -914,6 +1024,22 @@ class _Legend extends StatelessWidget {
         (quietColor(0), l10n.mapLegendLoud),
       ],
       if (layers.contains(MapLayer.air)) (airColor(1), l10n.mapLegendAir),
+      if (layers.contains(MapLayer.heat)) ...[
+        (heatIslandColor(3), l10n.mapLegendHeatHot),
+        (heatIslandColor(2), l10n.mapLegendHeatWarm),
+        (heatIslandColor(0), l10n.mapLegendHeatCool),
+      ],
+      if (layers.contains(MapLayer.surface)) ...[
+        (surfaceColor(3), l10n.mapLegendCobbles),
+        (surfaceColor(2), l10n.mapLegendSett),
+        (surfaceColor(1), l10n.mapLegendPaving),
+        (surfaceColor(4), l10n.mapLegendUnpaved),
+        (stepsColor, l10n.mapLegendSteps),
+      ],
+      if (layers.contains(MapLayer.community)) ...[
+        (crowdColor(CrowdKind.tree), l10n.mapLegendCrowdTree),
+        (crowdColor(CrowdKind.tap), l10n.mapLegendCrowdTap),
+      ],
       if (layers.contains(MapLayer.night)) ...[
         (nightColor(3), l10n.mapLegendNightBusy),
         (nightColor(2), l10n.mapLegendNightLively),
@@ -931,6 +1057,10 @@ class _Legend extends StatelessWidget {
         ? l10n.mapNightNote
         : layers.contains(MapLayer.winter)
         ? l10n.mapWinterNote
+        : layers.contains(MapLayer.heat)
+        ? l10n.mapHeatNote
+        : layers.contains(MapLayer.surface)
+        ? l10n.mapSurfaceNote
         : null;
     if (rows.isEmpty) return const SizedBox.shrink();
     return Container(
@@ -1011,6 +1141,80 @@ class _ToiletPin extends StatelessWidget {
               border: Border.all(color: Colors.white, width: 2),
             ),
             child: const Icon(Icons.wc_rounded, size: 18, color: Colors.white),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A fountain or splash pad on the «Woda» layer.
+class _FountainPin extends StatelessWidget {
+  const _FountainPin({required this.fountain});
+
+  final Fountain fountain;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final label = fountain.splash ? l10n.mapSplashPad : l10n.mapFountain;
+    return Semantics(
+      button: true,
+      label: label,
+      excludeSemantics: true,
+      child: GestureDetector(
+        onTap: () => showAppToast(context, label),
+        child: Center(
+          child: Container(
+            width: 30,
+            height: 30,
+            decoration: BoxDecoration(
+              color: AppColors.cool,
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white, width: 2),
+            ),
+            child: Icon(
+              fountain.splash ? Icons.pool_rounded : Icons.water_rounded,
+              size: 18,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Steps on the «Nawierzchnia» mode; a tap says whether there is a ramp.
+class _StepsPin extends StatelessWidget {
+  const _StepsPin({required this.steps});
+
+  final Steps steps;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final label = steps.ramp ? l10n.mapStepsRamp : l10n.mapStepsNoRamp;
+    return Semantics(
+      button: true,
+      label: label,
+      excludeSemantics: true,
+      child: GestureDetector(
+        onTap: () => showAppToast(context, label),
+        child: Center(
+          child: Container(
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              color: steps.ramp ? AppColors.success : stepsColor,
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(color: Colors.white, width: 2),
+            ),
+            child: const Icon(
+              Icons.stairs_rounded,
+              size: 14,
+              color: Colors.white,
+            ),
           ),
         ),
       ),

@@ -229,4 +229,19 @@ void main() {
     expect(repo.writes, [200, 200, 100, 80]);
     expect(repo.state.badges, {GameBadge.coolGuard});
   });
+
+  test('demo fill: walks, password and reports once', () async {
+    final c = await make(demo: true);
+    final game = c.read(gameServiceProvider);
+    final award = await game.seedDemo();
+    expect(award, isNotNull);
+    expect(repo.routes, hasLength(GameService.demoWalks));
+    expect(award!.pointsFor(PointsType.password), 500);
+    expect(award.pointsFor(PointsType.route), GameService.demoWalks * 10);
+    expect(award.badges, isNotEmpty);
+    expect(repo.state.points, award.points);
+    // Filled already: nothing more.
+    expect(await game.seedDemo(), isNull);
+    expect(repo.routes, hasLength(GameService.demoWalks));
+  });
 }

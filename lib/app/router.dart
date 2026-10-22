@@ -10,6 +10,8 @@ import '../features/auth/login_screen.dart';
 import '../features/auth/start_screen.dart';
 import '../features/cool_places/cool_places_screen.dart';
 import '../features/cool_places/place_screen.dart';
+import '../features/cool_walk/cool_walk_screen.dart';
+import '../features/day_plan/day_plan_screen.dart';
 import '../features/heat_guard/heat_check_screen.dart';
 import '../features/heat_guard/heat_guard_screen.dart';
 import '../features/map/map_screen.dart';
@@ -154,6 +156,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         ],
       ),
       GoRoute(path: Routes.shop, builder: (_, _) => const ShopScreen()),
+      GoRoute(path: Routes.coolWalk, builder: (_, _) => const CoolWalkScreen()),
+      GoRoute(path: Routes.dayPlan, builder: (_, _) => const DayPlanScreen()),
       GoRoute(
         path: Routes.guide,
         builder: (_, _) => const OnboardingScreen(replay: true),

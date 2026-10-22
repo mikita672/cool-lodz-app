@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/api/api_providers.dart';
+import '../../../core/api/live/air_quality.dart';
 import '../../../core/api/live/weather.dart';
 import '../../../core/clock.dart';
 import '../../../core/heat/heat_risk.dart';
@@ -62,4 +63,20 @@ final asphaltAtProvider = FutureProvider.family<double?, DateTime>((
   final air = forecast?.at(departure)?.temperature;
   if (air == null) return null;
   return asphaltTemperature(air, departure, forecast: forecast);
+}, retry: noRetry);
+
+final airQualityClientProvider = Provider<AirQualityClient>(
+  (ref) => AirQualityClient.create(),
+);
+
+/// Pollen and the European AQI for the rest of today (Open-Meteo); null
+/// offline. The demo has a fixed hot-day reading.
+final airTodayProvider = FutureProvider<AirToday?>((ref) async {
+  final now = ref.read(clockProvider)();
+  if (ref.watch(isDemoModeEffectiveProvider)) return demoAirToday;
+  try {
+    return await ref.watch(airQualityClientProvider).today(now);
+  } catch (_) {
+    return null;
+  }
 }, retry: noRetry);

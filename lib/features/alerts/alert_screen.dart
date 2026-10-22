@@ -8,6 +8,7 @@ import '../../app/theme.dart';
 import '../../core/game/game_config.dart';
 import '../../core/models/models.dart';
 import '../../l10n/app_localizations.dart';
+import '../../shared/tts.dart';
 import '../../shared/widgets/app_button.dart';
 import '../../shared/widgets/app_toast.dart';
 import '../../shared/widgets/empty_state.dart';
@@ -133,7 +134,24 @@ class _AlertBody extends StatelessWidget {
             ),
           ),
         ],
-        const SizedBox(height: AppSizes.s24),
+        const SizedBox(height: AppSizes.s12),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: ReadAloudButton(
+            text: () => [
+              l10n.alertHeading(level),
+              if (!synthetic)
+                l10n.alertPeriod(
+                  alert.area,
+                  hm(alert.validFrom),
+                  hm(alert.validTo),
+                ),
+              l10n.alertWhatToDo,
+              ...tips.take(3),
+            ].join('. '),
+          ),
+        ),
+        const SizedBox(height: AppSizes.s12),
         Semantics(
           header: true,
           child: Text(l10n.alertWhatToDo, style: theme.textTheme.titleMedium),

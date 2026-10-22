@@ -15,6 +15,7 @@ class HeatGuardConfig(json: JSONObject) {
     val heatOnly = json.optBoolean("heatOnly", true)
     val hotCelsius = json.optDouble("hotCelsius", 28.0)
     val heatUntil = json.optLong("heatUntil", 0)
+    val fallDetection = json.optBoolean("fallDetection", true)
     val contacts: List<Pair<String, String>> = json.optJSONArray("contacts")?.let { a ->
         (0 until a.length()).mapNotNull { i ->
             a.optJSONObject(i)?.let { it.optString("name") to it.optString("phone") }

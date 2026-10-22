@@ -11,6 +11,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -38,7 +42,7 @@ import kotlin.math.roundToInt
  * answer the siren plays at half volume for 30 s, then at full volume with
  * the flashlight, and the trusted contacts get an SMS with the location.
  */
-class HeatGuardService : Service(), LocationListener {
+class HeatGuardService : Service(), LocationListener, SensorEventListener {
 
     enum class Phase { IDLE, ASK, HALF, FULL }
 
@@ -53,6 +57,8 @@ class HeatGuardService : Service(), LocationListener {
     /** Started by the switch (not only for a test). */
     private var monitoring = false
     private var alarmLock: PowerManager.WakeLock? = null
+    private val fall = FallDetector()
+    private var sensing = false
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -70,6 +76,9 @@ class HeatGuardService : Service(), LocationListener {
             return START_NOT_STICKY
         }
         detector.waitMs = cfg.waitMinutes * 60_000L
+        if (tracking) {
+            if (cfg.fallDetection) startFallSensor() else stopFallSensor()
+        }
         if (!startInForeground()) {
             stopSelf()
             return START_NOT_STICKY
@@ -167,6 +176,7 @@ class HeatGuardService : Service(), LocationListener {
             }
         }
         tracking = true
+        startFallSensor()
         // Timers must run with the screen off while it is hot.
         val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
         wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "coollodz:heatguard").apply {
@@ -178,6 +188,7 @@ class HeatGuardService : Service(), LocationListener {
     private fun stopTracking() {
         if (!tracking) return
         (getSystemService(Context.LOCATION_SERVICE) as LocationManager).removeUpdates(this)
+        stopFallSensor()
         tracking = false
         releaseWakeLock()
     }
@@ -234,6 +245,33 @@ class HeatGuardService : Service(), LocationListener {
         }
     }
 
+    // --- Fall detection ------------------------------------------------------
+
+    private fun startFallSensor() {
+        if (sensing || config?.fallDetection != true) return
+        val sm = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        val acc = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) ?: return
+        sensing = sm.registerListener(this, acc, SensorManager.SENSOR_DELAY_GAME, handler)
+    }
+
+    private fun stopFallSensor() {
+        if (!sensing) return
+        (getSystemService(Context.SENSOR_SERVICE) as SensorManager).unregisterListener(this)
+        sensing = false
+    }
+
+    override fun onSensorChanged(event: SensorEvent) {
+        val v = event.values
+        if (!fall.add(v[0], v[1], v[2], event.timestamp / 1_000_000L)) return
+        if (phase != Phase.IDLE) return
+        Log.i(TAG, "fall detected")
+        fellAt = System.currentTimeMillis()
+        test = false
+        ask()
+    }
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+
     // --- The check and the alarm -------------------------------------------
 
     private fun ask() {
@@ -284,6 +322,7 @@ class HeatGuardService : Service(), LocationListener {
         alarm.stop()
         phase = Phase.IDLE
         test = false
+        fellAt = 0L
         (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(CHECK_ID)
         updateNotification()
         alarmLock?.let { if (it.isHeld) it.release() }
@@ -399,6 +438,7 @@ class HeatGuardService : Service(), LocationListener {
         val body = when {
             smsSentTo.isNotEmpty() -> cfg.text("checkSmsSent", "names" to smsSentTo.joinToString(", "))
             alarmOn -> cfg.text("checkAlarmBody")
+            System.currentTimeMillis() - fellAt < 5 * 60_000L -> cfg.text("checkFallBody")
             else -> cfg.text("checkBody")
         }
         val n = Notification.Builder(this, CHANNEL_CHECK)
@@ -448,13 +488,23 @@ class HeatGuardService : Service(), LocationListener {
         @Volatile var lastLat: Double? = null
         @Volatile var lastLon: Double? = null
         @Volatile var lastAccuracy: Float? = null
+        @Volatile var fellAt = 0L
+
+        /** The user turned the alarm on (restarted after a reboot). */
+        fun wanted(context: Context) =
+            context.getSharedPreferences("heat_guard", Context.MODE_PRIVATE).getBoolean("wanted", false)
+
+        private fun setWanted(context: Context, on: Boolean) =
+            context.getSharedPreferences("heat_guard", Context.MODE_PRIVATE).edit().putBoolean("wanted", on).apply()
 
         fun start(context: Context, action: String = ACTION_START) {
+            if (action == ACTION_START) setWanted(context, true)
             val intent = Intent(context, HeatGuardService::class.java).setAction(action)
             context.startForegroundService(intent)
         }
 
         fun stop(context: Context) {
+            setWanted(context, false)
             context.stopService(Intent(context, HeatGuardService::class.java))
         }
     }

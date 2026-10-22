@@ -6,9 +6,11 @@ import 'package:intl/intl.dart';
 import '../../app/routes.dart';
 import '../../app/theme.dart';
 import '../../core/api/api_providers.dart';
+import '../../core/api/live/air_quality.dart';
 import '../../core/heat/heat_risk.dart';
 import '../../core/models/models.dart';
 import '../../l10n/app_localizations.dart';
+import '../../shared/tts.dart';
 import '../profile/data/comfort_profile_provider.dart';
 import 'data/heat_risk_providers.dart';
 
@@ -28,6 +30,29 @@ Color heatRiskColor(HeatRiskLevel level) => switch (level) {
 };
 
 /// WHO UV categories.
+String pollenName(PollenKind k, AppLocalizations l10n) => switch (k) {
+  PollenKind.alder => l10n.pollenAlder,
+  PollenKind.birch => l10n.pollenBirch,
+  PollenKind.grass => l10n.pollenGrass,
+  PollenKind.ragweed => l10n.pollenRagweed,
+};
+
+String pollenLevelName(PollenLevel l, AppLocalizations l10n) => switch (l) {
+  PollenLevel.none => l10n.pollenNone,
+  PollenLevel.low => l10n.pollenLow,
+  PollenLevel.moderate => l10n.pollenModerate,
+  PollenLevel.high => l10n.pollenHigh,
+};
+
+String aqiName(double aqi, AppLocalizations l10n) => switch (aqiBand(aqi)) {
+  0 => l10n.aqiVeryGood,
+  1 => l10n.aqiGood,
+  2 => l10n.aqiModerate,
+  3 => l10n.aqiPoor,
+  4 => l10n.aqiVeryPoor,
+  _ => l10n.aqiExtreme,
+};
+
 String uvCategory(double uv, AppLocalizations l10n) => switch (uv) {
   < 3 => l10n.heatRiskUvLow,
   < 6 => l10n.heatRiskUvModerate,
@@ -126,6 +151,7 @@ class HeatRiskSheet extends ConsumerWidget {
     final demo = ref.watch(isDemoModeEffectiveProvider);
     final hm = DateFormat('H:mm', 'pl');
     final senior = profile.id == ProfileId.senior || profile.seniorMode;
+    final air = ref.watch(airTodayProvider).value;
 
     final advice = <String>[
       ...switch (risk.level) {
@@ -151,6 +177,7 @@ class HeatRiskSheet extends ConsumerWidget {
       if (profile.id == ProfileId.tourist &&
           risk.level.index >= HeatRiskLevel.high.index)
         l10n.heatRiskAdviceTourist,
+      if (air != null && air.allergyWarning) l10n.heatRiskAdviceAllergy,
     ];
 
     final asphalt = risk.asphaltPeak;
@@ -175,6 +202,23 @@ class HeatRiskSheet extends ConsumerWidget {
         ),
       if (asphalt != null)
         (Icons.add_road_rounded, l10n.heatRiskAsphalt(asphalt.round())),
+      if (air?.aqiMax case final aqi?)
+        (Icons.air_rounded, l10n.heatRiskAir(aqiName(aqi, l10n), aqi.round())),
+      if (air != null && air.pollen.isNotEmpty)
+        (
+          Icons.local_florist_rounded,
+          air.pollenLevels.isEmpty
+              ? l10n.heatRiskPollenNone
+              : l10n.heatRiskPollen(
+                  air.pollenLevels
+                      .map(
+                        (p) =>
+                            '${pollenName(p.$1, l10n)} – '
+                            '${pollenLevelName(p.$2, l10n)}',
+                      )
+                      .join(', '),
+                ),
+        ),
     ];
 
     return SafeArea(
@@ -277,6 +321,52 @@ class HeatRiskSheet extends ConsumerWidget {
                 ),
               ),
             const SizedBox(height: AppSizes.s16),
+            ReadAloudButton(
+              text: () => [
+                l10n.heatRiskTitle,
+                heatRiskLabel(risk.level, l10n),
+                for (final (_, text) in facts) text,
+                l10n.heatRiskAdviceTitle,
+                ...advice,
+              ].join('. '),
+            ),
+            const SizedBox(height: AppSizes.s8),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    key: const Key('heat-risk-day-plan'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      context.push(Routes.dayPlan);
+                    },
+                    icon: const Icon(Icons.event_note_rounded),
+                    label: Text(
+                      l10n.heatRiskDayPlan,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: AppSizes.s8),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    key: const Key('heat-risk-cool-walk'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      context.push(Routes.coolWalk);
+                    },
+                    icon: const Icon(Icons.loop_rounded),
+                    label: Text(
+                      l10n.coolWalkTitle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSizes.s8),
             OutlinedButton.icon(
               key: const Key('heat-risk-symptoms'),
               onPressed: () {

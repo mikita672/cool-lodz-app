@@ -16,18 +16,21 @@ enum MapLayer {
   green,
   quiet,
   air,
+  heat,
   water,
   cool,
   benches,
   toilets,
+  community,
   night,
-  winter;
+  winter,
+  surface;
 
   /// Fill layers cover areas; at most [MapLayers.maxFills] at once.
-  bool get isFill => index <= MapLayer.air.index;
+  bool get isFill => index <= MapLayer.heat.index;
 
-  /// Street line modes («Nocą», «Zima»): one at a time.
-  bool get isLine => this == night || this == winter;
+  /// Street line modes («Nocą», «Zima», «Nawierzchnia»): one at a time.
+  bool get isLine => this == night || this == winter || this == surface;
 }
 
 /// Active S05 filters. Turning on a third fill switches off the one that

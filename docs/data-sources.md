@@ -153,3 +153,22 @@ Built by `python3 -I tools/demo-data/build_modes.py` from OpenStreetMap (Overpas
 
 Night level: weighted venues within 40 m of a street (bars, pubs, clubs ×2): ≥ 8 busiest (pedestrian streets ≥ 3), ≥ 3 lively, else lit when `lit=yes`. Winter order: 1 trunk/primary/secondary, bus/tram routes, tram rails; 2 tertiary and pedestrian; 3 the rest — an estimate, not the city's plan. Trees on the map come from `shadow_casters.json`.
 
+Added 22.10 (same bbox, mirror `maps.mail.ru`):
+
+| Raw file | Query |
+| :-- | :-- |
+| `osm_paths.json` | `way[surface~"^(sett\|cobblestone\|unhewn_cobblestone)$"](bbox); out tags geom;` (plus the `surface` of `osm_streets.json`) |
+| `osm_steps.json` | `way[highway=steps](bbox); out tags geom;` — `ramp`, `ramp:wheelchair`, `ramp:stroller`; escalators (`conveying`) skipped |
+| `osm_fountains.json` | `nwr[amenity=fountain](bbox); nwr[leisure=splash_pad](bbox); nwr[playground=splash_pad](bbox); out tags center;` |
+
+Surfaces: 1 paving stones / concrete plates / brick, 2 sett, 3 cobblestones, 4 unpaved; asphalt is left out (531 ways). Steps: 955 flights. Fountains: 50 (11 splash pads). Heat islands: a 200 m grid; per cell the roof share (building footprints from `osm_buildings.json`), tree crown share (`osm_trees.json`, 3 m crowns) and park share (`layer_green.geojson`, 10 × 10 samples); score = roofs − 1.5 × trees − parks: cool island when parks ≥ 40 % or score < 0, then < 0.2 mild, < 0.35 warm, else hot (128 / 297 / 180 / 45 cells).
+
+## Live data on the phone (22.10)
+
+| Data | Source | Notes |
+| :-- | :-- | :-- |
+| Pollen and air quality | Open-Meteo Air Quality API (`air-quality-api.open-meteo.com/v1/air-quality`, CAMS European model; free, no key) | hourly `european_aqi`, `birch_pollen`, `alder_pollen`, `grass_pollen`, `ragweed_pollen` for today; pollen levels (grains/m³): trees moderate ≥ 10, high ≥ 100; grass moderate ≥ 20, high ≥ 50; ragweed moderate ≥ 10, high ≥ 50 |
+| Heat warnings in the background | IMGW-PIB `danepubliczne.imgw.pl/api/data/warningsmeteo` | read by the Android job every 3 h, same filter as the app (`upał`, TERYT 1061) |
+| 7:00 message | Open-Meteo forecast `hourly=apparent_temperature&forecast_days=1` | thresholds 26 °C (message) and 30 °C (check-in day) |
+| Community points | Firestore `crowdPoints` (users of the app) | exported as GeoJSON (lon/lat, kind, votes, note, date; no user ids) |
+

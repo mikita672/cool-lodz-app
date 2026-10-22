@@ -2064,7 +2064,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get heatRiskSource =>
-      'Prognoza: Open-Meteo. Progi wg skali UTCI, dla seniorów o 2°C niższe. Temperatura asfaltu to szacunek.';
+      'Prognoza, powietrze i pyłki: Open-Meteo (CAMS). Progi wg skali UTCI, dla seniorów o 2°C niższe. Temperatura asfaltu to szacunek.';
 
   @override
   String get heatRiskDemo => 'Tryb demo: przykładowy upalny dzień.';
@@ -2552,4 +2552,502 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get placeSun => 'niedz.';
+
+  @override
+  String get heatNativeFallBody =>
+      'Wygląda na to, że upadłeś(-aś). Odpowiedz, inaczej włączy się alarm.';
+
+  @override
+  String get heatGuardFall => 'Wykrywanie upadku';
+
+  @override
+  String get heatGuardFallHint =>
+      'Gdy w upał telefon wykryje upadek i bezruch, alarm zapyta od razu.';
+
+  @override
+  String get dailyHeader => 'Codziennie w upał';
+
+  @override
+  String get dailyImgw => 'Ostrzeżenia IMGW';
+
+  @override
+  String get dailyImgwHint =>
+      'Telefon co 3 godziny sprawdza ostrzeżenia przed upałem dla Łodzi i powiadamia o nowych.';
+
+  @override
+  String get dailyMorning => 'Poranna wiadomość o 7:00';
+
+  @override
+  String get dailyMorningHint =>
+      'W upalny dzień: do ilu stopni, kiedy najlepiej wyjść i gdzie się schłodzić.';
+
+  @override
+  String get dailyCheckin => '«Czuję się dobrze»';
+
+  @override
+  String dailyCheckinHint(String ask, String deadline) {
+    return 'Każdego upalnego dnia o $ask zapytamy, jak się czujesz. Bez odpowiedzi do $deadline bliscy dostaną SMS.';
+  }
+
+  @override
+  String get dailyCheckinNoContacts =>
+      'Codzienne pytanie w upał. Dodaj zaufane osoby, aby bez odpowiedzi dostały SMS.';
+
+  @override
+  String get dailyCheckinAsk => 'Pytaj o';
+
+  @override
+  String get dailyCheckinDeadline => 'SMS po';
+
+  @override
+  String get dailyWidgetHint =>
+      'Dodaj też widżet «Cool Łódź: upał dziś» na ekran główny telefonu.';
+
+  @override
+  String dailyImgwTitle(String level) {
+    return 'Ostrzeżenie IMGW: upał $level. stopnia w Łodzi';
+  }
+
+  @override
+  String dailyImgwBody(String from, String to) {
+    return 'Od $from do $to. Pij wodę, unikaj słońca w południe i zajrzyj do starszych sąsiadów.';
+  }
+
+  @override
+  String dailyMorningTitle(String max) {
+    return 'Dziś upał: odczuwalna do $max°C';
+  }
+
+  @override
+  String dailyMorningBody(String before, String after) {
+    return 'Najlepiej wyjść przed $before lub po $after.';
+  }
+
+  @override
+  String get dailyMorningAllDay =>
+      'Upał przez większość dnia: wychodź tylko, gdy musisz, i wybieraj cień.';
+
+  @override
+  String dailyMorningPlace(String place) {
+    return 'Blisko domu schłodzisz się w: $place.';
+  }
+
+  @override
+  String get dailyCheckinTitle => 'Jak się dziś czujesz?';
+
+  @override
+  String dailyCheckinBody(String deadline) {
+    return 'Dziś upał. Stuknij «Czuję się dobrze» do $deadline, inaczej wyślemy SMS do bliskich.';
+  }
+
+  @override
+  String get dailyCheckinAction => 'Czuję się dobrze';
+
+  @override
+  String get dailyCheckinThanks => 'Dziękujemy! Pij wodę i unikaj słońca.';
+
+  @override
+  String dailyCheckinSms(String name, String deadline) {
+    return 'Cool Łódź: $name nie potwierdził(a) do $deadline, że dobrze się czuje w dzisiejszym upale. Zadzwoń, proszę.';
+  }
+
+  @override
+  String get dailyCheckinMissedTitle =>
+      'Brak odpowiedzi na pytanie o samopoczucie';
+
+  @override
+  String get dailyCheckinNoSms =>
+      'Nie udało się wysłać SMS. Zadzwoń do bliskich, jeśli potrzebujesz pomocy.';
+
+  @override
+  String get dailyCheckinInApp =>
+      'Dziś upał. Daj znać, że wszystko w porządku – inaczej Twoi bliscy dostaną SMS.';
+
+  @override
+  String widgetTitleFeels(String max) {
+    return 'Upał: odczuwalna do $max°C';
+  }
+
+  @override
+  String widgetHours(String before, String after) {
+    return 'Wyjdź przed $before lub po $after';
+  }
+
+  @override
+  String get widgetNoData => 'Cool Łódź';
+
+  @override
+  String get widgetOpenApp => 'Otwórz aplikację, aby sprawdzić upał';
+
+  @override
+  String get widgetNoHeat => 'Dziś bez upału';
+
+  @override
+  String get widgetShade => 'Wybieraj cień i pij wodę';
+
+  @override
+  String get ttsRead => 'Przeczytaj na głos';
+
+  @override
+  String get ttsStop => 'Zatrzymaj czytanie';
+
+  @override
+  String get pollenAlder => 'olcha';
+
+  @override
+  String get pollenBirch => 'brzoza';
+
+  @override
+  String get pollenGrass => 'trawy';
+
+  @override
+  String get pollenRagweed => 'ambrozja';
+
+  @override
+  String get pollenNone => 'brak';
+
+  @override
+  String get pollenLow => 'niskie';
+
+  @override
+  String get pollenModerate => 'średnie';
+
+  @override
+  String get pollenHigh => 'wysokie';
+
+  @override
+  String get aqiVeryGood => 'bardzo dobre';
+
+  @override
+  String get aqiGood => 'dobre';
+
+  @override
+  String get aqiModerate => 'umiarkowane';
+
+  @override
+  String get aqiPoor => 'słabe';
+
+  @override
+  String get aqiVeryPoor => 'bardzo słabe';
+
+  @override
+  String get aqiExtreme => 'ekstremalnie złe';
+
+  @override
+  String heatRiskAir(String quality, int aqi) {
+    return 'Powietrze dziś: $quality (europejski indeks $aqi)';
+  }
+
+  @override
+  String heatRiskPollen(String list) {
+    return 'Pyłki: $list';
+  }
+
+  @override
+  String get heatRiskPollenNone => 'Pyłki: brak lub bardzo mało';
+
+  @override
+  String get heatRiskAdviceAllergy =>
+      'Alergikom i astmatykom: weź leki ze sobą, po spacerze umyj twarz i przepłucz oczy, wysiłek odłóż na wieczór.';
+
+  @override
+  String get mapLayerHeat => 'Wyspy ciepła';
+
+  @override
+  String get mapLayerCommunity => 'Społeczność';
+
+  @override
+  String get mapLayerSurface => 'Nawierzchnia';
+
+  @override
+  String get mapLegendHeatHot => 'Najgoręcej: dachy i bruk';
+
+  @override
+  String get mapLegendHeatWarm => 'Cieplej niż średnio';
+
+  @override
+  String get mapLegendHeatCool => 'Chłodniej: parki i drzewa';
+
+  @override
+  String get mapHeatNote =>
+      'Szacunek z budynków, drzew i parków (OSM), nie pomiar z satelity.';
+
+  @override
+  String get mapLegendCobbles => 'Kocie łby';
+
+  @override
+  String get mapLegendSett => 'Kostka granitowa';
+
+  @override
+  String get mapLegendPaving => 'Płyty, kostka betonowa';
+
+  @override
+  String get mapLegendUnpaved => 'Nieutwardzona';
+
+  @override
+  String get mapLegendSteps => 'Schody';
+
+  @override
+  String get mapSurfaceNote =>
+      'Dla wózków, wózków inwalidzkich i seniorów. Gładki asfalt nie jest zaznaczony.';
+
+  @override
+  String get mapStepsZoomIn => 'Przybliż, aby zobaczyć schody';
+
+  @override
+  String get mapStepsRamp => 'Schody z podjazdem';
+
+  @override
+  String get mapStepsNoRamp => 'Schody bez znanego podjazdu';
+
+  @override
+  String get mapFountain => 'Fontanna: schłodź dłonie i kark (wody nie pij)';
+
+  @override
+  String get mapSplashPad =>
+      'Kurtyna wodna / plac wodny: dzieci mogą się schłodzić';
+
+  @override
+  String get mapLegendCrowdTree => 'Posadź tu drzewo';
+
+  @override
+  String get mapLegendCrowdTap => 'Kranówka za darmo';
+
+  @override
+  String get crowdTree => 'Posadź tu drzewo';
+
+  @override
+  String get crowdTap => 'Kranówka tu';
+
+  @override
+  String get crowdTreeHint => 'Ulica bez cienia: zaproponuj drzewo';
+
+  @override
+  String get crowdTapHint => 'Tu nalejesz wody z kranu za darmo';
+
+  @override
+  String get crowdAddHere => 'Dodaj tutaj';
+
+  @override
+  String get crowdAddTitle => 'Dodaj punkt w środku mapy';
+
+  @override
+  String get crowdAddHint => 'Przesuń mapę tak, aby środek wskazywał miejsce.';
+
+  @override
+  String get crowdNote => 'Opis (opcjonalnie)';
+
+  @override
+  String get crowdSave => 'Dodaj';
+
+  @override
+  String get crowdAdded => 'Dodano. Dziękujemy!';
+
+  @override
+  String get crowdError => 'Nie udało się zapisać. Spróbuj ponownie.';
+
+  @override
+  String get crowdSignIn => 'Zaloguj się, aby dodawać punkty.';
+
+  @override
+  String get crowdOutside => 'Punkty można dodawać tylko w Łodzi.';
+
+  @override
+  String crowdVotes(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count głosu',
+      many: '$count głosów',
+      few: '$count głosy',
+      one: '1 głos',
+      zero: 'brak głosów',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String crowdTreeVotes(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Popiera $count osoby.',
+      many: 'Popiera $count osób.',
+      few: 'Popierają $count osoby.',
+      one: 'Popiera 1 osoba.',
+      zero: 'Nikt jeszcze nie poparł.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String crowdTapVotes(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Potwierdziło $count osoby.',
+      many: 'Potwierdziło $count osób.',
+      few: 'Potwierdziły $count osoby.',
+      one: 'Potwierdziła 1 osoba.',
+      zero: 'Nikt jeszcze nie potwierdził.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get crowdSupport => 'Popieram';
+
+  @override
+  String get crowdConfirm => 'Potwierdzam: jest woda';
+
+  @override
+  String get crowdVoted => 'Dziękujemy za głos!';
+
+  @override
+  String get crowdAlreadyVoted => 'Twój głos już jest policzony.';
+
+  @override
+  String get crowdRemove => 'Usuń mój punkt';
+
+  @override
+  String get crowdExport => 'Eksportuj (GeoJSON)';
+
+  @override
+  String get crowdExportTitle => 'Cool Łódź: punkty społeczności (GeoJSON)';
+
+  @override
+  String get crowdExportEmpty => 'Nie ma jeszcze punktów do eksportu.';
+
+  @override
+  String get crowdCopied => 'Skopiowano GeoJSON do schowka.';
+
+  @override
+  String routeCobbles(int metres) {
+    return 'Na trasie ok. $metres m kocich łbów lub kostki granitowej: trudno z wózkiem i balkonikiem.';
+  }
+
+  @override
+  String routeSteps(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count schodów bez znanego podjazdu.',
+      many: '$count schodów bez znanego podjazdu.',
+      few: '$count schody bez znanego podjazdu.',
+      one: '1 schody bez znanego podjazdu.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get coolWalkTitle => 'Chłodny spacer';
+
+  @override
+  String get coolWalkIntro =>
+      'Pętla z miejsca, w którym jesteś, i z powrotem: przez parki i cień, z jak najmniejszą ilością słońca teraz.';
+
+  @override
+  String coolWalkMinutes(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String get coolWalkFind => 'Znajdź spacer';
+
+  @override
+  String get coolWalkError =>
+      'Nie udało się wyznaczyć spaceru. Sprawdź internet i spróbuj ponownie.';
+
+  @override
+  String get coolWalkFromCentre =>
+      'Nie znamy Twojej lokalizacji: pętla zaczyna się w centrum Łodzi.';
+
+  @override
+  String get coolWalkBest => 'Najchłodniejsza pętla';
+
+  @override
+  String coolWalkOther(int number) {
+    return 'Pętla $number';
+  }
+
+  @override
+  String coolWalkStats(int minutes, String km, int shade) {
+    return '$minutes min · $km km · $shade% w cieniu';
+  }
+
+  @override
+  String get dayPlanTitle => 'Dzień w upale';
+
+  @override
+  String get dayPlanIntro =>
+      'Plan dnia w Łodzi: spacer, kiedy jest chłodno, w środku, kiedy grzeje, i wieczór na mieście.';
+
+  @override
+  String dayPlanIntroHot(String level, int max) {
+    return 'Dziś ryzyko upałowe: $level, odczuwalna do $max°C. Plan omija najgorętsze godziny.';
+  }
+
+  @override
+  String get dayPlanMorning => 'Rano: spacer w cieniu';
+
+  @override
+  String get dayPlanMorningBody =>
+      'Najprzyjemniejsza pora na zwiedzanie na zewnątrz. Weź wodę i nakrycie głowy.';
+
+  @override
+  String get dayPlanMidday => 'W najgorętszych godzinach: do środka';
+
+  @override
+  String get dayPlanMiddayBody =>
+      'Muzea, galerie i biblioteki z chłodem, otwarte przez ten czas:';
+
+  @override
+  String get dayPlanAfternoon => 'Po południu: woda';
+
+  @override
+  String get dayPlanAfternoonBody =>
+      'Fontanny, kurtyny wodne i punkty z wodą pitną. Schłodź dłonie, kark i nadgarstki.';
+
+  @override
+  String get dayPlanEvening => 'Wieczorem: miasto nocą';
+
+  @override
+  String get dayPlanEveningBody =>
+      'Kiedy upał słabnie: Piotrkowska, Off Piotrkowska i Manufaktura. Mapa pokaże, gdzie jest najwięcej ludzi.';
+
+  @override
+  String get dayPlanShowWater => 'Pokaż wodę na mapie';
+
+  @override
+  String get dayPlanShowNight => 'Pokaż mapę «Nocą»';
+
+  @override
+  String get heatRiskDayPlan => 'Plan dnia w upale';
+
+  @override
+  String get settingsCoolWalk => 'Chłodny spacer';
+
+  @override
+  String get settingsCoolWalkBody => 'Pętla na 15–60 minut przez cień i parki';
+
+  @override
+  String get settingsDayPlan => 'Dzień w upale';
+
+  @override
+  String get settingsDayPlanBody => 'Plan dnia wokół najgorętszych godzin';
+
+  @override
+  String get aboutDemoFill => 'Wypełnij konto demo';
+
+  @override
+  String get aboutDemoFillBody =>
+      '12 spacerów w cieniu z ostatnich dni, punkty, odznaki i postęp wyzwania – do prezentacji.';
+
+  @override
+  String aboutDemoFilled(int points) {
+    return 'Gotowe: +$points pkt, spacery i odznaki na koncie.';
+  }
+
+  @override
+  String get aboutDemoFilledAlready => 'To konto jest już wypełnione.';
 }

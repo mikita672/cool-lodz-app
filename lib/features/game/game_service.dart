@@ -6,6 +6,7 @@ import '../../core/clock.dart';
 import '../../core/game/challenges.dart';
 import '../../core/game/game_config.dart';
 import '../../core/game/game_rules.dart';
+import '../../core/models/models.dart';
 import '../auth/data/auth_repository.dart';
 import '../route/data/route_history_repository.dart';
 import 'data/game_config_repository.dart';
@@ -98,6 +99,83 @@ class GameService {
       if (points > 0) PointsEntry(type: PointsType.route, points: points),
     ], route: record);
   }
+
+  /// The demo account's quest «password» (marks the account as filled).
+  static const demoRefId = 'demo-account';
+
+  /// Hidden demo setting (O aplikacji): fills the account for a
+  /// presentation: shaded walks over the last days (impact, challenge,
+  /// badges) and points for the shop. Once per account; null when it was
+  /// already filled.
+  Future<GameAward?> seedDemo() => _serial(() async {
+    final uid = _uid;
+    if (uid == null) return GameAward.none;
+    final history = await _repo.history(uid);
+    if (history.has(PointsType.password, refId: demoRefId)) return null;
+    final now = _now;
+    final routes = [...history.routes];
+    final entries = <PointsEntry>[];
+    const from = RoutePoint(lat: 51.7795, lon: 19.4485, label: 'Manufaktura');
+    const to = RoutePoint(lat: 51.7592, lon: 19.4580, label: 'Piotrkowska');
+    for (var i = 0; i < demoWalks; i++) {
+      final day = now.subtract(Duration(days: i ~/ 2));
+      final walk = StartedRoute(
+        from: i.isEven ? from : to,
+        to: i.isEven ? to : from,
+        departAt: DateTime(day.year, day.month, day.day, i.isEven ? 8 : 19),
+        variant: RouteVariantType.shaded,
+        sunShare: 0.2 + 0.02 * i,
+        distanceM: 2400 + 50 * i,
+        durationS: 1900 + 40 * i,
+        shortestSunShare: 0.62,
+        waterStops: i % 3 == 0 ? 1 : 0,
+        endPlaceType: i.isEven ? null : PlaceCategory.mall.name,
+      );
+      await _repo.addRoute(uid, walk);
+      routes.add(
+        RouteRecord(
+          departAt: walk.departAt,
+          shadeShare: walk.shadeShare,
+          endPlaceType: walk.endPlaceType,
+          distanceM: walk.distanceM,
+          durationS: walk.durationS,
+          shortestSunShare: walk.shortestSunShare,
+          waterStops: walk.waterStops ?? 0,
+        ),
+      );
+      entries.add(
+        const PointsEntry(
+          type: PointsType.route,
+          points: GameConfig.pointsShadedRoute,
+        ),
+      );
+    }
+    // The quest password's 500 in parts ≤ 200, like the real one.
+    for (final part in [200, 200, 100]) {
+      entries.add(
+        PointsEntry(type: PointsType.password, points: part, refId: demoRefId),
+      );
+    }
+    for (var i = 1; i <= 4; i++) {
+      entries.add(
+        PointsEntry(
+          type: PointsType.report,
+          points: GameConfig.pointsReportApproved,
+          refId: '$demoRefId-$i',
+        ),
+      );
+    }
+    final filled = GameHistory(
+      routes: routes,
+      log: history.log,
+      badges: history.badges,
+      approvedReports: history.approvedReports + 4,
+      approvedReportIds: history.approvedReportIds,
+    );
+    return _award(uid, filled, entries, route: routes.last);
+  });
+
+  static const demoWalks = 12;
 
   /// A valid QR scan of [placeId] (the visit is already saved).
   Future<GameAward> placeScanned(String placeId) =>

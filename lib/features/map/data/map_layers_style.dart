@@ -12,12 +12,15 @@ String layerName(MapLayer layer, AppLocalizations l10n) => switch (layer) {
   MapLayer.green => l10n.mapLayerGreen,
   MapLayer.quiet => l10n.mapLayerQuiet,
   MapLayer.air => l10n.mapLayerAir,
+  MapLayer.heat => l10n.mapLayerHeat,
   MapLayer.water => l10n.mapLayerWater,
   MapLayer.cool => l10n.mapLayerCool,
   MapLayer.benches => l10n.mapLayerBenches,
   MapLayer.toilets => l10n.mapLayerToilets,
+  MapLayer.community => l10n.mapLayerCommunity,
   MapLayer.night => l10n.mapLayerNight,
   MapLayer.winter => l10n.mapLayerWinter,
+  MapLayer.surface => l10n.mapLayerSurface,
 };
 
 IconData layerIcon(MapLayer layer) => switch (layer) {
@@ -25,12 +28,15 @@ IconData layerIcon(MapLayer layer) => switch (layer) {
   MapLayer.green => Icons.park_rounded,
   MapLayer.quiet => Icons.volume_off_rounded,
   MapLayer.air => Icons.air_rounded,
+  MapLayer.heat => Icons.local_fire_department_rounded,
   MapLayer.water => Icons.water_drop_rounded,
   MapLayer.cool => Icons.ac_unit_rounded,
   MapLayer.benches => Icons.chair_alt_rounded,
   MapLayer.toilets => Icons.wc_rounded,
+  MapLayer.community => Icons.groups_rounded,
   MapLayer.night => Icons.nightlife_rounded,
   MapLayer.winter => Icons.snowing,
+  MapLayer.surface => Icons.accessible_rounded,
 };
 
 /// Polygons of [layer] styled for [kind]: shade `primary` (35 % at full
@@ -96,6 +102,26 @@ double winterWidth(int order) => switch (order) {
 };
 
 const treeColor = Color(0xFF2E7D32);
+
+/// «Wyspy ciepła»: 0 cool island … 3 hot.
+Color heatIslandColor(int level) => switch (level) {
+  <= 0 => const Color(0xFF00897B).withValues(alpha: 0.30),
+  1 => const Color(0xFFFFD54F).withValues(alpha: 0.22),
+  2 => const Color(0xFFFB8C00).withValues(alpha: 0.32),
+  _ => const Color(0xFFD32F2F).withValues(alpha: 0.40),
+};
+
+/// «Nawierzchnia»: 1 paving stones, 2 sett, 3 cobbles, 4 unpaved.
+Color surfaceColor(int surface) => switch (surface) {
+  1 => const Color(0xFFFBC02D),
+  2 => const Color(0xFFF57C00),
+  3 => const Color(0xFFC62828),
+  _ => const Color(0xFF8D6E63),
+};
+
+double surfaceWidth(int surface) => surface >= 3 ? 6 : 4;
+
+const stepsColor = Color(0xFF6A1B9A);
 
 /// Official GIOŚ air quality index colours (powietrze.gios.gov.pl).
 const airIndexColors = [

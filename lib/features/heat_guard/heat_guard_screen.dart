@@ -205,6 +205,119 @@ class _HeatGuardScreenState extends ConsumerState<HeatGuardScreen>
               onChanged: (v) => _save(s.copyWith(waitMinutes: v.round())),
             ),
           ),
+          SwitchListTile(
+            key: const Key('heat-guard-fall'),
+            secondary: const Icon(Icons.personal_injury_rounded),
+            title: Text(l10n.heatGuardFall),
+            subtitle: Text(l10n.heatGuardFallHint),
+            value: s.fallDetection,
+            onChanged: (v) => _save(s.copyWith(fallDetection: v)),
+          ),
+          const Divider(),
+          _Header(l10n.dailyHeader),
+          SwitchListTile(
+            key: const Key('daily-imgw'),
+            secondary: const Icon(Icons.warning_amber_rounded),
+            title: Text(l10n.dailyImgw),
+            subtitle: Text(l10n.dailyImgwHint),
+            value: s.imgwAuto,
+            onChanged: (v) async {
+              if (v) await _platform.request('notifications');
+              await _save(s.copyWith(imgwAuto: v));
+            },
+          ),
+          SwitchListTile(
+            key: const Key('daily-morning'),
+            secondary: const Icon(Icons.wb_twilight_rounded),
+            title: Text(l10n.dailyMorning),
+            subtitle: Text(l10n.dailyMorningHint),
+            value: s.morning,
+            onChanged: (v) async {
+              if (v) await _platform.request('notifications');
+              await _save(s.copyWith(morning: v));
+            },
+          ),
+          SwitchListTile(
+            key: const Key('daily-checkin'),
+            secondary: const Icon(Icons.how_to_reg_rounded),
+            title: Text(l10n.dailyCheckin),
+            subtitle: Text(
+              s.contacts.isEmpty
+                  ? l10n.dailyCheckinNoContacts
+                  : l10n.dailyCheckinHint(
+                      '${s.checkinHour}:00',
+                      '${s.deadlineHour}:00',
+                    ),
+            ),
+            value: s.checkin,
+            onChanged: (v) async {
+              if (v) {
+                await _platform.request('notifications');
+                await _platform.request('sms');
+              }
+              await _save(s.copyWith(checkin: v));
+              unawaited(_refresh());
+            },
+          ),
+          if (s.checkin)
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSizes.screenPadding,
+              ),
+              child: Wrap(
+                spacing: AppSizes.s12,
+                runSpacing: AppSizes.s8,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  Text(l10n.dailyCheckinAsk),
+                  DropdownButton<int>(
+                    key: const Key('daily-checkin-hour'),
+                    value: s.checkinHour,
+                    items: [
+                      for (final h in HeatGuardSettings.checkinHours)
+                        DropdownMenuItem(value: h, child: Text('$h:00')),
+                    ],
+                    onChanged: (h) {
+                      if (h == null) return;
+                      _save(
+                        s.copyWith(
+                          checkinHour: h,
+                          deadlineHour:
+                              s.deadlineHour > h && s.deadlineHour <= h + 4
+                              ? s.deadlineHour
+                              : h + 2,
+                        ),
+                      );
+                    },
+                  ),
+                  Text(l10n.dailyCheckinDeadline),
+                  DropdownButton<int>(
+                    key: const Key('daily-deadline-hour'),
+                    value: s.deadlineHour,
+                    items: [
+                      for (
+                        var h = s.checkinHour + 1;
+                        h <= s.checkinHour + 4;
+                        h++
+                      )
+                        DropdownMenuItem(value: h, child: Text('$h:00')),
+                    ],
+                    onChanged: (h) {
+                      if (h != null) _save(s.copyWith(deadlineHour: h));
+                    },
+                  ),
+                ],
+              ),
+            ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSizes.screenPadding,
+              AppSizes.s4,
+              AppSizes.screenPadding,
+              0,
+            ),
+            child: Text(l10n.dailyWidgetHint, style: theme.textTheme.bodySmall),
+          ),
           const Divider(),
           _Header(l10n.heatGuardContacts),
           Padding(

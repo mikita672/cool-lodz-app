@@ -713,6 +713,76 @@ describe('reports', () => {
   });
 });
 
+const crowd = (uid, overrides = {}) => ({
+  uid,
+  kind: 'tree',
+  lat: 51.7592,
+  lon: 19.4560,
+  note: 'Brak cienia przy przystanku',
+  votes: 0,
+  createdAt: serverTimestamp(),
+  ...overrides,
+});
+
+describe('crowd points', () => {
+  test('signed-in user adds a tree or tap point in Łódź', async () => {
+    await assertSucceeds(setDoc(doc(db('alice'), 'crowdPoints/t1'), crowd('alice')));
+    await assertSucceeds(setDoc(doc(db('alice'), 'crowdPoints/t2'), crowd('alice', { kind: 'tap' })));
+    await assertSucceeds(getDoc(doc(db('bob'), 'crowdPoints/t1')));
+    await assertFails(getDoc(doc(db(null), 'crowdPoints/t1')));
+  });
+
+  test('invalid points are rejected', async () => {
+    const alice = db('alice');
+    await assertFails(setDoc(doc(alice, 'crowdPoints/a'), crowd('bob')));
+    await assertFails(setDoc(doc(alice, 'crowdPoints/b'), crowd('alice', { kind: 'bench' })));
+    await assertFails(setDoc(doc(alice, 'crowdPoints/c'), crowd('alice', { lat: 52.23 })));
+    await assertFails(setDoc(doc(alice, 'crowdPoints/d'), crowd('alice', { votes: 5 })));
+    await assertFails(setDoc(doc(alice, 'crowdPoints/e'), crowd('alice', { note: 'x'.repeat(121) })));
+    await assertFails(setDoc(doc(alice, 'crowdPoints/f'), crowd('alice', { extra: 1 })));
+    await assertFails(setDoc(doc(db(null), 'crowdPoints/g'), crowd('alice')));
+  });
+
+  test('one vote per user, in a batch with votes + 1', async () => {
+    await seed({ 'crowdPoints/p1': { ...crowd('alice'), createdAt: new Date() } });
+    const bob = db('bob');
+    const vote = () => {
+      const b = writeBatch(bob);
+      b.set(doc(bob, 'crowdPoints/p1/votes/bob'), { createdAt: serverTimestamp() });
+      b.update(doc(bob, 'crowdPoints/p1'), { votes: increment(1) });
+      return b.commit();
+    };
+    await assertSucceeds(vote());
+    await assertFails(vote());
+    let votes;
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      votes = (await getDoc(doc(ctx.firestore(), 'crowdPoints/p1'))).data().votes;
+    });
+    assert.equal(votes, 1);
+  });
+
+  test('votes cannot jump, and other fields cannot change', async () => {
+    await seed({ 'crowdPoints/p1': { ...crowd('alice'), createdAt: new Date() } });
+    const bob = db('bob');
+    await assertFails(updateDoc(doc(bob, 'crowdPoints/p1'), { votes: increment(1) }));
+    const b = writeBatch(bob);
+    b.set(doc(bob, 'crowdPoints/p1/votes/bob'), { createdAt: serverTimestamp() });
+    b.update(doc(bob, 'crowdPoints/p1'), { votes: increment(2) });
+    await assertFails(b.commit());
+    const c = writeBatch(bob);
+    c.set(doc(bob, 'crowdPoints/p1/votes/carol'), { createdAt: serverTimestamp() });
+    c.update(doc(bob, 'crowdPoints/p1'), { votes: increment(1) });
+    await assertFails(c.commit());
+    await assertFails(updateDoc(doc(db('alice'), 'crowdPoints/p1'), { note: 'edited' }));
+  });
+
+  test('only the author deletes a point', async () => {
+    await seed({ 'crowdPoints/p1': { ...crowd('alice'), createdAt: new Date() } });
+    await assertFails(deleteDoc(doc(db('bob'), 'crowdPoints/p1')));
+    await assertSucceeds(deleteDoc(doc(db('alice'), 'crowdPoints/p1')));
+  });
+});
+
 describe('config and default deny', () => {
   test('config/game readable by signed-in users, not writable', async () => {
     await assertSucceeds(getDoc(doc(db('alice'), 'config/game')));
