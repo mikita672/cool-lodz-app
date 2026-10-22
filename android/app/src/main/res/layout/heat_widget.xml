@@ -6,7 +6,8 @@
     android:background="@drawable/heat_widget_bg"
     android:orientation="horizontal"
     android:padding="12dp">
-    <View
+    <!-- RemoteViews allow only layouts and some widgets: no plain View. -->
+    <FrameLayout
         android:id="@+id/heat_widget_bar"
         android:layout_width="6dp"
         android:layout_height="match_parent"
