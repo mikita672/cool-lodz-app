@@ -92,17 +92,28 @@ class HeatGuardPlatform {
 
   final MethodChannel _channel;
   final _checks = StreamController<void>.broadcast();
+  final _alerts = StreamController<void>.broadcast();
   bool _listening = false;
+
+  void _listen() {
+    if (_listening) return;
+    _listening = true;
+    _channel.setMethodCallHandler((call) async {
+      if (call.method == 'check') _checks.add(null);
+      if (call.method == 'alert') _alerts.add(null);
+    });
+  }
 
   /// Fires when the service opens the app for a check.
   Stream<void> get checks {
-    if (!_listening) {
-      _listening = true;
-      _channel.setMethodCallHandler((call) async {
-        if (call.method == 'check') _checks.add(null);
-      });
-    }
+    _listen();
     return _checks.stream;
+  }
+
+  /// Fires when an IMGW or check-in notification opens the app.
+  Stream<void> get alertTaps {
+    _listen();
+    return _alerts.stream;
   }
 
   Future<T?> _call<T>(String method, [Object? arguments]) async {
@@ -147,6 +158,27 @@ class HeatGuardPlatform {
   /// `location`, `backgroundLocation`, `notifications` or `sms`.
   Future<bool> request(String kind) async =>
       await _call<bool>('request', kind) ?? false;
+
+  /// The daily jobs (`HeatDaily.kt`): IMGW, 7:00, check-in.
+  Future<void> daily(String json) => _call<void>('daily', json);
+
+  /// «Czuję się dobrze» tapped in the app.
+  Future<void> checkinOk() => _call<void>('checkinOk');
+
+  /// Today's check-in was asked and not answered yet.
+  Future<bool> checkinPending() async =>
+      await _call<bool>('checkinPending') ?? false;
+
+  /// An IMGW or check-in notification opened the app.
+  Future<bool> pendingAlert() async =>
+      await _call<bool>('pendingAlert') ?? false;
+
+  /// The home-screen widget; [level] 0..3 (low..extreme).
+  Future<void> widget({
+    required int level,
+    required String title,
+    required String line,
+  }) => _call<void>('widget', {'level': level, 'title': title, 'line': line});
 
   /// `fullScreen`, `battery` or the app's settings page.
   Future<void> openSettings(String kind) => _call<void>('openSettings', kind);

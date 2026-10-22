@@ -50,6 +50,12 @@ class HeatGuardSettings {
     this.waitMinutes = defaultWait,
     this.contacts = const [],
     this.home,
+    this.fallDetection = true,
+    this.imgwAuto = true,
+    this.morning = true,
+    this.checkin = false,
+    this.checkinHour = 9,
+    this.deadlineHour = 11,
   });
 
   factory HeatGuardSettings.fromJson(Map<String, dynamic> json) {
@@ -65,6 +71,12 @@ class HeatGuardSettings {
       home: home is List && home.length == 2
           ? LatLng((home[0] as num).toDouble(), (home[1] as num).toDouble())
           : null,
+      fallDetection: json['fallDetection'] as bool? ?? true,
+      imgwAuto: json['imgwAuto'] as bool? ?? true,
+      morning: json['morning'] as bool? ?? true,
+      checkin: json['checkin'] as bool? ?? false,
+      checkinHour: (json['checkinHour'] as num?)?.toInt() ?? 9,
+      deadlineHour: (json['deadlineHour'] as num?)?.toInt() ?? 11,
     );
   }
 
@@ -86,18 +98,47 @@ class HeatGuardSettings {
   /// No checks within 80 m of home.
   final LatLng? home;
 
+  /// A fall (free fall, impact, lying still) asks at once while it is hot.
+  final bool fallDetection;
+
+  /// The phone checks IMGW every 3 hours and notifies a new heat warning.
+  final bool imgwAuto;
+
+  /// «Dziś upał» at 7:00 with the best hours to go out.
+  final bool morning;
+
+  /// «Czuję się dobrze» every hot day at [checkinHour]; with no tap by
+  /// [deadlineHour] the trusted contacts get an SMS.
+  final bool checkin;
+  final int checkinHour;
+  final int deadlineHour;
+
+  static const checkinHours = [7, 8, 9, 10, 11, 12];
+
   HeatGuardSettings copyWith({
     bool? enabled,
     bool? heatOnly,
     int? waitMinutes,
     List<TrustedContact>? contacts,
     LatLng? Function()? home,
+    bool? fallDetection,
+    bool? imgwAuto,
+    bool? morning,
+    bool? checkin,
+    int? checkinHour,
+    int? deadlineHour,
   }) => HeatGuardSettings(
     enabled: enabled ?? this.enabled,
     heatOnly: heatOnly ?? this.heatOnly,
     waitMinutes: waitMinutes ?? this.waitMinutes,
     contacts: contacts ?? this.contacts,
     home: home != null ? home() : this.home,
+    fallDetection: fallDetection ?? this.fallDetection,
+    imgwAuto: imgwAuto ?? this.imgwAuto,
+    morning: morning ?? this.morning,
+    checkin: checkin ?? this.checkin,
+    checkinHour: checkinHour ?? this.checkinHour,
+    deadlineHour: deadlineHour ?? this.deadlineHour,
   );
 
   Map<String, dynamic> toJson() => {
@@ -106,6 +147,12 @@ class HeatGuardSettings {
     'waitMinutes': waitMinutes,
     'contacts': [for (final c in contacts) c.toJson()],
     if (home case final h?) 'home': [h.latitude, h.longitude],
+    'fallDetection': fallDetection,
+    'imgwAuto': imgwAuto,
+    'morning': morning,
+    'checkin': checkin,
+    'checkinHour': checkinHour,
+    'deadlineHour': deadlineHour,
   };
 
   @override
@@ -115,7 +162,13 @@ class HeatGuardSettings {
       other.heatOnly == heatOnly &&
       other.waitMinutes == waitMinutes &&
       listEquals(other.contacts, contacts) &&
-      other.home == home;
+      other.home == home &&
+      other.fallDetection == fallDetection &&
+      other.imgwAuto == imgwAuto &&
+      other.morning == morning &&
+      other.checkin == checkin &&
+      other.checkinHour == checkinHour &&
+      other.deadlineHour == deadlineHour;
 
   @override
   int get hashCode => Object.hash(
@@ -124,6 +177,12 @@ class HeatGuardSettings {
     waitMinutes,
     Object.hashAll(contacts),
     home,
+    fallDetection,
+    imgwAuto,
+    morning,
+    checkin,
+    checkinHour,
+    deadlineHour,
   );
 }
 

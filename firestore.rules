@@ -278,6 +278,42 @@ service cloud.firestore {
         && incoming().createdAt == request.time;
     }
 
+    // ---- crowd points («Posadź tu drzewo», «Kranówka tu») ---------------------
+
+    // Anyone signed in reads them and adds one in Łódź; each user votes once
+    // per point (votes/{uid} in the same batch as votes + 1). Only the
+    // author deletes a point.
+    match /crowdPoints/{pointId} {
+      allow read: if signedIn();
+      allow delete: if signedIn() && resource.data.uid == request.auth.uid;
+      allow create: if signedIn()
+        && incoming().keys().hasOnly(['uid', 'kind', 'lat', 'lon', 'note', 'votes', 'createdAt'])
+        && incoming().keys().hasAll(['uid', 'kind', 'lat', 'lon', 'votes', 'createdAt'])
+        && incoming().uid == request.auth.uid
+        && incoming().kind in ['tree', 'tap']
+        && incoming().lat is number && incoming().lat >= 51.68 && incoming().lat <= 51.86
+        && incoming().lon is number && incoming().lon >= 19.32 && incoming().lon <= 19.64
+        && (!('note' in incoming())
+            || (incoming().note is string && incoming().note.size() <= 120))
+        && incoming().votes == 0
+        && incoming().createdAt == request.time;
+      allow update: if signedIn()
+        && incoming().diff(resource.data).affectedKeys().hasOnly(['votes'])
+        && incoming().votes == resource.data.votes + 1
+        && !exists(/databases/$(database)/documents/crowdPoints/$(pointId)/votes/$(request.auth.uid))
+        && existsAfter(/databases/$(database)/documents/crowdPoints/$(pointId)/votes/$(request.auth.uid));
+
+      match /votes/{voterId} {
+        allow read: if signedIn() && voterId == request.auth.uid;
+        allow create: if signedIn()
+          && voterId == request.auth.uid
+          && incoming().keys().hasOnly(['createdAt'])
+          && incoming().createdAt == request.time
+          && getAfter(/databases/$(database)/documents/crowdPoints/$(pointId)).data.votes
+              == get(/databases/$(database)/documents/crowdPoints/$(pointId)).data.votes + 1;
+      }
+    }
+
     // ---- config ---------------------------------------------------------------
 
     match /config/{docId} {

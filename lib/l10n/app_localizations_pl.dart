@@ -2064,7 +2064,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get heatRiskSource =>
-      'Prognoza: Open-Meteo. Progi wg skali UTCI, dla seniorów o 2°C niższe. Temperatura asfaltu to szacunek.';
+      'Prognoza, powietrze i pyłki: Open-Meteo (CAMS). Progi wg skali UTCI, dla seniorów o 2°C niższe. Temperatura asfaltu to szacunek.';
 
   @override
   String get heatRiskDemo => 'Tryb demo: przykładowy upalny dzień.';
@@ -2552,4 +2552,201 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get placeSun => 'niedz.';
+
+  @override
+  String get heatNativeFallBody =>
+      'Wygląda na to, że upadłeś(-aś). Odpowiedz, inaczej włączy się alarm.';
+
+  @override
+  String get heatGuardFall => 'Wykrywanie upadku';
+
+  @override
+  String get heatGuardFallHint =>
+      'Gdy w upał telefon wykryje upadek i bezruch, alarm zapyta od razu.';
+
+  @override
+  String get dailyHeader => 'Codziennie w upał';
+
+  @override
+  String get dailyImgw => 'Ostrzeżenia IMGW';
+
+  @override
+  String get dailyImgwHint =>
+      'Telefon co 3 godziny sprawdza ostrzeżenia przed upałem dla Łodzi i powiadamia o nowych.';
+
+  @override
+  String get dailyMorning => 'Poranna wiadomość o 7:00';
+
+  @override
+  String get dailyMorningHint =>
+      'W upalny dzień: do ilu stopni, kiedy najlepiej wyjść i gdzie się schłodzić.';
+
+  @override
+  String get dailyCheckin => '«Czuję się dobrze»';
+
+  @override
+  String dailyCheckinHint(String ask, String deadline) {
+    return 'Każdego upalnego dnia o $ask zapytamy, jak się czujesz. Bez odpowiedzi do $deadline bliscy dostaną SMS.';
+  }
+
+  @override
+  String get dailyCheckinNoContacts =>
+      'Codzienne pytanie w upał. Dodaj zaufane osoby, aby bez odpowiedzi dostały SMS.';
+
+  @override
+  String get dailyCheckinAsk => 'Pytaj o';
+
+  @override
+  String get dailyCheckinDeadline => 'SMS po';
+
+  @override
+  String get dailyWidgetHint =>
+      'Dodaj też widżet «Cool Łódź: upał dziś» na ekran główny telefonu.';
+
+  @override
+  String dailyImgwTitle(String level) {
+    return 'Ostrzeżenie IMGW: upał $level. stopnia w Łodzi';
+  }
+
+  @override
+  String dailyImgwBody(String from, String to) {
+    return 'Od $from do $to. Pij wodę, unikaj słońca w południe i zajrzyj do starszych sąsiadów.';
+  }
+
+  @override
+  String dailyMorningTitle(String max) {
+    return 'Dziś upał: odczuwalna do $max°C';
+  }
+
+  @override
+  String dailyMorningBody(String before, String after) {
+    return 'Najlepiej wyjść przed $before lub po $after.';
+  }
+
+  @override
+  String get dailyMorningAllDay =>
+      'Upał przez większość dnia: wychodź tylko, gdy musisz, i wybieraj cień.';
+
+  @override
+  String dailyMorningPlace(String place) {
+    return 'Blisko domu schłodzisz się w: $place.';
+  }
+
+  @override
+  String get dailyCheckinTitle => 'Jak się dziś czujesz?';
+
+  @override
+  String dailyCheckinBody(String deadline) {
+    return 'Dziś upał. Stuknij «Czuję się dobrze» do $deadline, inaczej wyślemy SMS do bliskich.';
+  }
+
+  @override
+  String get dailyCheckinAction => 'Czuję się dobrze';
+
+  @override
+  String get dailyCheckinThanks => 'Dziękujemy! Pij wodę i unikaj słońca.';
+
+  @override
+  String dailyCheckinSms(String name, String deadline) {
+    return 'Cool Łódź: $name nie potwierdził(a) do $deadline, że dobrze się czuje w dzisiejszym upale. Zadzwoń, proszę.';
+  }
+
+  @override
+  String get dailyCheckinMissedTitle =>
+      'Brak odpowiedzi na pytanie o samopoczucie';
+
+  @override
+  String get dailyCheckinNoSms =>
+      'Nie udało się wysłać SMS. Zadzwoń do bliskich, jeśli potrzebujesz pomocy.';
+
+  @override
+  String get dailyCheckinInApp =>
+      'Dziś upał. Daj znać, że wszystko w porządku – inaczej Twoi bliscy dostaną SMS.';
+
+  @override
+  String widgetTitleFeels(String max) {
+    return 'Upał: odczuwalna do $max°C';
+  }
+
+  @override
+  String widgetHours(String before, String after) {
+    return 'Wyjdź przed $before lub po $after';
+  }
+
+  @override
+  String get widgetNoData => 'Cool Łódź';
+
+  @override
+  String get widgetOpenApp => 'Otwórz aplikację, aby sprawdzić upał';
+
+  @override
+  String get widgetNoHeat => 'Dziś bez upału';
+
+  @override
+  String get widgetShade => 'Wybieraj cień i pij wodę';
+
+  @override
+  String get ttsRead => 'Przeczytaj na głos';
+
+  @override
+  String get ttsStop => 'Zatrzymaj czytanie';
+
+  @override
+  String get pollenAlder => 'olcha';
+
+  @override
+  String get pollenBirch => 'brzoza';
+
+  @override
+  String get pollenGrass => 'trawy';
+
+  @override
+  String get pollenRagweed => 'ambrozja';
+
+  @override
+  String get pollenNone => 'brak';
+
+  @override
+  String get pollenLow => 'niskie';
+
+  @override
+  String get pollenModerate => 'średnie';
+
+  @override
+  String get pollenHigh => 'wysokie';
+
+  @override
+  String get aqiVeryGood => 'bardzo dobre';
+
+  @override
+  String get aqiGood => 'dobre';
+
+  @override
+  String get aqiModerate => 'umiarkowane';
+
+  @override
+  String get aqiPoor => 'słabe';
+
+  @override
+  String get aqiVeryPoor => 'bardzo słabe';
+
+  @override
+  String get aqiExtreme => 'ekstremalnie złe';
+
+  @override
+  String heatRiskAir(String quality, int aqi) {
+    return 'Powietrze dziś: $quality (europejski indeks $aqi)';
+  }
+
+  @override
+  String heatRiskPollen(String list) {
+    return 'Pyłki: $list';
+  }
+
+  @override
+  String get heatRiskPollenNone => 'Pyłki: brak lub bardzo mało';
+
+  @override
+  String get heatRiskAdviceAllergy =>
+      'Alergikom i astmatykom: weź leki ze sobą, po spacerze umyj twarz i przepłucz oczy, wysiłek odłóż na wieczór.';
 }

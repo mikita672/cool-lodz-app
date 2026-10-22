@@ -43,7 +43,7 @@ void main() {
   ).read(heatGuardSettingsProvider);
 
   Future<void> pumpSettings(WidgetTester tester, {bool senior = false}) async {
-    tester.view.physicalSize = const Size(400, 1400);
+    tester.view.physicalSize = const Size(400, 2600);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
     await pumpScreen(
@@ -159,7 +159,7 @@ void main() {
     testWidgets('«Przetestuj alarm» runs the check without SMS', (
       tester,
     ) async {
-      tester.view.physicalSize = const Size(400, 1400);
+      tester.view.physicalSize = const Size(400, 2600);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
       final router = GoRouter(

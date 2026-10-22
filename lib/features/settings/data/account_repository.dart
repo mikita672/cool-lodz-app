@@ -94,6 +94,7 @@ class FirestoreAccountRepository implements AccountRepository {
     for (final col in [
       FirestoreCollections.visits,
       FirestoreCollections.reports,
+      FirestoreCollections.crowdPoints,
     ]) {
       final q = await _db
           .collection(col)

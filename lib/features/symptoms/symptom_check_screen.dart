@@ -8,6 +8,7 @@ import '../../app/theme.dart';
 import '../../core/clock.dart';
 import '../../core/models/models.dart';
 import '../../l10n/app_localizations.dart';
+import '../../shared/tts.dart';
 import '../cool_places/data/places_providers.dart';
 import '../cool_places/place_format.dart';
 import '../cool_places/place_sheet.dart';
@@ -223,6 +224,14 @@ class _Result extends ConsumerWidget {
                 ),
             ],
           ),
+        ),
+        const SizedBox(height: AppSizes.s8),
+        ReadAloudButton(
+          text: () => [
+            title,
+            if (result == SymptomResult.urgent) l10n.symptomsUrgentLead,
+            ...steps,
+          ].join('. '),
         ),
         if (result != SymptomResult.urgent) ...[
           const SizedBox(height: AppSizes.s12),

@@ -3559,7 +3559,7 @@ abstract class AppLocalizations {
   /// No description provided for @heatRiskSource.
   ///
   /// In pl, this message translates to:
-  /// **'Prognoza: Open-Meteo. Progi wg skali UTCI, dla seniorów o 2°C niższe. Temperatura asfaltu to szacunek.'**
+  /// **'Prognoza, powietrze i pyłki: Open-Meteo (CAMS). Progi wg skali UTCI, dla seniorów o 2°C niższe. Temperatura asfaltu to szacunek.'**
   String get heatRiskSource;
 
   /// No description provided for @heatRiskDemo.
@@ -4295,6 +4295,330 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'niedz.'**
   String get placeSun;
+
+  /// No description provided for @heatNativeFallBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wygląda na to, że upadłeś(-aś). Odpowiedz, inaczej włączy się alarm.'**
+  String get heatNativeFallBody;
+
+  /// No description provided for @heatGuardFall.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wykrywanie upadku'**
+  String get heatGuardFall;
+
+  /// No description provided for @heatGuardFallHint.
+  ///
+  /// In pl, this message translates to:
+  /// **'Gdy w upał telefon wykryje upadek i bezruch, alarm zapyta od razu.'**
+  String get heatGuardFallHint;
+
+  /// No description provided for @dailyHeader.
+  ///
+  /// In pl, this message translates to:
+  /// **'Codziennie w upał'**
+  String get dailyHeader;
+
+  /// No description provided for @dailyImgw.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ostrzeżenia IMGW'**
+  String get dailyImgw;
+
+  /// No description provided for @dailyImgwHint.
+  ///
+  /// In pl, this message translates to:
+  /// **'Telefon co 3 godziny sprawdza ostrzeżenia przed upałem dla Łodzi i powiadamia o nowych.'**
+  String get dailyImgwHint;
+
+  /// No description provided for @dailyMorning.
+  ///
+  /// In pl, this message translates to:
+  /// **'Poranna wiadomość o 7:00'**
+  String get dailyMorning;
+
+  /// No description provided for @dailyMorningHint.
+  ///
+  /// In pl, this message translates to:
+  /// **'W upalny dzień: do ilu stopni, kiedy najlepiej wyjść i gdzie się schłodzić.'**
+  String get dailyMorningHint;
+
+  /// No description provided for @dailyCheckin.
+  ///
+  /// In pl, this message translates to:
+  /// **'«Czuję się dobrze»'**
+  String get dailyCheckin;
+
+  /// No description provided for @dailyCheckinHint.
+  ///
+  /// In pl, this message translates to:
+  /// **'Każdego upalnego dnia o {ask} zapytamy, jak się czujesz. Bez odpowiedzi do {deadline} bliscy dostaną SMS.'**
+  String dailyCheckinHint(String ask, String deadline);
+
+  /// No description provided for @dailyCheckinNoContacts.
+  ///
+  /// In pl, this message translates to:
+  /// **'Codzienne pytanie w upał. Dodaj zaufane osoby, aby bez odpowiedzi dostały SMS.'**
+  String get dailyCheckinNoContacts;
+
+  /// No description provided for @dailyCheckinAsk.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pytaj o'**
+  String get dailyCheckinAsk;
+
+  /// No description provided for @dailyCheckinDeadline.
+  ///
+  /// In pl, this message translates to:
+  /// **'SMS po'**
+  String get dailyCheckinDeadline;
+
+  /// No description provided for @dailyWidgetHint.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dodaj też widżet «Cool Łódź: upał dziś» na ekran główny telefonu.'**
+  String get dailyWidgetHint;
+
+  /// No description provided for @dailyImgwTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ostrzeżenie IMGW: upał {level}. stopnia w Łodzi'**
+  String dailyImgwTitle(String level);
+
+  /// No description provided for @dailyImgwBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Od {from} do {to}. Pij wodę, unikaj słońca w południe i zajrzyj do starszych sąsiadów.'**
+  String dailyImgwBody(String from, String to);
+
+  /// No description provided for @dailyMorningTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dziś upał: odczuwalna do {max}°C'**
+  String dailyMorningTitle(String max);
+
+  /// No description provided for @dailyMorningBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Najlepiej wyjść przed {before} lub po {after}.'**
+  String dailyMorningBody(String before, String after);
+
+  /// No description provided for @dailyMorningAllDay.
+  ///
+  /// In pl, this message translates to:
+  /// **'Upał przez większość dnia: wychodź tylko, gdy musisz, i wybieraj cień.'**
+  String get dailyMorningAllDay;
+
+  /// No description provided for @dailyMorningPlace.
+  ///
+  /// In pl, this message translates to:
+  /// **'Blisko domu schłodzisz się w: {place}.'**
+  String dailyMorningPlace(String place);
+
+  /// No description provided for @dailyCheckinTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Jak się dziś czujesz?'**
+  String get dailyCheckinTitle;
+
+  /// No description provided for @dailyCheckinBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dziś upał. Stuknij «Czuję się dobrze» do {deadline}, inaczej wyślemy SMS do bliskich.'**
+  String dailyCheckinBody(String deadline);
+
+  /// No description provided for @dailyCheckinAction.
+  ///
+  /// In pl, this message translates to:
+  /// **'Czuję się dobrze'**
+  String get dailyCheckinAction;
+
+  /// No description provided for @dailyCheckinThanks.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dziękujemy! Pij wodę i unikaj słońca.'**
+  String get dailyCheckinThanks;
+
+  /// No description provided for @dailyCheckinSms.
+  ///
+  /// In pl, this message translates to:
+  /// **'Cool Łódź: {name} nie potwierdził(a) do {deadline}, że dobrze się czuje w dzisiejszym upale. Zadzwoń, proszę.'**
+  String dailyCheckinSms(String name, String deadline);
+
+  /// No description provided for @dailyCheckinMissedTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Brak odpowiedzi na pytanie o samopoczucie'**
+  String get dailyCheckinMissedTitle;
+
+  /// No description provided for @dailyCheckinNoSms.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie udało się wysłać SMS. Zadzwoń do bliskich, jeśli potrzebujesz pomocy.'**
+  String get dailyCheckinNoSms;
+
+  /// No description provided for @dailyCheckinInApp.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dziś upał. Daj znać, że wszystko w porządku – inaczej Twoi bliscy dostaną SMS.'**
+  String get dailyCheckinInApp;
+
+  /// No description provided for @widgetTitleFeels.
+  ///
+  /// In pl, this message translates to:
+  /// **'Upał: odczuwalna do {max}°C'**
+  String widgetTitleFeels(String max);
+
+  /// No description provided for @widgetHours.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wyjdź przed {before} lub po {after}'**
+  String widgetHours(String before, String after);
+
+  /// No description provided for @widgetNoData.
+  ///
+  /// In pl, this message translates to:
+  /// **'Cool Łódź'**
+  String get widgetNoData;
+
+  /// No description provided for @widgetOpenApp.
+  ///
+  /// In pl, this message translates to:
+  /// **'Otwórz aplikację, aby sprawdzić upał'**
+  String get widgetOpenApp;
+
+  /// No description provided for @widgetNoHeat.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dziś bez upału'**
+  String get widgetNoHeat;
+
+  /// No description provided for @widgetShade.
+  ///
+  /// In pl, this message translates to:
+  /// **'Wybieraj cień i pij wodę'**
+  String get widgetShade;
+
+  /// No description provided for @ttsRead.
+  ///
+  /// In pl, this message translates to:
+  /// **'Przeczytaj na głos'**
+  String get ttsRead;
+
+  /// No description provided for @ttsStop.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zatrzymaj czytanie'**
+  String get ttsStop;
+
+  /// No description provided for @pollenAlder.
+  ///
+  /// In pl, this message translates to:
+  /// **'olcha'**
+  String get pollenAlder;
+
+  /// No description provided for @pollenBirch.
+  ///
+  /// In pl, this message translates to:
+  /// **'brzoza'**
+  String get pollenBirch;
+
+  /// No description provided for @pollenGrass.
+  ///
+  /// In pl, this message translates to:
+  /// **'trawy'**
+  String get pollenGrass;
+
+  /// No description provided for @pollenRagweed.
+  ///
+  /// In pl, this message translates to:
+  /// **'ambrozja'**
+  String get pollenRagweed;
+
+  /// No description provided for @pollenNone.
+  ///
+  /// In pl, this message translates to:
+  /// **'brak'**
+  String get pollenNone;
+
+  /// No description provided for @pollenLow.
+  ///
+  /// In pl, this message translates to:
+  /// **'niskie'**
+  String get pollenLow;
+
+  /// No description provided for @pollenModerate.
+  ///
+  /// In pl, this message translates to:
+  /// **'średnie'**
+  String get pollenModerate;
+
+  /// No description provided for @pollenHigh.
+  ///
+  /// In pl, this message translates to:
+  /// **'wysokie'**
+  String get pollenHigh;
+
+  /// No description provided for @aqiVeryGood.
+  ///
+  /// In pl, this message translates to:
+  /// **'bardzo dobre'**
+  String get aqiVeryGood;
+
+  /// No description provided for @aqiGood.
+  ///
+  /// In pl, this message translates to:
+  /// **'dobre'**
+  String get aqiGood;
+
+  /// No description provided for @aqiModerate.
+  ///
+  /// In pl, this message translates to:
+  /// **'umiarkowane'**
+  String get aqiModerate;
+
+  /// No description provided for @aqiPoor.
+  ///
+  /// In pl, this message translates to:
+  /// **'słabe'**
+  String get aqiPoor;
+
+  /// No description provided for @aqiVeryPoor.
+  ///
+  /// In pl, this message translates to:
+  /// **'bardzo słabe'**
+  String get aqiVeryPoor;
+
+  /// No description provided for @aqiExtreme.
+  ///
+  /// In pl, this message translates to:
+  /// **'ekstremalnie złe'**
+  String get aqiExtreme;
+
+  /// No description provided for @heatRiskAir.
+  ///
+  /// In pl, this message translates to:
+  /// **'Powietrze dziś: {quality} (europejski indeks {aqi})'**
+  String heatRiskAir(String quality, int aqi);
+
+  /// No description provided for @heatRiskPollen.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pyłki: {list}'**
+  String heatRiskPollen(String list);
+
+  /// No description provided for @heatRiskPollenNone.
+  ///
+  /// In pl, this message translates to:
+  /// **'Pyłki: brak lub bardzo mało'**
+  String get heatRiskPollenNone;
+
+  /// No description provided for @heatRiskAdviceAllergy.
+  ///
+  /// In pl, this message translates to:
+  /// **'Alergikom i astmatykom: weź leki ze sobą, po spacerze umyj twarz i przepłucz oczy, wysiłek odłóż na wieczór.'**
+  String get heatRiskAdviceAllergy;
 }
 
 class _AppLocalizationsDelegate

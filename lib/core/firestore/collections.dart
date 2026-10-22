@@ -13,6 +13,8 @@ abstract final class FirestoreCollections {
   static const districts = 'districts';
   static const weeks = 'weeks'; // districts/{id}/weeks/{yyyy-Www}
   static const reports = 'reports';
+  static const crowdPoints = 'crowdPoints'; // «Posadź tu drzewo», «Kranówka tu»
+  static const votes = 'votes'; // crowdPoints/{id}/votes/{uid}
   static const config = 'config';
   static const rankings = 'rankings'; // public copy for S13, see RankingFields
 
