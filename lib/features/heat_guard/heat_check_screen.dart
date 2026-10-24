@@ -16,7 +16,8 @@ final dialEmergencyProvider = Provider<Future<void> Function()>(
 );
 
 /// «Wszystko w porządku?» over the lock screen. When the alarm sounds it
-/// turns into a screen for passers-by: what to do in heatstroke and a big
+/// turns into a screen for passers-by: when to call 112 and first aid
+/// (NHS, Ministry of Health) and a big
 /// «Zadzwoń 112».
 class HeatCheckScreen extends ConsumerStatefulWidget {
   const HeatCheckScreen({super.key, this.test = false});

@@ -460,7 +460,7 @@ void main() {
     expect(find.text('UV do 8: bardzo wysoki'), findsOneWidget);
     expect(find.byKey(const Key('heat-risk-paws')), findsOneWidget);
     expect(find.textContaining('Za gorąco dla łap psa'), findsOneWidget);
-    expect(find.text('Źle się czujesz? Sprawdź objawy'), findsOneWidget);
+    expect(find.text('Objawy upału: kiedy dzwonić 112'), findsOneWidget);
     // Demo air: grass in bloom, ozone.
     expect(
       find.text('Pyłki: trawy – wysokie, ambrozja – niskie'),
@@ -470,7 +470,10 @@ void main() {
       find.text('Powietrze dziś: umiarkowane (europejski indeks 58)'),
       findsOneWidget,
     );
-    expect(find.textContaining('Alergikom i astmatykom'), findsOneWidget);
+    expect(
+      find.textContaining('ważne dla alergików i astmatyków'),
+      findsOneWidget,
+    );
     expect(find.byKey(const Key('read-aloud')), findsOneWidget);
     expect(find.byKey(const Key('heat-risk-day-plan')), findsOneWidget);
   });

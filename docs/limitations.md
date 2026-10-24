@@ -36,9 +36,9 @@ A list for the competition documentation (MD hands it to Mikita Kutsenka). The d
 **Shop**
 - Rewards and codes are a demo: no agreement with MPK Łódź or the venues yet, codes are not checked anywhere. Spending is validated only by the Firestore rules (the client could add points the same way it earns them, see above).
 
-**Heat risk, pavement, symptoms**
+**Heat risk, pavement, «Objawy upału»**
 - The heat risk uses the feels-like temperature on UTCI-like steps, not a full UTCI calculation; the asphalt temperature is an estimate from air temperature and sun (no surface sensors).
-- The symptom check is fixed advice from NHS/GIS guidance, not a diagnosis.
+- «Objawy upału» only shows public information (Ministry of Health, quoted; NHS, translated by the team) and does not assess anyone's health. The GIS page (gis.gov.pl) could not be opened from the development environment, so the Ministry of Health page is the Polish source; the team should check whether GIS should be added. The texts must be re-checked when the source pages change.
 - «Twój wpływ» counts only walks started with «Prowadź»; routes saved before 22.10 estimate their time from the distance and have no «Mniej słońca». CO₂ assumes an average car.
 - The weekly challenge, like all points, is awarded by the client (no Cloud Functions).
 

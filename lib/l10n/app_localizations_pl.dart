@@ -1450,7 +1450,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get aboutMedical =>
-      'Aplikacja nie jest wyrobem medycznym. W razie złego samopoczucia dzwoń 112.';
+      'Cool Łódź nie jest wyrobem medycznym, nie zastępuje porady lekarza i podaje wyłącznie informacje z publicznych źródeł.';
 
   @override
   String get aboutSources => 'Źródła danych';
@@ -1844,7 +1844,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get heatGuardDisclaimer =>
-      'To nie jest wyrób medyczny ani usługa ratunkowa. Aplikacja nie dzwoni na 112 sama. Nie usuwaj jej z ostatnich aplikacji, gdy czuwa.';
+      'To nie jest wyrób medyczny ani usługa ratunkowa i nie zastępuje porady lekarza. Aplikacja nie dzwoni na 112 sama. Nie usuwaj jej z ostatnich aplikacji, gdy czuwa.';
 
   @override
   String get heatCheckQuestion => 'Wszystko w porządku?';
@@ -1860,27 +1860,29 @@ class AppLocalizationsPl extends AppLocalizations {
   String get heatCheckHelp => 'Potrzebuję pomocy';
 
   @override
-  String get heatCheckAlarmTitle => 'Ta osoba może potrzebować pomocy';
+  String get heatCheckAlarmTitle =>
+      'Alarm: ta osoba nie odpowiada na pytanie aplikacji';
 
   @override
-  String get heatCheckAlarmLead => 'Możliwy udar cieplny. Pomóż:';
+  String get heatCheckAlarmLead =>
+      'Jeśli ta osoba straciła przytomność, ma drgawki, jest splątana albo ma gorącą skórę, która się nie poci, zadzwoń pod 112. Do przyjazdu pomocy (NHS, Ministerstwo Zdrowia):';
 
   @override
   String get heatCheckAid1 => 'Zadzwoń pod 112.';
 
   @override
-  String get heatCheckAid2 => 'Przenieś osobę w cień lub chłodne miejsce.';
+  String get heatCheckAid2 => 'Przenieś osobę w chłodniejsze miejsce.';
 
   @override
   String get heatCheckAid3 =>
-      'Poluzuj ubranie, chłodź skórę wodą (kark, pachy, pachwiny), wachluj.';
+      'Wachluj ją albo przemywaj zimną wodą. Możesz owinąć ją chłodnym, mokrym prześcieradłem.';
 
   @override
   String get heatCheckAid4 =>
-      'Jeśli jest przytomna, podawaj wodę małymi łykami.';
+      'Jeśli straci przytomność, ułóż ją w pozycji bocznej ustalonej i powiedz o tym dyspozytorowi.';
 
   @override
-  String get heatCheckAid5 => 'Nie zostawiaj jej samej do przyjazdu pomocy.';
+  String get heatCheckAid5 => 'Zostań z tą osobą.';
 
   @override
   String get heatCheckCall112 => 'Zadzwoń 112';
@@ -1926,7 +1928,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String heatNativeSms(String place, String time) {
-    return 'Cool Łódź, alarm upałowy: nie odpowiadam od $time, mogę potrzebować pomocy. $place Zadzwoń do mnie, a jeśli nie odbieram, dzwoń pod 112.';
+    return 'Cool Łódź, alarm upałowy: nie odpowiadam na pytanie aplikacji od $time. $place Zadzwoń do mnie, a jeśli nie odbieram, dzwoń pod 112.';
   }
 
   @override
@@ -2060,7 +2062,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get heatRiskPawOk => 'Łapy psa: asfalt nie powinien parzyć.';
 
   @override
-  String get heatRiskSymptoms => 'Źle się czujesz? Sprawdź objawy';
+  String get heatRiskSymptoms => 'Objawy upału: kiedy dzwonić 112';
 
   @override
   String get heatRiskSource =>
@@ -2162,94 +2164,11 @@ class AppLocalizationsPl extends AppLocalizations {
       'Z tras rozpoczętych przyciskiem «Prowadź». «Mniej słońca»: w porównaniu z najkrótszą trasą o tej samej porze. CO₂: średnie auto, 0,17 kg/km.';
 
   @override
-  String get symptomsTitle => 'Objawy przegrzania';
-
-  @override
-  String get symptomsIntro =>
-      'Odpowiedz za siebie albo za osobę, której pomagasz. Pięć pytań, to nie jest diagnoza.';
-
-  @override
-  String get symptomsQ1 =>
-      'Czy jest splątanie, dziwne zachowanie albo trudność z mówieniem?';
-
-  @override
-  String get symptomsQ2 =>
-      'Czy było omdlenie, utrata przytomności albo drgawki?';
-
-  @override
-  String get symptomsQ3 =>
-      'Czy skóra jest gorąca i sucha (brak potu), mimo upału?';
-
-  @override
-  String get symptomsQ4 =>
-      'Czy boli głowa, kręci się w głowie albo są nudności lub wymioty?';
-
-  @override
-  String get symptomsQ5 =>
-      'Czy są skurcze mięśni, duże osłabienie albo bardzo silne pragnienie?';
-
-  @override
-  String get symptomsYes => 'Tak';
-
-  @override
-  String get symptomsNo => 'Nie';
-
-  @override
-  String get symptomsAnswerAll =>
-      'Odpowiedz na wszystkie pytania, aby zobaczyć, co robić.';
-
-  @override
-  String get symptomsUrgentTitle =>
-      'Możliwy udar cieplny. Zadzwoń pod 112 teraz.';
-
-  @override
-  String get symptomsUrgentLead => 'Do przyjazdu pomocy:';
-
-  @override
-  String get symptomsExhaustionTitle =>
-      'Możliwe wyczerpanie cieplne. Idź do chłodu teraz.';
-
-  @override
-  String get symptomsExhaustion1 => 'Usiądź lub połóż się w chłodnym miejscu.';
-
-  @override
-  String get symptomsExhaustion2 => 'Pij wodę małymi łykami.';
-
-  @override
-  String get symptomsExhaustion3 =>
-      'Chłodź skórę: mokry ręcznik albo woda na kark i ręce.';
-
-  @override
-  String get symptomsExhaustion4 =>
-      'Jeśli po 30 minutach nie ma poprawy albo jest gorzej, dzwoń pod 112.';
-
-  @override
-  String get symptomsOkTitle => 'Brak typowych objawów przegrzania.';
-
-  @override
-  String get symptomsOkBody =>
-      'Pij wodę, odpoczywaj w cieniu i obserwuj samopoczucie. Gdy coś się zmieni, sprawdź jeszcze raz.';
-
-  @override
-  String get symptomsNearest => 'Najbliższe otwarte miejsce chłodu';
-
-  @override
-  String get symptomsNoPlace =>
-      'Nie znam Twojej lokalizacji. Zobacz listę miejsc chłodu.';
-
-  @override
-  String get symptomsShowPlaces => 'Miejsca chłodu';
-
-  @override
-  String get symptomsDisclaimer =>
-      'To nie jest porada medyczna ani diagnoza. W razie wątpliwości dzwoń pod 112. Na podstawie zaleceń NHS i GIS dotyczących udaru cieplnego.';
-
-  @override
-  String get settingsSymptoms => 'Objawy przegrzania';
+  String get settingsSymptoms => 'Objawy upału';
 
   @override
   String get settingsSymptomsBody =>
-      '5 pytań: co robić, gdy źle się czujesz w upale';
+      'Objawy ostrzegawcze i pierwsza pomoc według NHS i Ministerstwa Zdrowia';
 
   @override
   String get challengeTitle => 'Wyzwanie tygodnia';
@@ -2454,7 +2373,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get onboardingRiskBody =>
-      'Karta na mapie mówi, jak bardzo grzeje dziś, kiedy są najgorętsze godziny i jaki jest UV. Ostrzeże o gorącym asfalcie dla psa, a test objawów powie, co robić, gdy źle się czujesz.';
+      'Karta na mapie mówi, jak bardzo grzeje dziś, kiedy są najgorętsze godziny i jaki jest UV. Ostrzeże o gorącym asfalcie dla psa, a ekran «Objawy upału» pokaże objawy ostrzegawcze i pierwszą pomoc według oficjalnych źródeł.';
 
   @override
   String get onboardingGuardTitle => 'Alarm upałowy';
@@ -2555,7 +2474,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get heatNativeFallBody =>
-      'Wygląda na to, że upadłeś(-aś). Odpowiedz, inaczej włączy się alarm.';
+      'Telefon zarejestrował gwałtowny ruch, a potem bezruch. Odpowiedz, inaczej włączy się alarm.';
 
   @override
   String get heatGuardFall => 'Wykrywanie upadku';
@@ -2748,7 +2667,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get heatRiskAdviceAllergy =>
-      'Alergikom i astmatykom: weź leki ze sobą, po spacerze umyj twarz i przepłucz oczy, wysiłek odłóż na wieczór.';
+      'Dziś dużo pyłków lub gorsze powietrze: ważne dla alergików i astmatyków.';
 
   @override
   String get mapLayerHeat => 'Wyspy ciepła';
@@ -3050,4 +2969,166 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get aboutDemoFilledAlready => 'To konto jest już wypełnione.';
+
+  @override
+  String get medicalNote =>
+      'Cool Łódź nie jest wyrobem medycznym, nie zastępuje porady lekarza i podaje wyłącznie informacje z publicznych źródeł.';
+
+  @override
+  String get showCoolPlaces => 'Miejsca chłodu';
+
+  @override
+  String get heatSymptomsTitle => 'Objawy upału';
+
+  @override
+  String get heatSymptomsIntro =>
+      'Objawy ostrzegawcze i pierwsza pomoc według Ministerstwa Zdrowia i brytyjskiej służby zdrowia NHS. To nie jest diagnoza ani porada lekarska.';
+
+  @override
+  String get heatSymptomsCallTitle =>
+      'Dzwoń pod 112, jeśli występuje którykolwiek z tych objawów';
+
+  @override
+  String get heatSymptomsCall1 =>
+      'złe samopoczucie mimo 30 minut odpoczynku w chłodnym miejscu, chłodzenia i picia';
+
+  @override
+  String get heatSymptomsCall2 => 'bardzo wysoka temperatura ciała';
+
+  @override
+  String get heatSymptomsCall3 =>
+      'gorąca skóra, która się nie poci i może być zaczerwieniona';
+
+  @override
+  String get heatSymptomsCall4 => 'szybkie bicie serca';
+
+  @override
+  String get heatSymptomsCall5 => 'szybki oddech lub duszność';
+
+  @override
+  String get heatSymptomsCall6 => 'splątanie i brak koordynacji';
+
+  @override
+  String get heatSymptomsCall7 => 'napad drgawek';
+
+  @override
+  String get heatSymptomsCall8 => 'utrata przytomności';
+
+  @override
+  String get heatSymptomsCallSource =>
+      'Źródło: NHS, sekcja «Call 999 now if» (tłumaczenie). W Polsce numer alarmowy to 112 lub 999 (Ministerstwo Zdrowia).';
+
+  @override
+  String get heatSymptomsCall112 => 'Zadzwoń 112';
+
+  @override
+  String get heatSymptomsCallNote =>
+      'Przycisk otwiera telefon z wpisanym numerem 112. Połączenie zatwierdzasz sam.';
+
+  @override
+  String get heatSymptomsWaitTitle => 'Czekając na pomoc';
+
+  @override
+  String get heatSymptomsWait1 =>
+      'Owiń osobę chłodnym, mokrym prześcieradłem albo wachluj ją lub przemywaj zimną wodą.';
+
+  @override
+  String get heatSymptomsWait2 =>
+      'Jeśli straci przytomność, ułóż ją w pozycji bocznej ustalonej i powiedz o tym dyspozytorowi. Sprawdzaj oddech i tętno; jeśli nie ma oznak życia, prowadź resuscytację.';
+
+  @override
+  String get heatSymptomsWaitSource =>
+      'Źródło: NHS, sekcja «What to do while waiting for help with heatstroke» (tłumaczenie).';
+
+  @override
+  String get heatSymptomsExhTitle =>
+      'Objawy wyczerpania cieplnego (przemęczenia upałem)';
+
+  @override
+  String get heatSymptomsExh1 => 'zmęczenie';
+
+  @override
+  String get heatSymptomsExh2 => 'zawroty głowy';
+
+  @override
+  String get heatSymptomsExh3 => 'ból głowy';
+
+  @override
+  String get heatSymptomsExh4 => 'nudności lub wymioty';
+
+  @override
+  String get heatSymptomsExh5 =>
+      'nadmierne pocenie się, blada i wilgotna skóra';
+
+  @override
+  String get heatSymptomsExh6 => 'skurcze rąk, nóg i brzucha';
+
+  @override
+  String get heatSymptomsExh7 => 'wysoka temperatura ciała';
+
+  @override
+  String get heatSymptomsExh8 => 'silne pragnienie';
+
+  @override
+  String get heatSymptomsExh9 => 'rozdrażnienie';
+
+  @override
+  String get heatSymptomsExhSource =>
+      'Źródło: NHS, sekcja «Symptoms of heat exhaustion» (tłumaczenie).';
+
+  @override
+  String get heatSymptomsAidTitle => 'Co robić, jeśli wystąpią objawy';
+
+  @override
+  String get heatSymptomsAid1 => 'przenieś się do chłodniejszego miejsca;';
+
+  @override
+  String get heatSymptomsAid2 => 'połóż się i rozluźnij ubranie;';
+
+  @override
+  String get heatSymptomsAid3 => 'rób zimne okłady na całym ciele;';
+
+  @override
+  String get heatSymptomsAid4 => 'pij wodę małymi łykami;';
+
+  @override
+  String get heatSymptomsAid5 =>
+      'jeśli wymiotujesz, natychmiast udaj się do lekarza.';
+
+  @override
+  String get heatSymptomsAid6 =>
+      'Jeśli pomagasz innej osobie, zostań z nią, aż poczuje się lepiej (NHS).';
+
+  @override
+  String get heatSymptomsWhen =>
+      'Jeśli osoba z objawami wyczerpania cieplnego wystarczająco szybko zostanie przeniesiona w chłodniejsze miejsce i napije się wody, powinna poczuć się lepiej. Jeśli jednak w ciągu pół godziny złe samopoczucie nie minie, należy bezzwłocznie wezwać pomoc.';
+
+  @override
+  String get heatSymptomsAidSource =>
+      'Źródło: Ministerstwo Zdrowia, sekcja «Wyczerpanie cieplne» (cytat).';
+
+  @override
+  String get heatSymptomsNearest => 'Najbliższe otwarte miejsce chłodu';
+
+  @override
+  String get heatSymptomsNoPlace =>
+      'Nie znam Twojej lokalizacji. Zobacz listę miejsc chłodu.';
+
+  @override
+  String get heatSymptomsSourcesTitle => 'Źródła';
+
+  @override
+  String get heatSymptomsSourceMz =>
+      'Ministerstwo Zdrowia: «Udar słoneczny, udar cieplny, przegrzanie cieplne», ostatnia modyfikacja 24.08.2022, dostęp 24.10.2026';
+
+  @override
+  String get heatSymptomsSourceNhs =>
+      'NHS: «Heat exhaustion and heatstroke», przegląd 28.05.2026, dostęp 24.10.2026 (tłumaczenie Cool Łódź)';
+
+  @override
+  String get privacyMedicalTitle => 'Informacje o zdrowiu';
+
+  @override
+  String get privacyMedicalBody =>
+      'Ekran «Objawy upału» tylko wyświetla informacje z publicznych źródeł: nie zadaje pytań o zdrowie i niczego nie zapisuje. Cool Łódź nie jest wyrobem medycznym, nie zastępuje porady lekarza i podaje wyłącznie informacje z publicznych źródeł.';
 }

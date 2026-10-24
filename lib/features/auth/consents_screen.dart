@@ -154,6 +154,12 @@ class _ConsentsScreenState extends ConsumerState<ConsentsScreen> {
                       label: Text(l10n.consentsPrivacyLink),
                     ),
                   ),
+                  const SizedBox(height: AppSizes.s8),
+                  Text(
+                    l10n.medicalNote,
+                    key: const Key('consents-medical'),
+                    style: theme.textTheme.bodySmall,
+                  ),
                 ],
               ),
             ),

@@ -368,10 +368,10 @@ class HeatRiskSheet extends ConsumerWidget {
             ),
             const SizedBox(height: AppSizes.s8),
             OutlinedButton.icon(
-              key: const Key('heat-risk-symptoms'),
+              key: const Key('heat-risk-heat-symptoms'),
               onPressed: () {
                 Navigator.of(context).pop();
-                context.push(Routes.symptoms);
+                context.push(Routes.heatSymptoms);
               },
               icon: const Icon(Icons.medical_information_rounded),
               label: Text(l10n.heatRiskSymptoms),

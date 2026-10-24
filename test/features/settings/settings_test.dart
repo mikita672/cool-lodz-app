@@ -255,8 +255,8 @@ void main() {
       await pump(tester, initial: '/profile/about');
       expect(
         find.text(
-          'Aplikacja nie jest wyrobem medycznym. '
-          'W razie złego samopoczucia dzwoń 112.',
+          'Cool Łódź nie jest wyrobem medycznym, nie zastępuje porady '
+          'lekarza i podaje wyłącznie informacje z publicznych źródeł.',
         ),
         findsOneWidget,
       );

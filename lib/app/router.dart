@@ -14,6 +14,7 @@ import '../features/cool_walk/cool_walk_screen.dart';
 import '../features/day_plan/day_plan_screen.dart';
 import '../features/heat_guard/heat_check_screen.dart';
 import '../features/heat_guard/heat_guard_screen.dart';
+import '../features/heat_symptoms/heat_symptoms_screen.dart';
 import '../features/map/map_screen.dart';
 import '../features/onboarding/onboarding_screen.dart';
 import '../features/profile/profile_select_screen.dart';
@@ -27,7 +28,6 @@ import '../features/settings/consents_settings_screen.dart';
 import '../features/settings/privacy_screen.dart';
 import '../features/settings/profile_tab_screen.dart';
 import '../features/shop/shop_screen.dart';
-import '../features/symptoms/symptom_check_screen.dart';
 import '../shared/debug/components_showcase.dart';
 import 'app_shell.dart';
 import 'routes.dart';
@@ -163,8 +163,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (_, _) => const OnboardingScreen(replay: true),
       ),
       GoRoute(
-        path: Routes.symptoms,
-        builder: (_, _) => const SymptomCheckScreen(),
+        path: Routes.heatSymptoms,
+        builder: (_, _) => const HeatSymptomsScreen(),
       ),
       GoRoute(
         path: Routes.heatCheck,
