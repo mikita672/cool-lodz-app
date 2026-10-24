@@ -2545,7 +2545,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutMedical.
   ///
   /// In pl, this message translates to:
-  /// **'Aplikacja nie jest wyrobem medycznym. W razie złego samopoczucia dzwoń 112.'**
+  /// **'Cool Łódź nie jest wyrobem medycznym, nie zastępuje porady lekarza i podaje wyłącznie informacje z publicznych źródeł.'**
   String get aboutMedical;
 
   /// No description provided for @aboutSources.
@@ -3205,7 +3205,7 @@ abstract class AppLocalizations {
   /// No description provided for @heatGuardDisclaimer.
   ///
   /// In pl, this message translates to:
-  /// **'To nie jest wyrób medyczny ani usługa ratunkowa. Aplikacja nie dzwoni na 112 sama. Nie usuwaj jej z ostatnich aplikacji, gdy czuwa.'**
+  /// **'To nie jest wyrób medyczny ani usługa ratunkowa i nie zastępuje porady lekarza. Aplikacja nie dzwoni na 112 sama. Nie usuwaj jej z ostatnich aplikacji, gdy czuwa.'**
   String get heatGuardDisclaimer;
 
   /// No description provided for @heatCheckQuestion.
@@ -3235,13 +3235,13 @@ abstract class AppLocalizations {
   /// No description provided for @heatCheckAlarmTitle.
   ///
   /// In pl, this message translates to:
-  /// **'Ta osoba może potrzebować pomocy'**
+  /// **'Alarm: ta osoba nie odpowiada na pytanie aplikacji'**
   String get heatCheckAlarmTitle;
 
   /// No description provided for @heatCheckAlarmLead.
   ///
   /// In pl, this message translates to:
-  /// **'Możliwy udar cieplny. Pomóż:'**
+  /// **'Jeśli ta osoba straciła przytomność, ma drgawki, jest splątana albo ma gorącą skórę, która się nie poci, zadzwoń pod 112. Do przyjazdu pomocy (NHS, Ministerstwo Zdrowia):'**
   String get heatCheckAlarmLead;
 
   /// No description provided for @heatCheckAid1.
@@ -3253,25 +3253,25 @@ abstract class AppLocalizations {
   /// No description provided for @heatCheckAid2.
   ///
   /// In pl, this message translates to:
-  /// **'Przenieś osobę w cień lub chłodne miejsce.'**
+  /// **'Przenieś osobę w chłodniejsze miejsce.'**
   String get heatCheckAid2;
 
   /// No description provided for @heatCheckAid3.
   ///
   /// In pl, this message translates to:
-  /// **'Poluzuj ubranie, chłodź skórę wodą (kark, pachy, pachwiny), wachluj.'**
+  /// **'Wachluj ją albo przemywaj zimną wodą. Możesz owinąć ją chłodnym, mokrym prześcieradłem.'**
   String get heatCheckAid3;
 
   /// No description provided for @heatCheckAid4.
   ///
   /// In pl, this message translates to:
-  /// **'Jeśli jest przytomna, podawaj wodę małymi łykami.'**
+  /// **'Jeśli straci przytomność, ułóż ją w pozycji bocznej ustalonej i powiedz o tym dyspozytorowi.'**
   String get heatCheckAid4;
 
   /// No description provided for @heatCheckAid5.
   ///
   /// In pl, this message translates to:
-  /// **'Nie zostawiaj jej samej do przyjazdu pomocy.'**
+  /// **'Zostań z tą osobą.'**
   String get heatCheckAid5;
 
   /// No description provided for @heatCheckCall112.
@@ -3343,7 +3343,7 @@ abstract class AppLocalizations {
   /// No description provided for @heatNativeSms.
   ///
   /// In pl, this message translates to:
-  /// **'Cool Łódź, alarm upałowy: nie odpowiadam od {time}, mogę potrzebować pomocy. {place} Zadzwoń do mnie, a jeśli nie odbieram, dzwoń pod 112.'**
+  /// **'Cool Łódź, alarm upałowy: nie odpowiadam na pytanie aplikacji od {time}. {place} Zadzwoń do mnie, a jeśli nie odbieram, dzwoń pod 112.'**
   String heatNativeSms(String place, String time);
 
   /// No description provided for @heatNativeSmsPlace.
@@ -3553,7 +3553,7 @@ abstract class AppLocalizations {
   /// No description provided for @heatRiskSymptoms.
   ///
   /// In pl, this message translates to:
-  /// **'Źle się czujesz? Sprawdź objawy'**
+  /// **'Objawy upału: kiedy dzwonić 112'**
   String get heatRiskSymptoms;
 
   /// No description provided for @heatRiskSource.
@@ -3714,154 +3714,16 @@ abstract class AppLocalizations {
   /// **'Z tras rozpoczętych przyciskiem «Prowadź». «Mniej słońca»: w porównaniu z najkrótszą trasą o tej samej porze. CO₂: średnie auto, 0,17 kg/km.'**
   String get impactNote;
 
-  /// No description provided for @symptomsTitle.
-  ///
-  /// In pl, this message translates to:
-  /// **'Objawy przegrzania'**
-  String get symptomsTitle;
-
-  /// No description provided for @symptomsIntro.
-  ///
-  /// In pl, this message translates to:
-  /// **'Odpowiedz za siebie albo za osobę, której pomagasz. Pięć pytań, to nie jest diagnoza.'**
-  String get symptomsIntro;
-
-  /// No description provided for @symptomsQ1.
-  ///
-  /// In pl, this message translates to:
-  /// **'Czy jest splątanie, dziwne zachowanie albo trudność z mówieniem?'**
-  String get symptomsQ1;
-
-  /// No description provided for @symptomsQ2.
-  ///
-  /// In pl, this message translates to:
-  /// **'Czy było omdlenie, utrata przytomności albo drgawki?'**
-  String get symptomsQ2;
-
-  /// No description provided for @symptomsQ3.
-  ///
-  /// In pl, this message translates to:
-  /// **'Czy skóra jest gorąca i sucha (brak potu), mimo upału?'**
-  String get symptomsQ3;
-
-  /// No description provided for @symptomsQ4.
-  ///
-  /// In pl, this message translates to:
-  /// **'Czy boli głowa, kręci się w głowie albo są nudności lub wymioty?'**
-  String get symptomsQ4;
-
-  /// No description provided for @symptomsQ5.
-  ///
-  /// In pl, this message translates to:
-  /// **'Czy są skurcze mięśni, duże osłabienie albo bardzo silne pragnienie?'**
-  String get symptomsQ5;
-
-  /// No description provided for @symptomsYes.
-  ///
-  /// In pl, this message translates to:
-  /// **'Tak'**
-  String get symptomsYes;
-
-  /// No description provided for @symptomsNo.
-  ///
-  /// In pl, this message translates to:
-  /// **'Nie'**
-  String get symptomsNo;
-
-  /// No description provided for @symptomsAnswerAll.
-  ///
-  /// In pl, this message translates to:
-  /// **'Odpowiedz na wszystkie pytania, aby zobaczyć, co robić.'**
-  String get symptomsAnswerAll;
-
-  /// No description provided for @symptomsUrgentTitle.
-  ///
-  /// In pl, this message translates to:
-  /// **'Możliwy udar cieplny. Zadzwoń pod 112 teraz.'**
-  String get symptomsUrgentTitle;
-
-  /// No description provided for @symptomsUrgentLead.
-  ///
-  /// In pl, this message translates to:
-  /// **'Do przyjazdu pomocy:'**
-  String get symptomsUrgentLead;
-
-  /// No description provided for @symptomsExhaustionTitle.
-  ///
-  /// In pl, this message translates to:
-  /// **'Możliwe wyczerpanie cieplne. Idź do chłodu teraz.'**
-  String get symptomsExhaustionTitle;
-
-  /// No description provided for @symptomsExhaustion1.
-  ///
-  /// In pl, this message translates to:
-  /// **'Usiądź lub połóż się w chłodnym miejscu.'**
-  String get symptomsExhaustion1;
-
-  /// No description provided for @symptomsExhaustion2.
-  ///
-  /// In pl, this message translates to:
-  /// **'Pij wodę małymi łykami.'**
-  String get symptomsExhaustion2;
-
-  /// No description provided for @symptomsExhaustion3.
-  ///
-  /// In pl, this message translates to:
-  /// **'Chłodź skórę: mokry ręcznik albo woda na kark i ręce.'**
-  String get symptomsExhaustion3;
-
-  /// No description provided for @symptomsExhaustion4.
-  ///
-  /// In pl, this message translates to:
-  /// **'Jeśli po 30 minutach nie ma poprawy albo jest gorzej, dzwoń pod 112.'**
-  String get symptomsExhaustion4;
-
-  /// No description provided for @symptomsOkTitle.
-  ///
-  /// In pl, this message translates to:
-  /// **'Brak typowych objawów przegrzania.'**
-  String get symptomsOkTitle;
-
-  /// No description provided for @symptomsOkBody.
-  ///
-  /// In pl, this message translates to:
-  /// **'Pij wodę, odpoczywaj w cieniu i obserwuj samopoczucie. Gdy coś się zmieni, sprawdź jeszcze raz.'**
-  String get symptomsOkBody;
-
-  /// No description provided for @symptomsNearest.
-  ///
-  /// In pl, this message translates to:
-  /// **'Najbliższe otwarte miejsce chłodu'**
-  String get symptomsNearest;
-
-  /// No description provided for @symptomsNoPlace.
-  ///
-  /// In pl, this message translates to:
-  /// **'Nie znam Twojej lokalizacji. Zobacz listę miejsc chłodu.'**
-  String get symptomsNoPlace;
-
-  /// No description provided for @symptomsShowPlaces.
-  ///
-  /// In pl, this message translates to:
-  /// **'Miejsca chłodu'**
-  String get symptomsShowPlaces;
-
-  /// No description provided for @symptomsDisclaimer.
-  ///
-  /// In pl, this message translates to:
-  /// **'To nie jest porada medyczna ani diagnoza. W razie wątpliwości dzwoń pod 112. Na podstawie zaleceń NHS i GIS dotyczących udaru cieplnego.'**
-  String get symptomsDisclaimer;
-
   /// No description provided for @settingsSymptoms.
   ///
   /// In pl, this message translates to:
-  /// **'Objawy przegrzania'**
+  /// **'Objawy upału'**
   String get settingsSymptoms;
 
   /// No description provided for @settingsSymptomsBody.
   ///
   /// In pl, this message translates to:
-  /// **'5 pytań: co robić, gdy źle się czujesz w upale'**
+  /// **'Objawy ostrzegawcze i pierwsza pomoc według NHS i Ministerstwa Zdrowia'**
   String get settingsSymptomsBody;
 
   /// No description provided for @challengeTitle.
@@ -4107,7 +3969,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingRiskBody.
   ///
   /// In pl, this message translates to:
-  /// **'Karta na mapie mówi, jak bardzo grzeje dziś, kiedy są najgorętsze godziny i jaki jest UV. Ostrzeże o gorącym asfalcie dla psa, a test objawów powie, co robić, gdy źle się czujesz.'**
+  /// **'Karta na mapie mówi, jak bardzo grzeje dziś, kiedy są najgorętsze godziny i jaki jest UV. Ostrzeże o gorącym asfalcie dla psa, a ekran «Objawy upału» pokaże objawy ostrzegawcze i pierwszą pomoc według oficjalnych źródeł.'**
   String get onboardingRiskBody;
 
   /// No description provided for @onboardingGuardTitle.
@@ -4299,7 +4161,7 @@ abstract class AppLocalizations {
   /// No description provided for @heatNativeFallBody.
   ///
   /// In pl, this message translates to:
-  /// **'Wygląda na to, że upadłeś(-aś). Odpowiedz, inaczej włączy się alarm.'**
+  /// **'Telefon zarejestrował gwałtowny ruch, a potem bezruch. Odpowiedz, inaczej włączy się alarm.'**
   String get heatNativeFallBody;
 
   /// No description provided for @heatGuardFall.
@@ -4617,7 +4479,7 @@ abstract class AppLocalizations {
   /// No description provided for @heatRiskAdviceAllergy.
   ///
   /// In pl, this message translates to:
-  /// **'Alergikom i astmatykom: weź leki ze sobą, po spacerze umyj twarz i przepłucz oczy, wysiłek odłóż na wieczór.'**
+  /// **'Dziś dużo pyłków lub gorsze powietrze: ważne dla alergików i astmatyków.'**
   String get heatRiskAdviceAllergy;
 
   /// No description provided for @mapLayerHeat.
@@ -5087,6 +4949,288 @@ abstract class AppLocalizations {
   /// In pl, this message translates to:
   /// **'To konto jest już wypełnione.'**
   String get aboutDemoFilledAlready;
+
+  /// No description provided for @medicalNote.
+  ///
+  /// In pl, this message translates to:
+  /// **'Cool Łódź nie jest wyrobem medycznym, nie zastępuje porady lekarza i podaje wyłącznie informacje z publicznych źródeł.'**
+  String get medicalNote;
+
+  /// No description provided for @showCoolPlaces.
+  ///
+  /// In pl, this message translates to:
+  /// **'Miejsca chłodu'**
+  String get showCoolPlaces;
+
+  /// No description provided for @heatSymptomsTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Objawy upału'**
+  String get heatSymptomsTitle;
+
+  /// No description provided for @heatSymptomsIntro.
+  ///
+  /// In pl, this message translates to:
+  /// **'Objawy ostrzegawcze i pierwsza pomoc według Ministerstwa Zdrowia i brytyjskiej służby zdrowia NHS. To nie jest diagnoza ani porada lekarska.'**
+  String get heatSymptomsIntro;
+
+  /// No description provided for @heatSymptomsCallTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Dzwoń pod 112, jeśli występuje którykolwiek z tych objawów'**
+  String get heatSymptomsCallTitle;
+
+  /// No description provided for @heatSymptomsCall1.
+  ///
+  /// In pl, this message translates to:
+  /// **'złe samopoczucie mimo 30 minut odpoczynku w chłodnym miejscu, chłodzenia i picia'**
+  String get heatSymptomsCall1;
+
+  /// No description provided for @heatSymptomsCall2.
+  ///
+  /// In pl, this message translates to:
+  /// **'bardzo wysoka temperatura ciała'**
+  String get heatSymptomsCall2;
+
+  /// No description provided for @heatSymptomsCall3.
+  ///
+  /// In pl, this message translates to:
+  /// **'gorąca skóra, która się nie poci i może być zaczerwieniona'**
+  String get heatSymptomsCall3;
+
+  /// No description provided for @heatSymptomsCall4.
+  ///
+  /// In pl, this message translates to:
+  /// **'szybkie bicie serca'**
+  String get heatSymptomsCall4;
+
+  /// No description provided for @heatSymptomsCall5.
+  ///
+  /// In pl, this message translates to:
+  /// **'szybki oddech lub duszność'**
+  String get heatSymptomsCall5;
+
+  /// No description provided for @heatSymptomsCall6.
+  ///
+  /// In pl, this message translates to:
+  /// **'splątanie i brak koordynacji'**
+  String get heatSymptomsCall6;
+
+  /// No description provided for @heatSymptomsCall7.
+  ///
+  /// In pl, this message translates to:
+  /// **'napad drgawek'**
+  String get heatSymptomsCall7;
+
+  /// No description provided for @heatSymptomsCall8.
+  ///
+  /// In pl, this message translates to:
+  /// **'utrata przytomności'**
+  String get heatSymptomsCall8;
+
+  /// No description provided for @heatSymptomsCallSource.
+  ///
+  /// In pl, this message translates to:
+  /// **'Źródło: NHS, sekcja «Call 999 now if» (tłumaczenie). W Polsce numer alarmowy to 112 lub 999 (Ministerstwo Zdrowia).'**
+  String get heatSymptomsCallSource;
+
+  /// No description provided for @heatSymptomsCall112.
+  ///
+  /// In pl, this message translates to:
+  /// **'Zadzwoń 112'**
+  String get heatSymptomsCall112;
+
+  /// No description provided for @heatSymptomsCallNote.
+  ///
+  /// In pl, this message translates to:
+  /// **'Przycisk otwiera telefon z wpisanym numerem 112. Połączenie zatwierdzasz sam.'**
+  String get heatSymptomsCallNote;
+
+  /// No description provided for @heatSymptomsWaitTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Czekając na pomoc'**
+  String get heatSymptomsWaitTitle;
+
+  /// No description provided for @heatSymptomsWait1.
+  ///
+  /// In pl, this message translates to:
+  /// **'Owiń osobę chłodnym, mokrym prześcieradłem albo wachluj ją lub przemywaj zimną wodą.'**
+  String get heatSymptomsWait1;
+
+  /// No description provided for @heatSymptomsWait2.
+  ///
+  /// In pl, this message translates to:
+  /// **'Jeśli straci przytomność, ułóż ją w pozycji bocznej ustalonej i powiedz o tym dyspozytorowi. Sprawdzaj oddech i tętno; jeśli nie ma oznak życia, prowadź resuscytację.'**
+  String get heatSymptomsWait2;
+
+  /// No description provided for @heatSymptomsWaitSource.
+  ///
+  /// In pl, this message translates to:
+  /// **'Źródło: NHS, sekcja «What to do while waiting for help with heatstroke» (tłumaczenie).'**
+  String get heatSymptomsWaitSource;
+
+  /// No description provided for @heatSymptomsExhTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Objawy wyczerpania cieplnego (przemęczenia upałem)'**
+  String get heatSymptomsExhTitle;
+
+  /// No description provided for @heatSymptomsExh1.
+  ///
+  /// In pl, this message translates to:
+  /// **'zmęczenie'**
+  String get heatSymptomsExh1;
+
+  /// No description provided for @heatSymptomsExh2.
+  ///
+  /// In pl, this message translates to:
+  /// **'zawroty głowy'**
+  String get heatSymptomsExh2;
+
+  /// No description provided for @heatSymptomsExh3.
+  ///
+  /// In pl, this message translates to:
+  /// **'ból głowy'**
+  String get heatSymptomsExh3;
+
+  /// No description provided for @heatSymptomsExh4.
+  ///
+  /// In pl, this message translates to:
+  /// **'nudności lub wymioty'**
+  String get heatSymptomsExh4;
+
+  /// No description provided for @heatSymptomsExh5.
+  ///
+  /// In pl, this message translates to:
+  /// **'nadmierne pocenie się, blada i wilgotna skóra'**
+  String get heatSymptomsExh5;
+
+  /// No description provided for @heatSymptomsExh6.
+  ///
+  /// In pl, this message translates to:
+  /// **'skurcze rąk, nóg i brzucha'**
+  String get heatSymptomsExh6;
+
+  /// No description provided for @heatSymptomsExh7.
+  ///
+  /// In pl, this message translates to:
+  /// **'wysoka temperatura ciała'**
+  String get heatSymptomsExh7;
+
+  /// No description provided for @heatSymptomsExh8.
+  ///
+  /// In pl, this message translates to:
+  /// **'silne pragnienie'**
+  String get heatSymptomsExh8;
+
+  /// No description provided for @heatSymptomsExh9.
+  ///
+  /// In pl, this message translates to:
+  /// **'rozdrażnienie'**
+  String get heatSymptomsExh9;
+
+  /// No description provided for @heatSymptomsExhSource.
+  ///
+  /// In pl, this message translates to:
+  /// **'Źródło: NHS, sekcja «Symptoms of heat exhaustion» (tłumaczenie).'**
+  String get heatSymptomsExhSource;
+
+  /// No description provided for @heatSymptomsAidTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Co robić, jeśli wystąpią objawy'**
+  String get heatSymptomsAidTitle;
+
+  /// No description provided for @heatSymptomsAid1.
+  ///
+  /// In pl, this message translates to:
+  /// **'przenieś się do chłodniejszego miejsca;'**
+  String get heatSymptomsAid1;
+
+  /// No description provided for @heatSymptomsAid2.
+  ///
+  /// In pl, this message translates to:
+  /// **'połóż się i rozluźnij ubranie;'**
+  String get heatSymptomsAid2;
+
+  /// No description provided for @heatSymptomsAid3.
+  ///
+  /// In pl, this message translates to:
+  /// **'rób zimne okłady na całym ciele;'**
+  String get heatSymptomsAid3;
+
+  /// No description provided for @heatSymptomsAid4.
+  ///
+  /// In pl, this message translates to:
+  /// **'pij wodę małymi łykami;'**
+  String get heatSymptomsAid4;
+
+  /// No description provided for @heatSymptomsAid5.
+  ///
+  /// In pl, this message translates to:
+  /// **'jeśli wymiotujesz, natychmiast udaj się do lekarza.'**
+  String get heatSymptomsAid5;
+
+  /// No description provided for @heatSymptomsAid6.
+  ///
+  /// In pl, this message translates to:
+  /// **'Jeśli pomagasz innej osobie, zostań z nią, aż poczuje się lepiej (NHS).'**
+  String get heatSymptomsAid6;
+
+  /// No description provided for @heatSymptomsWhen.
+  ///
+  /// In pl, this message translates to:
+  /// **'Jeśli osoba z objawami wyczerpania cieplnego wystarczająco szybko zostanie przeniesiona w chłodniejsze miejsce i napije się wody, powinna poczuć się lepiej. Jeśli jednak w ciągu pół godziny złe samopoczucie nie minie, należy bezzwłocznie wezwać pomoc.'**
+  String get heatSymptomsWhen;
+
+  /// No description provided for @heatSymptomsAidSource.
+  ///
+  /// In pl, this message translates to:
+  /// **'Źródło: Ministerstwo Zdrowia, sekcja «Wyczerpanie cieplne» (cytat).'**
+  String get heatSymptomsAidSource;
+
+  /// No description provided for @heatSymptomsNearest.
+  ///
+  /// In pl, this message translates to:
+  /// **'Najbliższe otwarte miejsce chłodu'**
+  String get heatSymptomsNearest;
+
+  /// No description provided for @heatSymptomsNoPlace.
+  ///
+  /// In pl, this message translates to:
+  /// **'Nie znam Twojej lokalizacji. Zobacz listę miejsc chłodu.'**
+  String get heatSymptomsNoPlace;
+
+  /// No description provided for @heatSymptomsSourcesTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Źródła'**
+  String get heatSymptomsSourcesTitle;
+
+  /// No description provided for @heatSymptomsSourceMz.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ministerstwo Zdrowia: «Udar słoneczny, udar cieplny, przegrzanie cieplne», ostatnia modyfikacja 24.08.2022, dostęp 24.10.2026'**
+  String get heatSymptomsSourceMz;
+
+  /// No description provided for @heatSymptomsSourceNhs.
+  ///
+  /// In pl, this message translates to:
+  /// **'NHS: «Heat exhaustion and heatstroke», przegląd 28.05.2026, dostęp 24.10.2026 (tłumaczenie Cool Łódź)'**
+  String get heatSymptomsSourceNhs;
+
+  /// No description provided for @privacyMedicalTitle.
+  ///
+  /// In pl, this message translates to:
+  /// **'Informacje o zdrowiu'**
+  String get privacyMedicalTitle;
+
+  /// No description provided for @privacyMedicalBody.
+  ///
+  /// In pl, this message translates to:
+  /// **'Ekran «Objawy upału» tylko wyświetla informacje z publicznych źródeł: nie zadaje pytań o zdrowie i niczego nie zapisuje. Cool Łódź nie jest wyrobem medycznym, nie zastępuje porady lekarza i podaje wyłącznie informacje z publicznych źródeł.'**
+  String get privacyMedicalBody;
 }
 
 class _AppLocalizationsDelegate

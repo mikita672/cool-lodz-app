@@ -196,8 +196,8 @@ class _AlertBody extends StatelessWidget {
         ),
         const SizedBox(height: AppSizes.s8),
         OutlinedButton.icon(
-          key: const Key('alert-symptoms'),
-          onPressed: () => context.push(Routes.symptoms),
+          key: const Key('alert-heat-symptoms'),
+          onPressed: () => context.push(Routes.heatSymptoms),
           icon: const Icon(Icons.medical_information_rounded),
           label: Text(l10n.heatRiskSymptoms),
         ),

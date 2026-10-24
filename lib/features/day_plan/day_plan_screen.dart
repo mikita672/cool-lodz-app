@@ -144,7 +144,7 @@ class DayPlanScreen extends ConsumerWidget {
           OutlinedButton.icon(
             onPressed: () => context.go(Routes.coolPlaces),
             icon: const Icon(Icons.ac_unit_rounded),
-            label: Text(l10n.symptomsShowPlaces),
+            label: Text(l10n.showCoolPlaces),
           )
         else
           for (final p in step.places)

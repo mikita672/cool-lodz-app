@@ -8,7 +8,7 @@ import 'package:cool_lodz/features/auth/data/auth_repository.dart';
 import 'package:cool_lodz/features/auth/data/user_profile_repository.dart';
 import 'package:cool_lodz/features/cool_places/cool_places_screen.dart';
 import 'package:cool_lodz/features/game/data/game_config_repository.dart';
-import 'package:cool_lodz/features/symptoms/symptom_check_screen.dart';
+import 'package:cool_lodz/features/heat_symptoms/heat_symptoms_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -147,18 +147,18 @@ void main() {
       expect(find.byType(CoolPlacesScreen), findsOneWidget);
     });
 
-    testWidgets('«Sprawdź objawy» opens the symptom check', (tester) async {
+    testWidgets('«Objawy upału» opens the information screen', (tester) async {
       await pumpApp(tester, location: '/map/alert');
       await tester.scrollUntilVisible(
-        find.byKey(const Key('alert-symptoms')),
+        find.byKey(const Key('alert-heat-symptoms')),
         200,
         scrollable: find.byType(Scrollable).first,
       );
       await tester.drag(find.byType(Scrollable).first, const Offset(0, -200));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('alert-symptoms')));
+      await tester.tap(find.byKey(const Key('alert-heat-symptoms')));
       await tester.pumpAndSettle();
-      expect(find.byType(SymptomCheckScreen), findsOneWidget);
+      expect(find.byType(HeatSymptomsScreen), findsOneWidget);
     });
 
     testWidgets('heatOverride 2 shows the banner on the map (demo)', (

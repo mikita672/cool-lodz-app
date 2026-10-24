@@ -18,6 +18,7 @@ class PrivacyScreen extends StatelessWidget {
       (l10n.privacyLocationTitle, l10n.privacyLocationBody),
       (l10n.privacyStorageTitle, l10n.privacyStorageBody),
       (l10n.privacyRankingTitle, l10n.privacyRankingBody),
+      (l10n.privacyMedicalTitle, l10n.privacyMedicalBody),
       (l10n.privacyRightsTitle, l10n.privacyRightsBody),
       (l10n.privacyContactTitle, l10n.privacyContactBody),
     ];

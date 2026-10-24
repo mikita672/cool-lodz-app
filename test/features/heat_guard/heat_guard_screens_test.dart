@@ -267,9 +267,16 @@ void main() {
       );
       await tester.pump(const Duration(seconds: 1));
       await tester.pump();
-      expect(find.text('Ta osoba może potrzebować pomocy'), findsOneWidget);
+      expect(
+        find.text('Alarm: ta osoba nie odpowiada na pytanie aplikacji'),
+        findsOneWidget,
+      );
       expect(find.text('Zadzwoń pod 112.'), findsOneWidget);
       expect(find.text('SMS wysłany do: Anna'), findsOneWidget);
+      // Facts only: no statement about the person's health.
+      for (final t in tester.widgetList<Text>(find.byType(Text))) {
+        expect((t.data ?? '').toLowerCase(), isNot(contains('udar')));
+      }
       await tester.tap(find.byKey(const Key('heat-check-call')));
       expect(platform.calls, contains('dial112'));
       // Answered from the notification: the screen closes by itself.
@@ -289,6 +296,8 @@ void main() {
       await tester.pump();
       expect(platform.calls, contains('help'));
       expect(find.byKey(const Key('heat-check-alarm')), findsOneWidget);
+      await tester.ensureVisible(find.byKey(const Key('heat-check-stop')));
+      await tester.pump();
       await tester.tap(find.byKey(const Key('heat-check-stop')));
       await tester.pumpAndSettle();
       expect(platform.calls, contains('ok'));
